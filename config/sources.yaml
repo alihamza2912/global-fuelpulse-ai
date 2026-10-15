@@ -1,0 +1,98 @@
+# ==============================================================================
+# GLOBAL FUELPULSE AI — DATA SOURCE REGISTRY
+# Verified metadata, license terms, frequencies, and access requirements.
+# ==============================================================================
+
+sources:
+  - id: "US_EIA"
+    name: "U.S. Energy Information Administration (EIA)"
+    description: "Official U.S. government statistical agency providing energy supply, disposition, and retail motor fuel prices."
+    homepage: "https://www.eia.gov/"
+    api_docs: "https://www.eia.gov/opendata/"
+    api_base_url: "https://api.eia.gov/v2/"
+    auth_type: "api_key"
+    env_key: "EIA_API_KEY"
+    pricing: "Free registration"
+    license: "U.S. Public Domain (Unrestricted with attribution)"
+    update_frequency: "Weekly (Every Monday for retail prices; monthly/annual for trade)"
+    endpoints:
+      retail_gasoline_diesel:
+        path: "petroleum/pri/gnd/data/"
+        frequency: "weekly"
+        products:
+          EPMR: "Regular Gasoline"
+          EPD2D: "On-Highway Diesel Fuel"
+      petroleum_imports_exports:
+        path: "petroleum/move/data/"
+        frequency: "monthly"
+      crude_imports_by_origin:
+        path: "crude-oil-imports/data/"
+        frequency: "monthly"
+
+  - id: "UN_COMTRADE"
+    name: "United Nations Comtrade Database"
+    description: "Authoritative global international trade statistics repository compiled by the United Nations Statistics Division."
+    homepage: "https://comtradeplus.un.org/"
+    api_docs: "https://comtradedeveloper.un.org/"
+    api_base_url: "https://comtradeapi.un.org/public/v1/"
+    auth_type: "subscription_key"
+    env_key: "UN_COMTRADE_SUBSCRIPTION_KEY"
+    pricing: "Free tier (500 records preview without key; subscription key for higher volume)"
+    license: "UN Comtrade Terms of Use (Academic and analytical reuse permitted with citation)"
+    update_frequency: "Monthly and Annual"
+    commodity_codes:
+      "2709": "Petroleum oils and oils obtained from bituminous minerals, crude"
+      "2710": "Petroleum oils and oils obtained from bituminous minerals, other than crude (Refined)"
+
+  - id: "INDIA_PPAC"
+    name: "Petroleum Planning & Analysis Cell (PPAC), MoPNG, Government of India"
+    description: "Attached office of the Ministry of Petroleum & Natural Gas tracking retail prices, Indian Crude Basket, and trade."
+    homepage: "https://ppac.gov.in/"
+    api_docs: "https://data.gov.in/"
+    api_base_url: "https://api.data.gov.in/resource/"
+    auth_type: "api_key"
+    env_key: "DATA_GOV_API_KEY"
+    pricing: "Free open government data"
+    license: "National Data Sharing and Accessibility Policy (NDSAP) - Government of India"
+    update_frequency: "Daily for metro retail prices; monthly for import/export volumes and crude basket"
+    coverage:
+      metro_cities: ["Delhi", "Mumbai", "Kolkata", "Chennai"]
+      crude_basket: "Indian Basket ($/bbl)"
+      import_dependency: "Crude oil import dependency percentage"
+
+  - id: "EC_OIL_BULLETIN"
+    name: "European Commission Directorate-General for Energy - Weekly Oil Bulletin"
+    description: "Official weekly consumer prices of petroleum products including and excluding duties and taxes across EU member states."
+    homepage: "https://energy.ec.europa.eu/data-and-analysis/weekly-oil-bulletin_en"
+    api_docs: "https://ec.europa.eu/energy/observatory/reports/bulletin_overview.html"
+    api_base_url: "https://ec.europa.eu/energy/observatory/reports/"
+    auth_type: "none"
+    pricing: "Free public access"
+    license: "European Commission Open Data (Attribution permitted)"
+    update_frequency: "Weekly (Every Monday/Thursday)"
+    products:
+      euro_super_95: "Euro-super 95 (Petrol)"
+      automotive_gas_oil: "Automotive gas oil (Diesel)"
+
+  - id: "GLOBAL_PETROL_PRICES"
+    name: "GlobalPetrolPrices.com"
+    description: "Commercial energy data provider tracking retail petrol, diesel, and electricity prices across 150+ countries."
+    homepage: "https://www.globalpetrolprices.com/"
+    api_docs: "https://www.globalpetrolprices.com/data_feeds.php"
+    api_base_url: "https://www.globalpetrolprices.com/api/"
+    auth_type: "xml_subscription"
+    env_key: "GLOBALPETROLPRICES_API_KEY"
+    pricing: "Commercial subscription required for automated data feeds"
+    license: "Proprietary (Subscription-based redistribution and integration terms apply)"
+    update_frequency: "Weekly (Every Monday)"
+    coverage: "150+ countries, local currency and USD equivalents"
+
+  - id: "WORLD_BANK"
+    name: "World Bank Commodity Markets (Pink Sheet)"
+    description: "Monthly commodity price benchmarks including Brent Crude, WTI Crude, Dubai Crude, and Natural Gas."
+    homepage: "https://www.worldbank.org/en/research/commodity-markets"
+    api_base_url: "https://api.worldbank.org/v2/"
+    auth_type: "none"
+    pricing: "Free open data"
+    license: "Creative Commons Attribution 4.0 International (CC BY 4.0)"
+    update_frequency: "Monthly"

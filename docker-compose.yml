@@ -1,0 +1,44 @@
+services:
+  app:
+    build: .
+    container_name: global_fuelpulse_app
+    restart: unless-stopped
+    ports:
+      - "8501:8501"
+    environment:
+      - DB_HOST=db
+      - DB_PORT=3306
+      - DB_NAME=fuelx_db
+      - DB_USER=root
+      - DB_PASSWORD=fuelx_secret_password
+      - APP_MODE=DEMO
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - .:/app
+
+  db:
+    image: mysql:8.4
+    container_name: fuelx_mysql_db
+    restart: unless-stopped
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      MYSQL_ROOT_PASSWORD: fuelx_secret_password
+      MYSQL_DATABASE: fuelx_db
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./sql/schema.sql:/docker-entrypoint-initdb.d/1_schema.sql:ro
+      - ./sql/views.sql:/docker-entrypoint-initdb.d/2_views.sql:ro
+      - ./sql/indexes.sql:/docker-entrypoint-initdb.d/3_indexes.sql:ro
+      - ./sql/seed_demo_data.sql:/docker-entrypoint-initdb.d/4_seed.sql:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-pfuelx_secret_password"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  mysql_data:

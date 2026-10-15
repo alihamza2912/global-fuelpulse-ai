@@ -1,0 +1,107 @@
+{
+  "name": "GlobalFuelPulseAI_DataModel",
+  "compatibilityLevel": 1550,
+  "model": {
+    "culture": "en-US",
+    "dataSources": [
+      {
+        "type": "Structured",
+        "name": "MySQL_fuelx_db",
+        "connectionDetails": {
+          "protocol": "mysql",
+          "address": {
+            "server": "127.0.0.1:3306",
+            "database": "fuelx_db"
+          }
+        },
+        "options": {
+          "commandTimeout": "PT10M"
+        }
+      }
+    ],
+    "tables": [
+      {
+        "name": "dim_country",
+        "columns": [
+          {"name": "country_iso3", "dataType": "string", "isKey": true},
+          {"name": "country_name", "dataType": "string"},
+          {"name": "continent", "dataType": "string"},
+          {"name": "region", "dataType": "string"},
+          {"name": "income_group", "dataType": "string"},
+          {"name": "currency_code", "dataType": "string"},
+          {"name": "latitude", "dataType": "double"},
+          {"name": "longitude", "dataType": "double"},
+          {"name": "is_opec", "dataType": "boolean"},
+          {"name": "is_opec_plus", "dataType": "boolean"}
+        ]
+      },
+      {
+        "name": "fuel_prices",
+        "columns": [
+          {"name": "price_id", "dataType": "int64", "isKey": true},
+          {"name": "country_iso3", "dataType": "string"},
+          {"name": "location_id", "dataType": "string"},
+          {"name": "observation_date", "dataType": "dateTime"},
+          {"name": "fuel_type", "dataType": "string"},
+          {"name": "price_local", "dataType": "double"},
+          {"name": "currency_local", "dataType": "string"},
+          {"name": "price_usd_per_litre", "dataType": "double", "formatString": "$#,##0.0000"},
+          {"name": "tax_component_percent", "dataType": "double"},
+          {"name": "source_id", "dataType": "string"}
+        ]
+      },
+      {
+        "name": "fact_petroleum_trade",
+        "columns": [
+          {"name": "trade_id", "dataType": "int64", "isKey": true},
+          {"name": "reporting_period", "dataType": "string"},
+          {"name": "exporter_iso3", "dataType": "string"},
+          {"name": "importer_iso3", "dataType": "string"},
+          {"name": "product_category", "dataType": "string"},
+          {"name": "trade_direction", "dataType": "string"},
+          {"name": "quantity", "dataType": "double", "formatString": "#,##0"},
+          {"name": "quantity_unit", "dataType": "string"},
+          {"name": "value_usd", "dataType": "double", "formatString": "$#,##0"}
+        ]
+      },
+      {
+        "name": "fact_affordability",
+        "columns": [
+          {"name": "affordability_id", "dataType": "int64", "isKey": true},
+          {"name": "country_iso3", "dataType": "string"},
+          {"name": "reporting_year", "dataType": "int64"},
+          {"name": "gdp_per_capita_nominal_usd", "dataType": "double", "formatString": "$#,##0"},
+          {"name": "daily_income_proxy_usd", "dataType": "double", "formatString": "$#,##0.00"},
+          {"name": "petrol_litre_percent_daily_income", "dataType": "double", "formatString": "0.00%"},
+          {"name": "affordability_tier", "dataType": "string"}
+        ]
+      }
+    ],
+    "relationships": [
+      {
+        "name": "Rel_Country_Prices",
+        "fromTable": "fuel_prices",
+        "fromColumn": "country_iso3",
+        "toTable": "dim_country",
+        "toColumn": "country_iso3",
+        "crossFilteringBehavior": "singleDirection"
+      },
+      {
+        "name": "Rel_Country_Exports",
+        "fromTable": "fact_petroleum_trade",
+        "fromColumn": "exporter_iso3",
+        "toTable": "dim_country",
+        "toColumn": "country_iso3",
+        "crossFilteringBehavior": "singleDirection"
+      },
+      {
+        "name": "Rel_Country_Affordability",
+        "fromTable": "fact_affordability",
+        "fromColumn": "country_iso3",
+        "toTable": "dim_country",
+        "toColumn": "country_iso3",
+        "crossFilteringBehavior": "singleDirection"
+      }
+    ]
+  }
+}
