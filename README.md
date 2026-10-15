@@ -1,5 +1,7 @@
 # Global FuelPulse AI — Global Fuel Price, Petroleum Trade & Energy Intelligence Platform
 
+https://global-fuelpulse-ai-jqsi5ngrigi4hm4gtmcghn.streamlit.app
+
 [![Python](https://img.shields.io/badge/Python-3.12-blue.svg)](https://www.python.org/)
 [![Database](https://img.shields.io/badge/Database-MySQL%20%7C%20SQLite-orange.svg)](https://www.mysql.com/)
 [![Streamlit](https://img.shields.io/badge/Streamlit-1.40+-FF4B4B.svg)](https://streamlit.io/)
