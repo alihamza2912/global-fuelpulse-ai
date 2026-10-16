@@ -1,11 +1,11 @@
 # ⚡ Global FuelPulse AI — Global Fuel Price, Petroleum Trade & Energy Intelligence Platform (v2.0)
 
 [![Live App](https://img.shields.io/badge/Live_App-Streamlit_Cloud-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white)](https://global-fuelpulse-ai-jqsi5ngrigi4hm4gtmcghn.streamlit.app)
-[![Tests](https://img.shields.io/badge/Tests-45%20Passed%20(100%25)-brightgreen.svg)]()
+[![Tests](https://img.shields.io/badge/Tests-46%20Passed%20(100%25)-brightgreen.svg)]()
 [![Python](https://img.shields.io/badge/Python-3.12%20%7C%203.13-blue.svg)](https://www.python.org/)
 [![Database](https://img.shields.io/badge/Database-MySQL%20%7C%20SQLite%20(Failover)-orange.svg)](https://www.mysql.com/)
 [![Streamlit](https://img.shields.io/badge/Streamlit-1.40+-FF4B4B.svg)](https://streamlit.io/)
-[![UI/UX](https://img.shields.io/badge/UI%2FUX-HeroWithMockup%20%7C%20TailwindCSS%20%7C%20shadcn-000000.svg)]()
+[![UI/UX](https://img.shields.io/badge/UI%2FUX-TreeNav%20%7C%20HeroWithMockup%20%7C%20TailwindCSS%20%7C%20shadcn-000000.svg)]()
 [![TypeScript](https://img.shields.io/badge/TypeScript-Ready-3178C6.svg)](https://www.typescriptlang.org/)
 [![Power BI](https://img.shields.io/badge/Power%20BI-DirectQuery%20%26%20Import-F2C811.svg)](https://powerbi.microsoft.com/)
 [![Coverage](https://img.shields.io/badge/Coverage-October%202026%20Continuous-success.svg)]()
@@ -20,12 +20,13 @@
 
 ## 🌟 What's New in v2.0 Platform Architecture
 
+- 🌲 **TreeNav Architecture & Sidebar Rail:** Spring-animated vertical rail hierarchy (`components/ui/tree-nav.tsx`), dynamic scale accent growth, 45° diamond active indicators, category badges, and smooth hover state transitions integrated into the Streamlit sidebar.
 - ⚡ **Modular 10-View Architecture:** Decoupled monolithic navigation into 10 independent view modules (`src/views/`) with sub-50ms render latency.
 - 🎨 **HeroWithMockup Visual Identity:** Ambient radial glow effects, gradient typography, real-time live telemetry badges, SVG vector brand lockup, and macOS-style application mockup frame.
 - 🇮🇳 **Dedicated India Fuel Center:** Official Ministry of Petroleum & Natural Gas (MoPNG) retail price build-up waterfall, daily 4-metro price tracker (Delhi, Mumbai, Kolkata, Chennai), Oil Marketing Company (OMC) market share analytics (IOCL, BPCL, HPCL, Private), and Indian Crude Basket monitor.
 - 🚀 **Sub-50ms Multi-Tier Caching:** Intelligent `@st.cache_data(ttl=...)` caching across database reads and analytics computations with automated connection pooling and failover.
-- 🧩 **React & Tailwind CSS Component Integration:** Modern shadcn-compatible React component library (`hero-with-mockup.tsx`, `mockup.tsx`, `glow.tsx`, `glow-button.tsx`, `sign-up.tsx`) with full TypeScript validation (`npx tsc --noEmit`).
-- 🧪 **Comprehensive 45-Test Automated Suite:** 100% test pass rate across data connectors, database failover, analytics engines, ML models, UI rendering, and view modules.
+- 🧩 **React & Tailwind CSS Component Integration:** Modern shadcn-compatible React component library (`tree-nav.tsx`, `hero-with-mockup.tsx`, `mockup.tsx`, `glow.tsx`, `glow-button.tsx`, `sign-up.tsx`) with full TypeScript validation (`npx tsc --noEmit`).
+- 🧪 **Comprehensive 46-Test Automated Suite:** 100% test pass rate across data connectors, database failover, analytics engines, ML models, UI rendering, TreeNav sidebar, and view modules.
 
 ---
 
@@ -142,7 +143,8 @@ global-fuelpulse-ai/
 ├── app.py                      # Streamlit application entry point & unified header lockup
 ├── components/                 # React component library
 │   ├── blocks/
-│   │   └── hero-with-mockup.tsx # Full hero landing block component
+│   │   ├── hero-with-mockup.tsx # Full hero landing block component
+│   │   └── tree-nav.tsx        # TreeNav block re-export component
 │   └── ui/
 │       ├── button.tsx          # Accessible interactive button
 │       ├── demo.tsx            # Interactive component preview wrapper
@@ -150,7 +152,11 @@ global-fuelpulse-ai/
 │       ├── glow-button.tsx     # Animated glowing call-to-action button
 │       ├── mockup.tsx          # macOS-style window frame mockup
 │       ├── hero-with-mockup.tsx# Modular HeroWithMockup React component
-│       └── sign-up.tsx         # User authentication & lead capture modal
+│       ├── sign-up.tsx         # User authentication & lead capture modal
+│       ├── tree-nav.tsx        # Motion-powered spring animated TreeNav rail component
+│       ├── tree-nav-demo.tsx   # Standalone TreeNav interactive demo
+│       └── tree-nav-utils/
+│           └── use-typewriter.ts # usePrefersReducedMotion accessibility hook
 ├── pages/                      # Multi-page Streamlit extension
 │   └── 11_Product_Guide.py     # Interactive product documentation portal
 ├── powerbi/                    # Executive Business Intelligence assets
@@ -235,9 +241,9 @@ Open your browser at `http://localhost:8501`.
 
 ---
 
-## 🧪 Automated Testing Suite (45 Tests, 100% Passing)
+## 🧪 Automated Testing Suite (46 Tests, 100% Passing)
 
-The project includes **45 automated tests** across 7 test suites guaranteeing reliability across data pipelines, database layers, ML engines, and UI views:
+The project includes **46 automated tests** across 7 test suites guaranteeing reliability across data pipelines, database layers, ML engines, TreeNav sidebar navigation, and UI views:
 
 ```bash
 # Run complete test suite
@@ -248,7 +254,7 @@ npx tsc --noEmit
 ```
 
 ### Test Suite Summary:
-- **`tests/test_views.py` (11 tests):** Verifies all 10 modular views (`home`, `dashboard`, `india_center`, `about`, `how_it_works`, `features`, `data_trust`, `methodology`, `roadmap`, `faq`) and the `Product Guide` page render cleanly without runtime exceptions.
+- **`tests/test_views.py` (12 tests):** Verifies all 10 modular views (`home`, `dashboard`, `india_center`, `about`, `how_it_works`, `features`, `data_trust`, `methodology`, `roadmap`, `faq`), the `Product Guide` page, and the `TreeNav` sidebar navigation hierarchy render cleanly without runtime exceptions.
 - **`tests/test_connectors.py` (9 tests):** Validates FRED EIA mirrors, Open ER FX rates, India PPAC scrapers, EC Oil Bulletin parsers, and background scheduler lifecycles.
 - **`tests/test_database.py` (5 tests):** Validates database health checks, ORM mappings, failover mechanisms, and read-only parameterized SQL query security.
 - **`tests/test_analytics.py` (7 tests):** Tests price differential calculations, HHI supplier concentration scoring, Affordability Burden Indices, and supply shock sensitivity equations.

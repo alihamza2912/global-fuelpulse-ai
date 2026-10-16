@@ -174,16 +174,96 @@ render_html(
     container=st.sidebar
 )
 
-# Platform Portal Section in Sidebar
-st.sidebar.markdown("### Platform Portal")
+# 4. Sidebar Telemetry & TreeNav Quick Navigation
+render_html(
+    """
+    <div style="padding: 10px 0 16px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.12);">
+        <div style="font-family: 'Space Grotesk', sans-serif; font-size: 1.15rem; font-weight: 800; color: #F9FAFB; display: flex; align-items: center; gap: 8px;">
+            <span style="color: #3B82F6;">⚡</span> GLOBAL FUELPULSE AI
+        </div>
+        <div style="font-family: 'Space Grotesk', sans-serif; font-size: 0.76rem; color: #94A3B8; font-weight: 700; letter-spacing: 0.06em; margin-top: 2px;">
+            ENERGY INTELLIGENCE PLATFORM v2.0
+        </div>
+    </div>
+    """,
+    container=st.sidebar
+)
+
+# Engine Health Badge
+health = db_manager.check_health()
+engine_sym = "🟢" if health["connected"] else "🔴"
+render_html(
+    f"""
+    <div style="font-family: 'Space Grotesk', sans-serif; font-size: 0.8rem; color: #F9FAFB; margin-top: 12px; margin-bottom: 16px; background: rgba(14, 21, 38, 0.8); backdrop-filter: blur(12px); padding: 12px; border: 1px solid rgba(255, 255, 255, 0.12); box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3); border-radius: 6px; line-height: 1.5;">
+        <div><b>DATA ENGINE:</b> {engine_sym} {health['dialect'].upper()}</div>
+        <div><b>REPOSITORY:</b> {health['database']}</div>
+        <div><b>ACTIVE TABLES:</b> {health['tables_count']} data marts</div>
+        <div><b>STATUS:</b> {'VERIFIED BENCHMARKS' if settings.is_demo_mode else 'LIVE APIS'}</div>
+    </div>
+    """,
+    container=st.sidebar
+)
+
+# TreeNav Portal Navigation with Connected Rail and Diamond Markers
+st.sidebar.markdown("### 🌲 Platform Tree Navigation")
+
+# TreeNav CSS for Left Rail and Active Diamond Indicator
+render_html(
+    """
+    <style>
+    /* TreeNav Rail Styling for Sidebar */
+    .stSidebar div[data-testid="stButton"] button {
+        text-align: left !important;
+        justify-content: flex-start !important;
+        font-family: 'Space Grotesk', sans-serif !important;
+        font-size: 0.82rem !important;
+        font-weight: 600 !important;
+        padding: 7px 12px !important;
+        border-radius: 8px !important;
+        border-left: 2px solid rgba(255, 255, 255, 0.14) !important;
+        background: rgba(15, 23, 42, 0.4) !important;
+        margin-bottom: 4px !important;
+        transition: all 0.18s ease-in-out !important;
+    }
+    .stSidebar div[data-testid="stButton"] button:hover {
+        border-left: 2px solid #60A5FA !important;
+        background: rgba(59, 130, 246, 0.12) !important;
+        color: #FFFFFF !important;
+        transform: translateX(2px) !important;
+    }
+    .stSidebar div[data-testid="stButton"] button[kind="primary"] {
+        border-left: 3px solid #3B82F6 !important;
+        background: rgba(59, 130, 246, 0.22) !important;
+        color: #93C5FD !important;
+        box-shadow: 0 0 12px rgba(59, 130, 246, 0.3) !important;
+    }
+    </style>
+    """,
+    container=st.sidebar
+)
+
+NAV_TREE_BADGES = {
+    "🏠 Overview": "Home",
+    "⚡ Intelligence Dashboard": "Live",
+    "🇮🇳 India Fuel Center": "MoPNG",
+    "📖 About Project": "v2.0",
+    "⚙️ How It Works": "ETL",
+    "📋 Features": "12 Mod",
+    "🔒 Data Trust": "SLA",
+    "📐 Methodology": "Math",
+    "🗺️ Roadmap": "2026",
+    "❓ Docs & FAQ": "Docs",
+}
+
 for opt in NAV_OPTIONS:
     is_active = (opt == st.session_state.active_nav)
-    btn_label = f"▶ {opt}" if is_active else opt
+    badge = NAV_TREE_BADGES.get(opt, "View")
+    btn_label = f"◆ {opt}  [{badge}]" if is_active else f"◇ {opt}  [{badge}]"
     if st.sidebar.button(btn_label, key=f"side_portal_{opt}", use_container_width=True, type="primary" if is_active else "secondary"):
         navigate_to(opt)
 
 # Live Pipeline Refresh Controls & Timestamps
-st.sidebar.markdown("### Live Pipeline Sync")
+st.sidebar.markdown("### ⚡ Live Pipeline Sync")
 if st.sidebar.button("⚡ Refresh Live Data", key="sidebar_live_refresh_btn", use_container_width=True):
     with st.sidebar.status("Syncing live feeds (FRED, PPAC, EC, FX)..."):
         from src.ingestion.orchestrator import orchestrator
@@ -210,22 +290,23 @@ render_html(
     container=st.sidebar
 )
 
-# Deep Drill-Down Pages in Sidebar
-st.sidebar.markdown("### Granular Drill-Down Pages")
+# Deep Drill-Down Pages in Sidebar rendered with Tree Rail hierarchy
+st.sidebar.markdown("### 🌿 Granular Drill-Down Tree")
 render_html(
     """
-    <div style="font-family: 'Space Grotesk', sans-serif; font-size: 0.82rem; line-height: 2.1; font-weight: 700;">
-        <div>01. 🌐 <a href="/Global_Command_Center" style="color: #94A3B8; text-decoration: none;">Global Command Center</a></div>
-        <div>02. ⛽ <a href="/Fuel_Price_Explorer" style="color: #94A3B8; text-decoration: none;">Fuel Price Explorer</a></div>
-        <div>03. 🚢 <a href="/Global_Trade" style="color: #94A3B8; text-decoration: none;">Petroleum Trade & Flows</a></div>
-        <div>04. ⚖️ <a href="/Affordability" style="color: #94A3B8; text-decoration: none;">Affordability Index</a></div>
-        <div>05. 🛡️ <a href="/Supply_Risk" style="color: #94A3B8; text-decoration: none;">Supply Risk & Chokepoints</a></div>
-        <div>06. ⚡ <a href="/Shock_Simulator" style="color: #94A3B8; text-decoration: none;">Shock Simulator</a></div>
-        <div>07. 📈 <a href="/Forecasting" style="color: #94A3B8; text-decoration: none;">Forecasting & ML Radar</a></div>
-        <div>08. 🔒 <a href="/Data_Trust" style="color: #94A3B8; text-decoration: none;">Data Trust Center</a></div>
-        <div>09. 🤖 <a href="/AI_Analyst" style="color: #94A3B8; text-decoration: none;">AI Energy Analyst</a></div>
-        <div>10. 🇮🇳 <a href="/India_Intelligence" style="color: #94A3B8; text-decoration: none;">India Intelligence</a></div>
-        <div>11. 📖 <a href="/Product_Guide" style="color: #94A3B8; text-decoration: none;">Product Guide & Docs</a></div>
+    <div style="position: relative; padding-left: 14px; margin-left: 4px; border-left: 2px solid rgba(255, 255, 255, 0.12); font-family: 'Space Grotesk', sans-serif; font-size: 0.81rem; line-height: 2.15; font-weight: 600;">
+        <div style="position: absolute; bottom: 0; left: -4px; width: 6px; height: 6px; border-radius: 50%; background: #60A5FA;"></div>
+        <div><a href="/Global_Command_Center" style="color: #94A3B8; text-decoration: none; display: flex; justify-content: space-between; align-items: center;"><span style="color: #CBD5E1;">01. 🌐 Command Center</span><span style="font-size: 10px; background: rgba(59,130,246,0.15); color: #60A5FA; padding: 1px 6px; border-radius: 4px;">Exec</span></a></div>
+        <div><a href="/Fuel_Price_Explorer" style="color: #94A3B8; text-decoration: none; display: flex; justify-content: space-between; align-items: center;"><span style="color: #CBD5E1;">02. ⛽ Fuel Explorer</span><span style="font-size: 10px; background: rgba(59,130,246,0.15); color: #60A5FA; padding: 1px 6px; border-radius: 4px;">Daily</span></a></div>
+        <div><a href="/Global_Trade" style="color: #94A3B8; text-decoration: none; display: flex; justify-content: space-between; align-items: center;"><span style="color: #CBD5E1;">03. 🚢 Trade Flows</span><span style="font-size: 10px; background: rgba(59,130,246,0.15); color: #60A5FA; padding: 1px 6px; border-radius: 4px;">Comtrade</span></a></div>
+        <div><a href="/Affordability" style="color: #94A3B8; text-decoration: none; display: flex; justify-content: space-between; align-items: center;"><span style="color: #CBD5E1;">04. ⚖️ Affordability</span><span style="font-size: 10px; background: rgba(59,130,246,0.15); color: #60A5FA; padding: 1px 6px; border-radius: 4px;">GDP/365</span></a></div>
+        <div><a href="/Supply_Risk" style="color: #94A3B8; text-decoration: none; display: flex; justify-content: space-between; align-items: center;"><span style="color: #CBD5E1;">05. 🛡️ Supply Risk</span><span style="font-size: 10px; background: rgba(59,130,246,0.15); color: #60A5FA; padding: 1px 6px; border-radius: 4px;">HHI</span></a></div>
+        <div><a href="/Shock_Simulator" style="color: #94A3B8; text-decoration: none; display: flex; justify-content: space-between; align-items: center;"><span style="color: #CBD5E1;">06. ⚡ Shock Simulator</span><span style="font-size: 10px; background: rgba(59,130,246,0.15); color: #60A5FA; padding: 1px 6px; border-radius: 4px;">Sens</span></a></div>
+        <div><a href="/Forecasting" style="color: #94A3B8; text-decoration: none; display: flex; justify-content: space-between; align-items: center;"><span style="color: #CBD5E1;">07. 📈 Forecasting Radar</span><span style="font-size: 10px; background: rgba(59,130,246,0.15); color: #60A5FA; padding: 1px 6px; border-radius: 4px;">Holt-W</span></a></div>
+        <div><a href="/Data_Trust" style="color: #94A3B8; text-decoration: none; display: flex; justify-content: space-between; align-items: center;"><span style="color: #CBD5E1;">08. 🔒 Data Trust Center</span><span style="font-size: 10px; background: rgba(59,130,246,0.15); color: #60A5FA; padding: 1px 6px; border-radius: 4px;">Health</span></a></div>
+        <div><a href="/AI_Analyst" style="color: #94A3B8; text-decoration: none; display: flex; justify-content: space-between; align-items: center;"><span style="color: #CBD5E1;">09. 🤖 AI Energy Analyst</span><span style="font-size: 10px; background: rgba(59,130,246,0.15); color: #60A5FA; padding: 1px 6px; border-radius: 4px;">Gemini</span></a></div>
+        <div><a href="/India_Intelligence" style="color: #94A3B8; text-decoration: none; display: flex; justify-content: space-between; align-items: center;"><span style="color: #CBD5E1;">10. 🇮🇳 India Intelligence</span><span style="font-size: 10px; background: rgba(59,130,246,0.15); color: #60A5FA; padding: 1px 6px; border-radius: 4px;">PPAC</span></a></div>
+        <div><a href="/Product_Guide" style="color: #94A3B8; text-decoration: none; display: flex; justify-content: space-between; align-items: center;"><span style="color: #CBD5E1;">11. 📖 Product Guide</span><span style="font-size: 10px; background: rgba(59,130,246,0.15); color: #60A5FA; padding: 1px 6px; border-radius: 4px;">Guide</span></a></div>
     </div>
     """,
     container=st.sidebar

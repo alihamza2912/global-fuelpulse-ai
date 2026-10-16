@@ -51,3 +51,14 @@ def test_app_methodology_navigation_renders_cleanly():
     at.query_params["tab"] = "methodology"
     at.run()
     assert len(at.exception) == 0, f"Methodology view raised exceptions: {at.exception}"
+
+
+def test_app_tree_nav_sidebar_renders_cleanly():
+    """Verifies that the TreeNav sidebar with connected rail and diamond indicators renders cleanly."""
+    at = AppTest.from_file("app.py", default_timeout=30)
+    at.run()
+    assert len(at.exception) == 0, f"App TreeNav sidebar raised exceptions: {at.exception}"
+    # Check that sidebar buttons exist and contain the tree marker
+    portal_buttons = [b for b in at.sidebar.button if "◆" in b.label or "◇" in b.label]
+    assert len(portal_buttons) == 10, f"Expected 10 TreeNav portal buttons, found {len(portal_buttons)}"
+
