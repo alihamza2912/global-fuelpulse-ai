@@ -55,7 +55,7 @@ else:
     status_detail = f"Free questions left today: {q_status['calls_remaining']} / {q_status['max_calls_today']}"
     badge_bg = "#EBF7EE"
 
-render_html(f"""<div style="display:inline-flex;align-items:center;gap:10px;padding:9px 18px;background:{badge_bg};color:#111111;font-weight:700;font-size:13px;border:2px solid #111111;box-shadow:3px 3px 0px #111111;margin-bottom:16px;border-radius:4px;"><span>{status_icon} <strong>{status_label}</strong></span><span style="color:#555555;font-weight:400;">•</span><span style="font-weight:500;font-size:12.5px;">{status_detail}</span></div>""")
+render_html(f"""<div style="display:inline-flex;align-items:center;gap:10px;padding:9px 18px;background:rgba(14, 21, 38, 0.85);backdrop-filter:blur(12px);color:#F9FAFB;font-weight:700;font-size:13px;border:1px solid rgba(255, 255, 255, 0.14);box-shadow:0 4px 14px rgba(0, 0, 0, 0.35);margin-bottom:16px;border-radius:6px;"><span>{status_icon} <strong style="color:#F5B942;">{status_label}</strong></span><span style="color:rgba(255, 255, 255, 0.2);font-weight:400;">•</span><span style="font-weight:500;font-size:12.5px;color:#94A3B8;">{status_detail}</span></div>""")
 
 # Assistant Info Banner
 st.info(

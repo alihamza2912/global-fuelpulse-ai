@@ -127,9 +127,9 @@ ensure_database_ready()
 # Sidebar Telemetry & Quick Navigation
 render_html(
     """
-    <div style="padding: 10px 0 16px 0; border-bottom: 2px solid #111111;">
-        <div style="font-family: 'Space Grotesk', sans-serif; font-size: 1.15rem; font-weight: 800; color: #111111;">GLOBAL FUELPULSE AI</div>
-        <div style="font-family: 'Space Grotesk', sans-serif; font-size: 0.78rem; color: #333333; font-weight: 700; letter-spacing: 0.05em;">EDITORIAL ENERGY ATLAS</div>
+    <div style="padding: 10px 0 16px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.12);">
+        <div style="font-family: 'Space Grotesk', sans-serif; font-size: 1.15rem; font-weight: 800; color: #F9FAFB;">GLOBAL FUELPULSE AI</div>
+        <div style="font-family: 'Space Grotesk', sans-serif; font-size: 0.78rem; color: #94A3B8; font-weight: 700; letter-spacing: 0.05em;">ENERGY INTELLIGENCE ATLAS</div>
     </div>
     """,
     container=st.sidebar
@@ -139,7 +139,7 @@ health = db_manager.check_health()
 engine_sym = "🟢" if health["connected"] else "🔴"
 render_html(
     f"""
-    <div style="font-family: 'Space Grotesk', sans-serif; font-size: 0.8rem; color: #111111; margin-top: 12px; margin-bottom: 16px; background: #FFFFFF; padding: 12px; border: 2px solid #111111; box-shadow: 2px 2px 0px #111111; border-radius: 4px; line-height: 1.5;">
+    <div style="font-family: 'Space Grotesk', sans-serif; font-size: 0.8rem; color: #F9FAFB; margin-top: 12px; margin-bottom: 16px; background: rgba(14, 21, 38, 0.8); backdrop-filter: blur(12px); padding: 12px; border: 1px solid rgba(255, 255, 255, 0.12); box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3); border-radius: 6px; line-height: 1.5;">
         <div><b>DATA ENGINE:</b> {engine_sym} {health['dialect'].upper()}</div>
         <div><b>REPOSITORY:</b> {health['database']}</div>
         <div><b>ACTIVE TABLES:</b> {health['tables_count']} data marts</div>
@@ -166,11 +166,11 @@ last_ppac = sync_times.get("INDIA_PPAC") or "Today"
 
 render_html(
     f"""
-    <div style="font-family: 'Space Grotesk', sans-serif; font-size: 0.76rem; color: #111111; margin-bottom: 16px; background: #FFF9E8; padding: 10px; border: 1.5px solid #111111; border-radius: 4px; line-height: 1.4;">
-        <div style="font-weight: 800; margin-bottom: 4px;">📡 DATA PROVENANCE & SYNC:</div>
-        <div>• EIA & FRED: <span style="font-weight: 700;">{last_eia}</span></div>
-        <div>• PPAC India: <span style="font-weight: 700;">{last_ppac}</span></div>
-        <div>• FX Rates: <span style="font-weight: 700;">{last_fx}</span></div>
+    <div style="font-family: 'Space Grotesk', sans-serif; font-size: 0.76rem; color: #94A3B8; margin-bottom: 16px; background: rgba(14, 21, 38, 0.6); padding: 10px; border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 6px; line-height: 1.4;">
+        <div style="font-weight: 800; color: #F9FAFB; margin-bottom: 4px;">📡 DATA PROVENANCE & SYNC:</div>
+        <div>• EIA & FRED: <span style="font-weight: 700; color: #F5B942;">{last_eia}</span></div>
+        <div>• PPAC India: <span style="font-weight: 700; color: #F5B942;">{last_ppac}</span></div>
+        <div>• FX Rates: <span style="font-weight: 700; color: #F5B942;">{last_fx}</span></div>
     </div>
     """,
     container=st.sidebar
@@ -180,16 +180,16 @@ st.sidebar.markdown("### Granular Drill-Down Pages")
 render_html(
     """
     <div style="font-family: 'Space Grotesk', sans-serif; font-size: 0.82rem; line-height: 2.1; font-weight: 700;">
-        <div>01. 🌐 <a href="/Global_Command_Center" style="color: #111111; text-decoration: none;">Global Command Center</a></div>
-        <div>02. ⛽ <a href="/Fuel_Price_Explorer" style="color: #111111; text-decoration: none;">Fuel Price Explorer</a></div>
-        <div>03. 🚢 <a href="/Global_Trade" style="color: #111111; text-decoration: none;">Petroleum Trade & Flows</a></div>
-        <div>04. ⚖️ <a href="/Affordability" style="color: #111111; text-decoration: none;">Affordability Index</a></div>
-        <div>05. 🛡️ <a href="/Supply_Risk" style="color: #111111; text-decoration: none;">Supply Risk & Chokepoints</a></div>
-        <div>06. ⚡ <a href="/Shock_Simulator" style="color: #111111; text-decoration: none;">Shock Simulator</a></div>
-        <div>07. 📈 <a href="/Forecasting" style="color: #111111; text-decoration: none;">Forecasting & ML Radar</a></div>
-        <div>08. 🔒 <a href="/Data_Trust" style="color: #111111; text-decoration: none;">Data Trust Center</a></div>
-        <div>09. 🤖 <a href="/AI_Analyst" style="color: #111111; text-decoration: none;">AI Energy Analyst</a></div>
-        <div>10. 🇮🇳 <a href="/India_Intelligence" style="color: #111111; text-decoration: none;">India Intelligence</a></div>
+        <div>01. 🌐 <a href="/Global_Command_Center" style="color: #94A3B8; text-decoration: none; transition: color 0.15s ease;">Global Command Center</a></div>
+        <div>02. ⛽ <a href="/Fuel_Price_Explorer" style="color: #94A3B8; text-decoration: none;">Fuel Price Explorer</a></div>
+        <div>03. 🚢 <a href="/Global_Trade" style="color: #94A3B8; text-decoration: none;">Petroleum Trade & Flows</a></div>
+        <div>04. ⚖️ <a href="/Affordability" style="color: #94A3B8; text-decoration: none;">Affordability Index</a></div>
+        <div>05. 🛡️ <a href="/Supply_Risk" style="color: #94A3B8; text-decoration: none;">Supply Risk & Chokepoints</a></div>
+        <div>06. ⚡ <a href="/Shock_Simulator" style="color: #94A3B8; text-decoration: none;">Shock Simulator</a></div>
+        <div>07. 📈 <a href="/Forecasting" style="color: #94A3B8; text-decoration: none;">Forecasting & ML Radar</a></div>
+        <div>08. 🔒 <a href="/Data_Trust" style="color: #94A3B8; text-decoration: none;">Data Trust Center</a></div>
+        <div>09. 🤖 <a href="/AI_Analyst" style="color: #94A3B8; text-decoration: none;">AI Energy Analyst</a></div>
+        <div>10. 🇮🇳 <a href="/India_Intelligence" style="color: #94A3B8; text-decoration: none;">India Intelligence</a></div>
     </div>
     """,
     container=st.sidebar
@@ -224,7 +224,7 @@ def get_searchable_entities():
                 items.append({
                     "name": c[1],
                     "type": "Country",
-                    "badge_bg": "#DFEBFA",
+                    "badge_bg": "rgba(59, 130, 246, 0.2)",
                     "category": f"Region: {c[2]} ({c[0]})",
                     "target": "#ch-04",
                     "label": "View Retail Prices & Metrics"
@@ -233,21 +233,21 @@ def get_searchable_entities():
         pass
 
     quick_items = [
-        ("Delhi Metro", "India Metro", "#D9F4D8", "PPAC Daily Retail Petrol ₹94.72 / Diesel ₹87.62", "#ch-05", "View Delhi Price Breakdown"),
-        ("Mumbai Metro", "India Metro", "#D9F4D8", "PPAC Daily Retail Petrol ₹104.21 / Diesel ₹92.15", "#ch-05", "View Mumbai Price Breakdown"),
-        ("Kolkata Metro", "India Metro", "#D9F4D8", "PPAC Daily Retail Petrol ₹103.94 / Diesel ₹90.76", "#ch-05", "View Kolkata Price Breakdown"),
-        ("Chennai Metro", "India Metro", "#D9F4D8", "PPAC Daily Retail Petrol ₹100.75 / Diesel ₹92.34", "#ch-05", "View Chennai Price Breakdown"),
-        ("Petrol (Regular Motor Gasoline)", "Fuel Product", "#FFE58A", "Motor fuel retail price tracking", "#ch-04", "Compare Global Petrol Prices"),
-        ("Diesel (Automotive Gasoil)", "Fuel Product", "#FFE58A", "Industrial & logistics fuel tracking", "#ch-04", "Compare Global Diesel Prices"),
-        ("Brent Crude Spot Benchmark", "Market Benchmark", "#F7E1E6", "Global seaborne crude reference price", "#ch-01", "Inspect Brent Trends"),
-        ("WTI Crude Spot Benchmark", "Market Benchmark", "#F7E1E6", "US Cushing pipeline crude reference", "#ch-01", "Inspect WTI Trends"),
-        ("Indian Crude Basket", "Official Basket", "#D9F4D8", "PPAC sour & sweet import blend", "#ch-05", "View Indian Basket Price"),
-        ("IOCL (Indian Oil Corporation)", "OMC Company", "#FFF9E8", "42% retail fuel distribution share in India", "#ch-05", "Examine OMC Margins"),
-        ("BPCL (Bharat Petroleum)", "OMC Company", "#FFF9E8", "Major state OMC refiner & marketer", "#ch-05", "Examine OMC Margins"),
-        ("HPCL (Hindustan Petroleum)", "OMC Company", "#FFF9E8", "Leading nationwide retail pump operator", "#ch-05", "Examine OMC Margins"),
-        ("Strait of Hormuz Corridor", "Maritime Chokepoint", "#F7E1E6", "18.5 mbpd Persian Gulf transit bottleneck", "#ch-03", "Analyze Maritime Flow"),
-        ("Malacca Strait Corridor", "Maritime Chokepoint", "#F7E1E6", "16.2 mbpd Asian import chokepoint", "#ch-03", "Analyze Maritime Flow"),
-        ("Suez Canal & Red Sea", "Maritime Chokepoint", "#F7E1E6", "4.5 mbpd Europe-Asia corridor", "#ch-03", "Analyze Maritime Flow")
+        ("Delhi Metro", "India Metro", "rgba(16, 185, 129, 0.2)", "PPAC Daily Retail Petrol ₹94.72 / Diesel ₹87.62", "#ch-05", "View Delhi Price Breakdown"),
+        ("Mumbai Metro", "India Metro", "rgba(16, 185, 129, 0.2)", "PPAC Daily Retail Petrol ₹104.21 / Diesel ₹92.15", "#ch-05", "View Mumbai Price Breakdown"),
+        ("Kolkata Metro", "India Metro", "rgba(16, 185, 129, 0.2)", "PPAC Daily Retail Petrol ₹103.94 / Diesel ₹90.76", "#ch-05", "View Kolkata Price Breakdown"),
+        ("Chennai Metro", "India Metro", "rgba(16, 185, 129, 0.2)", "PPAC Daily Retail Petrol ₹100.75 / Diesel ₹92.34", "#ch-05", "View Chennai Price Breakdown"),
+        ("Petrol (Regular Motor Gasoline)", "Fuel Product", "rgba(245, 185, 66, 0.2)", "Motor fuel retail price tracking", "#ch-04", "Compare Global Petrol Prices"),
+        ("Diesel (Automotive Gasoil)", "Fuel Product", "rgba(245, 185, 66, 0.2)", "Industrial & logistics fuel tracking", "#ch-04", "Compare Global Diesel Prices"),
+        ("Brent Crude Spot Benchmark", "Market Benchmark", "rgba(244, 63, 94, 0.2)", "Global seaborne crude reference price", "#ch-01", "Inspect Brent Trends"),
+        ("WTI Crude Spot Benchmark", "Market Benchmark", "rgba(244, 63, 94, 0.2)", "US Cushing pipeline crude reference", "#ch-01", "Inspect WTI Trends"),
+        ("Indian Crude Basket", "Official Basket", "rgba(16, 185, 129, 0.2)", "PPAC sour & sweet import blend", "#ch-05", "View Indian Basket Price"),
+        ("IOCL (Indian Oil Corporation)", "OMC Company", "rgba(14, 21, 38, 0.8)", "42% retail fuel distribution share in India", "#ch-05", "Examine OMC Margins"),
+        ("BPCL (Bharat Petroleum)", "OMC Company", "rgba(14, 21, 38, 0.8)", "Major state OMC refiner & marketer", "#ch-05", "Examine OMC Margins"),
+        ("HPCL (Hindustan Petroleum)", "OMC Company", "rgba(14, 21, 38, 0.8)", "Leading nationwide retail pump operator", "#ch-05", "Examine OMC Margins"),
+        ("Strait of Hormuz Corridor", "Maritime Chokepoint", "rgba(244, 63, 94, 0.2)", "18.5 mbpd Persian Gulf transit bottleneck", "#ch-03", "Analyze Maritime Flow"),
+        ("Malacca Strait Corridor", "Maritime Chokepoint", "rgba(244, 63, 94, 0.2)", "16.2 mbpd Asian import chokepoint", "#ch-03", "Analyze Maritime Flow"),
+        ("Suez Canal & Red Sea", "Maritime Chokepoint", "rgba(244, 63, 94, 0.2)", "4.5 mbpd Europe-Asia corridor", "#ch-03", "Analyze Maritime Flow")
     ]
     for q_name, q_type, q_bg, q_desc, q_target, q_btn in quick_items:
         items.append({
@@ -272,8 +272,9 @@ with search_col1:
 with search_col2:
     render_html(
         f"""
-        <div style="background: {COLOR_WHITE}; border: 2px solid {COLOR_INK}; box-shadow: 2px 2px 0px {COLOR_INK}; border-radius: 6px; padding: 7px 12px; font-family: 'Space Grotesk', sans-serif; font-size: 0.75rem; font-weight: 800; text-align: center; color: {COLOR_INK}; height: 42px; display: flex; align-items: center; justify-content: center;">
-            ⚡ SUB-MILLISECOND SEARCH
+        <div style="background: rgba(14, 21, 38, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.12); box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3); border-radius: 6px; padding: 7px 12px; font-family: 'Space Grotesk', sans-serif; font-size: 0.75rem; font-weight: 800; text-align: center; color: #F5B942; height: 42px; display: flex; align-items: center; justify-content: center; gap: 6px;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            SUB-MILLISECOND SEARCH
         </div>
         """
     )
@@ -288,7 +289,7 @@ if search_q and search_q.strip():
 
     if matches:
         st.markdown(
-            f"<div style='font-family: Space Grotesk, sans-serif; font-size: 0.82rem; font-weight: 800; color: #111111; margin-top: 8px; margin-bottom: 8px;'>MATCHED {len(matches)} RESULT(S) FOR \"{search_q.strip()}\":</div>",
+            f"<div style='font-family: Space Grotesk, sans-serif; font-size: 0.82rem; font-weight: 800; color: #F9FAFB; margin-top: 8px; margin-bottom: 8px;'>MATCHED {len(matches)} RESULT(S) FOR \"{search_q.strip()}\":</div>",
             unsafe_allow_html=True
         )
         res_cols = st.columns(min(len(matches), 3))
@@ -296,13 +297,13 @@ if search_q and search_q.strip():
             with res_cols[idx % min(len(matches), 3)]:
                 render_html(
                     f"""
-                    <div style="background: {COLOR_WHITE}; border: 2px solid {COLOR_INK}; box-shadow: 3px 3px 0px {COLOR_INK}; border-radius: 6px; padding: 12px; margin-bottom: 10px;">
+                    <div style="background: rgba(14, 21, 38, 0.85); backdrop-filter: blur(14px); border: 1px solid rgba(255, 255, 255, 0.12); box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4); border-radius: 8px; padding: 14px; margin-bottom: 10px;">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                            <span style="font-family: 'Space Grotesk', sans-serif; font-size: 0.85rem; font-weight: 800; color: {COLOR_INK};">{match['name']}</span>
-                            <span style="background: {match['badge_bg']}; border: 1px solid {COLOR_INK}; padding: 1px 6px; border-radius: 999px; font-size: 0.65rem; font-weight: 700; color: {COLOR_INK};">{match['type'].upper()}</span>
+                            <span style="font-family: 'Space Grotesk', sans-serif; font-size: 0.85rem; font-weight: 800; color: #F9FAFB;">{match['name']}</span>
+                            <span style="background: {match['badge_bg']}; border: 1px solid rgba(255, 255, 255, 0.15); padding: 2px 7px; border-radius: 999px; font-size: 0.65rem; font-weight: 700; color: #F5B942;">{match['type'].upper()}</span>
                         </div>
-                        <div style="font-size: 0.75rem; color: #444444; margin-bottom: 8px;">{match['category']}</div>
-                        <a href="{match['target']}" style="display: inline-block; background: {COLOR_AMBER}; border: 1.5px solid {COLOR_INK}; box-shadow: 1.5px 1.5px 0px {COLOR_INK}; padding: 3px 10px; border-radius: 4px; font-size: 0.72rem; font-weight: 800; color: {COLOR_INK}; text-decoration: none;">{match['label']} →</a>
+                        <div style="font-size: 0.75rem; color: #94A3B8; margin-bottom: 10px;">{match['category']}</div>
+                        <a href="{match['target']}" style="display: inline-flex; align-items: center; gap: 5px; background: linear-gradient(135deg, #F5B942 0%, #D9951A 100%); border: 1px solid rgba(255, 255, 255, 0.25); box-shadow: 0 0 10px rgba(245, 185, 66, 0.35); padding: 4px 12px; border-radius: 5px; font-size: 0.72rem; font-weight: 800; color: #070A12; text-decoration: none;">{match['label']} →</a>
                     </div>
                     """
                 )
@@ -323,10 +324,12 @@ with hero_c1:
         f"""
         {grid_css}
         <div class="fuelpulse-hero-backdrop" style="
-            background: {COLOR_WHITE};
-            border: 2px solid {COLOR_INK};
-            box-shadow: 5px 5px 0px {COLOR_INK};
-            border-radius: 8px;
+            background: rgba(14, 21, 38, 0.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6), 0 0 30px rgba(245, 185, 66, 0.08);
+            border-radius: 12px;
             padding: 34px 38px;
             height: 100%;
             display: flex;
@@ -341,9 +344,9 @@ with hero_c1:
                         display: inline-flex;
                         align-items: center;
                         gap: 8px;
-                        background: {COLOR_AMBER};
-                        color: {COLOR_INK};
-                        border: 1.5px solid {COLOR_INK};
+                        background: rgba(245, 185, 66, 0.18);
+                        color: #F5B942;
+                        border: 1px solid rgba(245, 185, 66, 0.4);
                         padding: 4px 12px;
                         border-radius: 999px;
                         font-family: 'Space Grotesk', sans-serif;
@@ -361,18 +364,20 @@ with hero_c1:
                     font-family: 'Space Grotesk', sans-serif;
                     font-size: 2.85rem;
                     font-weight: 800;
-                    color: {COLOR_INK};
                     letter-spacing: -0.04em;
                     line-height: 1.1;
                     margin: 0 0 16px 0;
+                    background: linear-gradient(135deg, #FFFFFF 40%, #F5B942 100%);
+                    -webkit-background-clip: text;
+                    -webkit-text-fill-color: transparent;
                 ">
                     The world runs on energy.<br>
-                    <span style="background: {COLOR_AMBER}; padding: 0 6px; border: 1.5px solid {COLOR_INK}; box-shadow: 2px 2px 0px {COLOR_INK};">See where it flows.</span>
+                    <span>See where it flows.</span>
                 </h1>
                 <p style="
                     font-family: 'Inter', sans-serif;
                     font-size: 1.05rem;
-                    color: {COLOR_GRAY_MUTED};
+                    color: #94A3B8;
                     line-height: 1.6;
                     margin-bottom: 24px;
                 ">
@@ -380,28 +385,39 @@ with hero_c1:
                 </p>
                 <div style="display: flex; gap: 14px; flex-wrap: wrap;">
                     <a href="#ch-01" style="
-                        background: {COLOR_AMBER};
-                        color: {COLOR_INK};
-                        border: 2px solid {COLOR_INK};
-                        box-shadow: 3px 3px 0px {COLOR_INK};
-                        padding: 10px 22px;
-                        border-radius: 5px;
+                        display: inline-flex;
+                        align-items: center;
+                        gap: 8px;
+                        background: linear-gradient(135deg, #F5B942 0%, #D9951A 100%);
+                        color: #070A12;
+                        border: 1px solid rgba(255, 255, 255, 0.3);
+                        box-shadow: 0 0 20px rgba(245, 185, 66, 0.5), 0 4px 14px rgba(0, 0, 0, 0.4);
+                        padding: 10px 24px;
+                        border-radius: 6px;
                         font-family: 'Space Grotesk', sans-serif;
-                        font-size: 0.88rem;
+                        font-size: 0.9rem;
                         font-weight: 800;
                         text-decoration: none;
-                    ">Explore Global Markets ↗</a>
+                        transition: all 0.2s ease;
+                    ">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
+                        Explore Global Markets ↗
+                    </a>
                     <a href="#ch-05" style="
-                        background: {COLOR_WHITE};
-                        color: {COLOR_INK};
-                        border: 2px solid {COLOR_INK};
-                        box-shadow: 3px 3px 0px {COLOR_INK};
-                        padding: 10px 22px;
-                        border-radius: 5px;
+                        display: inline-flex;
+                        align-items: center;
+                        gap: 8px;
+                        background: rgba(14, 21, 38, 0.8);
+                        color: #F9FAFB;
+                        border: 1px solid rgba(255, 255, 255, 0.15);
+                        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+                        padding: 10px 24px;
+                        border-radius: 6px;
                         font-family: 'Space Grotesk', sans-serif;
-                        font-size: 0.88rem;
+                        font-size: 0.9rem;
                         font-weight: 700;
                         text-decoration: none;
+                        transition: all 0.2s ease;
                     ">Understand India's Fuel Prices →</a>
                 </div>
             </div>
@@ -414,16 +430,18 @@ with hero_c2:
     render_html(
         f"""
         <div style="
-            background: {COLOR_WHITE};
-            border: 2px solid {COLOR_INK};
-            box-shadow: 5px 5px 0px {COLOR_INK};
-            border-radius: 8px;
+            background: rgba(14, 21, 38, 0.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
+            border-radius: 12px;
             padding: 20px 24px 14px 24px;
             margin-bottom: 12px;
         ">
             <div style="display: flex; justify-content: space-between; align-items: center;">
-                <span style="font-family: 'Space Grotesk', sans-serif; font-size: 0.82rem; font-weight: 800; text-transform: uppercase; color: {COLOR_INK};">TOP CRUDE PRODUCERS PREVIEW</span>
-                <span style="background: {COLOR_CREAM}; border: 1.5px solid {COLOR_INK}; padding: 2px 8px; border-radius: 999px; font-size: 0.7rem; font-weight: 700; color: {COLOR_INK};">2024–25 DATA</span>
+                <span style="font-family: 'Space Grotesk', sans-serif; font-size: 0.82rem; font-weight: 800; text-transform: uppercase; color: #F9FAFB;">TOP CRUDE PRODUCERS PREVIEW</span>
+                <span style="background: rgba(245, 185, 66, 0.18); border: 1px solid rgba(245, 185, 66, 0.35); padding: 2px 8px; border-radius: 999px; font-size: 0.7rem; font-weight: 700; color: #F5B942;">2024–25 DATA</span>
             </div>
         </div>
         """
@@ -435,10 +453,10 @@ with hero_c2:
         y="country_name",
         orientation="h",
         color="crude_prod_mbpd_2024",
-        color_continuous_scale=[[0, "#E8E4D8"], [0.5, COLOR_AMBER], [1, COLOR_INK]],
+        color_continuous_scale=[[0, "#1E293B"], [0.5, "#F5B942"], [1, "#FFDD80"]],
         labels={"crude_prod_mbpd_2024": "mbpd", "country_name": ""}
     )
-    fig_hero_bar.update_traces(marker=dict(line=dict(color=COLOR_INK, width=1.5)))
+    fig_hero_bar.update_traces(marker=dict(line=dict(color="rgba(255, 255, 255, 0.2)", width=1)))
     apply_clean_layout(
         fig_hero_bar,
         height=280,
@@ -611,7 +629,7 @@ with col_leader:
     
     render_html(
         f"""
-        <div style="background: {COLOR_WHITE}; padding: 14px 16px; border: 2px solid {COLOR_INK}; box-shadow: 3px 3px 0px {COLOR_INK}; border-radius: 6px; font-size: 0.84rem; line-height: 1.6; color: {COLOR_INK};">
+        <div style="background: rgba(14, 21, 38, 0.75); backdrop-filter: blur(14px); padding: 14px 16px; border: 1px solid rgba(255, 255, 255, 0.12); box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3); border-radius: 6px; font-size: 0.84rem; line-height: 1.6; color: #F9FAFB;">
             <b>EXECUTIVE BRIEFING:</b><br>
             • <b>Cartel Dynamics:</b> OPEC+ nations coordinate ~55% of world tracked oil supply, holding the largest low-cost swing capacity.<br>
             • <b>US Shale Hegemony:</b> The United States leads extraction with 13.2 mbpd, serving as the dominant non-OPEC pricing anchor.<br>
@@ -699,7 +717,7 @@ with cp_chart2:
 
 render_html(
     f"""
-    <div style="background: {COLOR_WHITE}; padding: 12px 16px; border-left: 4px solid {COLOR_AMBER}; border: 2px solid {COLOR_INK}; box-shadow: 3px 3px 0px {COLOR_INK}; border-radius: 4px; font-size: 0.84rem; color: {COLOR_INK}; margin-top: 6px; line-height: 1.5;">
+    <div style="background: rgba(14, 21, 38, 0.75); backdrop-filter: blur(14px); padding: 12px 16px; border-left: 3px solid {COLOR_AMBER}; border: 1px solid rgba(255, 255, 255, 0.12); box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3); border-radius: 4px; font-size: 0.84rem; color: #F9FAFB; margin-top: 6px; line-height: 1.5;">
         <b>METHODOLOGICAL DISTINCTION:</b> 
         This dataset strictly accounts for <b>crude oil and lease condensate</b>. It explicitly excludes Natural Gas Liquids (NGLs), refinery processing gains, and biofuels. Proven reserves represent underground resources recoverable under current economic and operating conditions, whereas production measures active daily extraction rate.
     </div>
@@ -1172,12 +1190,12 @@ rev_c1, rev_c2 = st.columns([6, 6])
 with rev_c1:
     render_html(
         f"""
-        <div style="background: {COLOR_WHITE}; border: 2px solid {COLOR_INK}; box-shadow: 4px 4px 0px {COLOR_INK}; border-radius: 6px; padding: 22px 24px; height: 100%;">
-            <div style="font-size: 0.82rem; font-weight: 800; text-transform: uppercase; color: {COLOR_GRAY_MUTED}; margin-bottom: 6px;">SOVEREIGN PETROLEUM FISCAL REVENUE</div>
-            <div style="font-size: 2.2rem; font-weight: 800; color: {COLOR_INK}; line-height: 1.1;">₹4.82 Lakh Cr</div>
-            <div style="font-size: 0.85rem; color: {COLOR_GRAY_MUTED}; margin-top: 6px; margin-bottom: 16px;">Total Contribution to Central and State Exchequers (FY2023–24)</div>
+        <div style="background: rgba(14, 21, 38, 0.75); backdrop-filter: blur(14px); border: 1px solid rgba(255, 255, 255, 0.12); box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4); border-radius: 8px; padding: 22px 24px; height: 100%;">
+            <div style="font-size: 0.82rem; font-weight: 800; text-transform: uppercase; color: #94A3B8; margin-bottom: 6px;">SOVEREIGN PETROLEUM FISCAL REVENUE</div>
+            <div style="font-size: 2.2rem; font-weight: 800; color: #F9FAFB; line-height: 1.1;">₹4.82 Lakh Cr</div>
+            <div style="font-size: 0.85rem; color: #94A3B8; margin-top: 6px; margin-bottom: 16px;">Total Contribution to Central and State Exchequers (FY2023–24)</div>
             
-            <div style="border-top: 1.5px solid {COLOR_BORDER_LIGHT}; padding-top: 12px; font-size: 0.85rem; line-height: 1.6;">
+            <div style="border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 12px; font-size: 0.85rem; line-height: 1.6; color: #E2E8F0;">
                 • <b>Central Exchequer:</b> ~₹2.81 Lakh Crore via Specific Central Excise Duty on Petrol & Diesel.<br>
                 • <b>State Exchequers:</b> ~₹2.01 Lakh Crore via State VAT, Sales Tax, and Local Cess.<br>
                 • <b>Non-GST Treatment:</b> Petrol, Diesel, and Crude Oil remain outside GST, preserving fiscal autonomy for Indian states.

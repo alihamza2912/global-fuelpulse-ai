@@ -296,10 +296,10 @@ with tab_dossier:
         st.write("")
         render_html(
             f"""
-            <div style="background: {COLOR_WHITE}; border: 2px solid {COLOR_INK}; box-shadow: 3px 3px 0px {COLOR_INK}; padding: 14px; border-radius: 4px; font-family: 'Space Grotesk', sans-serif; font-size: 0.85rem; line-height: 1.8; color: {COLOR_INK};">
+            <div style="background: rgba(14, 21, 38, 0.75); backdrop-filter: blur(14px); border: 1px solid rgba(255, 255, 255, 0.12); box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3); padding: 14px; border-radius: 6px; font-family: 'Space Grotesk', sans-serif; font-size: 0.85rem; line-height: 1.8; color: #F9FAFB;">
                 <div><b>GROSS EXPORTS:</b> <span>{exp_vol:,.0f} bpd</span></div>
                 <div><b>GROSS IMPORTS:</b> <span>{imp_vol:,.0f} bpd</span></div>
-                <div><b>COMMODITY CATEGORY:</b> <span style="background: {COLOR_AMBER}; padding: 1px 6px; border: 1px solid {COLOR_INK}; font-weight: 700;">{product_cat.upper()}</span></div>
+                <div><b>COMMODITY CATEGORY:</b> <span style="background: rgba(245, 185, 66, 0.2); color: #F5B942; padding: 2px 8px; border-radius: 4px; border: 1px solid rgba(245, 185, 66, 0.4); font-weight: 700;">{product_cat.upper()}</span></div>
                 <div><b>REPORTING CADENCE:</b> <span>ANNUAL CUSTOMS (UN COMTRADE)</span></div>
             </div>
             """

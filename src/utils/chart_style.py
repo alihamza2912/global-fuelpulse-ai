@@ -9,11 +9,13 @@ import plotly.graph_objects as go
 import numpy as np
 import pandas as pd
 
-COLOR_INK = "#111111"
-COLOR_WHITE = "#FFFFFF"
-COLOR_CREAM = "#FFF9E8"
+COLOR_INK = "#F9FAFB"
+COLOR_WHITE = "rgba(0,0,0,0)"
+COLOR_CREAM = "#070A12"
 COLOR_AMBER = "#F5B942"
-COLOR_BORDER = "#111111"
+COLOR_BORDER = "rgba(255, 255, 255, 0.12)"
+COLOR_GRID = "rgba(255, 255, 255, 0.08)"
+COLOR_TEXT_MUTED = "#94A3B8"
 
 # Product name mapping dictionary for clean human-readable presentation
 PRODUCT_NAME_MAP = {
@@ -173,8 +175,8 @@ def apply_clean_layout(
 
     # 3. Base layout configuration
     layout_updates: Dict[str, Any] = {
-        "paper_bgcolor": COLOR_WHITE,
-        "plot_bgcolor": COLOR_WHITE,
+        "paper_bgcolor": "rgba(0,0,0,0)",
+        "plot_bgcolor": "rgba(0,0,0,0)",
         "height": max(height, 450),
         "font": dict(
             family="'Space Grotesk', 'Inter', -apple-system, sans-serif",
@@ -183,9 +185,9 @@ def apply_clean_layout(
         ),
         "margin": dict(l=calc_l, r=calc_r, t=calc_t, b=calc_b),
         "hoverlabel": dict(
-            bgcolor=COLOR_WHITE,
-            bordercolor=COLOR_INK,
-            font=dict(color="#000000", family="'Space Grotesk', sans-serif", size=13)
+            bgcolor="#0E1526",
+            bordercolor="rgba(255, 255, 255, 0.2)",
+            font=dict(color="#F9FAFB", family="'Space Grotesk', sans-serif", size=13)
         )
     }
 
@@ -216,19 +218,19 @@ def apply_clean_layout(
                 y=leg_y,
                 xanchor="center",
                 x=0.5,
-                bgcolor=COLOR_WHITE,
-                bordercolor=COLOR_INK,
-                borderwidth=1.5,
-                font=dict(color="#000000", family="'Space Grotesk', sans-serif", size=13),
+                bgcolor="rgba(14, 21, 38, 0.8)",
+                bordercolor="rgba(255, 255, 255, 0.12)",
+                borderwidth=1,
+                font=dict(color="#F9FAFB", family="'Space Grotesk', sans-serif", size=13),
                 itemwidth=40,
                 traceorder="normal"
             )
         else:
             layout_updates["legend"] = dict(
-                bgcolor=COLOR_WHITE,
-                bordercolor=COLOR_INK,
-                borderwidth=1.5,
-                font=dict(color="#000000", family="'Space Grotesk', sans-serif", size=13)
+                bgcolor="rgba(14, 21, 38, 0.8)",
+                bordercolor="rgba(255, 255, 255, 0.12)",
+                borderwidth=1,
+                font=dict(color="#F9FAFB", family="'Space Grotesk', sans-serif", size=13)
             )
     elif determine_showlegend is False:
         layout_updates["showlegend"] = False
@@ -240,9 +242,9 @@ def apply_clean_layout(
         xaxis_kwargs: Dict[str, Any] = {
             "automargin": True,
             "title_standoff": 22,
-            "gridcolor": "#E8E4D8",
-            "zerolinecolor": "#E8E4D8",
-            "tickfont": dict(color=COLOR_INK, family="'Space Grotesk', sans-serif", size=12),
+            "gridcolor": COLOR_GRID,
+            "zerolinecolor": "rgba(255, 255, 255, 0.12)",
+            "tickfont": dict(color=COLOR_TEXT_MUTED, family="'Space Grotesk', sans-serif", size=12),
             "title_font": dict(color=COLOR_INK, family="'Space Grotesk', sans-serif", size=14, weight="bold")
         }
         if rotate_x is not None:
@@ -253,9 +255,9 @@ def apply_clean_layout(
         yaxis_kwargs: Dict[str, Any] = {
             "automargin": True,
             "title_standoff": 24,
-            "gridcolor": "#E8E4D8",
-            "zerolinecolor": "#E8E4D8",
-            "tickfont": dict(color=COLOR_INK, family="'Space Grotesk', sans-serif", size=12),
+            "gridcolor": COLOR_GRID,
+            "zerolinecolor": "rgba(255, 255, 255, 0.12)",
+            "tickfont": dict(color=COLOR_TEXT_MUTED, family="'Space Grotesk', sans-serif", size=12),
             "title_font": dict(color=COLOR_INK, family="'Space Grotesk', sans-serif", size=14, weight="bold")
         }
         if yaxis_title:
