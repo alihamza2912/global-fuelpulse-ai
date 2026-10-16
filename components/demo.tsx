@@ -4,6 +4,15 @@ import { Home, User, Briefcase, FileText } from "lucide-react";
 import { NavBar } from "@/components/ui/tubelight-navbar";
 import { BackgroundPaths } from "@/components/ui/background-paths";
 import { AnimatedGrid } from "@/components/ui/animated-grid";
+import { Component as GlowButton } from "@/components/ui/glow-button";
+
+export function GlowButtonDemo() {
+  return (
+    <div className="flex h-screen w-screen items-center justify-center bg-background text-foreground">
+      <GlowButton label="Generate Intelligence" />
+    </div>
+  );
+}
 
 export function AnimatedGridDemo() {
   return (
@@ -36,4 +45,10 @@ export function NavBarDemo() {
   return <NavBar items={navItems} />;
 }
 
-export default AnimatedGridDemo;
+export default function Default() {
+  return (
+    <div className="flex h-screen w-screen items-center justify-center bg-background text-foreground">
+      <GlowButton />
+    </div>
+  );
+}
