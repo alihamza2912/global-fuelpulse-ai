@@ -6,11 +6,17 @@ Tagline: Understand the world's energy flows.
 """
 
 import os
+import sys
 from pathlib import Path
 from dotenv import load_dotenv
 
+# Ensure project root is ALWAYS in sys.path (crucial for Streamlit Cloud)
+ROOT_DIR = Path(__file__).resolve().parent
+if str(ROOT_DIR) not in sys.path:
+    sys.path.insert(0, str(ROOT_DIR))
+
 # Ensure .env is loaded using absolute path from project root
-ENV_FILE = Path(__file__).resolve().parent / ".env"
+ENV_FILE = ROOT_DIR / ".env"
 if ENV_FILE.exists():
     load_dotenv(dotenv_path=ENV_FILE, override=True)
 
@@ -24,31 +30,63 @@ from datetime import datetime, date
 from config.settings import settings
 from src.database.connection import db_manager
 from src.database.migrations import init_database
-from src.ui_components import (
-    render_command_strip,
-    render_signal_rail,
-    render_instrument_card,
-    render_chapter_header,
-    render_chapter_nav,
-    render_csv_download,
-    get_atlas_plotly_theme,
-    apply_clean_layout,
-    clean_product_label,
-    apply_theme,
-    clean_html,
-    render_html,
-    get_fuel_client_logo_html,
-    get_animated_grid_css,
-    COLOR_CREAM,
-    COLOR_WHITE,
-    COLOR_INK,
-    COLOR_AMBER,
-    COLOR_GREEN_LIGHT,
-    COLOR_BLUE_LIGHT,
-    COLOR_ROSE_LIGHT,
-    COLOR_GRAY_MUTED,
-    COLOR_BORDER_LIGHT
-)
+
+# Ensure clean imports from src.ui_components with cache invalidation if needed
+try:
+    from src.ui_components import (
+        render_command_strip,
+        render_signal_rail,
+        render_instrument_card,
+        render_chapter_header,
+        render_chapter_nav,
+        render_csv_download,
+        get_atlas_plotly_theme,
+        apply_clean_layout,
+        clean_product_label,
+        apply_theme,
+        clean_html,
+        render_html,
+        get_fuel_client_logo_html,
+        get_animated_grid_css,
+        COLOR_CREAM,
+        COLOR_WHITE,
+        COLOR_INK,
+        COLOR_AMBER,
+        COLOR_GREEN_LIGHT,
+        COLOR_BLUE_LIGHT,
+        COLOR_ROSE_LIGHT,
+        COLOR_GRAY_MUTED,
+        COLOR_BORDER_LIGHT
+    )
+except ImportError:
+    import importlib
+    if "src.ui_components" in sys.modules:
+        importlib.reload(sys.modules["src.ui_components"])
+    from src.ui_components import (
+        render_command_strip,
+        render_signal_rail,
+        render_instrument_card,
+        render_chapter_header,
+        render_chapter_nav,
+        render_csv_download,
+        get_atlas_plotly_theme,
+        apply_clean_layout,
+        clean_product_label,
+        apply_theme,
+        clean_html,
+        render_html,
+        get_fuel_client_logo_html,
+        get_animated_grid_css,
+        COLOR_CREAM,
+        COLOR_WHITE,
+        COLOR_INK,
+        COLOR_AMBER,
+        COLOR_GREEN_LIGHT,
+        COLOR_BLUE_LIGHT,
+        COLOR_ROSE_LIGHT,
+        COLOR_GRAY_MUTED,
+        COLOR_BORDER_LIGHT
+    )
 
 # Domain Analytics & ML Engines
 from src.analytics.price_analytics import FuelPriceAnalytics

@@ -12,6 +12,7 @@ from typing import Optional, Dict, Any, List
 from datetime import datetime
 from config.settings import settings
 from src.database.connection import db_manager
+from src.utils.chart_style import apply_clean_layout, clean_product_label
 
 # ==============================================================================
 # 1. COLOR PALETTE CONSTANTS (PREPZII EDITORIAL DIRECTION)
@@ -985,8 +986,6 @@ def get_atlas_plotly_theme(height: int = 420, **overrides) -> Dict[str, Any]:
     )
     return deep_merge(theme, overrides)
 
-
-from src.utils.chart_style import apply_clean_layout, clean_product_label
 
 def apply_atlas_theme(fig, height: int = 460, **kwargs):
     """Safely applies Editorial styling to a Plotly figure without duplicate keyword collisions."""
