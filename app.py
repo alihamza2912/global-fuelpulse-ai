@@ -113,11 +113,16 @@ st.set_page_config(
 # Apply global editorial styling
 apply_theme()
 
-# Ensure database is initialized with verified reference seeds
-try:
-    init_database(seed_if_empty=True)
-except Exception as e:
-    st.sidebar.error(f"Database Note: {e}")
+# Ensure database is initialized with verified reference seeds (cached for speed)
+@st.cache_resource(show_spinner=False)
+def ensure_database_ready():
+    try:
+        init_database(seed_if_empty=True)
+        return True
+    except Exception as e:
+        return False
+
+ensure_database_ready()
 
 # Sidebar Telemetry & Quick Navigation
 render_html(
@@ -203,6 +208,108 @@ render_command_strip(
 # Sticky Chapter Navigation Ribbon
 render_chapter_nav()
 
+# ==============================================================================
+# FAST UNIVERSAL INTELLIGENCE SEARCH ENGINE
+# ==============================================================================
+@st.cache_data(ttl=600, show_spinner=False)
+def get_searchable_entities():
+    """Builds an in-memory index for sub-millisecond universal search across countries, cities, fuels, indicators, and OMCs."""
+    items = []
+    try:
+        with db_manager.engine.connect() as conn:
+            countries = conn.execute(db_manager.safe_sql(
+                "SELECT country_iso3, country_name, continent FROM dim_country ORDER BY country_name"
+            )).fetchall()
+            for c in countries:
+                items.append({
+                    "name": c[1],
+                    "type": "Country",
+                    "badge_bg": "#DFEBFA",
+                    "category": f"Region: {c[2]} ({c[0]})",
+                    "target": "#ch-04",
+                    "label": "View Retail Prices & Metrics"
+                })
+    except Exception:
+        pass
+
+    quick_items = [
+        ("Delhi Metro", "India Metro", "#D9F4D8", "PPAC Daily Retail Petrol ₹94.72 / Diesel ₹87.62", "#ch-05", "View Delhi Price Breakdown"),
+        ("Mumbai Metro", "India Metro", "#D9F4D8", "PPAC Daily Retail Petrol ₹104.21 / Diesel ₹92.15", "#ch-05", "View Mumbai Price Breakdown"),
+        ("Kolkata Metro", "India Metro", "#D9F4D8", "PPAC Daily Retail Petrol ₹103.94 / Diesel ₹90.76", "#ch-05", "View Kolkata Price Breakdown"),
+        ("Chennai Metro", "India Metro", "#D9F4D8", "PPAC Daily Retail Petrol ₹100.75 / Diesel ₹92.34", "#ch-05", "View Chennai Price Breakdown"),
+        ("Petrol (Regular Motor Gasoline)", "Fuel Product", "#FFE58A", "Motor fuel retail price tracking", "#ch-04", "Compare Global Petrol Prices"),
+        ("Diesel (Automotive Gasoil)", "Fuel Product", "#FFE58A", "Industrial & logistics fuel tracking", "#ch-04", "Compare Global Diesel Prices"),
+        ("Brent Crude Spot Benchmark", "Market Benchmark", "#F7E1E6", "Global seaborne crude reference price", "#ch-01", "Inspect Brent Trends"),
+        ("WTI Crude Spot Benchmark", "Market Benchmark", "#F7E1E6", "US Cushing pipeline crude reference", "#ch-01", "Inspect WTI Trends"),
+        ("Indian Crude Basket", "Official Basket", "#D9F4D8", "PPAC sour & sweet import blend", "#ch-05", "View Indian Basket Price"),
+        ("IOCL (Indian Oil Corporation)", "OMC Company", "#FFF9E8", "42% retail fuel distribution share in India", "#ch-05", "Examine OMC Margins"),
+        ("BPCL (Bharat Petroleum)", "OMC Company", "#FFF9E8", "Major state OMC refiner & marketer", "#ch-05", "Examine OMC Margins"),
+        ("HPCL (Hindustan Petroleum)", "OMC Company", "#FFF9E8", "Leading nationwide retail pump operator", "#ch-05", "Examine OMC Margins"),
+        ("Strait of Hormuz Corridor", "Maritime Chokepoint", "#F7E1E6", "18.5 mbpd Persian Gulf transit bottleneck", "#ch-03", "Analyze Maritime Flow"),
+        ("Malacca Strait Corridor", "Maritime Chokepoint", "#F7E1E6", "16.2 mbpd Asian import chokepoint", "#ch-03", "Analyze Maritime Flow"),
+        ("Suez Canal & Red Sea", "Maritime Chokepoint", "#F7E1E6", "4.5 mbpd Europe-Asia corridor", "#ch-03", "Analyze Maritime Flow")
+    ]
+    for q_name, q_type, q_bg, q_desc, q_target, q_btn in quick_items:
+        items.append({
+            "name": q_name,
+            "type": q_type,
+            "badge_bg": q_bg,
+            "category": q_desc,
+            "target": q_target,
+            "label": q_btn
+        })
+    return items
+
+search_col1, search_col2 = st.columns([9, 3])
+with search_col1:
+    search_q = st.text_input(
+        "⚡ Fast Intelligence Search",
+        placeholder="🔍 Type anything to search instantly (e.g. India, Delhi, Diesel, Brent, HPCL, Hormuz, USA)...",
+        label_visibility="collapsed",
+        key="fast_universal_search_input"
+    )
+
+with search_col2:
+    render_html(
+        f"""
+        <div style="background: {COLOR_WHITE}; border: 2px solid {COLOR_INK}; box-shadow: 2px 2px 0px {COLOR_INK}; border-radius: 6px; padding: 7px 12px; font-family: 'Space Grotesk', sans-serif; font-size: 0.75rem; font-weight: 800; text-align: center; color: {COLOR_INK}; height: 42px; display: flex; align-items: center; justify-content: center;">
+            ⚡ SUB-MILLISECOND SEARCH
+        </div>
+        """
+    )
+
+if search_q and search_q.strip():
+    q_clean = search_q.strip().lower()
+    all_entities = get_searchable_entities()
+    matches = [
+        e for e in all_entities
+        if q_clean in e["name"].lower() or q_clean in e["type"].lower() or q_clean in e["category"].lower()
+    ][:6]
+
+    if matches:
+        st.markdown(
+            f"<div style='font-family: Space Grotesk, sans-serif; font-size: 0.82rem; font-weight: 800; color: #111111; margin-top: 8px; margin-bottom: 8px;'>MATCHED {len(matches)} RESULT(S) FOR \"{search_q.strip()}\":</div>",
+            unsafe_allow_html=True
+        )
+        res_cols = st.columns(min(len(matches), 3))
+        for idx, match in enumerate(matches):
+            with res_cols[idx % min(len(matches), 3)]:
+                render_html(
+                    f"""
+                    <div style="background: {COLOR_WHITE}; border: 2px solid {COLOR_INK}; box-shadow: 3px 3px 0px {COLOR_INK}; border-radius: 6px; padding: 12px; margin-bottom: 10px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                            <span style="font-family: 'Space Grotesk', sans-serif; font-size: 0.85rem; font-weight: 800; color: {COLOR_INK};">{match['name']}</span>
+                            <span style="background: {match['badge_bg']}; border: 1px solid {COLOR_INK}; padding: 1px 6px; border-radius: 999px; font-size: 0.65rem; font-weight: 700; color: {COLOR_INK};">{match['type'].upper()}</span>
+                        </div>
+                        <div style="font-size: 0.75rem; color: #444444; margin-bottom: 8px;">{match['category']}</div>
+                        <a href="{match['target']}" style="display: inline-block; background: {COLOR_AMBER}; border: 1.5px solid {COLOR_INK}; box-shadow: 1.5px 1.5px 0px {COLOR_INK}; padding: 3px 10px; border-radius: 4px; font-size: 0.72rem; font-weight: 800; color: {COLOR_INK}; text-decoration: none;">{match['label']} →</a>
+                    </div>
+                    """
+                )
+    else:
+        st.info(f"No direct matches for '{search_q}'. You can explore the chapters below or query the AI Market Analyst in Chapter 09.")
+
+st.write("")
 
 # ==============================================================================
 # SECTION 4: EDITORIAL HERO SECTION

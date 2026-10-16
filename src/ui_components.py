@@ -176,11 +176,26 @@ def apply_theme():
     custom_css = f"""<style>
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&family=Space+Grotesk:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap');
 
-/* 1. Global page canvas */
+@keyframes stapp-grid-drift {{
+  from {{ background-position: 0 0, 0 0, 0 0, 0 0; }}
+  to   {{ background-position: 144px 144px, 144px 144px, 144px 144px, 144px 144px; }}
+}}
+
+/* 1. Global page canvas with animated grid backdrop */
 .stApp {{
 background-color: {COLOR_CREAM} !important;
+background-image:
+  linear-gradient(to right, rgba(17, 17, 17, 0.06) 1px, transparent 1px),
+  linear-gradient(to bottom, rgba(17, 17, 17, 0.06) 1px, transparent 1px),
+  linear-gradient(to right, rgba(245, 185, 66, 0.28) 1.5px, transparent 1.5px),
+  linear-gradient(to bottom, rgba(245, 185, 66, 0.28) 1.5px, transparent 1.5px) !important;
+background-size: 36px 36px, 36px 36px, 144px 144px, 144px 144px !important;
+animation: stapp-grid-drift 26s linear infinite !important;
 color: {COLOR_INK} !important;
 font-family: 'Space Grotesk', 'Inter', -apple-system, sans-serif;
+}}
+@media (prefers-reduced-motion: reduce) {{
+  .stApp {{ animation: none !important; }}
 }}
 
 /* 2. Global typography scale */
