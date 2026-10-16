@@ -65,22 +65,56 @@ def render_html(html_str: str, container=None):
 # ==============================================================================
 # 3. BRAND LOGO (CLEAN EDITORIAL SVG EMBED)
 # ==============================================================================
-def get_brand_logo_svg(width: int = 280, height: int = 50) -> str:
-    """Returns the custom editorial Global FuelPulse AI emblem and typography in luminous dark styling."""
-    return f"""<svg width="{width}" height="{height}" viewBox="0 0 320 54" fill="none" xmlns="http://www.w3.org/2000/svg">
-<rect x="6" y="6" width="42" height="42" rx="8" fill="#151F38"/>
-<rect x="3" y="3" width="42" height="42" rx="8" fill="#F5B942" stroke="rgba(255, 255, 255, 0.2)" stroke-width="1.5"/>
-<circle cx="24" cy="24" r="11" fill="#0E1526"/>
-<circle cx="24" cy="24" r="5.5" fill="#F5B942"/>
-<path d="M24 13 L24 18 M24 30 L24 35 M13 24 L18 24 M30 24 L35 24" stroke="#0E1526" stroke-width="2.2" stroke-linecap="round"/>
-<text x="56" y="24" fill="#F9FAFB" font-family="'Space Grotesk', -apple-system, sans-serif" font-weight="800" font-size="16" letter-spacing="0.06em">GLOBAL FUELPULSE AI</text>
-<text x="56" y="41" fill="#94A3B8" font-family="'Space Grotesk', -apple-system, sans-serif" font-weight="600" font-size="12" letter-spacing="0.02em">Understand the world's energy flows.</text>
+def get_logo_mark_svg(size: int = 36) -> str:
+    """Returns the standalone compact petroleum droplet, trade-route orbit, and energy pulse mark."""
+    return f"""<svg width="{size}" height="{size}" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="36" height="36" rx="8" fill="#0E1526" stroke="rgba(255, 255, 255, 0.15)" stroke-width="1.2"/>
+  <!-- Orbital Global Trade Route Curve -->
+  <ellipse cx="18" cy="18" rx="14.5" ry="6.2" transform="rotate(-26 18 18)" stroke="#60A5FA" stroke-width="1.4" stroke-dasharray="3 2" opacity="0.85"/>
+  <circle cx="28.5" cy="12.5" r="1.8" fill="#F5B942"/>
+  <!-- Petroleum Fuel Droplet -->
+  <path d="M18 7 C18 7 11.5 15.5 11.5 20.5 A6.5 6.5 0 0 0 24.5 20.5 C24.5 15.5 18 7 18 7 Z" fill="url(#gfp_drop_grad)" stroke="#F5B942" stroke-width="1.3"/>
+  <!-- Energy Frequency Pulse Waveform -->
+  <path d="M12 20.5 L15 20.5 L16.8 16.5 L19.5 24.5 L21.2 20.5 L24 20.5" stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <defs>
+    <linearGradient id="gfp_drop_grad" x1="18" y1="7" x2="18" y2="27" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#F5B942"/>
+      <stop offset="65%" stop-color="#D97706"/>
+      <stop offset="100%" stop-color="#0E1526"/>
+    </linearGradient>
+  </defs>
+</svg>"""
+
+
+def get_brand_logo_svg(width: int = 280, height: int = 48) -> str:
+    """Returns the full brand lockup: distinctive vector trade emblem + Global FuelPulse AI typography."""
+    return f"""<svg width="{width}" height="{height}" viewBox="0 0 280 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Droplet & Trade Route Orbit Emblem -->
+  <g transform="translate(4, 6)">
+    <rect width="36" height="36" rx="8" fill="#0E1526" stroke="rgba(255, 255, 255, 0.15)" stroke-width="1.2"/>
+    <ellipse cx="18" cy="18" rx="14.5" ry="6.2" transform="rotate(-26 18 18)" stroke="#60A5FA" stroke-width="1.4" stroke-dasharray="3 2" opacity="0.85"/>
+    <circle cx="28.5" cy="12.5" r="1.8" fill="#F5B942"/>
+    <path d="M18 7 C18 7 11.5 15.5 11.5 20.5 A6.5 6.5 0 0 0 24.5 20.5 C24.5 15.5 18 7 18 7 Z" fill="url(#gfp_brand_drop)" stroke="#F5B942" stroke-width="1.3"/>
+    <path d="M12 20.5 L15 20.5 L16.8 16.5 L19.5 24.5 L21.2 20.5 L24 20.5" stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <defs>
+    <linearGradient id="gfp_brand_drop" x1="18" y1="7" x2="18" y2="27" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#F5B942"/>
+      <stop offset="65%" stop-color="#D97706"/>
+      <stop offset="100%" stop-color="#0E1526"/>
+    </linearGradient>
+  </defs>
+  <!-- Typography Lockup -->
+  <text x="48" y="24" fill="#F9FAFB" font-family="'Space Grotesk', -apple-system, sans-serif" font-weight="800" font-size="16" letter-spacing="0.04em">GLOBAL FUELPULSE</text>
+  <rect x="228" y="11" width="26" height="16" rx="4" fill="rgba(245, 185, 66, 0.22)" stroke="#F5B942" stroke-width="1"/>
+  <text x="241" y="23" fill="#F5B942" font-family="'Space Grotesk', sans-serif" font-weight="800" font-size="10.5" text-anchor="middle">AI</text>
+  <text x="48" y="39" fill="#94A3B8" font-family="'Inter', sans-serif" font-weight="600" font-size="11" letter-spacing="0.01em">ENERGY INTELLIGENCE PLATFORM</text>
 </svg>"""
 
 
 def get_fuel_client_logo_html() -> str:
-    """Returns a client-facing small fuel logo badge with an industrial fuel pump and energy flame."""
-    return """
+    """Returns a client-facing badge with the distinctive fuel trade logo."""
+    return f"""
     <div style="
         display: inline-flex;
         align-items: center;
@@ -96,15 +130,9 @@ def get_fuel_client_logo_html() -> str:
         position: relative;
         z-index: 5;
     ">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#F5B942" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M3 22V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v17"/>
-            <path d="M15 10h2a2 2 0 0 1 2 2v2a2 2 0 0 0 2 2 2 2 0 0 0 2-2V9.83a2 2 0 0 0-.59-1.42L19.4 5.4"/>
-            <path d="M3 22h12"/>
-            <path d="M7 9h4"/>
-            <circle cx="9" cy="6" r="1.3" fill="#F5B942"/>
-        </svg>
+        {get_logo_mark_svg(20)}
         <span style="font-family: 'Space Grotesk', sans-serif; font-size: 0.72rem; font-weight: 800; letter-spacing: 0.08em; color: #F9FAFB; text-transform: uppercase;">
-            FUELPULSE AI <span style="background: rgba(245, 185, 66, 0.2); color: #F5B942; padding: 2px 8px; border-radius: 999px; font-weight: 800; border: 1px solid rgba(245, 185, 66, 0.4); margin-left: 6px;">CLIENT PORTAL</span>
+            GLOBAL FUELPULSE <span style="background: rgba(245, 185, 66, 0.2); color: #F5B942; padding: 2px 8px; border-radius: 999px; font-weight: 800; border: 1px solid rgba(245, 185, 66, 0.4); margin-left: 6px;">INTELLIGENCE</span>
         </span>
     </div>
     """
