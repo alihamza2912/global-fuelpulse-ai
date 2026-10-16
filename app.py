@@ -232,13 +232,20 @@ render_html(
 )
 
 
-# 5. Top Brand Navigation Strip
-render_command_strip(
-    active_page=st.session_state.active_nav,
-    region_tag="GLOBAL & INDIA",
-    product_tag="CRUDE OIL & FUELS",
-    reporting_period="2024–2026 LIVE COVERAGE"
-)
+# 5. Top Brand Header Strip (Clean single-row header without duplicate links)
+health = db_manager.check_health()
+engine_name = "MYSQL 8.4" if health["dialect"] == "mysql" else "SQLITE VERIFIED"
+render_html(f"""
+<div style="background: rgba(14, 21, 38, 0.85); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.12); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); border-radius: 10px; padding: 10px 20px; margin: -0.5rem 0 0.75rem 0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px;">
+    <div style="display: flex; align-items: center; gap: 14px;">
+        {get_brand_logo_svg(width=280, height=44)}
+    </div>
+    <div style="display: flex; align-items: center; gap: 10px;">
+        <span style="background: rgba(16, 185, 129, 0.18); color: #34D399; border: 1px solid rgba(16, 185, 129, 0.4); padding: 4px 12px; border-radius: 999px; font-family: 'Space Grotesk', sans-serif; font-size: 11.5px; font-weight: 700;">● {engine_name}</span>
+        <span style="background: rgba(245, 185, 66, 0.18); color: #F5B942; border: 1px solid rgba(245, 185, 66, 0.4); padding: 4px 12px; border-radius: 999px; font-family: 'Space Grotesk', sans-serif; font-size: 11.5px; font-weight: 700;">LIVE PLATFORM 2024–2026</span>
+    </div>
+</div>
+""")
 
 # 6. Interactive Horizontal Product Ribbon Selector
 curr_idx = NAV_OPTIONS.index(st.session_state.active_nav) if st.session_state.active_nav in NAV_OPTIONS else 0
