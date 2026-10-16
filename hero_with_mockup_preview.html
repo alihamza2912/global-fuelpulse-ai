@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hero With Mockup — Interactive Component Preview</title>
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: "hsl(var(--brand))",
+            "brand-foreground": "hsl(var(--brand-foreground))",
+            background: "hsl(var(--background))",
+            foreground: "hsl(var(--foreground))",
+            muted: "hsl(var(--muted))",
+            "muted-foreground": "hsl(var(--muted-foreground))",
+            border: "hsl(var(--border))",
+          },
+          animation: {
+            'appear': 'appear 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+            'appear-zoom': 'appear-zoom 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+          },
+          keyframes: {
+            'appear': {
+              '0%': { opacity: '0', transform: 'translateY(16px)' },
+              '100%': { opacity: '1', transform: 'translateY(0)' },
+            },
+            'appear-zoom': {
+              '0%': { opacity: '0', transform: 'scale(0.96)' },
+              '100%': { opacity: '1', transform: 'scale(1)' },
+            },
+          },
+        },
+      },
+    }
+  </script>
+  <style>
+    :root {
+      --background: 0 0% 100%;
+      --foreground: 240 10% 3.9%;
+      --brand: 41 90% 61%;
+      --brand-foreground: 0 0% 9%;
+      --muted: 210 40% 96.1%;
+      --muted-foreground: 215.4 16.3% 46.9%;
+      --border: 240 5.9% 90%;
+    }
+    .dark {
+      --background: 240 10% 3.9%;
+      --foreground: 0 0% 98%;
+      --brand: 41 90% 61%;
+      --brand-foreground: 0 0% 9%;
+      --muted: 217.2 32.6% 17.5%;
+      --muted-foreground: 215 20.2% 65.1%;
+      --border: 240 3.7% 15.9%;
+    }
+    body {
+      font-family: 'Space Grotesk', 'Inter', -apple-system, sans-serif;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+    @keyframes float-slow {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-8px); }
+    }
+    .floating-mockup {
+      animation: float-slow 7s ease-in-out infinite;
+    }
+  </style>
+</head>
+<body class="bg-background text-foreground min-h-screen flex flex-col justify-between selection:bg-brand selection:text-black">
+
+  <!-- Top Preview Bar -->
+  <header class="border-b border-border bg-background/80 backdrop-blur-md sticky top-0 z-50 px-6 py-3.5 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <div class="w-8 h-8 rounded-lg bg-[#0E1526] border border-white/10 flex items-center justify-center text-brand font-bold text-sm shadow-md">
+        ⚡
+      </div>
+      <div>
+        <span class="font-bold text-sm tracking-wide text-foreground">hero-with-mockup.tsx</span>
+        <span class="ml-2 text-xs px-2 py-0.5 rounded-full bg-brand/20 text-brand border border-brand/30 font-semibold">shadcn/ui block</span>
+      </div>
+    </div>
+    
+    <div class="flex items-center gap-3">
+      <button id="toggle-device" class="text-xs font-semibold px-3 py-1.5 rounded-md border border-border bg-muted/60 hover:bg-muted text-foreground transition">
+        📱 Toggle Mobile / Desktop
+      </button>
+      <button id="theme-toggle" class="text-xs font-semibold px-3 py-1.5 rounded-md border border-border bg-muted/60 hover:bg-muted text-foreground transition flex items-center gap-1.5">
+        <span id="theme-icon">☀️</span> <span id="theme-text">Light Mode</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Hero Component Container -->
+  <main class="flex-1 flex flex-col justify-center">
+    <section class="relative bg-background text-foreground py-16 px-4 md:py-24 lg:py-28 overflow-hidden transition-colors">
+      
+      <!-- Content Container -->
+      <div class="relative mx-auto max-w-[1280px] flex flex-col gap-12 lg:gap-16">
+        <div class="relative z-10 flex flex-col items-center gap-6 pt-4 text-center lg:gap-8">
+          
+          <!-- Category / Badge Pill -->
+          <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full text-xs font-bold tracking-wide uppercase bg-brand/15 text-brand border border-brand/30 animate-appear opacity-0 shadow-sm">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            GLOBAL FUELPULSE AI • ENERGY INTELLIGENCE
+          </div>
+
+          <!-- Heading with Gradient Text -->
+          <h1 class="inline-block animate-appear opacity-0 [animation-delay:100ms] bg-gradient-to-b from-foreground via-foreground/90 to-muted-foreground bg-clip-text text-transparent text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl leading-[1.1] sm:leading-[1.1] drop-shadow-sm dark:drop-shadow-[0_0_20px_rgba(255,255,255,0.08)] max-w-5xl">
+            Understand the world's real-time energy flows.
+          </h1>
+
+          <!-- Description -->
+          <p class="max-w-[620px] animate-appear opacity-0 [animation-delay:200ms] text-base sm:text-lg md:text-xl text-muted-foreground font-medium leading-relaxed">
+            Unify international crude benchmarks, maritime seaborne tanker routes, and downstream retail pump pricing into an integrated, deterministic intelligence platform.
+          </p>
+
+          <!-- CTAs -->
+          <div class="relative z-10 flex flex-wrap justify-center items-center gap-4 animate-appear opacity-0 [animation-delay:350ms] pt-2">
+            <a href="#dashboard" class="inline-flex items-center justify-center h-12 px-8 rounded-md text-sm font-bold bg-gradient-to-b from-brand to-amber-600 text-black shadow-lg shadow-amber-500/20 hover:from-amber-400 hover:to-amber-500 active:scale-95 transition-all duration-200">
+              ⚡ Launch Live Intelligence Dashboard
+            </a>
+
+            <a href="https://github.com/alihamza2912/global-fuelpulse-ai" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center h-12 px-6 rounded-md text-sm font-semibold border border-border bg-muted/40 hover:bg-muted text-foreground/85 active:scale-95 transition-all duration-200 gap-2">
+              <svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
+              </svg>
+              View on GitHub
+            </a>
+          </div>
+
+          <!-- Mockup Container -->
+          <div class="relative w-full pt-8 px-2 sm:px-6 lg:px-8">
+            <div id="mockup-frame" class="floating-mockup mx-auto transition-all duration-500 max-w-[1100px] flex relative z-10 overflow-hidden shadow-2xl rounded-xl border border-border/40 shadow-[0_0_60px_-15px_rgba(0,0,0,0.5)] dark:shadow-[0_0_60px_-15px_rgba(245,185,66,0.15)] bg-[#0E1526]/90 backdrop-blur-md animate-appear opacity-0 [animation-delay:500ms]">
+              
+              <!-- Mockup Browser Header Window Controls -->
+              <div class="w-full">
+                <div class="bg-[#151F38] border-b border-white/10 px-4 py-2.5 flex items-center justify-between">
+                  <div class="flex items-center gap-2">
+                    <span class="w-3 h-3 rounded-full bg-rose-500 inline-block"></span>
+                    <span class="w-3 h-3 rounded-full bg-amber-500 inline-block"></span>
+                    <span class="w-3 h-3 rounded-full bg-emerald-500 inline-block"></span>
+                    <span class="text-xs font-mono text-slate-400 ml-3">global-fuelpulse-ai.streamlit.app</span>
+                  </div>
+                  <div class="flex items-center gap-2 text-xs font-mono text-brand bg-brand/10 border border-brand/20 px-2.5 py-0.5 rounded">
+                    ● 25 NATIONS LIVE
+                  </div>
+                </div>
+
+                <!-- Live Interface Content Mockup Image -->
+                <div class="relative aspect-[16/10] overflow-hidden bg-[#070A12] flex items-center justify-center p-4">
+                  <img
+                    id="mockup-img"
+                    src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1600&q=80"
+                    alt="Global FuelPulse AI Interface"
+                    class="w-full h-full object-cover rounded-lg border border-white/10 shadow-inner"
+                    loading="lazy"
+                  />
+                  <!-- Overlay Infographic Badges -->
+                  <div class="absolute bottom-8 left-8 right-8 bg-[#0E1526]/95 backdrop-blur-xl border border-white/15 p-5 rounded-xl shadow-2xl grid grid-cols-2 md:grid-cols-4 gap-4 text-left">
+                    <div>
+                      <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">BRENT SPOT</div>
+                      <div class="text-xl font-extrabold text-brand">$76.80 / bbl</div>
+                      <div class="text-[11px] text-emerald-400 font-semibold">▲ Daily Index</div>
+                    </div>
+                    <div>
+                      <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">DELHI DIESEL</div>
+                      <div class="text-xl font-extrabold text-white">₹87.62 / L</div>
+                      <div class="text-[11px] text-slate-400">PPAC Benchmark</div>
+                    </div>
+                    <div>
+                      <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">HORMUZ VOLUME</div>
+                      <div class="text-xl font-extrabold text-blue-400">18.5 mbpd</div>
+                      <div class="text-[11px] text-rose-400 font-semibold">Critical Corridor</div>
+                    </div>
+                    <div>
+                      <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">QUERY LATENCY</div>
+                      <div class="text-xl font-extrabold text-emerald-400">&lt; 10 ms</div>
+                      <div class="text-[11px] text-slate-400">Multi-Tier Cache</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Ambient Background Glow Effect -->
+      <div class="absolute inset-0 overflow-hidden pointer-events-none -z-10">
+        <div class="absolute -top-[140px] left-1/2 -translate-x-1/2 w-[900px] h-[400px] bg-gradient-to-r from-brand/15 via-amber-500/25 to-blue-500/15 blur-[140px] rounded-full animate-appear-zoom opacity-0 [animation-delay:600ms]"></div>
+      </div>
+
+    </section>
+  </main>
+
+  <!-- Interactive Control Script -->
+  <script>
+    const themeToggleBtn = document.getElementById('theme-toggle');
+    const themeIcon = document.getElementById('theme-icon');
+    const themeText = document.getElementById('theme-text');
+    const toggleDeviceBtn = document.getElementById('toggle-device');
+    const mockupFrame = document.getElementById('mockup-frame');
+    let isMobile = false;
+
+    themeToggleBtn.addEventListener('click', () => {
+      const html = document.documentElement;
+      if (html.classList.contains('dark')) {
+        html.classList.remove('dark');
+        themeIcon.textContent = '🌙';
+        themeText.textContent = 'Dark Mode';
+      } else {
+        html.classList.add('dark');
+        themeIcon.textContent = '☀️';
+        themeText.textContent = 'Light Mode';
+      }
+    });
+
+    toggleDeviceBtn.addEventListener('click', () => {
+      isMobile = !isMobile;
+      if (isMobile) {
+        mockupFrame.classList.remove('max-w-[1100px]');
+        mockupFrame.classList.add('max-w-[360px]', 'rounded-[40px]', 'p-2');
+        toggleDeviceBtn.textContent = '💻 Switch to Desktop';
+      } else {
+        mockupFrame.classList.remove('max-w-[360px]', 'rounded-[40px]', 'p-2');
+        mockupFrame.classList.add('max-w-[1100px]');
+        toggleDeviceBtn.textContent = '📱 Switch to Mobile';
+      }
+    });
+  </script>
+
+</body>
+</html>

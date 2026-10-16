@@ -1,79 +1,26 @@
-"use client";
+import React from "react"
+import { HeroWithMockup } from "@/components/ui/hero-with-mockup"
 
-import React from "react";
-import { Home, User, Briefcase, FileText } from "lucide-react";
-import { NavBar } from "@/components/ui/tubelight-navbar";
-import { BackgroundPaths } from "@/components/ui/background-paths";
-import { AnimatedGrid } from "@/components/ui/animated-grid";
-import { Component as GlowButton } from "@/components/ui/glow-button";
-import { AuthComponent } from "@/components/ui/sign-up";
-
-// A simple placeholder logo for demonstration
-const CustomLogo = () => (
-  <div className="bg-blue-500 text-white rounded-md p-1.5">
-    <svg 
-      className="h-4 w-4" 
-      xmlns="http://www.w3.org/2000/svg" 
-      viewBox="0 0 24 24" 
-      fill="none" 
-      stroke="currentColor" 
-      strokeWidth="2" 
-      strokeLinecap="round" 
-      strokeLinejoin="round"
-    >
-      <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
-    </svg>
-  </div>
-);
-
-export function CustomAuthDemo() {
+export function HeroDemo() {
   return (
-    <AuthComponent 
-      logo={<CustomLogo />} 
-      brandName="MyWebApp" 
+    <HeroWithMockup
+      title="Build AI-powered apps in minutes, not months"
+      description="Create sophisticated AI applications with our intuitive platform. No ML expertise required."
+      primaryCta={{
+        text: "Start Building",
+        href: "/signup",
+      }}
+      secondaryCta={{
+        text: "View on GitHub",
+        href: "https://github.com/your-ai-platform",
+      }}
+      mockupImage={{
+        alt: "AI Platform Dashboard",
+        width: 1248,
+        height: 765,
+        src: "https://cdn.21st.dev/assets/mirror/86/867a175524a0966eb144327b962159fa1ac4e1822b0cd857759b754306f3b0d4.png"
+      }}
     />
-  );
+  )
 }
-
-export function GlowButtonDemo() {
-  return (
-    <div className="flex h-screen w-screen items-center justify-center bg-background text-foreground">
-      <GlowButton label="Generate Intelligence" />
-    </div>
-  );
-}
-
-export function AnimatedGridDemo() {
-  return (
-    <div className="relative h-screen w-full overflow-hidden bg-background">
-      <AnimatedGrid />
-      <div className="relative z-10 flex h-full w-full flex-col items-center justify-center gap-2 text-center">
-        <h1 className="text-4xl font-semibold tracking-tight text-foreground">
-          Build faster.
-        </h1>
-        <p className="max-w-md text-muted-foreground">
-          A CSS-only animated grid backdrop for heroes and section backgrounds.
-        </p>
-      </div>
-    </div>
-  );
-}
-
-export function DemoBackgroundPaths() {
-  return <BackgroundPaths title="Background Paths" />;
-}
-
-export function NavBarDemo() {
-  const navItems = [
-    { name: "Home", url: "#", icon: Home },
-    { name: "About", url: "#", icon: User },
-    { name: "Projects", url: "#", icon: Briefcase },
-    { name: "Resume", url: "#", icon: FileText },
-  ];
-
-  return <NavBar items={navItems} />;
-}
-
-export default function Default() {
-  return <CustomAuthDemo />;
-}
+export default HeroDemo

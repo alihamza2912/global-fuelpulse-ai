@@ -23,6 +23,8 @@
     --border: 0 0% 89.8%;
     --input: 0 0% 89.8%;
     --ring: 0 0% 3.9%;
+    --brand: 210 100% 50%;
+    --brand-foreground: 213 100% 60%;
     --radius: 0.5rem;
     --color-border: #dce4ef;
     --color-accent: #315fea;
@@ -56,6 +58,8 @@
     --border: 0 0% 14.9%;
     --input: 0 0% 14.9%;
     --ring: 0 0% 83.1%;
+    --brand: 213 100% 60%;
+    --brand-foreground: 210 100% 50%;
     --color-border: #263449;
     --color-accent: #4f7cff;
     --color-primary: #f5b942;
@@ -75,6 +79,13 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+/* Utility classes */
+@layer utilities {
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-b from-foreground via-foreground/90 to-muted-foreground;
   }
 }
 
