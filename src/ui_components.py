@@ -719,7 +719,7 @@ def render_chapter_header(
 
 
 def render_chapter_nav():
-    """Renders a sticky horizontal navigation ribbon for the 11 analytical chapters."""
+    """Renders a floating Tubelight horizontal navigation bar for the 11 analytical chapters."""
     chapters = [
         ("01", "At a Glance", "#ch-01"),
         ("02", "Production", "#ch-02"),
@@ -735,58 +735,106 @@ def render_chapter_nav():
     ]
 
     nav_links = "".join([
-        f'<a href="{anchor}" class="editorial-nav-btn"><span class="ch-num">{num}</span> {name}</a>'
+        f'<a href="{anchor}" class="tubelight-nav-item"><span class="tubelight-lamp"></span><span class="ch-badge">{num}</span><span>{name}</span></a>'
         for num, name, anchor in chapters
     ])
 
     css_and_nav = f"""<style>
-.editorial-nav-strip {{
-    background: {COLOR_WHITE};
-    border: 2px solid {COLOR_INK};
-    box-shadow: 4px 4px 0px {COLOR_INK};
-    border-radius: 6px;
-    padding: 8px 14px;
-    margin-bottom: 2rem;
+.tubelight-nav-wrapper {{
     display: flex;
-    overflow-x: auto;
-    white-space: nowrap;
-    gap: 8px;
-    scrollbar-width: thin;
+    justify-content: center;
     position: sticky;
-    top: 0;
-    z-index: 99;
+    top: 12px;
+    z-index: 999;
+    margin: 0 auto 2rem auto;
+    width: 100%;
 }}
-.editorial-nav-btn {{
+.tubelight-nav-container {{
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    background: {COLOR_CREAM};
-    color: {COLOR_INK};
-    padding: 6px 12px;
-    border-radius: 4px;
-    border: 1.5px solid {COLOR_INK};
-    text-decoration: none;
+    background: rgba(255, 255, 255, 0.94);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 2px solid {COLOR_INK};
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08), 4px 4px 0px {COLOR_INK};
+    border-radius: 9999px;
+    padding: 6px 10px;
+    max-width: 98%;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    white-space: nowrap;
+}}
+.tubelight-nav-container::-webkit-scrollbar {{
+    display: none;
+}}
+.tubelight-title {{
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 13px;
+    font-size: 11px;
+    font-weight: 800;
+    color: {COLOR_INK};
+    letter-spacing: 0.05em;
+    padding: 6px 12px;
+    background: {COLOR_CREAM};
+    border: 1.5px solid {COLOR_INK};
+    border-radius: 9999px;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    margin-right: 4px;
+}}
+.tubelight-nav-item {{
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 14px;
+    border-radius: 9999px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 12.5px;
     font-weight: 700;
-    transition: all 0.15s ease;
+    color: {COLOR_INK};
+    text-decoration: none;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    background: transparent;
 }}
-.editorial-nav-btn:hover {{
-    background: {COLOR_AMBER};
-    transform: translate(-1px, -1px);
-    box-shadow: 2px 2px 0px {COLOR_INK};
-}}
-.editorial-nav-btn .ch-num {{
+.tubelight-nav-item .ch-badge {{
     background: {COLOR_INK};
     color: {COLOR_WHITE};
+    font-size: 10.5px;
+    font-weight: 800;
     padding: 1px 6px;
-    border-radius: 3px;
-    font-size: 12px;
+    border-radius: 9999px;
+}}
+.tubelight-nav-item .tubelight-lamp {{
+    position: absolute;
+    top: -2px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0px;
+    height: 3px;
+    background: {COLOR_AMBER};
+    border-radius: 9999px;
+    transition: all 0.25s ease-out;
+    opacity: 0;
+}}
+.tubelight-nav-item:hover {{
+    background: rgba(245, 185, 66, 0.15);
+    color: #000000;
+    transform: translateY(-2px);
+}}
+.tubelight-nav-item:hover .tubelight-lamp {{
+    width: 28px;
+    opacity: 1;
+    box-shadow: 0 0 12px 3px rgba(245, 185, 66, 0.85), 0 0 24px 6px rgba(245, 185, 66, 0.45);
 }}
 </style>
-<div class="editorial-nav-strip">
-<div style="font-family: 'Space Grotesk', sans-serif; font-size: 12px; font-weight: 800; color: {COLOR_INK}; display: flex; align-items: center; padding-right: 10px; border-right: 2px solid {COLOR_INK};">CHAPTER INDEX</div>
+<div class="tubelight-nav-wrapper">
+<div class="tubelight-nav-container">
+<div class="tubelight-title">⚡ CHAPTERS</div>
 {nav_links}
+</div>
 </div>"""
     render_html(css_and_nav)
 
