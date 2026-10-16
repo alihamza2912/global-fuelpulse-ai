@@ -26,6 +26,14 @@
     --radius: 0.5rem;
     --color-border: #dce4ef;
     --color-accent: #315fea;
+    --color-primary: #f5b942;
+    --color-secondary: #3b82f6;
+    --color-destructive: #f43f5e;
+    --color-chart-1: #f59e0b;
+    --color-chart-2: #10b981;
+    --color-chart-3: #6366f1;
+    --color-chart-4: #ec4899;
+    --color-chart-5: #14b8a6;
   }
 
   .dark {
@@ -50,6 +58,14 @@
     --ring: 0 0% 83.1%;
     --color-border: #263449;
     --color-accent: #4f7cff;
+    --color-primary: #f5b942;
+    --color-secondary: #60a5fa;
+    --color-destructive: #f43f5e;
+    --color-chart-1: #fbbf24;
+    --color-chart-2: #34d399;
+    --color-chart-3: #818cf8;
+    --color-chart-4: #f472b6;
+    --color-chart-5: #2dd4bf;
   }
 }
 

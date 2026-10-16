@@ -1,10 +1,39 @@
 "use client";
 
+import React from "react";
 import { Home, User, Briefcase, FileText } from "lucide-react";
 import { NavBar } from "@/components/ui/tubelight-navbar";
 import { BackgroundPaths } from "@/components/ui/background-paths";
 import { AnimatedGrid } from "@/components/ui/animated-grid";
 import { Component as GlowButton } from "@/components/ui/glow-button";
+import { AuthComponent } from "@/components/ui/sign-up";
+
+// A simple placeholder logo for demonstration
+const CustomLogo = () => (
+  <div className="bg-blue-500 text-white rounded-md p-1.5">
+    <svg 
+      className="h-4 w-4" 
+      xmlns="http://www.w3.org/2000/svg" 
+      viewBox="0 0 24 24" 
+      fill="none" 
+      stroke="currentColor" 
+      strokeWidth="2" 
+      strokeLinecap="round" 
+      strokeLinejoin="round"
+    >
+      <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+    </svg>
+  </div>
+);
+
+export function CustomAuthDemo() {
+  return (
+    <AuthComponent 
+      logo={<CustomLogo />} 
+      brandName="MyWebApp" 
+    />
+  );
+}
 
 export function GlowButtonDemo() {
   return (
@@ -46,9 +75,5 @@ export function NavBarDemo() {
 }
 
 export default function Default() {
-  return (
-    <div className="flex h-screen w-screen items-center justify-center bg-background text-foreground">
-      <GlowButton />
-    </div>
-  );
+  return <CustomAuthDemo />;
 }
