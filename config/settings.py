@@ -24,6 +24,12 @@ class DatabaseSettings:
     name: str = field(default_factory=lambda: os.getenv("DB_NAME", "fuelx_db"))
     user: str = field(default_factory=lambda: os.getenv("DB_USER", "root"))
     password: str = field(default_factory=lambda: os.getenv("DB_PASSWORD", ""))
+    engine_type: str = field(
+        default_factory=lambda: os.getenv(
+            "DB_ENGINE",
+            "sqlite" if (BASE_DIR / "fuelx_local.db").exists() and "DB_HOST" not in os.environ else "mysql"
+        )
+    )
     sqlite_fallback_path: Path = field(
         default_factory=lambda: BASE_DIR / "fuelx_local.db"
     )

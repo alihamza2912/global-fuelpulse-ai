@@ -25,32 +25,34 @@ class DatabaseManager:
         self._initialize_engine()
 
     def _initialize_engine(self):
-        """Attempts connection to MySQL first; falls back smoothly to SQLite."""
-        # Try MySQL fuelx_db
-        try:
-            mysql_url = settings.db.mysql_url
-            test_engine = create_engine(
-                mysql_url,
-                pool_pre_ping=True,
-                pool_recycle=3600,
-                connect_args={"connect_timeout": 3}
-            )
-            with test_engine.connect() as conn:
-                conn.execute(text("SELECT 1"))
-            self._engine = test_engine
-            self._active_dialect = "mysql"
-            logger.info("Successfully connected to MySQL database: %s", settings.db.name)
-        except Exception as e:
-            logger.warning("Could not connect to MySQL at %s:%s (%s). Falling back to SQLite local storage.",
-                           settings.db.host, settings.db.port, e)
-            sqlite_url = settings.db.sqlite_url
-            self._engine = create_engine(
-                sqlite_url,
-                connect_args={"check_same_thread": False}
-            )
-            self._active_dialect = "sqlite"
-            logger.info("Active database: SQLite local file (%s)", settings.db.sqlite_fallback_path)
+        """Attempts connection to MySQL when configured; otherwise connects instantly to SQLite."""
+        if settings.db.engine_type.lower() != "sqlite":
+            try:
+                mysql_url = settings.db.mysql_url
+                test_engine = create_engine(
+                    mysql_url,
+                    pool_pre_ping=True,
+                    pool_recycle=3600,
+                    connect_args={"connect_timeout": 1}
+                )
+                with test_engine.connect() as conn:
+                    conn.execute(text("SELECT 1"))
+                self._engine = test_engine
+                self._active_dialect = "mysql"
+                logger.info("Successfully connected to MySQL database: %s", settings.db.name)
+                self._session_factory = sessionmaker(bind=self._engine, autocommit=False, autoflush=False)
+                return
+            except Exception as e:
+                logger.warning("Could not connect to MySQL at %s:%s (%s). Falling back to SQLite local storage.",
+                               settings.db.host, settings.db.port, e)
 
+        sqlite_url = settings.db.sqlite_url
+        self._engine = create_engine(
+            sqlite_url,
+            connect_args={"check_same_thread": False}
+        )
+        self._active_dialect = "sqlite"
+        logger.info("Active database: SQLite local file (%s)", settings.db.sqlite_fallback_path)
         self._session_factory = sessionmaker(
             bind=self._engine,
             autocommit=False,
