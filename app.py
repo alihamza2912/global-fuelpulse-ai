@@ -37,6 +37,8 @@ from src.ui_components import (
     apply_theme,
     clean_html,
     render_html,
+    get_fuel_client_logo_html,
+    get_animated_grid_css,
     COLOR_CREAM,
     COLOR_WHITE,
     COLOR_INK,
@@ -170,9 +172,12 @@ render_chapter_nav()
 hero_c1, hero_c2 = st.columns([7, 5])
 
 with hero_c1:
+    grid_css = get_animated_grid_css("fuelpulse-hero-backdrop")
+    client_logo = get_fuel_client_logo_html()
     render_html(
         f"""
-        <div style="
+        {grid_css}
+        <div class="fuelpulse-hero-backdrop" style="
             background: {COLOR_WHITE};
             border: 2px solid {COLOR_INK};
             box-shadow: 5px 5px 0px {COLOR_INK};
@@ -183,71 +188,77 @@ with hero_c1:
             flex-direction: column;
             justify-content: center;
         ">
-            <div style="
-                display: inline-flex;
-                align-items: center;
-                gap: 8px;
-                background: {COLOR_AMBER};
-                color: {COLOR_INK};
-                border: 1.5px solid {COLOR_INK};
-                padding: 3px 12px;
-                border-radius: 999px;
-                font-family: 'Space Grotesk', sans-serif;
-                font-size: 0.75rem;
-                font-weight: 800;
-                letter-spacing: 0.08em;
-                text-transform: uppercase;
-                margin-bottom: 14px;
-                width: fit-content;
-            ">
-                ENERGY ATLAS • 2024–2025
-            </div>
-            <h1 style="
-                font-family: 'Space Grotesk', sans-serif;
-                font-size: 2.85rem;
-                font-weight: 800;
-                color: {COLOR_INK};
-                letter-spacing: -0.04em;
-                line-height: 1.1;
-                margin: 0 0 16px 0;
-            ">
-                The world runs on energy.<br>
-                <span style="background: {COLOR_AMBER}; padding: 0 6px; border: 1.5px solid {COLOR_INK}; box-shadow: 2px 2px 0px {COLOR_INK};">See where it flows.</span>
-            </h1>
-            <p style="
-                font-family: 'Inter', sans-serif;
-                font-size: 1.05rem;
-                color: {COLOR_GRAY_MUTED};
-                line-height: 1.6;
-                margin-bottom: 24px;
-            ">
-                Explore global oil production, petroleum trade, fuel prices, and India's fuel economics through reliable data and interactive analysis.
-            </p>
-            <div style="display: flex; gap: 14px; flex-wrap: wrap;">
-                <a href="#ch-01" style="
-                    background: {COLOR_AMBER};
-                    color: {COLOR_INK};
-                    border: 2px solid {COLOR_INK};
-                    box-shadow: 3px 3px 0px {COLOR_INK};
-                    padding: 10px 22px;
-                    border-radius: 5px;
+            <span class="fuelpulse-hero-backdrop-glow"></span>
+            <div style="position: relative; z-index: 2;">
+                <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; margin-bottom: 6px;">
+                    {client_logo}
+                    <div style="
+                        display: inline-flex;
+                        align-items: center;
+                        gap: 8px;
+                        background: {COLOR_AMBER};
+                        color: {COLOR_INK};
+                        border: 1.5px solid {COLOR_INK};
+                        padding: 4px 12px;
+                        border-radius: 999px;
+                        font-family: 'Space Grotesk', sans-serif;
+                        font-size: 0.73rem;
+                        font-weight: 800;
+                        letter-spacing: 0.08em;
+                        text-transform: uppercase;
+                        margin-bottom: 12px;
+                        width: fit-content;
+                    ">
+                        ENERGY ATLAS • 2024–2026
+                    </div>
+                </div>
+                <h1 style="
                     font-family: 'Space Grotesk', sans-serif;
-                    font-size: 0.88rem;
+                    font-size: 2.85rem;
                     font-weight: 800;
-                    text-decoration: none;
-                ">Explore Global Markets ↗</a>
-                <a href="#ch-05" style="
-                    background: {COLOR_WHITE};
                     color: {COLOR_INK};
-                    border: 2px solid {COLOR_INK};
-                    box-shadow: 3px 3px 0px {COLOR_INK};
-                    padding: 10px 22px;
-                    border-radius: 5px;
-                    font-family: 'Space Grotesk', sans-serif;
-                    font-size: 0.88rem;
-                    font-weight: 700;
-                    text-decoration: none;
-                ">Understand India's Fuel Prices →</a>
+                    letter-spacing: -0.04em;
+                    line-height: 1.1;
+                    margin: 0 0 16px 0;
+                ">
+                    The world runs on energy.<br>
+                    <span style="background: {COLOR_AMBER}; padding: 0 6px; border: 1.5px solid {COLOR_INK}; box-shadow: 2px 2px 0px {COLOR_INK};">See where it flows.</span>
+                </h1>
+                <p style="
+                    font-family: 'Inter', sans-serif;
+                    font-size: 1.05rem;
+                    color: {COLOR_GRAY_MUTED};
+                    line-height: 1.6;
+                    margin-bottom: 24px;
+                ">
+                    Explore global oil production, petroleum trade, fuel prices, and India's fuel economics through reliable data and interactive analysis.
+                </p>
+                <div style="display: flex; gap: 14px; flex-wrap: wrap;">
+                    <a href="#ch-01" style="
+                        background: {COLOR_AMBER};
+                        color: {COLOR_INK};
+                        border: 2px solid {COLOR_INK};
+                        box-shadow: 3px 3px 0px {COLOR_INK};
+                        padding: 10px 22px;
+                        border-radius: 5px;
+                        font-family: 'Space Grotesk', sans-serif;
+                        font-size: 0.88rem;
+                        font-weight: 800;
+                        text-decoration: none;
+                    ">Explore Global Markets ↗</a>
+                    <a href="#ch-05" style="
+                        background: {COLOR_WHITE};
+                        color: {COLOR_INK};
+                        border: 2px solid {COLOR_INK};
+                        box-shadow: 3px 3px 0px {COLOR_INK};
+                        padding: 10px 22px;
+                        border-radius: 5px;
+                        font-family: 'Space Grotesk', sans-serif;
+                        font-size: 0.88rem;
+                        font-weight: 700;
+                        text-decoration: none;
+                    ">Understand India's Fuel Prices →</a>
+                </div>
             </div>
         </div>
         """

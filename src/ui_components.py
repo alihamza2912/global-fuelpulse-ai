@@ -77,6 +77,96 @@ def get_brand_logo_svg(width: int = 280, height: int = 50) -> str:
 </svg>"""
 
 
+def get_fuel_client_logo_html() -> str:
+    """Returns a client-facing small fuel logo badge with an industrial fuel pump and energy flame."""
+    return """
+    <div style="
+        display: inline-flex;
+        align-items: center;
+        gap: 9px;
+        background: #FFFFFF;
+        border: 1.5px solid #111111;
+        box-shadow: 2px 2px 0px #111111;
+        padding: 5px 12px;
+        border-radius: 9999px;
+        margin-bottom: 12px;
+        width: fit-content;
+        position: relative;
+        z-index: 5;
+    ">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#111111" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 22V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v17"/>
+            <path d="M15 10h2a2 2 0 0 1 2 2v2a2 2 0 0 0 2 2 2 2 0 0 0 2-2V9.83a2 2 0 0 0-.59-1.42L19.4 5.4"/>
+            <path d="M3 22h12"/>
+            <path d="M7 9h4"/>
+            <circle cx="9" cy="6" r="1.3" fill="#F5B942"/>
+        </svg>
+        <span style="font-family: 'Space Grotesk', sans-serif; font-size: 0.72rem; font-weight: 800; letter-spacing: 0.08em; color: #111111; text-transform: uppercase;">
+            FUELPULSE AI <span style="background: #F5B942; color: #111111; padding: 1px 7px; border-radius: 3px; font-weight: 800; border: 1px solid #111111; margin-left: 4px;">CLIENT PORTAL</span>
+        </span>
+    </div>
+    """
+
+
+def get_animated_grid_css(container_class: str = "fuelpulse-hero-backdrop") -> str:
+    """Generates layered, CSS-only animated grid backdrop styles matching animated-grid.tsx."""
+    return f"""
+<style>
+@keyframes fp-grid-drift {{
+  from {{ background-position: 0 0, 0 0; }}
+  to   {{ background-position: 144px 144px, 144px 144px; }}
+}}
+@keyframes fp-grid-pulse {{
+  0%, 100% {{ transform: scale(1); opacity: 0.7; }}
+  50%      {{ transform: scale(1.12); opacity: 1; }}
+}}
+.{container_class} {{
+  position: relative !important;
+  overflow: hidden !important;
+}}
+.{container_class}::before,
+.{container_class}::after {{
+  content: "";
+  position: absolute;
+  inset: -144px;
+  pointer-events: none;
+}}
+.{container_class}::before {{
+  background-image:
+    linear-gradient(to right, #dce4ef 1px, transparent 1px),
+    linear-gradient(to bottom, #dce4ef 1px, transparent 1px);
+  background-size: 36px 36px;
+  opacity: 0.45;
+  animation: fp-grid-drift 26s linear infinite;
+  will-change: background-position;
+}}
+.{container_class}::after {{
+  background-image:
+    linear-gradient(to right, rgba(245, 185, 66, 0.55) 1.2px, transparent 1.2px),
+    linear-gradient(to bottom, rgba(245, 185, 66, 0.55) 1.2px, transparent 1.2px);
+  background-size: 144px 144px;
+  opacity: 0.38;
+  animation: fp-grid-drift 26s linear infinite;
+  will-change: background-position;
+}}
+.{container_class}-glow {{
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(45% 45% at 50% 42%, rgba(245, 185, 66, 0.22), transparent 70%);
+  animation: fp-grid-pulse 9s ease-in-out infinite;
+  will-change: transform, opacity;
+}}
+@media (prefers-reduced-motion: reduce) {{
+  .{container_class}::before, .{container_class}::after, .{container_class}-glow {{
+    animation: none !important;
+  }}
+}}
+</style>
+"""
+
+
+
 # ==============================================================================
 # 4. EDITORIAL THEME INJECTOR
 # ==============================================================================
