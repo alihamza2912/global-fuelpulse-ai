@@ -148,40 +148,14 @@ def navigate_to(target: str):
     st.rerun()
 
 
-# 4. Sidebar Telemetry & Quick Navigation
+# 4. Sidebar Brand Lockup
 render_html(
     """
-    <div style="padding: 10px 0 16px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.12);">
-        <div style="font-family: 'Space Grotesk', sans-serif; font-size: 1.15rem; font-weight: 800; color: #F9FAFB;">GLOBAL FUELPULSE AI</div>
-        <div style="font-family: 'Space Grotesk', sans-serif; font-size: 0.78rem; color: #94A3B8; font-weight: 700; letter-spacing: 0.05em;">ENERGY INTELLIGENCE PLATFORM</div>
-    </div>
-    """,
-    container=st.sidebar
-)
-
-# Engine Health Badge
-health = db_manager.check_health()
-engine_sym = "🟢" if health["connected"] else "🔴"
-render_html(
-    f"""
-    <div style="font-family: 'Space Grotesk', sans-serif; font-size: 0.8rem; color: #F9FAFB; margin-top: 12px; margin-bottom: 16px; background: rgba(14, 21, 38, 0.8); backdrop-filter: blur(12px); padding: 12px; border: 1px solid rgba(255, 255, 255, 0.12); box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3); border-radius: 6px; line-height: 1.5;">
-        <div><b>DATA ENGINE:</b> {engine_sym} {health['dialect'].upper()}</div>
-        <div><b>REPOSITORY:</b> {health['database']}</div>
-        <div><b>ACTIVE TABLES:</b> {health['tables_count']} data marts</div>
-        <div><b>STATUS:</b> {'VERIFIED BENCHMARKS' if settings.is_demo_mode else 'LIVE APIS'}</div>
-    </div>
-    """,
-    container=st.sidebar
-)
-
-# 4. Sidebar Telemetry & TreeNav Quick Navigation
-render_html(
-    """
-    <div style="padding: 10px 0 16px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.12);">
-        <div style="font-family: 'Space Grotesk', sans-serif; font-size: 1.15rem; font-weight: 800; color: #F9FAFB; display: flex; align-items: center; gap: 8px;">
+    <div style="padding: 10px 0 14px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.1); margin-bottom: 12px;">
+        <div style="font-family: 'Space Grotesk', -apple-system, sans-serif; font-size: 1.15rem; font-weight: 800; color: #F9FAFB; display: flex; align-items: center; gap: 8px;">
             <span style="color: #3B82F6;">⚡</span> GLOBAL FUELPULSE AI
         </div>
-        <div style="font-family: 'Space Grotesk', sans-serif; font-size: 0.76rem; color: #94A3B8; font-weight: 700; letter-spacing: 0.06em; margin-top: 2px;">
+        <div style="font-family: 'Space Grotesk', -apple-system, sans-serif; font-size: 0.74rem; color: #94A3B8; font-weight: 700; letter-spacing: 0.06em; margin-top: 2px;">
             ENERGY INTELLIGENCE PLATFORM v2.0
         </div>
     </div>
@@ -194,54 +168,79 @@ health = db_manager.check_health()
 engine_sym = "🟢" if health["connected"] else "🔴"
 render_html(
     f"""
-    <div style="font-family: 'Space Grotesk', sans-serif; font-size: 0.8rem; color: #F9FAFB; margin-top: 12px; margin-bottom: 16px; background: rgba(14, 21, 38, 0.8); backdrop-filter: blur(12px); padding: 12px; border: 1px solid rgba(255, 255, 255, 0.12); box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3); border-radius: 6px; line-height: 1.5;">
-        <div><b>DATA ENGINE:</b> {engine_sym} {health['dialect'].upper()}</div>
-        <div><b>REPOSITORY:</b> {health['database']}</div>
-        <div><b>ACTIVE TABLES:</b> {health['tables_count']} data marts</div>
-        <div><b>STATUS:</b> {'VERIFIED BENCHMARKS' if settings.is_demo_mode else 'LIVE APIS'}</div>
+    <div style="font-family: 'Space Grotesk', -apple-system, sans-serif; font-size: 0.78rem; color: #F9FAFB; margin-bottom: 14px; background: rgba(14, 21, 38, 0.8); backdrop-filter: blur(12px); padding: 10px 12px; border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; line-height: 1.5;">
+        <div><b>ENGINE:</b> {engine_sym} {health['dialect'].upper()} &nbsp;|&nbsp; <b>REPOS:</b> {health['database']}</div>
+        <div><b>TABLES:</b> {health['tables_count']} marts &nbsp;|&nbsp; <b>DATA:</b> {'VERIFIED' if settings.is_demo_mode else 'LIVE'}</div>
     </div>
     """,
     container=st.sidebar
 )
 
-# TreeNav Portal Navigation with Connected Rail and Diamond Markers
-st.sidebar.markdown("### 🌲 Platform Tree Navigation")
+# 21st.dev Authentic TreeNav Sidebar Component
+TREE_NAV_ITEMS = [
+    {"label": "Overview", "tab": "home", "canonical": "🏠 Overview", "badge": None},
+    {"label": "Intelligence Dashboard", "tab": "dashboard", "canonical": "⚡ Intelligence Dashboard", "badge": "Live"},
+    {"label": "India Fuel Center", "tab": "india", "canonical": "🇮🇳 India Fuel Center", "badge": "MoPNG"},
+    {"label": "About Platform", "tab": "about", "canonical": "📖 About Project", "badge": "v2.0"},
+    {"label": "How It Works", "tab": "how_it_works", "canonical": "⚙️ How It Works", "badge": None},
+    {"label": "Feature Catalog", "tab": "features", "canonical": "📋 Features", "badge": "12 Mod"},
+    {"label": "Data Trust & SLAs", "tab": "data_trust", "canonical": "🔒 Data Trust", "badge": "SLA"},
+    {"label": "Methodology", "tab": "methodology", "canonical": "📐 Methodology", "badge": None},
+    {"label": "Product Roadmap", "tab": "roadmap", "canonical": "🗺️ Roadmap", "badge": "New"},
+    {"label": "Documentation & FAQ", "tab": "faq", "canonical": "❓ Docs & FAQ", "badge": "Docs"},
+]
 
-# TreeNav CSS for Left Rail and Active Diamond Indicator
-render_html(
-    """
-    <style>
-    /* TreeNav Rail Styling for Sidebar */
-    .stSidebar div[data-testid="stButton"] button {
-        text-align: left !important;
-        justify-content: flex-start !important;
-        font-family: 'Space Grotesk', sans-serif !important;
-        font-size: 0.82rem !important;
-        font-weight: 600 !important;
-        padding: 7px 12px !important;
-        border-radius: 8px !important;
-        border-left: 2px solid rgba(255, 255, 255, 0.14) !important;
-        background: rgba(15, 23, 42, 0.4) !important;
-        margin-bottom: 4px !important;
-        transition: all 0.18s ease-in-out !important;
-    }
-    .stSidebar div[data-testid="stButton"] button:hover {
-        border-left: 2px solid #60A5FA !important;
-        background: rgba(59, 130, 246, 0.12) !important;
-        color: #FFFFFF !important;
-        transform: translateX(2px) !important;
-    }
-    .stSidebar div[data-testid="stButton"] button[kind="primary"] {
-        border-left: 3px solid #3B82F6 !important;
-        background: rgba(59, 130, 246, 0.22) !important;
-        color: #93C5FD !important;
-        box-shadow: 0 0 12px rgba(59, 130, 246, 0.3) !important;
-    }
-    </style>
-    """,
-    container=st.sidebar
-)
+active_idx = 0
+for idx, item in enumerate(TREE_NAV_ITEMS):
+    if item["canonical"] == st.session_state.active_nav:
+        active_idx = idx
+        break
 
+ROW_H = 34
+MARKER = 7
+RAIL_X = 10
+total_items = len(TREE_NAV_ITEMS)
+end_y = total_items * ROW_H - ROW_H // 2
+marker_y = active_idx * ROW_H + ROW_H // 2 - MARKER // 2
+
+items_html = []
+for idx, item in enumerate(TREE_NAV_ITEMS):
+    is_active = (idx == active_idx)
+    badge_html = f'<span style="display: inline-flex; height: 18px; align-items: center; border-radius: 6px; background: rgba(43, 127, 255, 0.14); padding: 0 6px; font-size: 11px; font-weight: 500; color: #60A5FA; line-height: 1;">{item["badge"]}</span>' if item.get("badge") else ''
+    active_style = 'background: rgba(255, 255, 255, 0.08); color: #FFFFFF; font-weight: 500;' if is_active else 'color: #A1A1AA; font-weight: 400;'
+    items_html.append(f"""
+        <li style="position: relative; list-style: none; margin: 0; padding: 0;">
+            <a href="?tab={item['tab']}" target="_self" style="display: flex; height: 32px; align-items: center; justify-content: space-between; border-radius: 8px; padding: 0 10px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 13px; text-decoration: none; transition: all 0.15s ease-out; {active_style}">
+                <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{item['label']}</span>
+                {badge_html}
+            </a>
+        </li>
+    """)
+
+tree_nav_html = f"""
+<div style="background: #09090b; border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 14px; padding: 12px 10px 14px 8px; margin-bottom: 16px; position: relative;">
+    <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 11px; font-weight: 600; color: #71717A; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; padding-left: 10px;">
+        Tree Nav
+    </div>
+    <ul style="position: relative; display: flex; flex-direction: column; gap: 2px; padding-left: 24px; margin: 0; padding-right: 0;">
+        <!-- Vertical Rail Track -->
+        <span aria-hidden="true" style="pointer-events: none; position: absolute; top: 0; bottom: 0; left: 0; width: 20px;">
+            <!-- Background Rail -->
+            <span style="position: absolute; top: 16px; left: {RAIL_X}px; width: 1px; height: {end_y - 16}px; background: #27272a;"></span>
+            <!-- Terminal Dot -->
+            <span style="position: absolute; left: {RAIL_X - 1.5}px; top: {end_y - 2}px; width: 4px; height: 4px; border-radius: 50%; background: #3f3f46;"></span>
+            <!-- Accent Rail (Pure White) -->
+            <span style="position: absolute; top: 16px; left: {RAIL_X}px; width: 1px; height: {active_idx * ROW_H}px; background: #ffffff;"></span>
+            <!-- Active Diamond Marker (Pure White 45deg) -->
+            <span style="position: absolute; left: {RAIL_X - MARKER / 2 + 0.5}px; top: {marker_y + 1}px; width: {MARKER}px; height: {MARKER}px; background: #ffffff; transform: rotate(45deg); border-radius: 1px; box-shadow: 0 0 6px rgba(255, 255, 255, 0.8);"></span>
+        </span>
+        {''.join(items_html)}
+    </ul>
+</div>
+"""
+render_html(tree_nav_html, container=st.sidebar)
+
+# Programmatic Buttons for Test Coverage & Fallback
 NAV_TREE_BADGES = {
     "🏠 Overview": "Home",
     "⚡ Intelligence Dashboard": "Live",
@@ -255,12 +254,13 @@ NAV_TREE_BADGES = {
     "❓ Docs & FAQ": "Docs",
 }
 
-for opt in NAV_OPTIONS:
-    is_active = (opt == st.session_state.active_nav)
-    badge = NAV_TREE_BADGES.get(opt, "View")
-    btn_label = f"◆ {opt}  [{badge}]" if is_active else f"◇ {opt}  [{badge}]"
-    if st.sidebar.button(btn_label, key=f"side_portal_{opt}", use_container_width=True, type="primary" if is_active else "secondary"):
-        navigate_to(opt)
+with st.sidebar.expander("⚡ Quick Portal Jump (Buttons)", expanded=False):
+    for opt in NAV_OPTIONS:
+        is_active = (opt == st.session_state.active_nav)
+        badge = NAV_TREE_BADGES.get(opt, "View")
+        btn_label = f"◆ {opt}  [{badge}]" if is_active else f"◇ {opt}  [{badge}]"
+        if st.button(btn_label, key=f"side_portal_{opt}", use_container_width=True, type="primary" if is_active else "secondary"):
+            navigate_to(opt)
 
 # Live Pipeline Refresh Controls & Timestamps
 st.sidebar.markdown("### ⚡ Live Pipeline Sync")
