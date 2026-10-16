@@ -135,6 +135,7 @@ st.sidebar.markdown("### Granular Drill-Down Pages")
 render_html(
     """
     <div style="font-family: 'Space Grotesk', sans-serif; font-size: 0.82rem; line-height: 2.1; font-weight: 700;">
+        <div>00. 🛰️ <a href="/Satellite_Radar" style="color: #111111; text-decoration: none;">Satellite Radar & Earth Observation</a></div>
         <div>01. 🌐 <a href="/Global_Command_Center" style="color: #111111; text-decoration: none;">Global Command Center</a></div>
         <div>02. ⛽ <a href="/Fuel_Price_Explorer" style="color: #111111; text-decoration: none;">Fuel Price Explorer</a></div>
         <div>03. 🚢 <a href="/Global_Trade" style="color: #111111; text-decoration: none;">Petroleum Trade & Flows</a></div>

@@ -2,6 +2,7 @@
 
 import { Home, User, Briefcase, FileText } from 'lucide-react'
 import { NavBar } from "@/components/ui/tubelight-navbar"
+export { SatelliteImagingLandingPage } from "@/components/satellite-imaging-landing-page"
 
 export function NavBarDemo() {
   const navItems = [
