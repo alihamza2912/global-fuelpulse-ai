@@ -2,7 +2,11 @@
 
 import { Home, User, Briefcase, FileText } from 'lucide-react'
 import { NavBar } from "@/components/ui/tubelight-navbar"
-export { SatelliteImagingLandingPage } from "@/components/satellite-imaging-landing-page"
+import { BackgroundPaths } from "@/components/ui/background-paths"
+
+export function DemoBackgroundPaths() {
+  return <BackgroundPaths title="Background Paths" />
+}
 
 export function NavBarDemo() {
   const navItems = [
@@ -14,3 +18,4 @@ export function NavBarDemo() {
 
   return <NavBar items={navItems} />
 }
+
