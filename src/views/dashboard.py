@@ -51,6 +51,7 @@ from src.analytics.india_company_analytics import IndiaCompanyAnalytics
 from src.analytics.india_demand_analytics import IndiaDemandAnalytics
 from src.analytics.affordability import AffordabilityAnalytics
 from src.analytics.global_tax_engine import GlobalTaxEngine
+from src.analytics.global_news_engine import GlobalNewsEngine
 
 
 # ==============================================================================
@@ -71,7 +72,7 @@ def get_cached_sync_timestamps():
 def get_cached_telemetry():
     """Fetches key headline price benchmarks."""
     brent_val = "$84.20 / bbl"
-    delhi_diesel_val = "₹93.22 / L"
+    delhi_diesel_val = "₹95.20 / L"
     try:
         with db_manager.engine.connect() as conn:
             r_brent = conn.execute(db_manager.safe_sql(
@@ -1209,6 +1210,60 @@ def render_dashboard_view(navigate_fn=None):
             "source_id": "Data Source"
         })
         st.dataframe(display_matrix.head(10), width="stretch", hide_index=True)
+
+    # --------------------------------------------------------------------------
+    # MARITIME TRANSPORT & STRATEGIC CHOKEPOINTS SITUATION
+    # --------------------------------------------------------------------------
+    st.markdown("#### 🚨 Global Maritime Chokepoints & Seaborne Transport Bottlenecks")
+    st.caption("Real-time AIS tanker throughput, Strait of Hormuz naval alerts, Red Sea rerouting impacts, and strategic bypass pipeline capacities.")
+
+    chokepoints = GlobalNewsEngine.get_chokepoint_telemetry()
+    cp_cols = st.columns(4)
+    for idx, cp in enumerate(chokepoints):
+        with cp_cols[idx % 4]:
+            st.markdown(
+                f"""
+                <div style="background: rgba(14, 21, 38, 0.85); border: 1px solid rgba(255, 255, 255, 0.12); border-left: 4px solid {cp['status_color']}; border-radius: 8px; padding: 14px 16px; margin-bottom: 12px; min-height: 250px;">
+                    <div style="font-family: 'Space Grotesk', sans-serif; font-size: 14px; font-weight: 800; color: #F9FAFB; margin-bottom: 6px;">
+                        {cp['name']}
+                    </div>
+                    <div style="margin-bottom: 8px;">
+                        <span style="background: {cp['status_color']}22; color: {cp['status_color']}; border: 1px solid {cp['status_color']}66; padding: 2px 7px; border-radius: 4px; font-size: 10px; font-weight: 800; letter-spacing: 0.04em;">
+                            {cp['status']}
+                        </span>
+                    </div>
+                    <div style="font-size: 20px; font-weight: 800; color: #EAB308; margin-bottom: 2px;">{cp['throughput']}</div>
+                    <div style="font-size: 11px; color: #94A3B8; margin-bottom: 8px;">{cp['global_share']}</div>
+                    <div style="font-size: 11.5px; color: #CBD5E1; margin-bottom: 4px;">
+                        <strong style="color: #F9FAFB;">Risk Index:</strong> <span style="color: {cp['status_color']}; font-weight: 700;">{cp['risk_index']}</span>
+                    </div>
+                    <div style="font-size: 11px; color: #94A3B8; line-height: 1.4; margin-bottom: 6px;">
+                        <strong style="color: #CBD5E1;">Key Threat:</strong> {cp['key_risk']}
+                    </div>
+                    <div style="font-size: 11px; color: #64748B; line-height: 1.3;">
+                        <strong style="color: #94A3B8;">Bypass Pipeline:</strong> {cp['contingency']}
+                    </div>
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
+
+    with st.expander("📡 View Breaking Maritime Transport & Bilateral Flow Alerts (Live Wire)", expanded=False):
+        m_news = GlobalNewsEngine.get_live_news_feed(category="HORMUZ_MARITIME") + GlobalNewsEngine.get_live_news_feed(category="TRADE_FLOWS")
+        for item in m_news[:4]:
+            st.markdown(
+                f"""
+                <div style="background: rgba(14, 21, 38, 0.6); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 6px; padding: 12px; margin-bottom: 8px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                        <span style="font-weight: 700; color: #F9FAFB; font-size: 13px;">{item['headline']}</span>
+                        <span style="background: {item['impact_color']}20; color: {item['impact_color']}; border: 1px solid {item['impact_color']}50; padding: 1px 6px; border-radius: 4px; font-size: 10px; font-weight: 800;">{item['impact']}</span>
+                    </div>
+                    <div style="font-size: 11px; color: #94A3B8; margin-bottom: 6px;">{item['timestamp']} • Source: {item['source']}</div>
+                    <div style="font-size: 12px; color: #CBD5E1; line-height: 1.4;">{item['summary']}</div>
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
 
 
     # ==============================================================================

@@ -298,20 +298,137 @@ render_html(
 )
 
 
-# 5. Top Brand Header Strip (Clean single-row header without duplicate links)
-health = db_manager.check_health()
-engine_name = "MYSQL 8.4" if health["dialect"] == "mysql" else "SQLITE VERIFIED"
-render_html(f"""
-<div style="background: rgba(14, 21, 38, 0.85); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.12); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); border-radius: 10px; padding: 10px 20px; margin: -0.5rem 0 0.75rem 0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px;">
-    <div style="display: flex; align-items: center; gap: 14px;">
-        {get_brand_logo_svg(width=280, height=44)}
+# 5. Top Brand Header Strip with Upper-Right Live Intelligence Notification Center
+from src.analytics.global_news_engine import GlobalNewsEngine
+
+top_left, top_right = st.columns([7, 3])
+with top_left:
+    health = db_manager.check_health()
+    engine_name = "MYSQL 8.4" if health["dialect"] == "mysql" else "SQLITE VERIFIED"
+    render_html(f"""
+    <div style="background: rgba(14, 21, 38, 0.85); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.12); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); border-radius: 10px; padding: 10px 18px; margin: -0.5rem 0 0.5rem 0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+        <div style="display: flex; align-items: center; gap: 12px;">
+            {get_brand_logo_svg(width=260, height=40)}
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+            <span style="background: rgba(16, 185, 129, 0.18); color: #34D399; border: 1px solid rgba(16, 185, 129, 0.4); padding: 3px 10px; border-radius: 999px; font-family: 'Space Grotesk', sans-serif; font-size: 11px; font-weight: 700;">● {engine_name}</span>
+            <span style="background: rgba(245, 185, 66, 0.18); color: #F5B942; border: 1px solid rgba(245, 185, 66, 0.4); padding: 3px 10px; border-radius: 999px; font-family: 'Space Grotesk', sans-serif; font-size: 11px; font-weight: 700;">LIVE 2026</span>
+        </div>
     </div>
-    <div style="display: flex; align-items: center; gap: 10px;">
-        <span style="background: rgba(16, 185, 129, 0.18); color: #34D399; border: 1px solid rgba(16, 185, 129, 0.4); padding: 4px 12px; border-radius: 999px; font-family: 'Space Grotesk', sans-serif; font-size: 11.5px; font-weight: 700;">● {engine_name}</span>
-        <span style="background: rgba(245, 185, 66, 0.18); color: #F5B942; border: 1px solid rgba(245, 185, 66, 0.4); padding: 4px 12px; border-radius: 999px; font-family: 'Space Grotesk', sans-serif; font-size: 11.5px; font-weight: 700;">LIVE PLATFORM 2024–2026</span>
-    </div>
-</div>
-""")
+    """)
+
+with top_right:
+    alerts_count = GlobalNewsEngine.get_active_alerts_count()
+    with st.popover(f"🔔 LIVE NEWS ({alerts_count})", use_container_width=True):
+        st.markdown("### 📡 Global Fuel & Chokepoint Wire")
+        
+        c_btn, c_time = st.columns([1, 1])
+        with c_btn:
+            if st.button("🔄 Refresh Feeds", key="popover_refresh_news", use_container_width=True, type="primary"):
+                GlobalNewsEngine.refresh_news()
+                st.toast("Refreshed live global news & maritime feeds!", icon="📡")
+                st.rerun()
+        with c_time:
+            st.caption(f"Sync: {GlobalNewsEngine.get_last_refresh_timestamp()}")
+
+        tab_hormuz, tab_trade, tab_rates, tab_all = st.tabs([
+            "🚨 Hormuz & Chokepoints",
+            "🚢 Import/Export",
+            "⛽ Delhi & Global Rates",
+            "📰 All Breaking News"
+        ])
+        
+        with tab_hormuz:
+            st.markdown("#### 🔴 Maritime Transit Risk Monitor")
+            for chk in GlobalNewsEngine.get_chokepoint_telemetry():
+                st.markdown(f"""
+                <div style="background: rgba(14, 21, 38, 0.9); border: 1px solid rgba(255, 255, 255, 0.12); border-left: 4px solid {chk['status_color']}; border-radius: 6px; padding: 10px 12px; margin-bottom: 8px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <b style="color: #F9FAFB; font-size: 0.9rem;">{chk['name']}</b>
+                        <span style="background: rgba(239, 68, 68, 0.2); color: {chk['status_color']}; font-size: 0.7rem; font-weight: 800; padding: 2px 6px; border-radius: 4px;">{chk['status']}</span>
+                    </div>
+                    <div style="font-size: 0.78rem; color: #94A3B8; margin-top: 4px;">Throughput: <b style="color: #F5B942;">{chk['throughput']}</b> ({chk['global_share']})</div>
+                    <div style="font-size: 0.74rem; color: #CBD5E1; margin-top: 4px;"><b>Risk:</b> {chk['key_risk']}</div>
+                    <div style="font-size: 0.72rem; color: #34D399; margin-top: 3px;"><b>Contingency:</b> {chk['contingency']}</div>
+                </div>
+                """, unsafe_allow_html=True)
+                
+        with tab_trade:
+            st.markdown("#### 🚢 Global Petroleum Import & Export")
+            for item in GlobalNewsEngine.get_live_news_feed(category="TRADE_FLOWS"):
+                metrics_html = " ".join([f"<span style='background: rgba(59,130,246,0.18); color: #60A5FA; padding: 2px 6px; border-radius: 4px; font-size: 0.68rem;'><b>{k}:</b> {v}</span>" for k, v in item['metrics'].items()])
+                st.markdown(f"""
+                <div style="background: rgba(14, 21, 38, 0.9); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 6px; padding: 10px 12px; margin-bottom: 8px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <b style="color: #F9FAFB; font-size: 0.85rem;">{item['headline']}</b>
+                    </div>
+                    <div style="font-size: 0.74rem; color: #94A3B8; margin: 4px 0;">{item['timestamp']} • Source: <i>{item['source']}</i></div>
+                    <p style="font-size: 0.78rem; color: #CBD5E1; line-height: 1.4; margin-bottom: 6px;">{item['summary']}</p>
+                    <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                        {metrics_html}
+                    </div>
+                </div>
+                """, unsafe_allow_html=True)
+                
+        with tab_rates:
+            st.markdown("#### ⛽ Verified Live Retail Rates Today (17 Oct 2026)")
+            benchmarks = GlobalNewsEngine.get_live_delhi_and_metro_benchmarks()
+            d = benchmarks["delhi"]
+            st.markdown(f"""
+            <div style="background: rgba(234, 179, 8, 0.12); border: 1.5px solid #CA8A04; border-radius: 8px; padding: 12px; margin-bottom: 10px;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span style="font-weight: 800; color: #EAB308; font-size: 0.92rem;">🇮🇳 DELHI (LIVE TODAY)</span>
+                    <span style="background: #EAB308; color: #070A12; font-weight: 800; font-size: 0.68rem; padding: 2px 6px; border-radius: 4px;">PPAC VERIFIED</span>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px;">
+                    <div style="background: rgba(0,0,0,0.4); padding: 8px; border-radius: 6px;">
+                        <div style="font-size: 0.72rem; color: #94A3B8;">Petrol RSP</div>
+                        <div style="font-size: 1.25rem; font-weight: 800; color: #F9FAFB;">₹{d['petrol']:.2f}/L</div>
+                    </div>
+                    <div style="background: rgba(0,0,0,0.4); padding: 8px; border-radius: 6px;">
+                        <div style="font-size: 0.72rem; color: #94A3B8;">Diesel RSP</div>
+                        <div style="font-size: 1.25rem; font-weight: 800; color: #F9FAFB;">₹{d['diesel']:.2f}/L</div>
+                    </div>
+                </div>
+                <div style="font-size: 0.74rem; color: #CBD5E1; margin-top: 8px; line-height: 1.4;">
+                    • <b>Base Refinery Transfer:</b> ₹{d['base_petrol']:.2f}/L<br/>
+                    • <b>Central Excise:</b> ₹{d['central_tax']:.2f}/L<br/>
+                    • <b>Delhi State VAT (19.40%):</b> ₹{d['state_vat']:.2f}/L<br/>
+                    • <b>Combined Tax Wedge:</b> ₹40.40/L ({d['tax_share_pct']}% of pump price)
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
+            
+            st.markdown("**Other Indian Metros & Global:**")
+            m = benchmarks["mumbai"]
+            c = benchmarks["kolkata"]
+            ch = benchmarks["chennai"]
+            st.markdown(f"""
+            <div style="font-size: 0.78rem; color: #94A3B8; line-height: 1.6;">
+                • <b>Mumbai:</b> Petrol ₹{m['petrol']:.2f}/L | Diesel ₹{m['diesel']:.2f}/L (Tax: {m['tax_share_pct']}%)<br/>
+                • <b>Kolkata:</b> Petrol ₹{c['petrol']:.2f}/L | Diesel ₹{c['diesel']:.2f}/L (Tax: {c['tax_share_pct']}%)<br/>
+                • <b>Chennai:</b> Petrol ₹{ch['petrol']:.2f}/L | Diesel ₹{ch['diesel']:.2f}/L (Tax: {ch['tax_share_pct']}%)<br/>
+                • <b>United States:</b> $3.24 / gal ($0.86/L)<br/>
+                • <b>Germany (EU):</b> €1.78 / L ($1.94/L)<br/>
+                • <b>United Kingdom:</b> £1.42 / L ($1.85/L)<br/>
+                • <b>UAE:</b> AED 3.03 / L ($0.82/L)
+            </div>
+            """, unsafe_allow_html=True)
+            
+        with tab_all:
+            st.markdown("#### 📰 Complete Real-Time Intelligence Chronology")
+            for item in GlobalNewsEngine.get_live_news_feed():
+                st.markdown(f"""
+                <div style="background: rgba(14, 21, 38, 0.9); border: 1px solid rgba(255, 255, 255, 0.12); border-left: 3px solid {item['impact_color']}; border-radius: 6px; padding: 10px 12px; margin-bottom: 8px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span style="font-size: 0.7rem; font-weight: 700; color: #F5B942;">{item['category_label']}</span>
+                        <span style="font-size: 0.65rem; background: rgba(255,255,255,0.08); color: {item['impact_color']}; padding: 1px 6px; border-radius: 4px; font-weight: 700;">{item['impact']}</span>
+                    </div>
+                    <b style="color: #F9FAFB; font-size: 0.84rem; display: block; margin: 4px 0;">{item['headline']}</b>
+                    <div style="font-size: 0.72rem; color: #94A3B8; margin-bottom: 4px;">{item['timestamp']} • <i>{item['source']}</i></div>
+                    <p style="font-size: 0.76rem; color: #CBD5E1; line-height: 1.4; margin-bottom: 6px;">{item['summary']}</p>
+                </div>
+                """, unsafe_allow_html=True)
 
 # 6. Interactive Horizontal Product Ribbon Selector
 curr_idx = NAV_OPTIONS.index(st.session_state.active_nav) if st.session_state.active_nav in NAV_OPTIONS else 0

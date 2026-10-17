@@ -76,18 +76,18 @@ def render_india_center_view(navigate_fn=None):
 
     with k1:
         delhi_petrol = latest_metro[(latest_metro["city"] == "Delhi") & (latest_metro["fuel_type"] == "petrol_regular")]
-        val_p = f"₹{delhi_petrol.iloc[0]['price_inr']:.2f}/L" if not delhi_petrol.empty else "₹101.84/L"
+        val_p = f"₹{delhi_petrol.iloc[0]['price_inr']:.2f}/L" if not delhi_petrol.empty else "₹102.12/L"
         render_instrument_card(
             label="Delhi Petrol Benchmark",
             value=val_p,
             accent="amber",
-            subtext="PPAC Metro Benchmark ($1.22/L)",
+            subtext="PPAC Metro Benchmark ($1.18/L)",
             code_badge="MS-DELHI"
         )
 
     with k2:
         delhi_diesel = latest_metro[(latest_metro["city"] == "Delhi") & (latest_metro["fuel_type"] == "diesel")]
-        val_d = f"₹{delhi_diesel.iloc[0]['price_inr']:.2f}/L" if not delhi_diesel.empty else "₹93.22/L"
+        val_d = f"₹{delhi_diesel.iloc[0]['price_inr']:.2f}/L" if not delhi_diesel.empty else "₹95.20/L"
         render_instrument_card(
             label="Delhi Diesel Benchmark",
             value=val_d,

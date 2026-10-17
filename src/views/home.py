@@ -75,7 +75,7 @@ def render_home_view(navigate_fn=None):
 
     # Fetch live headline benchmarks from database with current benchmarks
     brent_val = "$84.20 / bbl"
-    delhi_diesel_val = "₹93.22 / L"
+    delhi_diesel_val = "₹95.20 / L"
     try:
         with db_manager.engine.connect() as conn:
             r_brent = conn.execute(db_manager.safe_sql(
