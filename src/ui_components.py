@@ -245,23 +245,23 @@ def render_app_header_brand_html(current_lang: str, engine_name: str, live_text:
     logo_svg = get_logo_mark_svg(size=38)
     return f"""
     <div class="fuelpulse-header-bar">
-        <div style="display: flex; align-items: center; gap: 12px;">
+        <div style="display: flex; align-items: center; gap: 12px; flex-shrink: 0;">
             {logo_svg}
             <div>
-                <div style="display: flex; align-items: center; gap: 8px; line-height: 1.1;">
-                    <span style="font-family: 'Space Grotesk', -apple-system, sans-serif; font-size: 1.25rem; font-weight: 800; letter-spacing: -0.01em; color: #FFFFFF; text-transform: uppercase;">
+                <div style="display: flex; align-items: center; gap: 8px; line-height: 1.25;">
+                    <span style="font-family: 'Space Grotesk', -apple-system, sans-serif; font-size: 1.22rem; font-weight: 800; letter-spacing: -0.01em; color: #FFFFFF; text-transform: uppercase; white-space: nowrap;">
                         GLOBAL FUELPULSE
                     </span>
                     <span style="background: #EAB308; color: #070A12; font-family: 'Space Grotesk', sans-serif; font-size: 0.72rem; font-weight: 900; padding: 2px 7px; border-radius: 4px; letter-spacing: 0.05em; display: inline-block;">
                         AI
                     </span>
                 </div>
-                <div style="font-family: 'Space Grotesk', -apple-system, sans-serif; font-size: 0.65rem; font-weight: 700; color: #94A3B8; letter-spacing: 0.12em; text-transform: uppercase; margin-top: 3px;">
+                <div style="font-family: 'Space Grotesk', -apple-system, sans-serif; font-size: 0.65rem; font-weight: 700; color: #94A3B8; letter-spacing: 0.12em; text-transform: uppercase; margin-top: 3px; white-space: nowrap;">
                     {brand_sub}
                 </div>
             </div>
         </div>
-        <div style="display: flex; align-items: center; gap: 8px;">
+        <div style="display: flex; align-items: center; gap: 8px; flex-shrink: 0;">
             <span class="fuelpulse-status-pill fuelpulse-status-emerald">
                 {db_icon}
                 <span>{engine_name}</span>
@@ -397,7 +397,7 @@ def apply_theme():
   max-width: 1360px !important;
   margin-left: auto !important;
   margin-right: auto !important;
-  padding-top: 1rem !important;
+  padding-top: 3.5rem !important;
   padding-bottom: 3.5rem !important;
   padding-left: 24px !important;
   padding-right: 24px !important;
@@ -408,7 +408,7 @@ def apply_theme():
   .block-container {{
     padding-left: 18px !important;
     padding-right: 18px !important;
-    padding-top: 0.75rem !important;
+    padding-top: 3.25rem !important;
   }}
 }}
 
@@ -416,7 +416,7 @@ def apply_theme():
   .block-container {{
     padding-left: 12px !important;
     padding-right: 12px !important;
-    padding-top: 0.5rem !important;
+    padding-top: 3.0rem !important;
   }}
 }}
 
@@ -434,7 +434,9 @@ def apply_theme():
   margin-bottom: 12px !important;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4) !important;
   gap: 14px !important;
-  flex-wrap: wrap !important;
+  flex-wrap: nowrap !important;
+  overflow: visible !important;
+  box-sizing: border-box !important;
 }}
 
 .fuelpulse-status-pill {{
@@ -923,13 +925,24 @@ div[data-testid="stFileUploader"] * {{
 
 
 /* 16. Header bar and action menu */
-header[data-testid="stHeader"] {{
-  background-color: rgba(7, 10, 18, 0.85) !important;
-  backdrop-filter: blur(16px) !important;
-  -webkit-backdrop-filter: blur(16px) !important;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+div[data-testid="stDecoration"] {{
+  display: none !important;
 }}
-header[data-testid="stHeader"] button, header[data-testid="stHeader"] svg {{
+header[data-testid="stHeader"] {{
+  background: transparent !important;
+  background-color: transparent !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border-bottom: none !important;
+  pointer-events: none !important;
+  z-index: 999990 !important;
+}}
+header[data-testid="stHeader"] button,
+header[data-testid="stHeader"] svg,
+header[data-testid="stHeader"] [data-testid="stToolbar"],
+header[data-testid="stHeader"] [data-testid="stSidebarCollapsedControl"],
+header[data-testid="stHeader"] [data-testid="stSidebarCollapseButton"] {{
+  pointer-events: auto !important;
   color: #F9FAFB !important;
   fill: #F9FAFB !important;
 }}
