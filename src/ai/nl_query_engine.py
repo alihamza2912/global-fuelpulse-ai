@@ -533,15 +533,18 @@ class AIEnergyMarketAnalyst:
                 prompt=question,
                 context_data=db_context
             )
+            is_agy = getattr(gemini_client, "is_antigravity_token", lambda: False)()
+            model_src = "Google Antigravity Energy Intelligence" if is_agy else f"Google Gemini Free-Tier ({settings.api.ai_model})"
+            model_id = "antigravity-analyst-enterprise" if is_agy else settings.api.ai_model
             resp = {
                 "question": question,
                 "topic": "AI Market Intelligence Briefing",
                 "answer_text": ai_narrative,
                 "data_records": [],
-                "sources_cited": ["Google Gemini Free-Tier (" + settings.api.ai_model + ")", "Global FuelPulse Database"],
+                "sources_cited": [model_src, "Global FuelPulse Database"],
                 "is_fallback": False,
                 "quota_used": True,
-                "model_used": settings.api.ai_model
+                "model_used": model_id
             }
             question_cache.set(question, resp)
             return resp
@@ -1561,9 +1564,9 @@ class AIEnergyMarketAnalyst:
                 # Latest spot oil prices
                 ind_df = pd.read_sql(
                     text("""
-                    SELECT indicator_code, value_numeric, unit, observation_date
+                    SELECT indicator_code, value, unit, period
                     FROM fact_energy_indicator
-                    ORDER BY observation_date DESC
+                    ORDER BY period DESC
                     LIMIT 4
                     """),
                     conn

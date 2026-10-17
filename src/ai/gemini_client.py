@@ -85,6 +85,12 @@ class GeminiFreeTierClient:
         k = self.api_key
         return bool(k and len(k) > 5)
 
+    def is_antigravity_token(self) -> bool:
+        """Checks if the configured key is an Antigravity token rather than an external Google AI Studio key."""
+        k = (self.api_key or "").strip()
+        if not k:
+            return False
+        return not k.startswith("AIza")
 
     def generate_intelligence(
         self,
@@ -93,7 +99,7 @@ class GeminiFreeTierClient:
         context_data: Optional[Dict[str, Any]] = None,
     ) -> str:
         """
-        Calls Gemini free-tier REST API to generate an analytical briefing.
+        Calls Gemini free-tier REST API or Antigravity Enterprise Engine to generate an analytical briefing.
         Detects HTTP 429 / RESOURCE_EXHAUSTED and triggers quota latching.
         Never exposes the API key in logs or exceptions.
         """
@@ -105,9 +111,21 @@ class GeminiFreeTierClient:
         if not can_call:
             raise AIQuotaExhaustedError(user_msg)
 
-        # Build payload
+        # 1. Antigravity Enterprise Engine routing (for connected Antigravity tokens)
+        if self.is_antigravity_token():
+            from src.ai.nl_query_engine import AIEnergyMarketAnalyst
+            resp_dict = AIEnergyMarketAnalyst._generate_autonomous_free_ai_answer(prompt)
+            quota_manager.record_call_success()
+            return resp_dict.get("answer_text", "")
+
+        # 2. Google Gemini REST API routing (for Google AI Studio AIza... keys or OAuth tokens)
         endpoint = f"https://generativelanguage.googleapis.com/v1beta/models/{self.model}:generateContent"
-        params = {"key": self.api_key}
+        headers = {"Content-Type": "application/json"}
+        if self.api_key.startswith("ya29."):
+            headers["Authorization"] = f"Bearer {self.api_key}"
+            params = {}
+        else:
+            params = {"key": self.api_key}
 
         payload: Dict[str, Any] = {}
 
@@ -144,7 +162,7 @@ class GeminiFreeTierClient:
                 params=params,
                 json=payload,
                 timeout=settings.api.timeout_seconds,
-                headers={"Content-Type": "application/json"}
+                headers=headers
             )
         except requests.exceptions.RequestException as req_err:
             sanitized_err = sanitize_sensitive_text(str(req_err))

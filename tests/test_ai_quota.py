@@ -120,14 +120,15 @@ def test_missing_api_key_graceful_message():
     client = GeminiFreeTierClient(api_key="")
     assert client.is_key_configured() is False
 
-    ans = AIEnergyMarketAnalyst.answer_question(
-        question="What is the outlook for refining margins in Europe?",
-        session_id="test_key_session",
-        bypass_session_limits=True
-    )
-    assert ans["is_fallback"] is True
-    assert "The AI assistant requires a free Gemini API key" in ans["answer_text"]
-    assert "GEMINI_API_KEY" in ans["answer_text"]
+    with patch("src.ai.nl_query_engine.gemini_client.is_key_configured", return_value=False):
+        ans = AIEnergyMarketAnalyst.answer_question(
+            question="What is the outlook for refining margins in Europe?",
+            session_id="test_key_session",
+            bypass_session_limits=True
+        )
+        assert ans["is_fallback"] is True
+        assert "The AI assistant requires a free Gemini API key" in ans["answer_text"]
+        assert "GEMINI_API_KEY" in ans["answer_text"]
 
 
 def test_autonomous_free_ai_mode_without_api_key():
@@ -136,12 +137,13 @@ def test_autonomous_free_ai_mode_without_api_key():
     assert client.is_key_configured() is False
 
     # 1. European refining margins query with allow_free_autonomous=True
-    ans_europe = AIEnergyMarketAnalyst.answer_question(
-        question="What is the outlook for refining margins in Europe?",
-        session_id="free_ai_session_1",
-        bypass_session_limits=True,
-        allow_free_autonomous=True
-    )
+    with patch("src.ai.nl_query_engine.gemini_client.is_key_configured", return_value=False):
+        ans_europe = AIEnergyMarketAnalyst.answer_question(
+            question="What is the outlook for refining margins in Europe?",
+            session_id="free_ai_session_1",
+            bypass_session_limits=True,
+            allow_free_autonomous=True
+        )
     assert ans_europe["is_fallback"] is False
     assert ans_europe["autonomous_free_mode"] is True
     assert ans_europe["quota_used"] is False
@@ -326,10 +328,12 @@ def test_ai_api_key_fallback_resolution():
 
     old_gemini = os.environ.get("GEMINI_API_KEY")
     old_ai = os.environ.get("AI_API_KEY")
+    old_agy = os.environ.get("ANTIGRAVITY_API_KEY")
 
     try:
-        # Clear GEMINI_API_KEY and set AI_API_KEY
+        # Clear GEMINI_API_KEY and ANTIGRAVITY_API_KEY, then set AI_API_KEY
         os.environ["GEMINI_API_KEY"] = ""
+        os.environ["ANTIGRAVITY_API_KEY"] = ""
         os.environ["AI_API_KEY"] = "AIzaSyTestFallbackKey12345"
 
         client = GeminiFreeTierClient()
@@ -344,6 +348,10 @@ def test_ai_api_key_fallback_resolution():
             os.environ["AI_API_KEY"] = old_ai
         else:
             os.environ.pop("AI_API_KEY", None)
+        if old_agy is not None:
+            os.environ["ANTIGRAVITY_API_KEY"] = old_agy
+        else:
+            os.environ.pop("ANTIGRAVITY_API_KEY", None)
 
 
 def test_saudi_tax_and_fuel_query_accuracy():

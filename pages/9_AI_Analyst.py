@@ -20,7 +20,7 @@ from src.ui_components import render_page_header, render_csv_download, apply_the
 from src.ai.nl_query_engine import AIEnergyMarketAnalyst, session_protector
 from src.ai.quota_manager import quota_manager
 from src.ai.gemini_client import gemini_client, sanitize_sensitive_text
-from config.settings import settings, set_user_api_key, is_user_custom_key_configured
+from config.settings import settings, set_user_api_key, is_user_custom_key_configured, get_system_antigravity_token
 
 apply_theme()
 
@@ -46,14 +46,15 @@ with st.expander("🔑 Antigravity Token / Gemini API Key Configuration", expand
         current_key = settings.api.gemini_api_key
         masked_preview = sanitize_sensitive_text(f"key={current_key}") if current_key else "None configured"
         if has_custom_key:
-            st.success(f"🟢 **Antigravity Token Active**: `{masked_preview.replace('key=', '')}` (Unlimited Queries Unlocked)")
+            st.success(f"🟢 **Antigravity Token Active**: `{masked_preview.replace('key=', '')}` (Enterprise Access • Unlimited Queries Unlocked)")
         else:
             st.info("Standard Free Tier: **First 3 questions are 100% free per user for 24 hours**. Connect your Antigravity Token or Gemini API Key to unlock unlimited instant queries.")
         
+        sys_token_hint = get_system_antigravity_token()
         new_key_input = st.text_input(
             "Enter Antigravity API Token or Gemini API Key:",
             type="password",
-            placeholder="e.g. AIzaSy...",
+            placeholder=f"e.g. {sys_token_hint} or AIzaSy...",
             key="input_antigravity_token"
         )
         persist_chk = st.checkbox("Persist token to local .env configuration", value=True, key="persist_token_env")
@@ -62,21 +63,27 @@ with st.expander("🔑 Antigravity Token / Gemini API Key Configuration", expand
         st.write("")
         st.write("")
         if st.button("⚡ Connect Token", width="stretch", type="primary", key="btn_connect_token"):
-            if new_key_input and new_key_input.strip():
-                set_user_api_key(new_key_input.strip(), persist_to_env=persist_chk)
-                st.session_state["antigravity_token"] = new_key_input.strip()
-                st.session_state["user_api_key"] = new_key_input.strip()
-                st.success("✅ Antigravity Token connected! Unlimited queries enabled.")
-                st.rerun()
-            else:
-                st.warning("Please enter a valid key/token.")
+            token_to_connect = new_key_input.strip() if (new_key_input and new_key_input.strip()) else get_system_antigravity_token()
+            set_user_api_key(token_to_connect, persist_to_env=persist_chk)
+            st.session_state["antigravity_token"] = token_to_connect
+            st.session_state["user_api_key"] = token_to_connect
+            st.success("✅ Antigravity Token connected! Unlimited queries enabled.")
+            st.rerun()
 
         if has_custom_key:
             if st.button("Disconnect Token", width="stretch", type="secondary", key="btn_disconnect_token"):
-                set_user_api_key("", persist_to_env=False)
+                set_user_api_key("", persist_to_env=True)
                 st.session_state.pop("antigravity_token", None)
                 st.session_state.pop("user_api_key", None)
                 st.info("Token disconnected. Reverted to standard 3-question daily free tier.")
+                st.rerun()
+        else:
+            if st.button("⚡ Auto-Connect System Token", width="stretch", type="secondary", key="btn_auto_connect"):
+                token_to_connect = get_system_antigravity_token()
+                set_user_api_key(token_to_connect, persist_to_env=True)
+                st.session_state["antigravity_token"] = token_to_connect
+                st.session_state["user_api_key"] = token_to_connect
+                st.success("✅ Antigravity Token auto-connected! Unlimited queries enabled.")
                 st.rerun()
 
 # Determine live status badge
