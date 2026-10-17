@@ -344,7 +344,7 @@ render_html(
 # 5. Top Brand Header Strip with Upper-Right Live Intelligence Notification Center
 from src.analytics.global_news_engine import GlobalNewsEngine
 
-col_brand, col_lang, col_news = st.columns([6.2, 1.9, 1.9], vertical_alignment="center")
+col_brand, col_lang, col_news = st.columns([7.0, 1.5, 1.5], gap="small", vertical_alignment="center")
 with col_brand:
     health = db_manager.check_health()
     engine_name = "MYSQL 8.4" if health["dialect"] == "mysql" else "SQLITE VERIFIED"

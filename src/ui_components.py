@@ -402,8 +402,8 @@ def apply_theme():
   max-width: 1360px !important;
   margin-left: auto !important;
   margin-right: auto !important;
-  padding-top: 3.5rem !important;
-  padding-bottom: 3.5rem !important;
+  padding-top: 1.0rem !important;
+  padding-bottom: 2.5rem !important;
   padding-left: 24px !important;
   padding-right: 24px !important;
   box-sizing: border-box !important;
@@ -413,7 +413,7 @@ def apply_theme():
   .block-container {{
     padding-left: 18px !important;
     padding-right: 18px !important;
-    padding-top: 3.25rem !important;
+    padding-top: 0.85rem !important;
   }}
 }}
 
@@ -421,7 +421,7 @@ def apply_theme():
   .block-container {{
     padding-left: 12px !important;
     padding-right: 12px !important;
-    padding-top: 3.0rem !important;
+    padding-top: 0.75rem !important;
   }}
 }}
 
@@ -436,6 +436,7 @@ def apply_theme():
   border: 1px solid rgba(255, 255, 255, 0.12) !important;
   border-radius: 10px !important;
   padding: 8px 16px !important;
+  margin-top: 0 !important;
   margin-bottom: 12px !important;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4) !important;
   gap: 14px !important;
@@ -934,6 +935,11 @@ div[data-testid="stDecoration"] {{
   display: none !important;
 }}
 header[data-testid="stHeader"] {{
+  height: 0 !important;
+  min-height: 0 !important;
+  max-height: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
   background: transparent !important;
   background-color: transparent !important;
   backdrop-filter: none !important;
@@ -976,7 +982,15 @@ div[data-testid="stPopover"],
 div[data-testid="stPopoverButton"] {{
   display: flex !important;
   align-items: center !important;
+  justify-content: center !important;
   width: 100% !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
 }}
 
 div[data-testid="stPopover"] > button,
@@ -986,21 +1000,21 @@ div[data-testid="stPopoverButton"] > button {{
   color: #F9FAFB !important;
   -webkit-text-fill-color: #F9FAFB !important;
   border: 1px solid rgba(255, 255, 255, 0.16) !important;
-  border-radius: 6px !important;
-  height: 36px !important;
-  min-height: 36px !important;
-  max-height: 36px !important;
-  line-height: 36px !important;
-  padding: 0 10px !important;
+  border-radius: 8px !important;
+  height: 38px !important;
+  min-height: 38px !important;
+  max-height: 38px !important;
+  line-height: 38px !important;
+  padding: 0 12px !important;
   font-family: 'Space Grotesk', -apple-system, sans-serif !important;
-  font-size: 11.5px !important;
+  font-size: 12px !important;
   font-weight: 700 !important;
   white-space: nowrap !important;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35) !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  gap: 5px !important;
+  gap: 6px !important;
   transition: all 0.15s ease-in-out !important;
   cursor: pointer !important;
   width: 100% !important;
@@ -1015,7 +1029,7 @@ div[data-testid="stPopoverButton"] > button p,
 div[data-testid="stPopoverButton"] > button span {{
   color: #F9FAFB !important;
   -webkit-text-fill-color: #F9FAFB !important;
-  font-size: 11.5px !important;
+  font-size: 12px !important;
   font-weight: 700 !important;
   white-space: nowrap !important;
   line-height: 1 !important;
@@ -1027,7 +1041,7 @@ div[data-testid="stPopover"] > button:hover,
 div[data-testid="stPopoverButton"] > button:hover {{
   background: rgba(245, 185, 66, 0.14) !important;
   background-color: rgba(245, 185, 66, 0.14) !important;
-  border-color: rgba(245, 185, 66, 0.45) !important;
+  border-color: rgba(245, 185, 66, 0.5) !important;
   color: #F5B942 !important;
   -webkit-text-fill-color: #F5B942 !important;
   transform: translateY(-1px) !important;
@@ -1064,7 +1078,7 @@ div[data-testid="column"]:nth-of-type(3) div[data-testid="stPopoverButton"] > bu
 /* B. Popover Dropdown Container & Menu Items (Language selector & News Wire) */
 div[data-testid="stPopoverBody"],
 div[data-baseweb="popover"],
-div[data-testid*="Popover"] {{
+div[data-testid="stPopoverContent"] {{
   background: #0B1120 !important;
   border: 1px solid rgba(255, 255, 255, 0.14) !important;
   box-shadow: 0 16px 40px rgba(0, 0, 0, 0.65) !important;
@@ -1073,7 +1087,7 @@ div[data-testid*="Popover"] {{
 
 div[data-testid="stPopoverBody"] div.stButton > button,
 div[data-baseweb="popover"] div.stButton > button,
-div[data-testid*="Popover"] div.stButton > button {{
+div[data-testid="stPopoverContent"] div.stButton > button {{
   background: #111A2E !important;
   background-color: #111A2E !important;
   color: #E2E8F0 !important;
@@ -1102,7 +1116,7 @@ div[data-testid*="Popover"] div.stButton > button {{
 
 div[data-testid="stPopoverBody"] div.stButton > button *,
 div[data-baseweb="popover"] div.stButton > button *,
-div[data-testid*="Popover"] div.stButton > button * {{
+div[data-testid="stPopoverContent"] div.stButton > button * {{
   color: #E2E8F0 !important;
   -webkit-text-fill-color: #E2E8F0 !important;
   font-size: 12px !important;
@@ -1113,7 +1127,7 @@ div[data-testid*="Popover"] div.stButton > button * {{
 
 div[data-testid="stPopoverBody"] div.stButton > button:hover,
 div[data-baseweb="popover"] div.stButton > button:hover,
-div[data-testid*="Popover"] div.stButton > button:hover {{
+div[data-testid="stPopoverContent"] div.stButton > button:hover {{
   background: rgba(245, 185, 66, 0.14) !important;
   background-color: rgba(245, 185, 66, 0.14) !important;
   border-color: rgba(245, 185, 66, 0.4) !important;
@@ -1124,14 +1138,14 @@ div[data-testid*="Popover"] div.stButton > button:hover {{
 
 div[data-testid="stPopoverBody"] div.stButton > button:hover *,
 div[data-baseweb="popover"] div.stButton > button:hover *,
-div[data-testid*="Popover"] div.stButton > button:hover * {{
+div[data-testid="stPopoverContent"] div.stButton > button:hover * {{
   color: #F5B942 !important;
   -webkit-text-fill-color: #F5B942 !important;
 }}
 
 div[data-testid="stPopoverBody"] div.stButton > button[kind="primary"],
 div[data-baseweb="popover"] div.stButton > button[kind="primary"],
-div[data-testid*="Popover"] div.stButton > button[kind="primary"] {{
+div[data-testid="stPopoverContent"] div.stButton > button[kind="primary"] {{
   background: rgba(245, 185, 66, 0.22) !important;
   background-color: rgba(245, 185, 66, 0.22) !important;
   border: 1px solid rgba(245, 185, 66, 0.5) !important;
@@ -1142,15 +1156,15 @@ div[data-testid*="Popover"] div.stButton > button[kind="primary"] {{
 
 div[data-testid="stPopoverBody"] div.stButton > button[kind="primary"] *,
 div[data-baseweb="popover"] div.stButton > button[kind="primary"] *,
-div[data-testid*="Popover"] div.stButton > button[kind="primary"] * {{
+div[data-testid="stPopoverContent"] div.stButton > button[kind="primary"] * {{
   color: #F5B942 !important;
   -webkit-text-fill-color: #F5B942 !important;
   font-weight: 700 !important;
 }}
 
 /* C. Secondary Action Buttons & Suggested Query Chips */
-div:not([data-testid*="Popover"]):not([data-baseweb="popover"]) > div.stButton > button[kind="secondary"],
-div:not([data-testid*="Popover"]):not([data-baseweb="popover"]) > div.stButton > button[data-testid="stBaseButton-secondary"]:not([role="radio"]):not([role="checkbox"]):not([data-testid*="Active"]),
+div:not([data-testid="stPopoverBody"]):not([data-baseweb="popover"]):not([data-testid="stPopoverContent"]) > div.stButton > button[kind="secondary"],
+div:not([data-testid="stPopoverBody"]):not([data-baseweb="popover"]):not([data-testid="stPopoverContent"]) > div.stButton > button[data-testid="stBaseButton-secondary"]:not([role="radio"]):not([role="checkbox"]):not([data-testid*="Active"]),
 button[kind="secondary"]:not([data-testid="stBaseButton-primary"]):not([role="radio"]):not([role="checkbox"]) {{
   background: rgba(14, 21, 38, 0.75) !important;
   background-color: rgba(14, 21, 38, 0.75) !important;
