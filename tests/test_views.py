@@ -77,3 +77,24 @@ def test_home_platform_suite_buttons_navigate_correctly():
     assert at.query_params.get("tab") == "dashboard" or at.query_params.get("tab") == ["dashboard"]
     assert len(at.exception) == 0, f"Dashboard navigation raised exception: {at.exception}"
 
+
+def test_dashboard_search_prayagraj_and_global_tax():
+    """Verifies that searching for 'prayagraj' and 'california' in the dashboard renders without exceptions."""
+    at = AppTest.from_file("app.py", default_timeout=35)
+    at.query_params["tab"] = "dashboard"
+    at.run()
+    assert len(at.exception) == 0, f"Dashboard initial load exception: {at.exception}"
+
+    # Search for prayagraj
+    search_inputs = [ti for ti in at.text_input if ti.key == "fast_universal_search_input"]
+    assert len(search_inputs) > 0, "fast_universal_search_input not found"
+    search_inputs[0].input("prayagraj").run()
+    assert len(at.exception) == 0, f"Prayagraj search raised exception: {at.exception}"
+
+    # Search for california
+    search_inputs = [ti for ti in at.text_input if ti.key == "fast_universal_search_input"]
+    assert len(search_inputs) > 0
+    search_inputs[0].input("california").run()
+    assert len(at.exception) == 0, f"California search raised exception: {at.exception}"
+
+

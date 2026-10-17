@@ -20,6 +20,8 @@ from src.ui_components import (
     COLOR_GRAY_MUTED
 )
 from src.database.connection import db_manager
+from src.analytics.global_tax_engine import GlobalTaxEngine
+
 
 
 def render_india_center_view(navigate_fn=None):
@@ -212,9 +214,39 @@ def render_india_center_view(navigate_fn=None):
 
     wf_col1, wf_col2 = st.columns([4, 8])
     with wf_col1:
+        state_options = [
+            "Uttar Pradesh (Prayagraj / Lucknow)",
+            "Delhi (NCT)",
+            "Maharashtra (Mumbai / Pune)",
+            "Karnataka (Bengaluru)",
+            "Tamil Nadu (Chennai)",
+            "West Bengal (Kolkata)",
+            "Rajasthan (Jaipur)",
+            "Bihar (Patna)",
+            "Gujarat (Ahmedabad)",
+            "Telangana (Hyderabad)",
+            "Andhra Pradesh (Visakhapatnam)",
+            "Kerala (Kochi)",
+            "Madhya Pradesh (Bhopal)",
+            "Punjab (Ludhiana / Chandigarh)",
+            "Haryana (Gurugram / Panipat)",
+            "Odisha (Bhubaneswar)",
+            "Assam (Guwahati)",
+            "Jharkhand (Ranchi)",
+            "Chhattisgarh (Raipur)",
+            "Uttarakhand (Dehradun)",
+            "Himachal Pradesh (Shimla)",
+            "Jammu and Kashmir (Srinagar / Jammu)",
+            "Goa (Panaji)",
+            "Chandigarh (UT)",
+            "Puducherry (UT)",
+            "Tripura (Agartala)",
+            "Meghalaya (Shillong)",
+            "Ladakh (Leh)"
+        ]
         sel_metro = st.selectbox(
-            "Select Metro Center",
-            ["Delhi (NCT)", "Mumbai (MH)", "Kolkata (WB)", "Chennai (TN)"],
+            "Select State or Metro Center",
+            state_options,
             key="india_center_metro_select"
         )
         sel_fuel = st.radio(
@@ -237,36 +269,25 @@ def render_india_center_view(navigate_fn=None):
         """)
 
     with wf_col2:
-        # Build-up numbers calibrated to official MoPNG circulars (current market rates > 100 INR/L)
+        # Dynamically resolved via GlobalTaxEngine (all petrol rates strictly > ₹100/L)
         is_petrol = (sel_fuel == "Petrol (Regular)")
-        if "Delhi" in sel_metro:
-            base_price = 58.60 if is_petrol else 58.80
-            freight = 0.32 if is_petrol else 0.30
-            excise = 19.90 if is_petrol else 15.80
-            commission = 3.86 if is_petrol else 2.62
-            vat = 19.16 if is_petrol else 15.70
-            total = 101.84 if is_petrol else 93.22
-        elif "Mumbai" in sel_metro:
-            base_price = 58.60 if is_petrol else 58.80
-            freight = 0.38 if is_petrol else 0.35
-            excise = 19.90 if is_petrol else 15.80
-            commission = 3.86 if is_petrol else 2.62
-            vat = 23.57 if is_petrol else 16.70
-            total = 106.31 if is_petrol else 94.27
-        elif "Kolkata" in sel_metro:
-            base_price = 58.60 if is_petrol else 58.80
-            freight = 0.44 if is_petrol else 0.40
-            excise = 19.90 if is_petrol else 15.80
-            commission = 3.86 if is_petrol else 2.62
-            vat = 23.05 if is_petrol else 15.14
-            total = 105.85 if is_petrol else 92.76
-        else: # Chennai
-            base_price = 58.60 if is_petrol else 58.80
-            freight = 0.40 if is_petrol else 0.38
-            excise = 19.90 if is_petrol else 15.80
-            commission = 3.86 if is_petrol else 2.62
-            vat = 19.87 if is_petrol else 16.64
-            total = 102.63 if is_petrol else 94.24
+        query_key = sel_metro.split("(")[0].strip()
+        tax_res = GlobalTaxEngine.resolve_query(query_key) or GlobalTaxEngine.resolve_query("Delhi")
+
+        if is_petrol:
+            base_price = tax_res["base_refinery_price"]
+            freight = tax_res["waterfall_steps"][1]["amount_inr"]
+            excise = tax_res["central_excise"]
+            commission = tax_res["dealer_commission"]
+            vat = tax_res["state_tax_amount"]
+            total = tax_res["petrol_price"]
+        else:
+            base_price = 58.80
+            freight = 0.32
+            excise = 15.80
+            commission = 2.62
+            vat = tax_res.get("diesel_state_tax_amount", 15.70)
+            total = tax_res["diesel_price"]
 
         fig_wf = go.Figure(go.Waterfall(
             name="Build-Up",
@@ -283,11 +304,24 @@ def render_india_center_view(navigate_fn=None):
         ))
         apply_clean_layout(
             fig_wf,
-            height=360,
+            height=340,
             yaxis_title="Price (₹ / Litre)",
             margin_b=60
         )
         st.plotly_chart(fig_wf, use_container_width=True, key="fig_india_center_waterfall")
+
+        # Tax Bite Summary Callout
+        state_pct_base = tax_res.get('state_tax_added_to_base_pct', 30.0)
+        state_pct_pump = tax_res.get('state_tax_share_pump_pct', 18.0)
+        tot_tax_pct = tax_res.get('total_tax_share_pump_pct', 38.0)
+        statute = tax_res.get('statutory_note', '')
+        render_html(f"""
+        <div style="background: rgba(14, 21, 38, 0.8); border-left: 3px solid #F5B942; border-radius: 4px; padding: 10px 14px; font-size: 0.77rem; color: #CBD5E1; margin-top: 6px;">
+            <b style="color: #F5B942;">STATE TAX BITE FOR {tax_res['state_name'].upper()}:</b> 
+            State VAT is <b>₹{vat:.2f}/L</b> (<b>{state_pct_pump}%</b> of pump price, taking <b>+{state_pct_base}%</b> over base refinery cost). 
+            Combined Central + State tax wedge is <b>{tot_tax_pct}%</b> of pump price. <span style="color: #94A3B8;">({statute})</span>
+        </div>
+        """)
 
     st.write("")
 

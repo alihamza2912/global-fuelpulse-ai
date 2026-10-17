@@ -93,3 +93,81 @@ def test_fuel_impact_score():
     # Check bounds (0 to 100)
     assert fis_df["fuel_impact_score"].min() >= 0.0
     assert fis_df["fuel_impact_score"].max() <= 100.0
+
+
+def test_global_tax_engine_prayagraj_resolution():
+    """Verifies search resolution for Prayagraj, UP, checking rates > 100 and state tax breakdown."""
+    from src.analytics.global_tax_engine import GlobalTaxEngine
+
+    res = GlobalTaxEngine.resolve_query("prayagraj")
+    assert res is not None
+    assert res["state_name"] == "Uttar Pradesh"
+    assert res["matched_city"] == "Prayagraj (Allahabad)"
+    assert res["country_iso3"] == "IND"
+    # Petrol rate strictly above 100 INR/L
+    assert res["petrol_price"] > 100.0
+    assert res["petrol_price"] == 101.45
+    assert res["diesel_price"] == 93.30
+    # State VAT details
+    assert res["state_tax_amount"] > 0
+    assert res["state_tax_share_pump_pct"] > 0
+    assert res["state_tax_added_to_base_pct"] > 0
+    # Total government tax wedge
+    assert res["total_government_tax_amount"] == round(res["central_excise"] + res["state_tax_amount"], 2)
+    # Waterfall steps verify
+    assert len(res["waterfall_steps"]) == 6
+    assert res["waterfall_steps"][0]["component"] == "Base Refinery Price (RTP)"
+    assert res["waterfall_steps"][-1]["component"] == "Final Retail Pump Price (RSP)"
+
+
+def test_global_tax_engine_indian_states_coverage():
+    """Verifies all major Indian states have petrol prices > 100 and valid tax build-ups."""
+    from src.analytics.global_tax_engine import GlobalTaxEngine
+
+    states_to_test = [
+        "Maharashtra", "Karnataka", "Tamil Nadu", "West Bengal", "Rajasthan",
+        "Bihar", "Gujarat", "Telangana", "Kerala", "Delhi"
+    ]
+    for st_name in states_to_test:
+        res = GlobalTaxEngine.resolve_query(st_name)
+        assert res is not None, f"Failed resolving state: {st_name}"
+        assert res["country_iso3"] == "IND"
+        assert res["petrol_price"] > 100.0, f"State {st_name} petrol price must be > 100"
+        assert res["state_tax_amount"] > 0
+        assert res["state_tax_rate_nominal_pct"] > 0
+
+
+def test_global_tax_engine_global_jurisdictions():
+    """Verifies resolution of global states, cities, and sovereign nations."""
+    from src.analytics.global_tax_engine import GlobalTaxEngine
+
+    # California test
+    ca = GlobalTaxEngine.resolve_query("california")
+    assert ca is not None
+    assert ca["country_iso3"] == "USA"
+    assert ca["currency"] == "USD"
+    assert ca["state_tax_amount"] > 0
+    assert ca["petrol_price"] > 1.0
+
+    # London test
+    uk = GlobalTaxEngine.resolve_query("london")
+    assert uk is not None
+    assert uk["country_iso3"] == "GBR"
+    assert uk["currency"] == "GBP"
+    assert uk["state_tax_share_pump_pct"] > 10.0
+
+    # Germany test
+    de = GlobalTaxEngine.resolve_query("berlin")
+    assert de is not None
+    assert de["country_iso3"] == "DEU"
+    assert de["currency"] == "EUR"
+    assert de["total_tax_share_pump_pct"] > 50.0
+
+    # Searchable jurisdictions index
+    jurisdictions = GlobalTaxEngine.get_all_searchable_jurisdictions()
+    assert len(jurisdictions) > 30
+    names = [j["name"].lower() for j in jurisdictions]
+    assert any("prayagraj" in n for n in names)
+    assert any("maharashtra" in n for n in names)
+    assert any("california" in n for n in names)
+

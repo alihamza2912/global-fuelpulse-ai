@@ -20,7 +20,9 @@ from src.ui_components import (
     COLOR_WHITE
 )
 from src.database.connection import db_manager
+from src.analytics.global_tax_engine import GlobalTaxEngine
 from sqlalchemy import text
+
 
 apply_theme()
 
@@ -121,18 +123,60 @@ st.write("")
 tab_tax, tab_calc = st.tabs(["💰 Price Structure & Taxes", "🚚 Fleet Fuel Cost Calculator"])
 
 with tab_tax:
-    st.subheader("Structure of Retail Fuel Pricing in India")
+    st.subheader("Structure of Retail Fuel Pricing & State Tax Decomposition")
     st.markdown(
         """
         Retail prices in India consist of:
         1. **Base Price (Refinery Gate / FOB):** Driven by international crude oil import prices and refining crack spreads.
         2. **Freight & Transportation:** Inland distribution costs to regional supply depots.
-        3. **Central Excise Duty:** Fixed rate levied by the Government of India.
-        4. **Dealer Commission:** Distribution margin for fuel retail station operators.
-        5. **State VAT (Value Added Tax):** Ad-valorem tax varying by state (e.g. Maharashtra VAT is higher than Delhi, explaining Mumbai's higher price).
+        3. **Central Excise Duty:** Fixed statutory levy by Government of India (₹19.90/L Petrol, ₹15.80/L Diesel).
+        4. **Dealer Commission:** Distribution margin for fuel retail station operators (~₹3.86/L Petrol).
+        5. **State VAT (Value Added Tax):** Ad-valorem tax varying significantly by state jurisdiction (ranging from 13.7% in Gujarat to 35.2% in Telangana).
         """
     )
-    
+
+    st.markdown("---")
+    st.markdown("#### 🏛️ Interactive All-India State & City Tax Radar")
+    st.caption("Select any Indian state or city to decompose the exact state tax take from the original refinery base price.")
+
+    state_pick = st.selectbox(
+        "Choose Jurisdiction to Inspect:",
+        [
+            "Uttar Pradesh (Prayagraj / Lucknow / Varanasi)",
+            "Delhi (NCT)",
+            "Maharashtra (Mumbai / Pune)",
+            "Karnataka (Bengaluru)",
+            "Tamil Nadu (Chennai)",
+            "West Bengal (Kolkata)",
+            "Rajasthan (Jaipur)",
+            "Bihar (Patna)",
+            "Gujarat (Ahmedabad)",
+            "Telangana (Hyderabad)",
+            "Andhra Pradesh (Visakhapatnam)",
+            "Kerala (Kochi)",
+            "Madhya Pradesh (Bhopal)",
+            "Punjab (Ludhiana / Chandigarh)",
+            "Haryana (Gurugram)",
+            "Odisha (Bhubaneswar)",
+            "Assam (Guwahati)",
+            "Jharkhand (Ranchi)",
+            "Chhattisgarh (Raipur)",
+            "Uttarakhand (Dehradun)",
+            "Himachal Pradesh (Shimla)",
+            "Jammu and Kashmir (Srinagar / Jammu)",
+            "Goa (Panaji)"
+        ],
+        key="p10_state_tax_radar_select"
+    )
+
+    q_clean = state_pick.split("(")[0].strip()
+    tax_info = GlobalTaxEngine.resolve_query(q_clean)
+    if tax_info:
+        GlobalTaxEngine.render_tax_intelligence_card(tax_info)
+
+    st.write("")
+    st.markdown("#### ⚖️ National Average Fuel Cost Architecture")
+
     # Illustrative Tax Component Pie Chart
     tax_breakdown = pd.DataFrame([
         {"Component": "Base Crude & Refining Cost", "Percentage": 52.0},
@@ -150,12 +194,13 @@ with tab_tax:
     fig_pie.update_traces(marker=dict(line=dict(color=COLOR_INK, width=1.5)))
     apply_clean_layout(
         fig_pie,
-        height=450,
+        height=400,
         is_pie=True,
         showlegend=True,
         legend_below=True
     )
     st.plotly_chart(fig_pie, width="stretch", theme=None)
+
 
 with tab_calc:
     st.subheader("Interactive Commercial Fleet Budget Calculator")

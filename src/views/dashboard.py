@@ -50,6 +50,8 @@ from src.analytics.production_analytics import GlobalProductionAnalytics
 from src.analytics.india_company_analytics import IndiaCompanyAnalytics
 from src.analytics.india_demand_analytics import IndiaDemandAnalytics
 from src.analytics.affordability import AffordabilityAnalytics
+from src.analytics.global_tax_engine import GlobalTaxEngine
+
 
 # ==============================================================================
 # HIGH-SPEED INTELLIGENCE CACHING ENGINE
@@ -656,6 +658,13 @@ def get_searchable_entities():
             "target": q_target,
             "label": q_btn
         })
+
+    try:
+        tax_entities = GlobalTaxEngine.get_all_searchable_jurisdictions()
+        items.extend(tax_entities)
+    except Exception:
+        pass
+
     return items
 
 
@@ -670,7 +679,7 @@ def render_dashboard_view(navigate_fn=None):
     with search_col1:
         search_q = st.text_input(
             "⚡ Fast Intelligence Search",
-            placeholder="🔍 Type anything to search instantly (e.g. India, Delhi, Diesel, Brent, HPCL, Hormuz, USA)...",
+            placeholder="🔍 Search any Indian State/City (e.g. Prayagraj, UP, Mumbai, Bangalore) or Global Jurisdiction (e.g. California, London, Texas)...",
             label_visibility="collapsed",
             key="fast_universal_search_input"
         )
@@ -687,6 +696,13 @@ def render_dashboard_view(navigate_fn=None):
 
     if search_q and search_q.strip():
         q_clean = search_q.strip().lower()
+
+        # 1. Resolve through Sovereign State Tax & Fuel Resolution Engine
+        tax_res = GlobalTaxEngine.resolve_query(q_clean)
+        if tax_res:
+            GlobalTaxEngine.render_tax_intelligence_card(tax_res)
+
+        # 2. Match general indexed entities
         all_entities = get_searchable_entities()
         matches = [
             e for e in all_entities
@@ -695,7 +711,7 @@ def render_dashboard_view(navigate_fn=None):
 
         if matches:
             st.markdown(
-                f"<div style='font-family: Space Grotesk, sans-serif; font-size: 0.82rem; font-weight: 800; color: #F9FAFB; margin-top: 8px; margin-bottom: 8px;'>MATCHED {len(matches)} RESULT(S) FOR \"{search_q.strip()}\":</div>",
+                f"<div style='font-family: Space Grotesk, sans-serif; font-size: 0.82rem; font-weight: 800; color: #F9FAFB; margin-top: 8px; margin-bottom: 8px;'>MATCHED {len(matches)} RELATED ENTITIES FOR \"{search_q.strip()}\":</div>",
                 unsafe_allow_html=True
             )
             res_cols = st.columns(min(len(matches), 3))
@@ -713,8 +729,8 @@ def render_dashboard_view(navigate_fn=None):
                         </div>
                         """
                     )
-        else:
-            st.info(f"No direct matches for '{search_q}'. You can explore the chapters below or query the AI Market Analyst in Chapter 09.")
+        elif not tax_res:
+            st.info(f"No direct matches for '{search_q}'. You can search any Indian city (e.g. Prayagraj, Lucknow, Jaipur) or explore the chapters below.")
 
     st.write("")
 
@@ -1146,8 +1162,57 @@ def render_dashboard_view(navigate_fn=None):
             st.plotly_chart(fig_metro_bar, width="stretch", theme=None)
 
     with ind_c2:
-        st.markdown(f"#### 💰 Price Build-Up Anatomy (Delhi Petrol ₹{delhi_petrol:.2f}/L)")
-        st.plotly_chart(fig_wf, width="stretch", theme=None)
+        ch5_state = st.selectbox(
+            "Inspect State / City Price Anatomy",
+            [
+                "Delhi (NCT)",
+                "Uttar Pradesh (Prayagraj / Lucknow)",
+                "Maharashtra (Mumbai / Pune)",
+                "Karnataka (Bengaluru)",
+                "Tamil Nadu (Chennai)",
+                "West Bengal (Kolkata)",
+                "Rajasthan (Jaipur)",
+                "Bihar (Patna)",
+                "Gujarat (Ahmedabad)",
+                "Telangana (Hyderabad)"
+            ],
+            key="ch05_state_selector"
+        )
+        ch5_res = GlobalTaxEngine.resolve_query(ch5_state.split("(")[0].strip()) or GlobalTaxEngine.resolve_query("Delhi")
+        ch5_p_price = ch5_res["petrol_price"]
+        st.markdown(f"#### 💰 Price Build-Up Anatomy ({ch5_res['jurisdiction_name']} Petrol ₹{ch5_p_price:.2f}/L)")
+
+        # Build interactive waterfall for selected state
+        steps = ch5_res.get("waterfall_steps", [])
+        if steps:
+            x_labels = [s["component"] for s in steps[:-1]] + ["Final Pump Price"]
+            y_amounts = [s.get("amount_inr", 0.0) for s in steps[:-1]] + [0]
+            text_labels = [f"₹{s.get('amount_inr', 0.0):.2f}" for s in steps[:-1]] + [f"₹{ch5_p_price:.2f}"]
+
+            fig_ch5_wf = go.Figure(go.Waterfall(
+                name="Cost Build-Up",
+                orientation="v",
+                measure=["relative"] * len(steps[:-1]) + ["total"],
+                x=x_labels,
+                y=y_amounts,
+                text=text_labels,
+                textposition="outside",
+                connector={"line": {"color": "rgba(255, 255, 255, 0.25)"}},
+                decreasing={"marker": {"color": "#F43F5E"}},
+                increasing={"marker": {"color": COLOR_AMBER}},
+                totals={"marker": {"color": "#60A5FA"}}
+            ))
+            apply_clean_layout(
+                fig_ch5_wf,
+                height=420,
+                yaxis_title="Price (₹ / Litre)",
+                margin_b=60
+            )
+            st.plotly_chart(fig_ch5_wf, width="stretch", theme=None)
+            st.caption(f"State VAT: ₹{ch5_res['state_tax_amount']:.2f}/L ({ch5_res['state_tax_share_pump_pct']}% of pump price, +{ch5_res['state_tax_added_to_base_pct']}% over base). {ch5_res['statutory_note']}")
+        else:
+            st.plotly_chart(fig_wf, width="stretch", theme=None)
+
 
 
     # ==============================================================================
