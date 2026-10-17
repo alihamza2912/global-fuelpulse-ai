@@ -1049,15 +1049,24 @@ TRANSLATIONS: Dict[str, Dict[str, str]] = {
     # HOME VIEW TRANSLATIONS
     # --------------------------------------------------------------------------
     "home_eyebrow": {
-        "en": "GLOBAL FUELPULSE AI • ENERGY INTELLIGENCE PLATFORM",
-        "hi": "ग्लोबल फ्यूलपल्स एआई • ऊर्जा खुफिया एवं बाजार विश्लेषण मंच",
-        "es": "GLOBAL FUELPULSE AI • PLATAFORMA DE INTELIGENCIA ENERGÉTICA",
-        "fr": "GLOBAL FUELPULSE AI • PLATEFORME D'INTELLIGENCE ÉNERGÉTIQUE",
-        "ar": "نبض الوقود العالمي بالذكاء الاصطناعي • منصة معلومات الطاقة",
-        "de": "GLOBAL FUELPULSE AI • ENERGIE-INTELLIGENZ-PLATTFORM",
-        "zh": "全球燃料脉搏 AI • 能源情报与市场分析平台",
-        "ru": "GLOBAL FUELPULSE AI • ПЛАТФОРМА ЭНЕРГЕТИЧЕСКОЙ РАЗВЕДКИ",
-        "ja": "グローバル・フューエルパルス AI • エネルギー情報プラットフォーム"
+        "en": "ENERGY INTELLIGENCE PLATFORM • REAL-TIME COMMODITY FLOWS",
+        "hi": "ऊर्जा खुफिया मंच • वास्तविक समय कमोडिटी प्रवाह",
+        "es": "PLATAFORMA DE INTELIGENCIA ENERGÉTICA • FLUJOS EN TIEMPO REAL",
+        "fr": "PLATEFORME D'INTELLIGENCE ÉNERGÉTIQUE • FLUX EN TEMPS RÉEL",
+        "ar": "منصة معلومات الطاقة • تدفقات السلع في الوقت الفعلي",
+        "de": "ENERGIE-INTELLIGENZ-PLATTFORM • ECHTZEIT-WARENFLÜSSE",
+        "zh": "能源情报分析平台 • 实时大宗商品流向",
+        "ru": "ПЛАТФОРМА ЭНЕРГЕТИЧЕСКОЙ РАЗВЕДКИ • ПОТОКИ В РЕАЛЬНОМ ВРЕМЕНИ",
+        "ja": "エネルギー市場情報プラットフォーム • リアルタイム・フロー",
+        "pt": "PLATAFORMA DE INTELIGÊNCIA ENERGÉTICA • FLUXOS EM TEMPO REAL",
+        "it": "PIATTAFORMA DI INTELLIGENZA ENERGETICA • FLUSSI IN TEMPO REALE",
+        "ko": "에너지 인텔리전스 플랫폼 • 실시간 원자재 흐름",
+        "tr": "ENERJİ İSTİHBARAT PLATFORMU • GERÇEK ZAMANLI EMTİA AKIŞLARI",
+        "nl": "ENERGIE-INTELLIGENTIEPLATFORM • REALTIME COMMODITY-STROMEN",
+        "id": "PLATFORM INTELIJEN ENERGI • ARUS KOMODITAS REAL-TIME",
+        "ur": "انرجی انٹیلیجنس پلیٹ فارم • رئیل ٹائم کموڈٹی فلو",
+        "bn": "এনার্জি ইন্টেলিজেন্স প্ল্যাটফর্ম • রিয়েল-টাইম কমোডিটি প্রবাহ",
+        "ta": "ஆற்றல் நுண்ணறிவு தளம் • நேரலை பொருட்கள் ஓட்டம்"
     },
     "home_hero_title": {
         "en": "Understand the world's real-time energy flows.",

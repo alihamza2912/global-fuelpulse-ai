@@ -709,6 +709,46 @@ div:not([data-testid="stButtonGroup"]):not([data-baseweb="button-group"]):not([d
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2) !important;
 }}
 
+/* 17b. Equal Dimensions & No-Wrap for Top Bar Action Popovers */
+div[data-testid="stPopover"],
+div[data-testid="stPopoverButton"] {{
+  display: flex !important;
+  align-items: center !important;
+  width: 100% !important;
+}}
+
+div[data-testid="stPopover"] > button,
+div[data-testid="stPopoverButton"] > button {{
+  height: 44px !important;
+  min-height: 44px !important;
+  max-height: 44px !important;
+  width: 100% !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0 16px !important;
+  box-sizing: border-box !important;
+  margin: 0 !important;
+  border-radius: 8px !important;
+}}
+
+div[data-testid="stPopover"] > button *,
+div[data-testid="stPopover"] > button p,
+div[data-testid="stPopover"] > button span,
+div[data-testid="stPopoverButton"] > button *,
+div[data-testid="stPopoverButton"] > button p,
+div[data-testid="stPopoverButton"] > button span {{
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  line-height: 1.2 !important;
+  font-size: 13.5px !important;
+  font-weight: 800 !important;
+}}
+
 /* 18. Modern Glassmorphic Cards */
 .editorial-card, .instrument-card {{
   background: rgba(14, 21, 38, 0.75);

@@ -327,12 +327,12 @@ render_html(
 # 5. Top Brand Header Strip with Upper-Right Live Intelligence Notification Center
 from src.analytics.global_news_engine import GlobalNewsEngine
 
-col_brand, col_lang, col_news = st.columns([5.2, 2.5, 2.3])
+col_brand, col_lang, col_news = st.columns([5.0, 2.5, 2.5], vertical_alignment="center")
 with col_brand:
     health = db_manager.check_health()
     engine_name = "MYSQL 8.4" if health["dialect"] == "mysql" else "SQLITE VERIFIED"
     render_html(f"""
-    <div style="background: rgba(14, 21, 38, 0.92); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1.5px solid rgba(255, 255, 255, 0.16); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.55); border-radius: 12px; padding: 10px 18px; margin: -0.5rem 0 0.5rem 0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+    <div style="background: rgba(14, 21, 38, 0.92); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1.5px solid rgba(255, 255, 255, 0.16); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.55); border-radius: 12px; padding: 10px 18px; margin: 0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
         <div style="display: flex; align-items: center; gap: 14px;">
             {get_logo_mark_svg(size=44)}
             <div>
@@ -359,7 +359,8 @@ with col_brand:
 with col_lang:
     all_langs = get_available_languages()
     cur_data = all_langs.get(current_lang, all_langs["en"])
-    lang_btn_label = f"🌐 Change Language ({cur_data['flag']} {cur_data['native']})"
+    cur_flag = cur_data.get("flag", "🌐")
+    lang_btn_label = f"🌐 Change Language ({cur_flag})"
     with st.popover(lang_btn_label, use_container_width=True):
         st.markdown(f"#### 🌐 {t('select_language', current_lang)} ({len(all_langs)} World Languages)")
         st.caption("Scroll down to select and activate your language:")
