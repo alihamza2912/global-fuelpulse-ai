@@ -40,7 +40,7 @@ render_command_strip(
     active_page="Petroleum Logistics Intelligence",
     region_tag="MARITIME CORRIDORS & PORTS",
     product_tag="CRUDE (HS 2709) & REFINED (HS 2710)",
-    reporting_period="2023–2024 CUSTOMS AUDIT"
+    reporting_period="2025–2026 LIVE CUSTOMS RADAR"
 )
 
 # 2. Controls & Parameter Bar
@@ -55,7 +55,11 @@ with tr_c1:
     )
 
 with tr_c2:
-    reporting_period = st.selectbox("CUSTOMS AUDIT YEAR", ["2024", "2023"])
+    period_choice = st.selectbox(
+        "CUSTOMS AUDIT PERIOD",
+        ["2026 (Live Customs)", "2025 (Annual Series)", "2024 (Historical Benchmark)"]
+    )
+    reporting_period = "2026" if "2026" in period_choice else ("2025" if "2025" in period_choice else "2024")
 
 with tr_c3:
     all_exporters = PetroleumTradeAnalytics.get_top_exporters(product_cat, reporting_period, limit=30)

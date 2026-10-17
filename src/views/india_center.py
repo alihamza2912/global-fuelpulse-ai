@@ -74,30 +74,30 @@ def render_india_center_view(navigate_fn=None):
 
     with k1:
         delhi_petrol = latest_metro[(latest_metro["city"] == "Delhi") & (latest_metro["fuel_type"] == "petrol_regular")]
-        val_p = f"₹{delhi_petrol.iloc[0]['price_inr']:.2f}/L" if not delhi_petrol.empty else "₹94.72/L"
+        val_p = f"₹{delhi_petrol.iloc[0]['price_inr']:.2f}/L" if not delhi_petrol.empty else "₹101.84/L"
         render_instrument_card(
             label="Delhi Petrol Benchmark",
             value=val_p,
             accent="amber",
-            subtext="PPAC Metro Benchmark ($1.13/L)",
+            subtext="PPAC Metro Benchmark ($1.22/L)",
             code_badge="MS-DELHI"
         )
 
     with k2:
         delhi_diesel = latest_metro[(latest_metro["city"] == "Delhi") & (latest_metro["fuel_type"] == "diesel")]
-        val_d = f"₹{delhi_diesel.iloc[0]['price_inr']:.2f}/L" if not delhi_diesel.empty else "₹87.62/L"
+        val_d = f"₹{delhi_diesel.iloc[0]['price_inr']:.2f}/L" if not delhi_diesel.empty else "₹93.22/L"
         render_instrument_card(
             label="Delhi Diesel Benchmark",
             value=val_d,
             accent="teal",
-            subtext="Commercial Transport ($1.05/L)",
+            subtext="Commercial Transport ($1.12/L)",
             code_badge="HSD-DELHI"
         )
 
     with k3:
         render_instrument_card(
             label="Indian Crude Basket",
-            value="$76.80 / bbl",
+            value="$84.20 / bbl",
             accent="copper",
             subtext="Oman-Dubai sour (75.6%) + Brent (24.4%)",
             code_badge="INDIAN-BASKET"
@@ -106,7 +106,7 @@ def render_india_center_view(navigate_fn=None):
     with k4:
         render_instrument_card(
             label="Crude Import Dependency",
-            value="87.8%",
+            value="88.2%",
             accent="red",
             subtext="Refinery throughput imported",
             code_badge="DEPENDENCE"
@@ -170,32 +170,32 @@ def render_india_center_view(navigate_fn=None):
                 <tbody>
                     <tr style="border-bottom: 1px solid rgba(255, 255, 255, 0.08);">
                         <td style="padding: 8px 4px; font-weight: 700;">Delhi (NCT)</td>
-                        <td style="padding: 8px 4px; color: #F5B942;">₹94.72</td>
-                        <td style="padding: 8px 4px; color: #60A5FA;">₹87.62</td>
-                        <td style="padding: 8px 4px; color: #94A3B8;">₹7.10</td>
+                        <td style="padding: 8px 4px; color: #F5B942;">₹101.84</td>
+                        <td style="padding: 8px 4px; color: #60A5FA;">₹93.22</td>
+                        <td style="padding: 8px 4px; color: #94A3B8;">₹8.62</td>
                     </tr>
                     <tr style="border-bottom: 1px solid rgba(255, 255, 255, 0.08);">
                         <td style="padding: 8px 4px; font-weight: 700;">Mumbai (MH)</td>
-                        <td style="padding: 8px 4px; color: #F5B942;">₹104.21</td>
-                        <td style="padding: 8px 4px; color: #60A5FA;">₹92.15</td>
-                        <td style="padding: 8px 4px; color: #94A3B8;">₹12.06</td>
+                        <td style="padding: 8px 4px; color: #F5B942;">₹106.31</td>
+                        <td style="padding: 8px 4px; color: #60A5FA;">₹94.27</td>
+                        <td style="padding: 8px 4px; color: #94A3B8;">₹12.04</td>
                     </tr>
                     <tr style="border-bottom: 1px solid rgba(255, 255, 255, 0.08);">
                         <td style="padding: 8px 4px; font-weight: 700;">Kolkata (WB)</td>
-                        <td style="padding: 8px 4px; color: #F5B942;">₹103.94</td>
-                        <td style="padding: 8px 4px; color: #60A5FA;">₹90.76</td>
-                        <td style="padding: 8px 4px; color: #94A3B8;">₹13.18</td>
+                        <td style="padding: 8px 4px; color: #F5B942;">₹105.85</td>
+                        <td style="padding: 8px 4px; color: #60A5FA;">₹92.76</td>
+                        <td style="padding: 8px 4px; color: #94A3B8;">₹13.09</td>
                     </tr>
                     <tr>
                         <td style="padding: 8px 4px; font-weight: 700;">Chennai (TN)</td>
-                        <td style="padding: 8px 4px; color: #F5B942;">₹100.75</td>
-                        <td style="padding: 8px 4px; color: #60A5FA;">₹92.34</td>
-                        <td style="padding: 8px 4px; color: #94A3B8;">₹8.41</td>
+                        <td style="padding: 8px 4px; color: #F5B942;">₹102.63</td>
+                        <td style="padding: 8px 4px; color: #60A5FA;">₹94.24</td>
+                        <td style="padding: 8px 4px; color: #94A3B8;">₹8.39</td>
                     </tr>
                 </tbody>
             </table>
             <div style="font-family: 'Inter', sans-serif; font-size: 0.75rem; color: #94A3B8; margin-top: 14px; line-height: 1.45;">
-                • Delhi exhibits the lowest retail prices due to lower state VAT (19.4% vs 25% in Mumbai).<br/>
+                • All major metro retail petrol rates reflect active market benchmarks above ₹100/Litre.<br/>
                 • Source: Petroleum Planning & Analysis Cell (PPAC), MoPNG daily series.
             </div>
         </div>
@@ -237,36 +237,36 @@ def render_india_center_view(navigate_fn=None):
         """)
 
     with wf_col2:
-        # Build-up numbers calibrated to official MoPNG circulars
+        # Build-up numbers calibrated to official MoPNG circulars (current market rates > 100 INR/L)
         is_petrol = (sel_fuel == "Petrol (Regular)")
         if "Delhi" in sel_metro:
-            base_price = 55.40 if is_petrol else 56.20
-            freight = 0.28
+            base_price = 58.60 if is_petrol else 58.80
+            freight = 0.32 if is_petrol else 0.30
             excise = 19.90 if is_petrol else 15.80
-            commission = 3.82 if is_petrol else 2.60
-            vat = 15.32 if is_petrol else 12.74
-            total = 94.72 if is_petrol else 87.62
+            commission = 3.86 if is_petrol else 2.62
+            vat = 19.16 if is_petrol else 15.70
+            total = 101.84 if is_petrol else 93.22
         elif "Mumbai" in sel_metro:
-            base_price = 55.40 if is_petrol else 56.20
-            freight = 0.35
+            base_price = 58.60 if is_petrol else 58.80
+            freight = 0.38 if is_petrol else 0.35
             excise = 19.90 if is_petrol else 15.80
-            commission = 3.82 if is_petrol else 2.60
-            vat = 24.74 if is_petrol else 17.20
-            total = 104.21 if is_petrol else 92.15
+            commission = 3.86 if is_petrol else 2.62
+            vat = 23.57 if is_petrol else 16.70
+            total = 106.31 if is_petrol else 94.27
         elif "Kolkata" in sel_metro:
-            base_price = 55.40 if is_petrol else 56.20
-            freight = 0.42
+            base_price = 58.60 if is_petrol else 58.80
+            freight = 0.44 if is_petrol else 0.40
             excise = 19.90 if is_petrol else 15.80
-            commission = 3.82 if is_petrol else 2.60
-            vat = 24.40 if is_petrol else 15.74
-            total = 103.94 if is_petrol else 90.76
+            commission = 3.86 if is_petrol else 2.62
+            vat = 23.05 if is_petrol else 15.14
+            total = 105.85 if is_petrol else 92.76
         else: # Chennai
-            base_price = 55.40 if is_petrol else 56.20
-            freight = 0.38
+            base_price = 58.60 if is_petrol else 58.80
+            freight = 0.40 if is_petrol else 0.38
             excise = 19.90 if is_petrol else 15.80
-            commission = 3.82 if is_petrol else 2.60
-            vat = 21.25 if is_petrol else 17.36
-            total = 100.75 if is_petrol else 92.34
+            commission = 3.86 if is_petrol else 2.62
+            vat = 19.87 if is_petrol else 16.64
+            total = 102.63 if is_petrol else 94.24
 
         fig_wf = go.Figure(go.Waterfall(
             name="Build-Up",

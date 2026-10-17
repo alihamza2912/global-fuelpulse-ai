@@ -62,18 +62,18 @@ k1, k2, k3, k4 = st.columns(4)
 
 with k1:
     delhi_petrol = latest_metro[(latest_metro["city"] == "Delhi") & (latest_metro["fuel_type"] == "petrol_regular")]
-    val = f"₹{delhi_petrol.iloc[0]['price_inr']:.2f}/L" if not delhi_petrol.empty else "₹94.72/L"
+    val = f"₹{delhi_petrol.iloc[0]['price_inr']:.2f}/L" if not delhi_petrol.empty else "₹101.84/L"
     render_instrument_card("Delhi Petrol Price", val, accent="amber", subtext="PPAC Metro Benchmark", code_badge="DELHI")
 
 with k2:
     delhi_diesel = latest_metro[(latest_metro["city"] == "Delhi") & (latest_metro["fuel_type"] == "diesel")]
-    val_d = f"₹{delhi_diesel.iloc[0]['price_inr']:.2f}/L" if not delhi_diesel.empty else "₹87.62/L"
+    val_d = f"₹{delhi_diesel.iloc[0]['price_inr']:.2f}/L" if not delhi_diesel.empty else "₹93.22/L"
     render_instrument_card("Delhi Diesel Price", val_d, accent="teal", subtext="Commercial Transportation", code_badge="HSD")
 
 with k3:
     render_instrument_card(
         label="Indian Crude Basket",
-        value="$76.80 / bbl",
+        value="$84.20 / bbl",
         accent="copper",
         subtext="Oman-Dubai sour + Brent sweet blend"
     )
@@ -81,7 +81,7 @@ with k3:
 with k4:
     render_instrument_card(
         label="Crude Import Dependency",
-        value="87.8%",
+        value="88.2%",
         accent="red",
         subtext="Refinery crude throughput imported"
     )
@@ -167,8 +167,8 @@ with tab_calc:
 
     with calc_c2:
         mileage_km_per_litre = st.number_input("Fuel Efficiency (km / Litre)", min_value=1.0, max_value=25.0, value=4.5)
-        selected_metro_price = st.selectbox("Fuel City Benchmark", ["Delhi (₹87.62/L)", "Mumbai (₹92.15/L)"])
-        active_rate = 87.62 if "Delhi" in selected_metro_price else 92.15
+        selected_metro_price = st.selectbox("Fuel City Benchmark", ["Delhi (₹93.22/L)", "Mumbai (₹94.27/L)"])
+        active_rate = 93.22 if "Delhi" in selected_metro_price else 94.27
 
     with calc_c3:
         operating_days = st.slider("Operating Days per Month", min_value=15, max_value=31, value=26)

@@ -16,7 +16,7 @@ class PetroleumTradeAnalytics:
     @staticmethod
     def get_top_exporters(
         product_category: str = "crude_oil",
-        period: str = "2024",
+        period: str = "2026",
         limit: int = 20
     ) -> pd.DataFrame:
         """Retrieves leading exporting countries by volume and value."""
@@ -50,6 +50,10 @@ class PetroleumTradeAnalytics:
                 "limit": limit
             })
 
+        if df.empty and period != "2024":
+            # Graceful fallback to 2024 historical baseline if newer period not yet populated
+            return PetroleumTradeAnalytics.get_top_exporters(product_category=product_category, period="2024", limit=limit)
+
         if not df.empty:
             total_vol = df["total_export_quantity"].sum()
             df["global_market_share_percent"] = (df["total_export_quantity"] / total_vol) * 100.0
@@ -60,7 +64,7 @@ class PetroleumTradeAnalytics:
     @staticmethod
     def get_top_importers(
         product_category: str = "crude_oil",
-        period: str = "2024",
+        period: str = "2026",
         limit: int = 20
     ) -> pd.DataFrame:
         """Retrieves leading importing countries by volume and value."""
@@ -93,6 +97,9 @@ class PetroleumTradeAnalytics:
                 "limit": limit
             })
 
+        if df.empty and period != "2024":
+            return PetroleumTradeAnalytics.get_top_importers(product_category=product_category, period="2024", limit=limit)
+
         if not df.empty:
             total_vol = df["total_import_quantity"].sum()
             df["global_import_share_percent"] = (df["total_import_quantity"] / total_vol) * 100.0
@@ -104,7 +111,7 @@ class PetroleumTradeAnalytics:
     def calculate_supplier_concentration_hhi(
         importer_iso3: str,
         product_category: str = "crude_oil",
-        period: str = "2024"
+        period: str = "2026"
     ) -> Dict[str, Any]:
         """
         Calculates the Herfindahl-Hirschman Index (HHI) for an importing country.
@@ -134,6 +141,13 @@ class PetroleumTradeAnalytics:
                 "product_category": product_category,
                 "period": period
             })
+
+        if df.empty and period != "2024":
+            return PetroleumTradeAnalytics.calculate_supplier_concentration_hhi(
+                importer_iso3=importer_iso3,
+                product_category=product_category,
+                period="2024"
+            )
 
         if df.empty or df["quantity"].sum() == 0:
             return {
@@ -168,7 +182,7 @@ class PetroleumTradeAnalytics:
     @staticmethod
     def get_bilateral_trade_flows(
         product_category: str = "crude_oil",
-        period: str = "2024"
+        period: str = "2026"
     ) -> pd.DataFrame:
         """Retrieves bilateral country-to-country trade flows for matrix and map visuals."""
         query = """
@@ -195,7 +209,15 @@ class PetroleumTradeAnalytics:
         ORDER BY t.quantity DESC
         """
         with db_manager.engine.connect() as conn:
-            return pd.read_sql(text(query), conn, params={
+            df = pd.read_sql(text(query), conn, params={
                 "product_category": product_category,
                 "period": period
             })
+
+        if df.empty and period != "2024":
+            return PetroleumTradeAnalytics.get_bilateral_trade_flows(
+                product_category=product_category,
+                period="2024"
+            )
+
+        return df

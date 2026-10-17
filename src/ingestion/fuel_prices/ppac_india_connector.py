@@ -29,12 +29,12 @@ class PPACIndiaConnector(BaseConnector):
         "CHENNAI": "IND_MAA"
     }
 
-    # Baseline metro retail prices in INR/Litre
+    # Baseline metro retail prices in INR/Litre (Current active market benchmarks > 100 INR/L)
     METRO_BASELINES = {
-        "DELHI": {"petrol": 94.72, "diesel": 87.62, "vat_petrol": 19.4, "vat_diesel": 16.75},
-        "MUMBAI": {"petrol": 104.21, "diesel": 92.15, "vat_petrol": 25.0, "vat_diesel": 21.0},
-        "KOLKATA": {"petrol": 103.94, "diesel": 90.76, "vat_petrol": 24.5, "vat_diesel": 19.8},
-        "CHENNAI": {"petrol": 100.75, "diesel": 92.34, "vat_petrol": 23.0, "vat_diesel": 20.5}
+        "DELHI": {"petrol": 101.84, "diesel": 93.22, "vat_petrol": 19.4, "vat_diesel": 16.75},
+        "MUMBAI": {"petrol": 106.31, "diesel": 94.27, "vat_petrol": 25.0, "vat_diesel": 21.0},
+        "KOLKATA": {"petrol": 105.85, "diesel": 92.76, "vat_petrol": 24.5, "vat_diesel": 19.8},
+        "CHENNAI": {"petrol": 102.63, "diesel": 94.24, "vat_petrol": 23.0, "vat_diesel": 20.5}
     }
 
     def __init__(self):

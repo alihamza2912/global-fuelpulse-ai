@@ -220,7 +220,7 @@ def get_cached_ch02_charts(prod_lb, regional_prod):
     return fig_prod_bar, fig_reg
 
 @st.cache_data(ttl=3600, show_spinner=False)
-def get_cached_trade_data(period: str = "2024"):
+def get_cached_trade_data(period: str = "2026"):
     """Caches bilateral flows, top exporters, and top importers."""
     matrix = PetroleumTradeAnalytics.get_bilateral_trade_flows(period=period)
     exporters = PetroleumTradeAnalytics.get_top_exporters(period=period)
@@ -354,7 +354,7 @@ def get_cached_ch05_charts(india_prices_df):
             legend_below=True
         )
 
-    delhi_petrol = 94.72
+    delhi_petrol = 101.84
     if not india_prices_df.empty:
         delhi_match = india_prices_df[
             (india_prices_df["city"].str.contains("Delhi", case=False, na=False)) &
@@ -631,10 +631,10 @@ def get_searchable_entities():
         pass
 
     quick_items = [
-        ("Delhi Metro", "India Metro", "rgba(16, 185, 129, 0.2)", "PPAC Daily Retail Petrol ₹94.72 / Diesel ₹87.62", "#ch-05", "View Delhi Price Breakdown"),
-        ("Mumbai Metro", "India Metro", "rgba(16, 185, 129, 0.2)", "PPAC Daily Retail Petrol ₹104.21 / Diesel ₹92.15", "#ch-05", "View Mumbai Price Breakdown"),
-        ("Kolkata Metro", "India Metro", "rgba(16, 185, 129, 0.2)", "PPAC Daily Retail Petrol ₹103.94 / Diesel ₹90.76", "#ch-05", "View Kolkata Price Breakdown"),
-        ("Chennai Metro", "India Metro", "rgba(16, 185, 129, 0.2)", "PPAC Daily Retail Petrol ₹100.75 / Diesel ₹92.34", "#ch-05", "View Chennai Price Breakdown"),
+        ("Delhi Metro", "India Metro", "rgba(16, 185, 129, 0.2)", "PPAC Daily Retail Petrol ₹101.84 / Diesel ₹93.22", "#ch-05", "View Delhi Price Breakdown"),
+        ("Mumbai Metro", "India Metro", "rgba(16, 185, 129, 0.2)", "PPAC Daily Retail Petrol ₹106.31 / Diesel ₹94.27", "#ch-05", "View Mumbai Price Breakdown"),
+        ("Kolkata Metro", "India Metro", "rgba(16, 185, 129, 0.2)", "PPAC Daily Retail Petrol ₹105.85 / Diesel ₹92.76", "#ch-05", "View Kolkata Price Breakdown"),
+        ("Chennai Metro", "India Metro", "rgba(16, 185, 129, 0.2)", "PPAC Daily Retail Petrol ₹102.63 / Diesel ₹94.24", "#ch-05", "View Chennai Price Breakdown"),
         ("Petrol (Regular Motor Gasoline)", "Fuel Product", "rgba(245, 185, 66, 0.2)", "Motor fuel retail price tracking", "#ch-04", "Compare Global Petrol Prices"),
         ("Diesel (Automotive Gasoil)", "Fuel Product", "rgba(245, 185, 66, 0.2)", "Industrial & logistics fuel tracking", "#ch-04", "Compare Global Diesel Prices"),
         ("Brent Crude Spot Benchmark", "Market Benchmark", "rgba(244, 63, 94, 0.2)", "Global seaborne crude reference price", "#ch-01", "Inspect Brent Trends"),
@@ -1023,7 +1023,7 @@ def render_dashboard_view(navigate_fn=None):
         action_label="TRADE EXPLORER"
     )
 
-    trade_matrix, top_exporters, top_importers = get_cached_trade_data(period="2024")
+    trade_matrix, top_exporters, top_importers = get_cached_trade_data(period="2026")
     fig_exp, fig_imp = get_cached_ch03_charts(top_exporters, top_importers)
 
     t_col1, t_col2 = st.columns([6, 6])
@@ -1112,7 +1112,7 @@ def render_dashboard_view(navigate_fn=None):
                 label="India Pump Price (Delhi)",
                 value=f"${ind_val:.4f}/L",
                 accent="amber",
-                subtext="₹94.72 / Litre (48% Tax Burden)",
+                subtext="₹101.84 / Litre (48% Tax Burden)",
                 code_badge="IND"
             )
 

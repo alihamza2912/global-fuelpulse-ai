@@ -55,13 +55,15 @@ class IngestionOrchestrator:
         return summaries
 
     def run_live_refresh(self) -> List[Dict[str, Any]]:
-        """Executes live retail fuel prices and exchange rate synchronization."""
+        """Executes live retail fuel prices, exchange rate synchronization, and international petroleum trade flows."""
         live_connectors = [
             OpenExchangeRateConnector(),
             EIAFuelPriceConnector(),
             PPACIndiaConnector(),
             ECOilBulletinConnector(),
-            GlobalPetrolPricesConnector()
+            GlobalPetrolPricesConnector(),
+            UNComtradeConnector(),
+            EIATradeConnector()
         ]
         summaries = []
         logger.info("Triggering live data refresh across %d connectors...", len(live_connectors))
