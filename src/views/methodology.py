@@ -13,10 +13,12 @@ from src.ui_components import (
     COLOR_INK,
     COLOR_GRAY_MUTED
 )
+from src.localization.i18n import t, get_current_language
 
 
 def render_methodology_view(navigate_fn=None):
     """Renders the comprehensive Methodology, Mathematical Formulations, and Calculations guide."""
+    cur_lang = get_current_language()
 
     render_html(f"""
     <div style="background: radial-gradient(circle at 10% 20%, rgba(245, 185, 66, 0.12) 0%, rgba(14, 21, 38, 0.95) 70%), #070A12; border: 1px solid rgba(255, 255, 255, 0.14); border-radius: 12px; padding: 26px 30px; margin-bottom: 24px;">
@@ -24,10 +26,10 @@ def render_methodology_view(navigate_fn=None):
             <div>
                 {get_fuel_client_logo_html()}
                 <h1 style="font-family: 'Space Grotesk', -apple-system, sans-serif; font-size: 2rem; font-weight: 800; color: #F9FAFB; margin: 6px 0 8px 0; letter-spacing: -0.02em;">
-                    Methodology & Mathematical Calculations
+                    {t('method_hero_title', cur_lang)}
                 </h1>
                 <p style="font-family: 'Inter', sans-serif; font-size: 1rem; color: #94A3B8; margin: 0; max-width: 820px; line-height: 1.55;">
-                    The mathematical, econometric, and statistical foundations powering price deltas, supplier concentration indices, and predictive error metrics.
+                    {t('method_hero_sub', cur_lang)}
                 </p>
             </div>
         </div>

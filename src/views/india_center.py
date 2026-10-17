@@ -35,10 +35,10 @@ def render_india_center_view(navigate_fn=None):
             <div>
                 {get_fuel_client_logo_html()}
                 <h1 style="font-family: 'Space Grotesk', -apple-system, sans-serif; font-size: 2rem; font-weight: 800; color: #F9FAFB; margin: 6px 0 8px 0; letter-spacing: -0.02em;">
-                    India Energy & Fuel Intelligence Center
+                    {t('india_center_title', cur_lang)}
                 </h1>
                 <p style="font-family: 'Inter', sans-serif; font-size: 1rem; color: #94A3B8; margin: 0; max-width: 820px; line-height: 1.55;">
-                    Official PPAC daily metro benchmarks, MoPNG price build-up waterfall, and state-owned vs private oil marketing company (OMC) market structures.
+                    {t('india_center_subtitle', cur_lang)}
                 </p>
             </div>
         </div>
@@ -80,10 +80,10 @@ def render_india_center_view(navigate_fn=None):
         delhi_petrol = latest_metro[(latest_metro["city"] == "Delhi") & (latest_metro["fuel_type"] == "petrol_regular")]
         val_p = f"₹{delhi_petrol.iloc[0]['price_inr']:.2f}/L" if not delhi_petrol.empty else "₹102.12/L"
         render_instrument_card(
-            label=f"Delhi {t('petrol_rsp', cur_lang)}",
+            label=t('india_delhi_petrol_kpi', cur_lang),
             value=val_p,
             accent="amber",
-            subtext=f"PPAC Metro Benchmark ({t('delhi_headline', cur_lang)})",
+            subtext=t('india_delhi_petrol_sub', cur_lang),
             code_badge="MS-DELHI"
         )
 
@@ -91,37 +91,37 @@ def render_india_center_view(navigate_fn=None):
         delhi_diesel = latest_metro[(latest_metro["city"] == "Delhi") & (latest_metro["fuel_type"] == "diesel")]
         val_d = f"₹{delhi_diesel.iloc[0]['price_inr']:.2f}/L" if not delhi_diesel.empty else "₹95.20/L"
         render_instrument_card(
-            label=f"Delhi {t('diesel_rsp', cur_lang)}",
+            label=t('india_delhi_diesel_kpi', cur_lang),
             value=val_d,
             accent="teal",
-            subtext="Commercial Transport Benchmark",
+            subtext=t('india_delhi_diesel_sub', cur_lang),
             code_badge="HSD-DELHI"
         )
 
     with k3:
         render_instrument_card(
-            label="Indian Crude Basket",
+            label=t('india_crude_basket_kpi', cur_lang),
             value="$84.20 / bbl",
             accent="copper",
-            subtext="Oman-Dubai sour (75.6%) + Brent (24.4%)",
+            subtext=t('india_crude_basket_sub', cur_lang),
             code_badge="INDIAN-BASKET"
         )
 
     with k4:
         render_instrument_card(
-            label="Crude Import Dependency",
+            label=t('india_crude_import_dep', cur_lang),
             value="88.2%",
             accent="red",
-            subtext="Refinery throughput imported",
+            subtext=t('india_crude_import_sub', cur_lang),
             code_badge="DEPENDENCE"
         )
 
     st.write("")
 
     # 3. Metro City Comparison (Petrol & Diesel)
-    st.markdown("""
+    st.markdown(f"""
     <div style="font-family: 'Space Grotesk', sans-serif; font-size: 1.25rem; font-weight: 800; color: #F9FAFB; margin-bottom: 8px;">
-        1. OFFICIAL METRO PUMP BENCHMARKS (PPAC SERIES)
+        {t('india_sec1_title', cur_lang)}
     </div>
     """, unsafe_allow_html=True)
 
@@ -208,9 +208,9 @@ def render_india_center_view(navigate_fn=None):
     st.write("")
 
     # 4. Interactive Price Build-Up Waterfall
-    st.markdown("""
+    st.markdown(f"""
     <div style="font-family: 'Space Grotesk', sans-serif; font-size: 1.25rem; font-weight: 800; color: #F9FAFB; margin-bottom: 8px;">
-        2. DYNAMIC PRICE BUILD-UP WATERFALL (MoPNG REGULATORY FORMULA)
+        {t('india_sec2_title', cur_lang)}
     </div>
     """, unsafe_allow_html=True)
 
@@ -328,9 +328,9 @@ def render_india_center_view(navigate_fn=None):
     st.write("")
 
     # 5. Oil Marketing Company (OMC) Market Footprint
-    st.markdown("""
+    st.markdown(f"""
     <div style="font-family: 'Space Grotesk', sans-serif; font-size: 1.25rem; font-weight: 800; color: #F9FAFB; margin-bottom: 8px;">
-        3. OIL MARKETING COMPANY (OMC) MARKET STRUCTURE
+        {t('india_sec3_title', cur_lang)}
     </div>
     """, unsafe_allow_html=True)
 

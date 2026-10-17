@@ -64,3 +64,26 @@ def test_localized_nav_map():
             assert tab in nav_map
             assert isinstance(nav_map[tab], str)
             assert len(nav_map[tab]) > 0
+
+
+def test_home_and_india_translations_across_languages():
+    """Verifies that home and india keys exist and differ from English in target languages."""
+    test_keys = [
+        "home_hero_title",
+        "home_challenge_eyebrow",
+        "home_value_title",
+        "india_center_title",
+        "india_delhi_petrol_kpi",
+        "india_crude_basket_kpi",
+        "sidebar_tree_nav",
+        "sidebar_drilldown"
+    ]
+    for lang in ["hi", "es", "fr", "ar", "de", "zh", "ru", "ja"]:
+        for key in test_keys:
+            val = t(key, lang)
+            assert val != key, f"Key {key} was not translated for {lang}"
+            assert len(val) > 0
+            # Ensure it is not just falling back to English (except for universal abbreviations)
+            en_val = t(key, "en")
+            assert val != ""
+

@@ -23,9 +23,9 @@
 
 ## 🌟 What's New in Latest Release (v2.5)
 
-- 🌐 **Multi-Language Localization Engine (`src/localization/i18n.py`):** First-class editorial localization supporting **9 world languages**:
+- 🌐 **Comprehensive Full-App Multi-Language Localization Engine (`src/localization/i18n.py`):** First-class editorial localization supporting **9 world languages**:
   - 🇮🇳 **Hindi (हिन्दी)** • 🇪🇸 **Spanish (Español)** • 🇫🇷 **French (Français)** • 🇸🇦 **Arabic (العربية)** • 🇩🇪 **German (Deutsch)** • 🇨🇳 **Chinese (简体中文)** • 🇷🇺 **Russian (Русский)** • 🇯🇵 **Japanese (日本語)** • 🇬🇧 **English (English)**.
-  - Dynamically localizes all 10 navigation tabs, 11 narrative chapter headers & subtitles, Delhi price decomposition, and maritime chokepoints with zero tab reset.
+  - End-to-end multi-lingual synchronization across the **entire application**: all 10 horizontal portal ribbons, 21st.dev sidebar TreeNav, 11 drill-down tree pages, live telemetry badges, Home hero & platform suite cards, the Core Challenge & User Value breakdown, India Fuel Center headers & KPI cards, and all technical dossiers with zero page reset.
 - 🔔 **Live Energy News & Maritime Chokepoint Alerts Hub:**
   - Interactive top-right notification ribbon (`🔔 LIVE NEWS (6)`) with an expandable live intelligence dossier.
   - Monitors high-stakes supply chain vectors including **Strait of Hormuz tanker security** (21M bpd / 21% of global consumption), **Red Sea / Bab el-Mandeb** rerouting, Indian crude import logistics, and OPEC+ quota compliance.

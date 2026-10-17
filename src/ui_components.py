@@ -1094,20 +1094,22 @@ def render_chapter_header(
     render_html(header_html)
 
 
-def render_chapter_nav():
+def render_chapter_nav(lang=None):
     """Renders a floating Tubelight horizontal navigation bar for the 11 analytical chapters."""
+    from src.localization.i18n import t, get_current_language
+    cur_lang = lang or get_current_language()
     chapters = [
-        ("01", "At a Glance", "#ch-01"),
-        ("02", "Production", "#ch-02"),
-        ("03", "Trade Flows", "#ch-03"),
-        ("04", "Fuel Prices", "#ch-04"),
-        ("05", "India Price", "#ch-05"),
-        ("06", "Oil Companies", "#ch-06"),
-        ("07", "Consumption", "#ch-07"),
-        ("08", "Taxes & Revenue", "#ch-08"),
-        ("09", "Risk & Security", "#ch-09"),
-        ("10", "Forecasts & Lab", "#ch-10"),
-        ("11", "Data Sources", "#ch-11")
+        ("01", t("chapter_01_title", cur_lang), "#ch-01"),
+        ("02", t("chapter_02_title", cur_lang), "#ch-02"),
+        ("03", t("chapter_03_title", cur_lang), "#ch-03"),
+        ("04", t("chapter_04_title", cur_lang), "#ch-04"),
+        ("05", t("chapter_05_title", cur_lang), "#ch-05"),
+        ("06", t("chapter_06_title", cur_lang), "#ch-06"),
+        ("07", t("chapter_07_title", cur_lang), "#ch-07"),
+        ("08", t("chapter_08_title", cur_lang), "#ch-08"),
+        ("09", t("chapter_09_title", cur_lang), "#ch-09"),
+        ("10", t("chapter_10_title", cur_lang), "#ch-10"),
+        ("11", t("chapter_11_title", cur_lang), "#ch-11")
     ]
 
     nav_links = "".join([
