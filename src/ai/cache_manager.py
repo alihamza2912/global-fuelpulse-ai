@@ -78,19 +78,28 @@ class QuestionCacheManager:
             return
 
         with self._thread_lock:
-            # Strip cache flags before saving
-            clean_resp = {k: v for k, v in response.items() if k != "served_from_cache"}
+            # Memory cache stores full response including visualization_fig
+            mem_resp = response.copy()
+            mem_resp.pop("served_from_cache", None)
             self._memory_cache[norm_key] = {
                 "cached_at": time.time(),
                 "original_question": question,
-                "response": clean_resp,
+                "response": mem_resp,
             }
-            # Persist to disk
+            # Disk persistence filters non-serializable objects like Figure
+            disk_cache = {}
+            for k, entry in self._memory_cache.items():
+                resp_copy = {rk: rv for rk, rv in entry["response"].items() if rk != "visualization_fig"}
+                disk_cache[k] = {
+                    "cached_at": entry["cached_at"],
+                    "original_question": entry["original_question"],
+                    "response": resp_copy
+                }
             try:
                 with open(self.cache_file_path, "w") as f:
                     fcntl.flock(f, fcntl.LOCK_EX)
                     try:
-                        json.dump(self._memory_cache, f, indent=2)
+                        json.dump(disk_cache, f, indent=2)
                     finally:
                         fcntl.flock(f, fcntl.LOCK_UN)
             except Exception as e:

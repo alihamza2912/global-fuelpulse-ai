@@ -804,6 +804,9 @@ def render_dashboard_view(navigate_fn=None):
             if ai_ans and not ai_ans.get("is_fallback"):
                 render_html("""<div style="display:inline-block;padding:5px 12px;background:rgba(16, 185, 129, 0.2);color:#10B981;font-weight:700;font-size:12px;border:1.5px solid #10B981;margin-top:10px;margin-bottom:8px;border-radius:4px;">🟢 Answered by Free Autonomous AI Market Analyst (Zero API Key Required)</div>""")
                 st.markdown(ai_ans["answer_text"])
+                if ai_ans.get("visualization_fig") is not None:
+                    st.markdown("#### 📊 Intelligence Visualization & Scenario Projection")
+                    st.plotly_chart(ai_ans["visualization_fig"], width="stretch", theme=None)
                 if ai_ans.get("data_records"):
                     st.dataframe(pd.DataFrame(ai_ans["data_records"]), width="stretch", hide_index=True)
             else:
@@ -842,6 +845,9 @@ def render_dashboard_view(navigate_fn=None):
                 if ai_resp.get("autonomous_free_mode"):
                     render_html("""<div style="display:inline-block;padding:5px 12px;background:rgba(16, 185, 129, 0.2);color:#10B981;font-weight:700;font-size:12px;border:1.5px solid #10B981;margin-bottom:8px;border-radius:4px;">🟢 100% Free Autonomous AI Engine (0 Quota • Zero API Key Required)</div>""")
                 st.markdown(ai_resp["answer_text"])
+                if ai_resp.get("visualization_fig") is not None:
+                    st.markdown("#### 📊 Intelligence Visualization & Scenario Projection")
+                    st.plotly_chart(ai_resp["visualization_fig"], width="stretch", theme=None)
                 if ai_resp.get("data_records"):
                     st.dataframe(pd.DataFrame(ai_resp["data_records"]), width="stretch", hide_index=True)
 

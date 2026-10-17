@@ -122,6 +122,11 @@ if user_question:
 
     st.markdown(response["answer_text"])
 
+    # If visualization returned, render interactive chart
+    if response.get("visualization_fig") is not None:
+        st.markdown("#### 📊 Interactive Scenario Projection & Intelligence Visualization")
+        st.plotly_chart(response["visualization_fig"], width="stretch", theme=None)
+
     # If tabular data returned, render table
     if response.get("data_records"):
         st.markdown("#### 📑 Underlying Relational Database Records")
