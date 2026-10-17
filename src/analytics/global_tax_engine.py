@@ -1133,7 +1133,10 @@ class GlobalTaxEngine:
 
         return None
 
-    resolve = resolve_query
+    @classmethod
+    def resolve(cls, query: str) -> Optional[Dict[str, Any]]:
+        """Public alias for resolve_query."""
+        return cls.resolve_query(query)
 
     @classmethod
     def _build_india_response(cls, state_name: str, data: Dict[str, Any], matched_city: Optional[str], query: str) -> Dict[str, Any]:
