@@ -34,23 +34,77 @@ FORBIDDEN_SQL_TERMS = [
 
 
 class SessionAbuseProtector:
-    """Per-user session abuse protection: rate limits, cooldowns, and message lengths."""
+    """
+    Per-user session abuse protection and enterprise security shield:
+    1. Security Guard: Detects malicious SQL injection, prompt injection, and cyber exploits.
+    2. Permanent Session Termination: Blocks sessions attempting illegal activities.
+    3. Daily Free Quota: Exactly 3 free questions per 24 hours for unauthenticated users.
+    4. Antigravity Token Pass: Unlimited queries when custom Antigravity / Gemini key is attached.
+    5. Per-Session Rate Limits: 500 char length, 3s cooldown, 15 questions/hour frequency.
+    """
+
+    ILLEGAL_PATTERNS = [
+        # SQL Injection & destructive DB tampering
+        r"\b(DROP|DELETE|UPDATE|INSERT|ALTER|TRUNCATE|GRANT|REVOKE|SHUTDOWN|EXEC|EXECUTE)\b",
+        r"\bUNION\s+(ALL\s+)?SELECT\b",
+        r";\s*--",
+        r"/\*.*?\*/",
+        r"\binformation_schema\b",
+        r"\bxp_cmdshell\b",
+        r"\bsys\.tables\b",
+        r"\b(benchmark|pg_sleep|sleep)\s*\(",
+        # Prompt injections & adversarial jailbreaks
+        r"ignore\s+(all\s+)?(previous\s+)?instructions",
+        r"disregard\s+(all\s+)?(previous\s+)?instructions",
+        r"bypass\s+(all\s+)?(security|guardrails|rules|filter)",
+        r"\bjailbreak\b",
+        r"\bdan\s+mode\b",
+        r"\bdeveloper\s+mode\b",
+        r"(reveal|print|show|dump)\s+(the\s+)?(system\s+)?(prompt|instruction)",
+        r"act\s+as\s+an?\s+(unrestricted|unfiltered|jailbroken)\b",
+        # Cyber / OS command execution & exploit payloads
+        r"\brm\s+-rf\b",
+        r"\bcurl\b.*\|\s*(bash|sh)\b",
+        r"\bwget\b.*\|\s*(bash|sh)\b",
+        r"/etc/(passwd|shadow)",
+        r"<script\b",
+        r"javascript\s*:",
+        r"\b(ransomware|exploit\s+kit|ddos\s+attack|malware\s+script)\b"
+    ]
 
     def __init__(self):
         self._sessions: Dict[str, Dict[str, Any]] = {}
         self._lock = threading.RLock()
+        self._compiled_regexes = [re.compile(p, re.IGNORECASE) for p in self.ILLEGAL_PATTERNS]
+
+    def check_illegal_activity(self, question: str) -> Tuple[bool, Optional[str]]:
+        """
+        Inspects query text against known cyberattack, SQL injection, and prompt injection signatures.
+        Returns (is_illegal, violation_category).
+        """
+        if not question:
+            return False, None
+        for rx in self._compiled_regexes:
+            if rx.search(question):
+                return True, f"Security Violation: Pattern '{rx.pattern[:30]}' triggered"
+        return False, None
 
     def validate_and_record(
         self,
         session_id: str,
         question: str,
-        bypass: bool = False
+        bypass: bool = False,
+        enforce_daily_free_limit: bool = False,
+        has_custom_key: bool = False
     ) -> Tuple[bool, Optional[str], Optional[str]]:
         """
         Validates per-user session constraints:
-        1. Length limit (max 500 characters).
-        2. Cooldown (minimum 3 seconds between requests).
-        3. Frequency limit (max 15 questions per hour).
+        1. Permanent block check (for sessions caught attempting illegal activity).
+        2. Illegal activity detection (terminates access if detected).
+        3. Message length limit (max 500 chars).
+        4. Cooldown (minimum 3s between requests).
+        5. Daily free quota (max 3 questions per 24 hours if no Antigravity key attached).
+        6. Frequency limit (max 15 questions per hour).
         Returns (is_valid, error_topic, error_message).
         """
         if bypass:
@@ -58,30 +112,59 @@ class SessionAbuseProtector:
 
         cleaned_q = question.strip() if question else ""
 
-        # 1. Message length check
-        max_len = settings.api.max_question_length
-        if len(cleaned_q) > max_len:
-            return (
-                False,
-                "Message Length Limit",
-                f"Your question is too long ({len(cleaned_q)} characters; maximum is {max_len}). "
-                "Please shorten your question and try again."
-            )
-
-        now = time.time()
-        cooldown_sec = settings.api.session_cooldown_seconds
-        max_per_hour = settings.api.session_max_questions_per_hour
-
         with self._lock:
             if session_id not in self._sessions:
                 self._sessions[session_id] = {
                     "last_timestamp": 0.0,
-                    "hourly_timestamps": []
+                    "hourly_timestamps": [],
+                    "daily_timestamps": [],
+                    "is_blocked": False,
+                    "block_reason": None
                 }
 
             sdata = self._sessions[session_id]
 
-            # 2. Cooldown check
+            # 1. Check if session was permanently blocked due to illegal activity
+            if sdata.get("is_blocked"):
+                return (
+                    False,
+                    "🚫 Security Violation: Access Terminated",
+                    "🚫 **ACCESS RESTRICTED: Session Terminated.**\n\n"
+                    "This session has been permanently blocked due to a detected security violation or illegal activity attempt. "
+                    "AI intelligence capabilities are no longer available for this session. "
+                    "If you believe this is in error, please restart your session or contact system administration."
+                )
+
+            # 2. Check for illegal, destructive, or adversarial activity in query
+            is_illegal, violation_reason = self.check_illegal_activity(cleaned_q)
+            if is_illegal:
+                sdata["is_blocked"] = True
+                sdata["block_reason"] = violation_reason
+                logger.warning(f"SECURITY ALERT: Blocked session {session_id}. Reason: {violation_reason}")
+                return (
+                    False,
+                    "🚫 Security Violation: Access Terminated",
+                    "🚫 **SECURITY VIOLATION: Access Terminated.**\n\n"
+                    "Malicious, unauthorized, or destructive activity detected (e.g. database injection, "
+                    "system prompt extraction, or exploit payload). In accordance with our security policies, "
+                    "your access to Global FuelPulse AI Analyst has been immediately revoked."
+                )
+
+            # 3. Message length check
+            max_len = settings.api.max_question_length
+            if len(cleaned_q) > max_len:
+                return (
+                    False,
+                    "Message Length Limit",
+                    f"Your question is too long ({len(cleaned_q)} characters; maximum is {max_len}). "
+                    "Please shorten your question and try again."
+                )
+
+            now = time.time()
+            cooldown_sec = settings.api.session_cooldown_seconds
+            max_per_hour = settings.api.session_max_questions_per_hour
+
+            # 4. Cooldown check
             time_since_last = now - sdata["last_timestamp"]
             if sdata["last_timestamp"] > 0 and time_since_last < cooldown_sec:
                 return (
@@ -90,7 +173,31 @@ class SessionAbuseProtector:
                     f"Please wait at least {int(cooldown_sec)} seconds between questions."
                 )
 
-            # 3. Clean and check 1-hour window
+            # 5. Daily Free Quota Check (Strict 3 questions per 24 hours for free users)
+            if enforce_daily_free_limit and not has_custom_key:
+                max_daily_free = settings.api.daily_free_questions_limit
+                daily_active = [ts for ts in sdata.get("daily_timestamps", []) if (now - ts) < 86400.0]
+                sdata["daily_timestamps"] = daily_active
+
+                if len(daily_active) >= max_daily_free:
+                    earliest_call = min(daily_active)
+                    reset_seconds = max(0.0, 86400.0 - (now - earliest_call))
+                    hours = int(reset_seconds // 3600)
+                    mins = int((reset_seconds % 3600) // 60)
+                    time_remaining_str = f"{hours}h {mins}m" if hours > 0 else f"{mins}m"
+                    return (
+                        False,
+                        "⏳ Daily Free Quota Finished (3/3 Used)",
+                        f"⏳ **Daily Free Quota Finished ({max_daily_free}/{max_daily_free} Questions Used)**\n\n"
+                        f"You have used your free daily allowance of **{max_daily_free} questions**. "
+                        f"Your 24-hour quota will reset in **{time_remaining_str}**.\n\n"
+                        "🔑 **Want to ask unlimited questions right now?**\n"
+                        "Attach your **Antigravity Token / Gemini API Key** in the configuration panel above to unlock "
+                        "**unlimited, instant AI market intelligence**.\n\n"
+                        "*Meanwhile, you can still explore all interactive charts, simulations, and trade flow monitors across the platform.*"
+                    )
+
+            # 6. Hourly frequency check
             recent = [ts for ts in sdata["hourly_timestamps"] if (now - ts) < 3600.0]
             if len(recent) >= max_per_hour:
                 return (
@@ -100,11 +207,43 @@ class SessionAbuseProtector:
                     "Please try again later. Meanwhile you can still use the charts, tables and forecasts on the dashboard."
                 )
 
-            # Record this message
+            # Record this question
             sdata["last_timestamp"] = now
             recent.append(now)
             sdata["hourly_timestamps"] = recent
+            if "daily_timestamps" not in sdata:
+                sdata["daily_timestamps"] = []
+            sdata["daily_timestamps"].append(now)
             return True, None, None
+
+    def get_session_status(self, session_id: str, has_custom_key: bool = False) -> Dict[str, Any]:
+        """Returns the current user session quota and security status."""
+        with self._lock:
+            sdata = self._sessions.get(session_id, {})
+            is_blocked = sdata.get("is_blocked", False)
+            now = time.time()
+            daily_active = [ts for ts in sdata.get("daily_timestamps", []) if (now - ts) < 86400.0]
+            used = len(daily_active)
+            max_free = settings.api.daily_free_questions_limit
+            remaining = 0 if is_blocked else (9999 if has_custom_key else max(0, max_free - used))
+            reset_sec = 0.0
+            if daily_active and not has_custom_key:
+                earliest_call = min(daily_active)
+                reset_sec = max(0.0, 86400.0 - (now - earliest_call))
+            hours = int(reset_sec // 3600)
+            mins = int((reset_sec % 3600) // 60)
+            reset_str = f"{hours}h {mins}m" if hours > 0 else f"{mins}m"
+            return {
+                "session_id": session_id,
+                "is_blocked": is_blocked,
+                "has_custom_key": has_custom_key,
+                "daily_questions_used": used,
+                "daily_questions_remaining": remaining,
+                "daily_free_limit": max_free,
+                "is_daily_quota_finished": (used >= max_free and not has_custom_key),
+                "reset_seconds_remaining": reset_sec,
+                "reset_time_str": reset_str
+            }
 
     def reset(self) -> None:
         """Clears session tracking state."""
@@ -154,11 +293,17 @@ class AIEnergyMarketAnalyst:
                 "is_fallback": True
             }
 
-        # 1. Per-User Session Validation
+        # Determine if Antigravity Token or custom Gemini API key is configured
+        has_custom_key = gemini_client.is_key_configured() or bool(settings.api.gemini_api_key)
+        enforce_daily = (not has_custom_key) and (not bypass_session_limits)
+
+        # 1. Per-User Session & Enterprise Security Validation
         valid, err_topic, err_msg = session_protector.validate_and_record(
             session_id=session_id,
             question=question,
-            bypass=bypass_session_limits
+            bypass=bypass_session_limits,
+            enforce_daily_free_limit=enforce_daily,
+            has_custom_key=has_custom_key
         )
         if not valid:
             return {
@@ -168,7 +313,8 @@ class AIEnergyMarketAnalyst:
                 "data_records": [],
                 "sources_cited": [],
                 "is_fallback": True,
-                "quota_used": False
+                "quota_used": False,
+                "is_security_blocked": "Security Violation" in (err_topic or "")
             }
 
         # 2. Check Question Cache (Saves 100% of Quota on repeated queries)
@@ -208,7 +354,11 @@ class AIEnergyMarketAnalyst:
         # Route T: Sovereign State & Global Tax / Fuel Decomposition (Prayagraj, UP, Delhi, Texas, Germany, etc.)
         if (
             any(w in q_lower for w in ["tax", "vat", "excise", "duty", "breakdown", "rsp", "base price"])
-            or any(w in q_lower for w in ["prayagraj", "allahabad", "uttar pradesh", "bihar", "karnataka", "punjab", "haryana", "tamil nadu", "maharashtra", "delhi tax", "up petrol", "up diesel"])
+            or any(w in q_lower for w in [
+                "prayagraj", "allahabad", "uttar pradesh", "bihar", "karnataka", "punjab", 
+                "haryana", "tamil nadu", "maharashtra", "delhi tax", "up petrol", "up diesel",
+                "saudi", "ksa", "riyadh", "jeddah", "uae", "dubai", "germany", "texas", "california"
+            ])
         ) and not any(w in q_lower for w in ["compare", "cheapest", "expensive", "export", "where export", "import", "where import", "who buys", "destination", "trade flow", "forecast", "future", "month"]):
             from src.analytics.global_tax_engine import GlobalTaxEngine
             resolve_fn = getattr(GlobalTaxEngine, "resolve", getattr(GlobalTaxEngine, "resolve_query", None))
@@ -571,12 +721,45 @@ class AIEnergyMarketAnalyst:
             f"- **Combined Sovereign Taxation (Federal + State)**: **{sym}{total_gov_tax:.2f} / L** (**{total_tax_pct_pump:.1f}%** of every litre paid by consumers)\n",
             "#### 3. Statutory & Regulatory Authority",
             f"- **Regulatory Body**: {statutory_authority}",
-            f"- **Statutory Directive**: {statutory_note}\n",
-            "**Data Provenance & Citations**:",
-            "- Ministry of Petroleum & Natural Gas (MoPNG) Price Build-Up Notifications",
-            "- State Commercial Tax & VAT Gazette Circulars",
-            "- Global FuelPulse Sovereign Tax Engine"
+            f"- **Statutory Directive**: {statutory_note}\n"
         ]
+
+        is_global = tax_res.get("matched_type") == "Global Jurisdiction"
+        is_saudi = "saudi" in j_name.lower() or "saudi" in question.lower() or "ksa" in question.lower()
+
+        if is_saudi:
+            lines.extend([
+                "#### 4. Saudi Individual Taxation & Household Fiscal Policy",
+                "- **Personal Income Tax on Salaries**: **0% (Zero Tax)** — Saudi Arabia imposes NO personal income tax on employment salaries, wages, or individual income of Saudi citizens or expatriate workers.",
+                "- **Value Added Tax (VAT)**: **15% standard rate** administered by ZATCA across retail commerce and motor fuels.",
+                "- **Zakat (Islamic Wealth Tax)**: 2.5% levied on qualifying capital and business net wealth of Saudi and GCC companies/nationals.",
+                "- **Consumer Fuel Price Shield**: Motor fuel retail prices are subsidized and capped by Royal Decree (Gasoline 91 capped at SAR 2.18/L, Diesel at SAR 1.15/L) to insulate residents from global crude fluctuations.\n"
+            ])
+
+        if is_global:
+            citations = [
+                statutory_authority,
+                "National Ministry of Finance & Energy Directorate",
+                "Global FuelPulse Sovereign Tax Engine"
+            ]
+            lines.extend([
+                "**Data Provenance & Citations**:",
+                f"- {statutory_authority} Statutory Tax Schedules",
+                "- International Energy Agency (IEA) Energy Prices & Taxes",
+                "- Global FuelPulse Sovereign Tax Engine"
+            ])
+        else:
+            citations = [
+                "Ministry of Petroleum & Natural Gas (MoPNG)",
+                "State Commercial Tax Department Circulars",
+                "Global FuelPulse Tax Engine"
+            ]
+            lines.extend([
+                "**Data Provenance & Citations**:",
+                "- Ministry of Petroleum & Natural Gas (MoPNG) Price Build-Up Notifications",
+                "- State Commercial Tax & VAT Gazette Circulars",
+                "- Global FuelPulse Sovereign Tax Engine"
+            ])
 
         waterfall_steps = tax_res.get("waterfall_steps", [])
         return {
@@ -584,11 +767,7 @@ class AIEnergyMarketAnalyst:
             "topic": f"Fuel & Tax Breakdown: {j_name}",
             "answer_text": "\n".join(lines),
             "data_records": waterfall_steps,
-            "sources_cited": [
-                "Ministry of Petroleum & Natural Gas (MoPNG)",
-                "State Commercial Tax Department Circulars",
-                "Global FuelPulse Tax Engine"
-            ],
+            "sources_cited": citations,
             "is_fallback": False,
             "quota_used": False,
             "served_from_db": True,
@@ -1157,7 +1336,10 @@ class AIEnergyMarketAnalyst:
             return cls._handle_petroleum_contribution_query(question)
 
         # 5. Check if query is asking about location, state tax, or pump price
-        has_tax_trigger = any(w in q_lower for w in ["tax", "vat", "excise", "duty", "breakdown", "rsp", "base price", "pump price", "retail price", "rate", "cost", "price", "petrol", "diesel"]) or any(w in q_lower for w in ["prayagraj", "allahabad", "uttar pradesh", "bihar", "karnataka", "delhi", "maharashtra", "california", "texas"])
+        has_tax_trigger = (
+            any(w in q_lower for w in ["tax", "vat", "excise", "duty", "breakdown", "rsp", "base price", "pump price", "retail price", "rate", "cost", "price", "petrol", "diesel"])
+            or any(w in q_lower for w in ["prayagraj", "allahabad", "uttar pradesh", "bihar", "karnataka", "delhi", "maharashtra", "california", "texas", "saudi", "ksa", "riyadh", "jeddah", "uae", "dubai", "germany"])
+        )
         if has_tax_trigger:
             from src.analytics.global_tax_engine import GlobalTaxEngine
             resolve_fn = getattr(GlobalTaxEngine, "resolve", getattr(GlobalTaxEngine, "resolve_query", None))

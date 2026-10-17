@@ -317,33 +317,64 @@ def render_home_view(navigate_fn=None):
     
     home_c1, home_c2, home_c3, home_c4, home_c5 = st.columns(5)
     home_q = None
+    import uuid
+    if "ai_session_id" not in st.session_state:
+        st.session_state.ai_session_id = str(uuid.uuid4())
+    sess_id = st.session_state.ai_session_id
+
+    from src.ai.nl_query_engine import AIEnergyMarketAnalyst, session_protector
+    from config.settings import is_user_custom_key_configured
+    from src.ai.gemini_client import gemini_client
+
+    has_custom_key = is_user_custom_key_configured() or gemini_client.is_key_configured()
+    sess_status = session_protector.get_session_status(sess_id, has_custom_key=has_custom_key)
+
+    if sess_status.get("is_blocked"):
+        status_badge_html = '<div style="display:inline-block;padding:5px 12px;background:rgba(239, 68, 68, 0.2);color:#EF4444;font-weight:700;font-size:12px;border:1px solid #EF4444;border-radius:4px;margin-bottom:12px;">🚫 Security Violation: Session Terminated</div>'
+    elif has_custom_key:
+        status_badge_html = '<div style="display:inline-block;padding:5px 12px;background:rgba(16, 185, 129, 0.2);color:#10B981;font-weight:700;font-size:12px;border:1px solid #10B981;border-radius:4px;margin-bottom:12px;">🟢 Antigravity Token Active • Unlimited Queries</div>'
+    elif sess_status.get("is_daily_quota_finished"):
+        status_badge_html = f'<div style="display:inline-block;padding:5px 12px;background:rgba(245, 185, 66, 0.2);color:#F5B942;font-weight:700;font-size:12px;border:1px solid #F5B942;border-radius:4px;margin-bottom:12px;">⏳ Daily Free Quota Finished (3/3 Used) • Resets in {sess_status["reset_time_str"]}</div>'
+    else:
+        status_badge_html = f'<div style="display:inline-block;padding:5px 12px;background:rgba(16, 185, 129, 0.2);color:#10B981;font-weight:700;font-size:12px;border:1px solid #10B981;border-radius:4px;margin-bottom:12px;">🟢 Free Tier: {sess_status["daily_questions_remaining"]} / 3 Free Questions Remaining Today (24h Quota)</div>'
+    render_html(status_badge_html)
+
+    home_c1, home_c2, home_c3, home_c4, home_c5 = st.columns(5)
+    home_q = None
     with home_c1:
+        if st.button("🇸🇦 Saudi Tax & Rates", key="home_ai_btn_saudi", width="stretch", type="secondary"):
+            home_q = "how much Saudi take tax from there people"
+    with home_c2:
         if st.button("🇮🇳 Prayagraj Petrol & Tax", key="home_ai_btn1", width="stretch", type="secondary"):
             home_q = "What is the petrol price in Prayagraj and how much tax does Uttar Pradesh take?"
-    with home_c2:
+    with home_c3:
         if st.button("🌍 Top Petrol Contributor", key="home_ai_btn2", width="stretch", type="secondary"):
             home_q = "who is the more contributor of petrol in the world"
-    with home_c3:
+    with home_c4:
         if st.button("🚢 Strait of Hormuz Risk", key="home_ai_btn3", width="stretch", type="secondary"):
             home_q = "What is the risk of a disruption in the Strait of Hormuz?"
-    with home_c4:
+    with home_c5:
         if st.button("🏢 Indian PSU OMCs", key="home_ai_btn4", width="stretch", type="secondary"):
             home_q = "What is the market share and refining capacity of Indian PSU OMCs like IOCL, BPCL, and HPCL?"
-    with home_c5:
-        if st.button("🚚 Fleet Fuel Shock", key="home_ai_btn5", width="stretch", type="secondary"):
-            home_q = "What would a 10% increase in fuel prices do to my fleet budget?"
 
     home_ai_input = st.text_input(
         "Ask any question about fuel rates, state taxes, maritime risks, or crude markets:",
         value=home_q if home_q else "",
-        placeholder="e.g. What is the petrol rate in Prayagraj and state tax? (Ask anything freely)",
+        placeholder="e.g. how much Saudi take tax from there people, or What is petrol rate in Prayagraj?",
         key="home_ai_text_input"
     )
     if home_ai_input and home_ai_input.strip():
-        with st.spinner("Analyzing with Free Autonomous AI Engine..."):
-            from src.ai.nl_query_engine import AIEnergyMarketAnalyst
-            home_resp = AIEnergyMarketAnalyst.answer_question(home_ai_input, allow_free_autonomous=True, bypass_session_limits=True)
-            if home_resp.get("autonomous_free_mode"):
+        with st.spinner("Analyzing with AI Market Analyst Engine..."):
+            home_resp = AIEnergyMarketAnalyst.answer_question(
+                home_ai_input,
+                session_id=sess_id,
+                allow_free_autonomous=True
+            )
+            if home_resp.get("is_security_blocked") or "Security Violation" in home_resp.get("topic", ""):
+                render_html("""<div style="display:inline-block;padding:7px 14px;background:rgba(239, 68, 68, 0.2);color:#EF4444;font-weight:700;font-size:12.5px;border:1.5px solid #EF4444;margin-bottom:8px;border-radius:4px;">🚫 Enterprise Security Alert: Malicious activity detected. Session terminated.</div>""")
+            elif "Daily Free Quota Finished" in home_resp.get("topic", ""):
+                render_html("""<div style="display:inline-block;padding:7px 14px;background:rgba(245, 185, 66, 0.2);color:#F5B942;font-weight:700;font-size:12.5px;border:1.5px solid #F5B942;margin-bottom:8px;border-radius:4px;">⏳ Daily Free Quota Finished (3/3 Used) • Connect Antigravity Key on Page 9 for unlimited access</div>""")
+            elif home_resp.get("autonomous_free_mode"):
                 render_html("""<div style="display:inline-block;padding:5px 12px;background:rgba(16, 185, 129, 0.2);color:#10B981;font-weight:700;font-size:12px;border:1.5px solid #10B981;margin-bottom:8px;border-radius:4px;">🟢 100% Free Autonomous AI Engine (0 Quota • Zero API Key Required)</div>""")
             st.markdown(home_resp["answer_text"])
             if home_resp.get("visualization_fig") is not None:

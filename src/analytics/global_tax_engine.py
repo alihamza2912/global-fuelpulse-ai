@@ -1006,10 +1006,10 @@ class GlobalTaxEngine:
             "state_tax_petrol": 0.28,        # 15% VAT
             "state_tax_pct": 12.8,
             "cities": [
-                "saudi arabia", "ksa", "riyadh", "jeddah", "mecca", "medina",
+                "saudi", "saudi arabia", "kingdom of saudi arabia", "ksa", "saudis", "riyadh", "jeddah", "mecca", "medina",
                 "dammam", "khobar", "dhahran", "jubail", "yanbu", "tabuk", "taif"
             ],
-            "tax_statute_note": "Aramco local supply with royal decree consumer price cap (Gasoline 91 capped at SAR 2.18/L) subject to 15% standard VAT."
+            "tax_statute_note": "Saudi Arabia levies a standard 15% Value Added Tax (VAT) administered by ZATCA (Zakat, Tax and Customs Authority) across commercial transactions and retail motor fuel. Crucially, there is 0% personal income tax on salaries and individual earnings for citizens and resident workers. Domestic motor fuel prices are subsidized and capped by Royal Decree (Gasoline 91 capped at SAR 2.18/L, Diesel at SAR 1.15/L)."
         },
         "Brazil": {
             "country": "Brazil",
@@ -1150,6 +1150,31 @@ class GlobalTaxEngine:
             if re.search(r'\b' + re.escape(alias) + r'\b', q) and state_target in cls.INDIA_TAX_DATA:
                 return cls._build_india_response(state_target, cls.INDIA_TAX_DATA[state_target], matched_city=None, query=query)
 
+        # Step 6: Check global country and sovereign aliases (e.g. "Saudi" for Saudi Arabia)
+        country_aliases = {
+            "saudi": "Saudi Arabia",
+            "ksa": "Saudi Arabia",
+            "kingdom of saudi arabia": "Saudi Arabia",
+            "saudis": "Saudi Arabia",
+            "uae": "United Arab Emirates",
+            "dubai": "United Arab Emirates",
+            "emirates": "United Arab Emirates",
+            "usa": "United States (National Average)",
+            "america": "United States (National Average)",
+            "us": "United States (National Average)",
+            "uk": "United Kingdom",
+            "britain": "United Kingdom",
+            "germany": "Germany",
+            "deutschland": "Germany",
+            "brazil": "Brazil",
+            "canada": "Canada (Ontario)",
+            "japan": "Japan",
+            "australia": "Australia (New South Wales)"
+        }
+        for alias, region_target in country_aliases.items():
+            if re.search(r'\b' + re.escape(alias) + r'\b', q) and region_target in cls.GLOBAL_TAX_DATA:
+                return cls._build_global_response(region_target, cls.GLOBAL_TAX_DATA[region_target], matched_city=None, query=query)
+
         return None
 
     @classmethod
@@ -1228,8 +1253,10 @@ class GlobalTaxEngine:
     @classmethod
     def _build_global_response(cls, region_name: str, data: Dict[str, Any], matched_city: Optional[str], query: str) -> Dict[str, Any]:
         """Builds a comprehensive tax decomposition response for a global jurisdiction."""
-        is_city = matched_city is not None
-        entity_name = f"{matched_city}, {region_name}" if (is_city and matched_city != region_name) else region_name
+        country_name = data.get("country", region_name)
+        country_aliases = [region_name.lower(), country_name.lower(), "saudi", "ksa", "saudis", "kingdom of saudi arabia", "uae", "emirates", "usa", "us", "america", "uk", "britain"]
+        is_city = matched_city is not None and matched_city.lower() not in country_aliases
+        entity_name = f"{matched_city}, {region_name}" if is_city else region_name
 
         curr = data["currency"]
         sym = data["currency_symbol"]

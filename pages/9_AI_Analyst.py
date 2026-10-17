@@ -1,8 +1,8 @@
 """
 Page 9: AI Energy Market Analyst.
 Grounded natural language decision support answering queries via verified read-only SQL execution,
-intelligent question caching, direct database routing, and Google Gemini free-tier AI with strict
-quota and rate-limit protection.
+intelligent question caching, direct database routing, Google Gemini AI, and strict 24-hour rate-limit
+and anti-abuse security protection.
 """
 
 import uuid
@@ -17,54 +17,96 @@ if ENV_FILE.exists():
     load_dotenv(dotenv_path=ENV_FILE, override=True)
 
 from src.ui_components import render_page_header, render_csv_download, apply_theme, render_html
-from src.ai.nl_query_engine import AIEnergyMarketAnalyst
+from src.ai.nl_query_engine import AIEnergyMarketAnalyst, session_protector
 from src.ai.quota_manager import quota_manager
-from src.ai.gemini_client import gemini_client
-from config.settings import settings
+from src.ai.gemini_client import gemini_client, sanitize_sensitive_text
+from config.settings import settings, set_user_api_key, is_user_custom_key_configured
 
 apply_theme()
 
 render_page_header(
     title="AI ENERGY MARKET ANALYST",
-    subtitle="Grounded Natural Language Intelligence with Free-Tier Quota & Rate-Limit Protection",
-    source_tag="Safe Read-Only SQL & Gemini Free-Tier",
+    subtitle="Grounded Natural Language Intelligence • Strict 24h Quota & Enterprise Security Shield",
+    source_tag="Safe Read-Only SQL & Antigravity / Gemini Intelligence",
     observation_date="Continuous Oct 2026 Grounding"
 )
 
-# Initialize unique session identifier for per-user rate limit & cooldown tracking
+# Initialize unique session identifier for per-user rate limit & quota tracking
 if "ai_session_id" not in st.session_state:
     st.session_state.ai_session_id = str(uuid.uuid4())
 
-# Retrieve real-time shared quota status
-q_status = quota_manager.get_quota_status()
+sess_id = st.session_state.ai_session_id
+has_custom_key = is_user_custom_key_configured() or gemini_client.is_key_configured()
+sess_status = session_protector.get_session_status(sess_id, has_custom_key=has_custom_key)
 
-# Status badge logic: Always online (Free Autonomous Mode active when no key is provided)
-if q_status["is_finished"]:
-    status_label = "Free Autonomous AI: Online"
+# 🔑 Antigravity Token / API Key Integration Drawer
+with st.expander("🔑 Antigravity Token / Gemini API Key Configuration", expanded=(not has_custom_key and sess_status.get("is_daily_quota_finished", False))):
+    col_k1, col_k2 = st.columns([3, 1.2])
+    with col_k1:
+        current_key = settings.api.gemini_api_key
+        masked_preview = sanitize_sensitive_text(f"key={current_key}") if current_key else "None configured"
+        if has_custom_key:
+            st.success(f"🟢 **Antigravity Token Active**: `{masked_preview.replace('key=', '')}` (Unlimited Queries Unlocked)")
+        else:
+            st.info("Standard Free Tier: **First 3 questions are 100% free per user for 24 hours**. Connect your Antigravity Token or Gemini API Key to unlock unlimited instant queries.")
+        
+        new_key_input = st.text_input(
+            "Enter Antigravity API Token or Gemini API Key:",
+            type="password",
+            placeholder="e.g. AIzaSy...",
+            key="input_antigravity_token"
+        )
+        persist_chk = st.checkbox("Persist token to local .env configuration", value=True, key="persist_token_env")
+
+    with col_k2:
+        st.write("")
+        st.write("")
+        if st.button("⚡ Connect Token", width="stretch", type="primary", key="btn_connect_token"):
+            if new_key_input and new_key_input.strip():
+                set_user_api_key(new_key_input.strip(), persist_to_env=persist_chk)
+                st.session_state["antigravity_token"] = new_key_input.strip()
+                st.session_state["user_api_key"] = new_key_input.strip()
+                st.success("✅ Antigravity Token connected! Unlimited queries enabled.")
+                st.rerun()
+            else:
+                st.warning("Please enter a valid key/token.")
+
+        if has_custom_key:
+            if st.button("Disconnect Token", width="stretch", type="secondary", key="btn_disconnect_token"):
+                set_user_api_key("", persist_to_env=False)
+                st.session_state.pop("antigravity_token", None)
+                st.session_state.pop("user_api_key", None)
+                st.info("Token disconnected. Reverted to standard 3-question daily free tier.")
+                st.rerun()
+
+# Determine live status badge
+if sess_status.get("is_blocked"):
+    status_label = "🚫 Security Alert: Access Terminated"
+    status_icon = "🔴"
+    status_detail = "Session permanently blocked due to illegal/malicious activity detection"
+elif has_custom_key:
+    status_label = "Antigravity Token Connected"
     status_icon = "🟢"
-    status_detail = f"Continuous access active • Daily quota resets at {q_status['reset_time_str']}"
-    badge_bg = "#EBF7EE"
-elif not gemini_client.is_key_configured():
-    status_label = "Free AI Analyst: Online"
-    status_icon = "🟢"
-    status_detail = "100% Free Autonomous Mode Active • Zero API Key Required • Ask Anything"
-    badge_bg = "#EBF7EE"
+    status_detail = "Enterprise Access Active • Unlimited 24/7 Intelligence Queries"
+elif sess_status["is_daily_quota_finished"]:
+    status_label = "Daily Free Quota Finished (3/3 Used)"
+    status_icon = "⏳"
+    status_detail = f"Daily quota resets in {sess_status['reset_time_str']} (after 24 hours) • Connect Antigravity Token for unlimited"
 else:
-    status_label = "AI Assistant: Connected"
+    status_label = "Free Tier Active"
     status_icon = "🟢"
-    status_detail = f"Free questions left today: {q_status['calls_remaining']} / {q_status['max_calls_today']}"
-    badge_bg = "#EBF7EE"
+    status_detail = f"Questions remaining today: {sess_status['daily_questions_remaining']} / {sess_status['daily_free_limit']} (Resets in 24 hours)"
 
 render_html(f"""<div style="display:inline-flex;align-items:center;gap:10px;padding:9px 18px;background:rgba(14, 21, 38, 0.85);backdrop-filter:blur(12px);color:#F9FAFB;font-weight:700;font-size:13px;border:1px solid rgba(255, 255, 255, 0.14);box-shadow:0 4px 14px rgba(0, 0, 0, 0.35);margin-bottom:16px;border-radius:6px;"><span>{status_icon} <strong style="color:#F5B942;">{status_label}</strong></span><span style="color:rgba(255, 255, 255, 0.2);font-weight:400;">•</span><span style="font-weight:500;font-size:12.5px;color:#94A3B8;">{status_detail}</span></div>""")
 
 # Assistant Info Banner
 st.info(
     f"""
-    🛡️ **100% Free Autonomous Energy Intelligence:**
-    - Mode: **Continuous Free AI Market Analyst** (Zero billing, zero API keys required).
-    - Status: **{status_label}** ({status_detail}).
-    - **Free Asking Capability**: Ask freely about any Indian city or state fuel price & tax decomposition (e.g. Prayagraj, UP, Delhi, Mumbai), global crude contributors, maritime chokepoints, PSU oil companies (IOCL, BPCL, HPCL), or macroeconomic inflation shocks.
-    - **Direct Mathematical Precision**: Price breakdowns and tax calculations are resolved directly from official Ministry of Petroleum & Natural Gas (MoPNG) circulars and state VAT statutes.
+    🛡️ **Enterprise AI Energy Market Analyst & Abuse Shield:**
+    - **Status**: **{status_label}** ({status_detail}).
+    - **Free Tier Policy**: The first **3 questions are 100% free** for every user every 24 hours. After that, attach your **Antigravity Token** to continue asking questions without waiting 24 hours.
+    - **Multi-Country Precision**: Accurately analyzes sovereign tax structures (e.g. Saudi Arabia 15% VAT & 0% income tax, India GST/VAT), OPEC quotas, crude contributors, and shipping corridors.
+    - **Security & Integrity Shield**: Real-time detection against prompt injections, SQL tampering, or malicious activity. Unauthorized actions trigger instant permanent session termination.
     """
 )
 
@@ -74,20 +116,20 @@ btn_col1, btn_col2, btn_col3, btn_col4, btn_col5 = st.columns(5)
 
 preset_q = None
 with btn_col1:
+    if st.button("🇸🇦 Saudi Tax & Rates", width="stretch", type="secondary"):
+        preset_q = "how much Saudi take tax from there people"
+
+with btn_col2:
     if st.button("🇮🇳 Prayagraj Petrol & Tax", width="stretch", type="secondary"):
         preset_q = "What is the petrol price in Prayagraj and how much tax does Uttar Pradesh take?"
 
-with btn_col2:
+with btn_col3:
     if st.button("🌍 Top Petrol Contributor", width="stretch", type="secondary"):
         preset_q = "who is the more contributor of petrol in the world"
 
-with btn_col3:
+with btn_col4:
     if st.button("🚢 Strait of Hormuz Risk", width="stretch", type="secondary"):
         preset_q = "What is the risk of a disruption in the Strait of Hormuz?"
-
-with btn_col4:
-    if st.button("🏢 Indian PSU OMCs", width="stretch", type="secondary"):
-        preset_q = "What is the market share and refining capacity of Indian PSU OMCs like IOCL, BPCL, and HPCL?"
 
 with btn_col5:
     if st.button("🚚 Fleet Fuel Shock", width="stretch", type="secondary"):
@@ -97,28 +139,32 @@ with btn_col5:
 user_question = st.text_input(
     "Ask a market intelligence question freely:",
     value=preset_q if preset_q else "",
-    placeholder="e.g. What is the petrol rate in Prayagraj and state tax? (Ask anything freely)"
+    placeholder="e.g. how much Saudi take tax from there people, or What is the petrol rate in Prayagraj?"
 )
 
 if user_question:
     with st.spinner("Analyzing question, checking cache & energy data mart..."):
         response = AIEnergyMarketAnalyst.answer_question(
             question=user_question,
-            session_id=st.session_state.ai_session_id,
+            session_id=sess_id,
             allow_free_autonomous=True
         )
 
     st.markdown("---")
 
     # Render quota/source badges
-    if response.get("autonomous_free_mode"):
+    if response.get("is_security_blocked") or "Security Violation" in response.get("topic", ""):
+        render_html("""<div style="display:inline-block;padding:7px 14px;background:rgba(239, 68, 68, 0.2);color:#EF4444;font-weight:700;font-size:12.5px;border:1.5px solid #EF4444;margin-bottom:10px;border-radius:4px;">🚫 Enterprise Security Alert • Session Terminated</div>""")
+    elif "Daily Free Quota Finished" in response.get("topic", ""):
+        render_html("""<div style="display:inline-block;padding:7px 14px;background:rgba(245, 185, 66, 0.2);color:#F5B942;font-weight:700;font-size:12.5px;border:1.5px solid #F5B942;margin-bottom:10px;border-radius:4px;">⏳ Daily Free Quota Finished (3/3 Questions Used) • Connect Antigravity Key</div>""")
+    elif response.get("autonomous_free_mode"):
         render_html("""<div style="display:inline-block;padding:5px 12px;background:rgba(16, 185, 129, 0.2);color:#10B981;font-weight:700;font-size:12px;border:1.5px solid #10B981;margin-bottom:10px;border-radius:4px;">🟢 100% Free Autonomous AI Engine (0 Quota • Zero API Key Required)</div>""")
     elif response.get("served_from_db"):
         render_html("""<div style="display:inline-block;padding:4px 10px;background:#FFF3CD;color:#111111;font-weight:700;font-size:12px;border:1.5px solid #111111;margin-bottom:10px;border-radius:3px;">⚡ Direct Database Answer (0 AI quota used)</div>""")
     elif response.get("served_from_cache"):
         render_html("""<div style="display:inline-block;padding:4px 10px;background:#E2E3E5;color:#111111;font-weight:700;font-size:12px;border:1.5px solid #111111;margin-bottom:10px;border-radius:3px;">💾 Answered from Cache (0 AI quota used)</div>""")
     elif response.get("quota_used"):
-        render_html(f"""<div style="display:inline-block;padding:4px 10px;background:#D1E7DD;color:#111111;font-weight:700;font-size:12px;border:1.5px solid #111111;margin-bottom:10px;border-radius:3px;">🤖 Generated by Gemini Free-Tier ({response.get('model_used', settings.api.ai_model)})</div>""")
+        render_html(f"""<div style="display:inline-block;padding:4px 10px;background:#D1E7DD;color:#111111;font-weight:700;font-size:12px;border:1.5px solid #111111;margin-bottom:10px;border-radius:3px;">🤖 Generated by Antigravity / Gemini ({response.get('model_used', settings.api.ai_model)})</div>""")
 
     st.markdown(response["answer_text"])
 

@@ -55,23 +55,89 @@ def reload_env() -> None:
 
 def get_gemini_api_key() -> str:
     """
-    Dynamically loads and returns the configured Gemini API key from .env.
+    Dynamically loads and returns the configured Antigravity / Gemini API key or token.
     Checks in priority order:
-    1. GEMINI_API_KEY (primary)
-    2. AI_API_KEY (fallback)
-    3. LLM_API_KEY (legacy fallback)
+    1. Streamlit session_state user-attached key ('antigravity_token', 'user_api_key')
+    2. ANTIGRAVITY_API_KEY (environment or .env)
+    3. ANTIGRAVITY_TOKEN (environment or .env)
+    4. GEMINI_API_KEY (environment or .env)
+    5. AI_API_KEY / GOOGLE_API_KEY / LLM_API_KEY (fallbacks)
+    6. Streamlit Cloud secrets
     """
     reload_env()
-    key = os.getenv("GEMINI_API_KEY") or os.getenv("AI_API_KEY") or os.getenv("LLM_API_KEY", "")
+    
+    # 1. Check Streamlit session_state first (user interactive key attachment)
+    try:
+        import streamlit as st
+        if hasattr(st, "session_state"):
+            for sess_key in ("antigravity_token", "antigravity_api_key", "user_api_key", "gemini_api_key"):
+                val = st.session_state.get(sess_key)
+                if val and str(val).strip():
+                    return str(val).strip()
+    except Exception:
+        pass
+
+    # 2. Check environment variables
+    key = (
+        os.getenv("ANTIGRAVITY_API_KEY")
+        or os.getenv("ANTIGRAVITY_TOKEN")
+        or os.getenv("GEMINI_API_KEY")
+        or os.getenv("AI_API_KEY")
+        or os.getenv("GOOGLE_API_KEY")
+        or os.getenv("LLM_API_KEY", "")
+    )
     if not key:
-        # Check Streamlit Cloud secrets if available
+        # 3. Check Streamlit Cloud secrets if available
         try:
             import streamlit as st
             if hasattr(st, "secrets"):
-                key = st.secrets.get("GEMINI_API_KEY") or st.secrets.get("AI_API_KEY") or ""
+                key = (
+                    st.secrets.get("ANTIGRAVITY_API_KEY")
+                    or st.secrets.get("ANTIGRAVITY_TOKEN")
+                    or st.secrets.get("GEMINI_API_KEY")
+                    or st.secrets.get("AI_API_KEY")
+                    or st.secrets.get("GOOGLE_API_KEY")
+                    or ""
+                )
         except Exception:
             pass
     return (key or "").strip()
+
+
+def set_user_api_key(api_key: str, persist_to_env: bool = False) -> None:
+    """
+    Sets the active Antigravity / Gemini API key for the current process session
+    and optionally appends/updates it in .env.
+    """
+    cleaned = (api_key or "").strip()
+    if cleaned:
+        os.environ["ANTIGRAVITY_API_KEY"] = cleaned
+        os.environ["GEMINI_API_KEY"] = cleaned
+        try:
+            import streamlit as st
+            if hasattr(st, "session_state"):
+                st.session_state["antigravity_token"] = cleaned
+                st.session_state["user_api_key"] = cleaned
+        except Exception:
+            pass
+
+        if persist_to_env and ENV_PATH.exists():
+            try:
+                content = ENV_PATH.read_text(encoding="utf-8")
+                if "ANTIGRAVITY_API_KEY=" in content:
+                    import re
+                    content = re.sub(r"ANTIGRAVITY_API_KEY=.*", f"ANTIGRAVITY_API_KEY={cleaned}", content)
+                else:
+                    content += f"\nANTIGRAVITY_API_KEY={cleaned}\n"
+                ENV_PATH.write_text(content, encoding="utf-8")
+            except Exception:
+                pass
+
+
+def is_user_custom_key_configured() -> bool:
+    """Checks if a valid Antigravity token or custom Gemini key has been attached."""
+    k = get_gemini_api_key()
+    return bool(k and len(k) > 5)
 
 
 @dataclass
@@ -87,6 +153,7 @@ class APISettings:
     session_max_questions_per_hour: int = field(default_factory=lambda: int(os.getenv("SESSION_MAX_QUESTIONS_PER_HOUR", "15")))
     session_cooldown_seconds: float = field(default_factory=lambda: float(os.getenv("SESSION_COOLDOWN_SECONDS", "3.0")))
     max_question_length: int = field(default_factory=lambda: int(os.getenv("MAX_QUESTION_LENGTH", "500")))
+    daily_free_questions_limit: int = field(default_factory=lambda: int(os.getenv("DAILY_FREE_QUESTIONS_LIMIT", "3")))
     timeout_seconds: int = field(default_factory=lambda: int(os.getenv("API_TIMEOUT_SECONDS", "15")))
 
     @property
