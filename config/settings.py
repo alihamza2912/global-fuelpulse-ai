@@ -63,7 +63,15 @@ def get_gemini_api_key() -> str:
     """
     reload_env()
     key = os.getenv("GEMINI_API_KEY") or os.getenv("AI_API_KEY") or os.getenv("LLM_API_KEY", "")
-    return key.strip()
+    if not key:
+        # Check Streamlit Cloud secrets if available
+        try:
+            import streamlit as st
+            if hasattr(st, "secrets"):
+                key = st.secrets.get("GEMINI_API_KEY") or st.secrets.get("AI_API_KEY") or ""
+        except Exception:
+            pass
+    return (key or "").strip()
 
 
 @dataclass

@@ -1070,6 +1070,25 @@ class GlobalTaxEngine:
         import re
         q = query.strip().lower()
 
+        # Guard: Check if query clearly expresses a non-tax operational intent (e.g. exports, imports, forecasts, production)
+        non_tax_intent_words = [
+            "export", "where export", "who buys", "importer", "import", "where import",
+            "destination", "trade", "flow", "corridor", "route", "tanker", "ship",
+            "chokepoint", "strait", "why", "how much oil", "how much crude",
+            "produce", "producer", "production", "refining capacity", "refinery", "forecast", "future",
+            "month", "trend", "predict", "hike", "cut", "or not", "who contributes", "who is the more contributor"
+        ]
+        explicit_tax_keywords = [
+            "tax", "vat", "excise", "duty", "breakdown", "cess", "dealer margin",
+            "rsp", "base price", "pump price", "retail price", "rate", "cost breakdown", "tax breakdown"
+        ]
+        has_non_tax_intent = any(w in q for w in non_tax_intent_words)
+        has_explicit_tax_keyword = any(w in q for w in explicit_tax_keywords)
+
+        if has_non_tax_intent and not has_explicit_tax_keyword:
+            # Operational energy query (trade/forecast/production), not a tax breakdown
+            return None
+
         # Step 1: Exact matches against India State names
         for state_name, data in cls.INDIA_TAX_DATA.items():
             state_lower = state_name.lower()
