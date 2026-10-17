@@ -140,15 +140,39 @@ def get_cached_world_production_map(prod_data):
         iso3 = row["country_iso3"]
         if iso3 in country_coords:
             lat, lon = country_coords[iso3]
+            mbpd = float(row["crude_prod_mbpd_2024"])
+            share = float(row["share_of_global_pct"])
+            if mbpd >= 9.0:
+                tier = "🔥 Super-Giant Producer (Tier 1)"
+            elif mbpd >= 4.0:
+                tier = "⚡ Major Producer (Tier 2)"
+            elif mbpd >= 2.0:
+                tier = "⚖️ Mid-Tier Producer (Tier 3)"
+            else:
+                tier = "🔹 Minor / Emerging Producer"
             map_rows.append({
                 "country": row["country_name"],
                 "iso3": iso3,
                 "lat": lat,
                 "lon": lon,
-                "production_mbpd": row["crude_prod_mbpd_2024"],
-                "share_pct": row["share_of_global_pct"]
+                "production_mbpd": mbpd,
+                "share_pct": share,
+                "tier": tier
             })
     map_df = pd.DataFrame(map_rows)
+
+    # High-contrast Energy Origination Heat Scale:
+    # Cool Cyan (< 2 mbpd) -> Emerald Teal (2 - 3.5 mbpd) -> Golden Amber (3.5 - 6 mbpd) ->
+    # Flaming Orange (6 - 9 mbpd) -> Fiery Red / Blazing Crimson (> 9 - 13+ mbpd)
+    production_color_scale = [
+        [0.0, "#0284C7"],    # Cool Petroleum Blue (< 1.5 mbpd: UK, Norway)
+        [0.20, "#10B981"],   # Emerald Teal (1.5 - 3.0 mbpd: Nigeria, Kuwait)
+        [0.40, "#F5B942"],   # Golden Solar Amber (3.0 - 5.5 mbpd: Brazil, UAE, China)
+        [0.65, "#F97316"],   # Flaming Radiant Orange (5.5 - 8.5 mbpd: Canada, Iraq)
+        [0.82, "#EF4444"],   # Intense Fiery Red (8.5 - 10.5 mbpd: Saudi Arabia 9.02, Russia 10.1)
+        [1.0, "#DC2626"]     # Blazing Scorching Crimson (10.5 - 13.5 mbpd: USA 12.9)
+    ]
+
     fig_world = px.scatter_geo(
         map_df,
         lat="lat",
@@ -156,24 +180,68 @@ def get_cached_world_production_map(prod_data):
         hover_name="country",
         size="production_mbpd",
         color="production_mbpd",
-        color_continuous_scale=[[0, "#D9D4C8"], [0.5, COLOR_AMBER], [1.0, COLOR_INK]],
-        hover_data={"production_mbpd": ":.2f", "share_pct": ":.1f%", "lat": False, "lon": False},
-        projection="natural earth"
+        color_continuous_scale=production_color_scale,
+        range_color=[0.5, 13.5],
+        custom_data=["country", "iso3", "production_mbpd", "share_pct", "tier"],
+        projection="natural earth",
+        size_max=36
     )
+
+    fig_world.update_traces(
+        marker=dict(
+            line=dict(width=1.8, color="#FFFFFF"),
+            opacity=0.92,
+            sizemin=6
+        ),
+        hovertemplate=(
+            "<div style='font-family: Space Grotesk, sans-serif; padding: 4px;'>"
+            "<b style='font-size: 14px;'>%{customdata[0]}</b> (%{customdata[1]})<br>"
+            "• Daily Crude Extraction: <b style='color: #F5B942;'>%{customdata[2]:.2f} mbpd</b><br>"
+            "• Share of Global Supply: <b style='color: #F9FAFB;'>%{customdata[3]:.1f}%</b><br>"
+            "• Producer Status: <b>%{customdata[4]}</b>"
+            "</div><extra></extra>"
+        )
+    )
+
     fig_world.update_geos(
-        showcoastlines=True, coastlinecolor=COLOR_INK,
-        showland=True, landcolor=COLOR_WHITE,
-        showocean=True, oceancolor=COLOR_CREAM,
-        showcountries=True, countrycolor=COLOR_BORDER_LIGHT
+        bgcolor="rgba(0,0,0,0)",
+        showcoastlines=True,
+        coastlinecolor="rgba(255, 255, 255, 0.28)",
+        showland=True,
+        landcolor="#0E1526",
+        showocean=True,
+        oceancolor="#070A12",
+        showcountries=True,
+        countrycolor="rgba(255, 255, 255, 0.12)",
+        showlakes=True,
+        lakecolor="#070A12",
+        showframe=False
     )
+
     apply_clean_layout(
         fig_world,
         height=460,
-        margin_l=20,
-        margin_b=30,
-        coloraxis_colorbar=dict(title="mbpd", thickness=14, title_font=dict(size=13, color=COLOR_INK), tickfont=dict(size=12, color=COLOR_INK))
+        margin_l=10,
+        margin_r=10,
+        margin_t=10,
+        margin_b=20,
+        coloraxis_colorbar=dict(
+            title=dict(
+                text="<b>Daily Output<br>(mbpd)</b>",
+                font=dict(size=12, color=COLOR_INK, family="'Space Grotesk', sans-serif")
+            ),
+            thickness=16,
+            len=0.85,
+            tickvals=[1, 4, 8, 12],
+            ticktext=["1 (Minor)", "4 (Mid)", "8 (Major)", "12+ (Super-Giant)"],
+            tickfont=dict(size=11, color=COLOR_INK, family="'Space Grotesk', sans-serif"),
+            bgcolor="rgba(14, 21, 38, 0.85)",
+            bordercolor="rgba(255, 255, 255, 0.15)",
+            borderwidth=1
+        )
     )
     return fig_world
+
 
 @st.cache_data(ttl=3600, show_spinner=False)
 def get_cached_ch02_charts(prod_lb, regional_prod):
@@ -957,6 +1025,29 @@ def render_dashboard_view(navigate_fn=None):
         prod_data = prod_lb
         fig_world = get_cached_world_production_map(prod_data)
         st.plotly_chart(fig_world, width="stretch", theme=None)
+        render_html(
+            f"""
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; background: rgba(14, 21, 38, 0.85); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 6px; padding: 8px 12px; margin-top: 6px; font-size: 0.74rem;">
+                <span style="display: flex; align-items: center; gap: 5px; color: #FDA4AF; font-weight: 700;">
+                    <span style="width: 10px; height: 10px; border-radius: 50%; background: #DC2626; display: inline-block; box-shadow: 0 0 6px #DC2626;"></span>
+                    🔥 Super-Giants (>9 mbpd): USA, RUS, SAU
+                </span>
+                <span style="display: flex; align-items: center; gap: 5px; color: #FDBA74; font-weight: 700;">
+                    <span style="width: 10px; height: 10px; border-radius: 50%; background: #F97316; display: inline-block;"></span>
+                    ⚡ Major (4–9 mbpd): CAN, IRQ, CHN
+                </span>
+                <span style="display: flex; align-items: center; gap: 5px; color: #FDE047; font-weight: 700;">
+                    <span style="width: 10px; height: 10px; border-radius: 50%; background: #F5B942; display: inline-block;"></span>
+                    ⚖️ Mid-Tier (2–4 mbpd): BRA, KWT, ARE
+                </span>
+                <span style="display: flex; align-items: center; gap: 5px; color: #7DD3FC; font-weight: 700;">
+                    <span style="width: 10px; height: 10px; border-radius: 50%; background: #0284C7; display: inline-block;"></span>
+                    🔹 Minor (<2 mbpd): NOR, NGA, GBR
+                </span>
+            </div>
+            """
+        )
+
 
     with col_leader:
         st.markdown("#### ⚡ Market Signals & Leaderboard")

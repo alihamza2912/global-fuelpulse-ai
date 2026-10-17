@@ -117,10 +117,11 @@ with map_col:
     render_html('<div class="atlas-section-title">THE ENERGY ATLAS — GLOBAL RETAIL FUEL PRICE TOPOGRAPHY</div>')
     if not all_prices.empty:
         # Create Custom Continuous Color Scale (Cream to Amber to Ink)
-        atlas_amber_scale = [
-            [0.0, "#E8E4D8"],
-            [0.5, COLOR_AMBER],
-            [1.0, COLOR_INK]
+        price_heat_scale = [
+            [0.0, "#10B981"],   # Emerald (Low / Subsidized: < $0.70/L)
+            [0.35, "#F5B942"],  # Amber (Moderate: $0.70 - $1.20/L)
+            [0.70, "#F97316"],  # Orange (High: $1.20 - $1.60/L)
+            [1.0, "#EF4444"]    # Crimson Red (Heavy Tax: > $1.70/L)
         ]
 
         fig_map = px.choropleth(
@@ -136,26 +137,27 @@ with map_col:
                 "source_name": True,
                 "country_iso3": False
             },
-            color_continuous_scale=atlas_amber_scale,
+            color_continuous_scale=price_heat_scale,
             labels={"price_usd_per_litre": "USD / Litre"}
         )
 
         fig_map.update_geos(
+            bgcolor="rgba(0,0,0,0)",
             showcoastlines=True,
-            coastlinecolor=COLOR_INK,
+            coastlinecolor="rgba(255, 255, 255, 0.28)",
             showland=True,
-            landcolor="#EFEAD9",
+            landcolor="#0E1526",
             showocean=True,
-            oceancolor=COLOR_WHITE,
+            oceancolor="#070A12",
             showlakes=True,
-            lakecolor=COLOR_WHITE,
+            lakecolor="#070A12",
             showcountries=True,
-            countrycolor="#D9D4C8",
+            countrycolor="rgba(255, 255, 255, 0.12)",
             countrywidth=0.8,
             projection_type="natural earth",
-            framecolor=COLOR_INK,
-            framewidth=1.5
+            showframe=False
         )
+
 
         apply_clean_layout(
             fig_map,
