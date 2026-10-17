@@ -52,4 +52,6 @@ export function TreeNavDemo() {
   );
 }
 
+export { DemoOne } from "@/components/ui/language-selector-demo";
 export default TreeNavDemo;
+

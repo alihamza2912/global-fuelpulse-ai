@@ -134,3 +134,19 @@
   color: #070A12;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 }
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(-2px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.15s ease-out forwards;
+}
+
