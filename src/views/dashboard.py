@@ -820,19 +820,19 @@ def render_dashboard_view(navigate_fn=None):
         fai_col1, fai_col2, fai_col3, fai_col4, fai_col5 = st.columns(5)
         fai_q = None
         with fai_col1:
-            if st.button("🇮🇳 Prayagraj Petrol & Tax", key="dash_ai_btn1", width="stretch", type="primary"):
+            if st.button("🇮🇳 Prayagraj Petrol & Tax", key="dash_ai_btn1", width="stretch", type="secondary"):
                 fai_q = "What is the petrol price in Prayagraj and how much tax does Uttar Pradesh take?"
         with fai_col2:
-            if st.button("🌍 Top Petrol Contributor", key="dash_ai_btn2", width="stretch", type="primary"):
+            if st.button("🌍 Top Petrol Contributor", key="dash_ai_btn2", width="stretch", type="secondary"):
                 fai_q = "who is the more contributor of petrol in the world"
         with fai_col3:
-            if st.button("🚢 Strait of Hormuz Risk", key="dash_ai_btn3", width="stretch", type="primary"):
+            if st.button("🚢 Strait of Hormuz Risk", key="dash_ai_btn3", width="stretch", type="secondary"):
                 fai_q = "What is the risk of a disruption in the Strait of Hormuz?"
         with fai_col4:
-            if st.button("🏢 Indian PSU OMCs", key="dash_ai_btn4", width="stretch", type="primary"):
+            if st.button("🏢 Indian PSU OMCs", key="dash_ai_btn4", width="stretch", type="secondary"):
                 fai_q = "What is the market share and refining capacity of Indian PSU OMCs like IOCL, BPCL, and HPCL?"
         with fai_col5:
-            if st.button("🚚 Fleet Fuel Shock", key="dash_ai_btn5", width="stretch", type="primary"):
+            if st.button("🚚 Fleet Fuel Shock", key="dash_ai_btn5", width="stretch", type="secondary"):
                 fai_q = "What would a 10% increase in fuel prices do to my fleet budget?"
 
         dash_ai_input = st.text_input(

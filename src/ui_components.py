@@ -315,7 +315,7 @@ def render_two_tier_nav_html(current_lang: str, active_canonical: str) -> str:
         )
 
     t1 = render_tier_bar(tier_1_items, "CORE")
-    t2 = render_tier_bar(tier_2_items, "GOVERNANCE & SPECS")
+    t2 = render_tier_bar(tier_2_items, "SPECS")
     return f'<div class="fuelpulse-nav-shell">{t1}{t2}</div>'
 
 
@@ -466,31 +466,38 @@ def apply_theme():
 .fuelpulse-nav-shell {{
   display: flex !important;
   flex-direction: column !important;
-  gap: 6px !important;
-  margin-bottom: 20px !important;
+  gap: 5px !important;
+  margin-bottom: 16px !important;
   width: 100% !important;
 }}
 
 .fuelpulse-nav-tier {{
   display: flex !important;
   align-items: center !important;
-  gap: 6px !important;
-  flex-wrap: wrap !important;
+  gap: 4px !important;
+  flex-wrap: nowrap !important;
+  overflow-x: auto !important;
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
   background: rgba(11, 17, 32, 0.75) !important;
   border: 1px solid rgba(255, 255, 255, 0.08) !important;
   border-radius: 8px !important;
-  padding: 4px 6px !important;
+  padding: 3px 6px !important;
+}}
+
+.fuelpulse-nav-tier::-webkit-scrollbar {{
+  display: none !important;
 }}
 
 .fuelpulse-nav-link {{
   display: inline-flex !important;
   align-items: center !important;
-  gap: 7px !important;
-  height: 36px !important;
-  padding: 0 13px !important;
-  border-radius: 6px !important;
+  gap: 5px !important;
+  height: 30px !important;
+  padding: 0 9px !important;
+  border-radius: 5px !important;
   font-family: 'Space Grotesk', -apple-system, sans-serif !important;
-  font-size: 13px !important;
+  font-size: 12px !important;
   font-weight: 600 !important;
   color: #94A3B8 !important;
   text-decoration: none !important;
@@ -510,32 +517,33 @@ def apply_theme():
   background: rgba(234, 179, 8, 0.12) !important;
   color: #F5B942 !important;
   border-color: rgba(234, 179, 8, 0.45) !important;
-  font-weight: 800 !important;
-  box-shadow: 0 0 12px rgba(234, 179, 8, 0.15) !important;
+  font-weight: 700 !important;
+  box-shadow: 0 0 10px rgba(234, 179, 8, 0.12) !important;
 }}
 
 .fuelpulse-nav-tier-label {{
-  font-size: 10px !important;
+  font-size: 9px !important;
   font-weight: 800 !important;
   color: #64748B !important;
   text-transform: uppercase !important;
-  letter-spacing: 0.08em !important;
-  padding: 0 8px !important;
+  letter-spacing: 0.06em !important;
+  padding: 0 6px !important;
   user-select: none !important;
+  opacity: 0.8 !important;
 }}
 
 .fuelpulse-nav-badge {{
   display: inline-flex !important;
   align-items: center !important;
-  height: 16px !important;
-  padding: 0 5px !important;
-  border-radius: 4px !important;
-  font-size: 10px !important;
+  height: 15px !important;
+  padding: 0 4px !important;
+  border-radius: 3px !important;
+  font-size: 9.5px !important;
   font-weight: 700 !important;
   background: rgba(234, 179, 8, 0.16) !important;
   color: #F5B942 !important;
   border: 1px solid rgba(234, 179, 8, 0.32) !important;
-  margin-left: 4px !important;
+  margin-left: 3px !important;
   line-height: 1 !important;
 }}
 
@@ -943,102 +951,9 @@ li[role="menuitem"]:hover, div[role="menuitem"]:hover {{
   color: #F5B942 !important;
 }}
 
-/* 17. Universal Action Buttons (Matte Yellow with Bold Jet Black Text) */
-div.stButton > button,
-div.stDownloadButton > button,
-div.stFormSubmitButton > button,
-div[data-testid="stPopover"] > button,
-div[data-testid="stPopoverButton"] > button,
-div:not([data-testid="stButtonGroup"]):not([data-baseweb="button-group"]):not([data-testid="stPills"]) > button[kind="primary"],
-div:not([data-testid="stButtonGroup"]):not([data-baseweb="button-group"]):not([data-testid="stPills"]) > button[kind="secondary"]:not([role="radio"]):not([role="checkbox"]):not([data-testid*="Active"]),
-div:not([data-testid="stButtonGroup"]):not([data-baseweb="button-group"]):not([data-testid="stPills"]) > button[data-testid="stBaseButton-primary"],
-div:not([data-testid="stButtonGroup"]):not([data-baseweb="button-group"]):not([data-testid="stPills"]) > button[data-testid="stBaseButton-secondary"]:not([role="radio"]):not([role="checkbox"]):not([data-testid*="Active"]) {{
-  background: #EAB308 !important;
-  background-color: #EAB308 !important;
-  color: #070A12 !important;
-  -webkit-text-fill-color: #070A12 !important;
-  border: 1.5px solid #CA8A04 !important;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25) !important;
-  border-radius: 6px !important;
-  font-weight: 800 !important;
-  font-family: 'Space Grotesk', sans-serif !important;
-  font-size: 13.5px !important;
-  padding: 8px 20px !important;
-  transition: all 0.15s ease-in-out !important;
-  cursor: pointer !important;
-}}
+/* 17. Professional SaaS Button & Popover Design System */
 
-/* Force all inner elements of standard action buttons to be crisp, bold jet-black */
-div.stButton > button *,
-div.stButton > button p,
-div.stButton > button span,
-div.stButton > button div,
-div.stButton > button strong,
-div.stButton > button b,
-div.stDownloadButton > button *,
-div.stDownloadButton > button p,
-div.stDownloadButton > button span,
-div.stDownloadButton > button div,
-div.stFormSubmitButton > button *,
-div.stFormSubmitButton > button p,
-div.stFormSubmitButton > button span,
-div.stFormSubmitButton > button div,
-div[data-testid="stPopover"] > button *,
-div[data-testid="stPopover"] > button p,
-div[data-testid="stPopover"] > button span,
-div[data-testid="stPopover"] > button div,
-div[data-testid="stPopoverButton"] > button *,
-div:not([data-testid="stButtonGroup"]):not([data-baseweb="button-group"]):not([data-testid="stPills"]) > button[kind="primary"] *,
-div:not([data-testid="stButtonGroup"]):not([data-baseweb="button-group"]):not([data-testid="stPills"]) > button[kind="secondary"]:not([role="radio"]):not([role="checkbox"]):not([data-testid*="Active"]) *,
-div:not([data-testid="stButtonGroup"]):not([data-baseweb="button-group"]):not([data-testid="stPills"]) > button[data-testid="stBaseButton-primary"] *,
-div:not([data-testid="stButtonGroup"]):not([data-baseweb="button-group"]):not([data-testid="stPills"]) > button[data-testid="stBaseButton-secondary"]:not([role="radio"]):not([role="checkbox"]):not([data-testid*="Active"]) * {{
-  color: #070A12 !important;
-  -webkit-text-fill-color: #070A12 !important;
-  font-weight: 800 !important;
-  fill: #070A12 !important;
-}}
-
-/* Button Hover State - Vibrant Matte Lift */
-div.stButton > button:hover,
-div.stDownloadButton > button:hover,
-div.stFormSubmitButton > button:hover,
-div[data-testid="stPopover"] > button:hover,
-div[data-testid="stPopoverButton"] > button:hover,
-div:not([data-testid="stButtonGroup"]):not([data-baseweb="button-group"]):not([data-testid="stPills"]) > button[kind="primary"]:hover,
-div:not([data-testid="stButtonGroup"]):not([data-baseweb="button-group"]):not([data-testid="stPills"]) > button[kind="secondary"]:not([role="radio"]):not([role="checkbox"]):hover {{
-  transform: translateY(-1px) !important;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3) !important;
-  background: #FACC15 !important;
-  background-color: #FACC15 !important;
-  border-color: #CA8A04 !important;
-}}
-
-div.stButton > button:hover *,
-div.stDownloadButton > button:hover *,
-div.stFormSubmitButton > button:hover *,
-div[data-testid="stPopover"] > button:hover *,
-div[data-testid="stPopoverButton"] > button:hover *,
-div:not([data-testid="stButtonGroup"]):not([data-baseweb="button-group"]):not([data-testid="stPills"]) > button[kind="primary"]:hover *,
-div:not([data-testid="stButtonGroup"]):not([data-baseweb="button-group"]):not([data-testid="stPills"]) > button[kind="secondary"]:not([role="radio"]):not([role="checkbox"]):hover * {{
-  color: #070A12 !important;
-  -webkit-text-fill-color: #070A12 !important;
-}}
-
-/* Button Active / Clicked State */
-div.stButton > button:active,
-div.stDownloadButton > button:active,
-div.stFormSubmitButton > button:active,
-div[data-testid="stPopover"] > button:active,
-div[data-testid="stPopoverButton"] > button:active,
-div:not([data-testid="stButtonGroup"]):not([data-baseweb="button-group"]):not([data-testid="stPills"]) > button[kind="primary"]:active,
-div:not([data-testid="stButtonGroup"]):not([data-baseweb="button-group"]):not([data-testid="stPills"]) > button[kind="secondary"]:not([role="radio"]):not([role="checkbox"]):active {{
-  transform: translateY(1px) !important;
-  background: #CA8A04 !important;
-  background-color: #CA8A04 !important;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2) !important;
-}}
-
-/* 17b. Equal Dimensions & No-Wrap for Top Bar Action Popovers (Classic 38px Height) */
+/* A. Popover Trigger Buttons (Header: Language & Live News) */
 div[data-testid="stPopover"],
 div[data-testid="stPopoverButton"] {{
   display: flex !important;
@@ -1048,169 +963,274 @@ div[data-testid="stPopoverButton"] {{
 
 div[data-testid="stPopover"] > button,
 div[data-testid="stPopoverButton"] > button {{
-  height: 42px !important;
-  min-height: 42px !important;
-  max-height: 42px !important;
-  line-height: 42px !important;
-  width: 100% !important;
+  background: rgba(14, 21, 38, 0.90) !important;
+  background-color: rgba(14, 21, 38, 0.90) !important;
+  color: #F9FAFB !important;
+  -webkit-text-fill-color: #F9FAFB !important;
+  border: 1px solid rgba(255, 255, 255, 0.16) !important;
+  border-radius: 6px !important;
+  height: 36px !important;
+  min-height: 36px !important;
+  max-height: 36px !important;
+  line-height: 36px !important;
+  padding: 0 10px !important;
+  font-family: 'Space Grotesk', -apple-system, sans-serif !important;
+  font-size: 11.5px !important;
+  font-weight: 700 !important;
   white-space: nowrap !important;
-  overflow: hidden !important;
-  text-overflow: ellipsis !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3) !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  padding: 0 14px !important;
+  gap: 5px !important;
+  transition: all 0.15s ease-in-out !important;
+  cursor: pointer !important;
+  width: 100% !important;
   box-sizing: border-box !important;
-  margin: 0 !important;
-  border-radius: 6px !important;
 }}
 
 div[data-testid="stPopover"] > button *,
 div[data-testid="stPopover"] > button p,
 div[data-testid="stPopover"] > button span,
-div[data-testid="stPopover"] > button div,
 div[data-testid="stPopoverButton"] > button *,
 div[data-testid="stPopoverButton"] > button p,
-div[data-testid="stPopoverButton"] > button span,
-div[data-testid="stPopoverButton"] > button div {{
+div[data-testid="stPopoverButton"] > button span {{
+  color: #F9FAFB !important;
+  -webkit-text-fill-color: #F9FAFB !important;
+  font-size: 11.5px !important;
+  font-weight: 700 !important;
   white-space: nowrap !important;
-  overflow: hidden !important;
-  text-overflow: ellipsis !important;
   line-height: 1 !important;
-  font-size: 13px !important;
-  font-weight: 800 !important;
   margin: 0 !important;
   padding: 0 !important;
 }}
 
-/* 17c. News Globe Vector Icon on Header Live News Button (36px Header Display) */
-div[data-testid="column"]:nth-of-type(3) div[data-testid="stPopover"] > button p,
-div[data-testid="column"]:nth-of-type(3) div[data-testid="stPopoverButton"] > button p {{
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
+div[data-testid="stPopover"] > button:hover,
+div[data-testid="stPopoverButton"] > button:hover {{
+  background: rgba(245, 185, 66, 0.14) !important;
+  background-color: rgba(245, 185, 66, 0.14) !important;
+  border-color: rgba(245, 185, 66, 0.45) !important;
+  color: #F5B942 !important;
+  -webkit-text-fill-color: #F5B942 !important;
+  transform: translateY(-1px) !important;
 }}
 
+div[data-testid="stPopover"] > button:hover *,
+div[data-testid="stPopoverButton"] > button:hover * {{
+  color: #F5B942 !important;
+  -webkit-text-fill-color: #F5B942 !important;
+}}
+
+div[data-testid="stPopover"] > button svg,
+div[data-testid="stPopoverButton"] > button svg {{
+  fill: #F5B942 !important;
+  color: #F5B942 !important;
+}}
+
+/* News Globe Icon on Header Button (20px compact display to prevent line-wrapping) */
 div[data-testid="column"]:nth-of-type(3) div[data-testid="stPopover"] > button p::before,
 div[data-testid="column"]:nth-of-type(3) div[data-testid="stPopoverButton"] > button p::before {{
   content: "" !important;
   display: inline-block !important;
-  width: 36px !important;
-  height: 36px !important;
-  margin-right: 8px !important;
+  width: 20px !important;
+  height: 20px !important;
+  margin-right: 6px !important;
   vertical-align: middle !important;
-  background-image: url("{get_news_globe_icon_data_uri(36)}") !important;
+  background-image: url("{get_news_globe_icon_data_uri(20)}") !important;
   background-repeat: no-repeat !important;
   background-position: center !important;
   background-size: contain !important;
   flex-shrink: 0 !important;
 }}
 
-/* 17d. Sleek, Compact Slate-Grey Buttons inside Popover Menus (Original Website Dropdown Format) */
+/* B. Popover Dropdown Container & Menu Items (Language selector & News Wire) */
+div[data-testid="stPopoverBody"],
+div[data-baseweb="popover"],
+div[data-testid*="Popover"] {{
+  background: #0B1120 !important;
+  border: 1px solid rgba(255, 255, 255, 0.14) !important;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.65) !important;
+  border-radius: 8px !important;
+}}
+
 div[data-testid="stPopoverBody"] div.stButton > button,
 div[data-baseweb="popover"] div.stButton > button,
-div[data-testid="stPopoverContent"] div.stButton > button,
-div[data-testid="stPopoverBody"] button[kind="secondary"],
-div[data-testid="stPopoverBody"] button[kind="primary"],
-div[data-baseweb="popover"] button[kind="secondary"],
-div[data-baseweb="popover"] button[kind="primary"] {{
-  background: #1E293B !important;
-  background-color: #1E293B !important;
-  color: #F1F5F9 !important;
-  -webkit-text-fill-color: #F1F5F9 !important;
-  border: 1px solid rgba(255, 255, 255, 0.09) !important;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25) !important;
-  border-radius: 6px !important;
-  height: 34px !important;
-  min-height: 34px !important;
-  max-height: 34px !important;
-  line-height: 34px !important;
-  padding: 0 12px !important;
-  margin: 3px 0 !important;
-  font-size: 13px !important;
+div[data-testid*="Popover"] div.stButton > button {{
+  background: #111A2E !important;
+  background-color: #111A2E !important;
+  color: #E2E8F0 !important;
+  -webkit-text-fill-color: #E2E8F0 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: 5px !important;
+  height: 32px !important;
+  min-height: 32px !important;
+  max-height: 32px !important;
+  line-height: 32px !important;
+  padding: 0 10px !important;
+  margin: 2px 0 !important;
+  font-size: 12px !important;
   font-weight: 500 !important;
-  font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+  font-family: 'Space Grotesk', -apple-system, sans-serif !important;
   display: flex !important;
   align-items: center !important;
   justify-content: flex-start !important;
   text-align: left !important;
   white-space: nowrap !important;
-  overflow: hidden !important;
-  text-overflow: ellipsis !important;
-  transition: all 0.15s ease-in-out !important;
-  cursor: pointer !important;
+  box-shadow: none !important;
+  transition: all 0.12s ease !important;
   width: 100% !important;
+  cursor: pointer !important;
 }}
 
-/* Inner text and icons of popover buttons */
 div[data-testid="stPopoverBody"] div.stButton > button *,
-div[data-testid="stPopoverBody"] div.stButton > button p,
-div[data-testid="stPopoverBody"] div.stButton > button span,
-div[data-testid="stPopoverBody"] div.stButton > button div,
 div[data-baseweb="popover"] div.stButton > button *,
-div[data-baseweb="popover"] div.stButton > button p,
-div[data-baseweb="popover"] div.stButton > button span,
-div[data-baseweb="popover"] div.stButton > button div {{
-  color: #F1F5F9 !important;
-  -webkit-text-fill-color: #F1F5F9 !important;
-  font-size: 13px !important;
+div[data-testid*="Popover"] div.stButton > button * {{
+  color: #E2E8F0 !important;
+  -webkit-text-fill-color: #E2E8F0 !important;
+  font-size: 12px !important;
   font-weight: 500 !important;
-  text-align: left !important;
-  justify-content: flex-start !important;
+  white-space: nowrap !important;
   line-height: 1 !important;
 }}
 
-/* Hover state for popover dropdown buttons */
 div[data-testid="stPopoverBody"] div.stButton > button:hover,
 div[data-baseweb="popover"] div.stButton > button:hover,
-div[data-testid="stPopoverContent"] div.stButton > button:hover {{
-  background: #334155 !important;
-  background-color: #334155 !important;
-  border-color: rgba(255, 255, 255, 0.25) !important;
-  color: #FFFFFF !important;
-  -webkit-text-fill-color: #FFFFFF !important;
+div[data-testid*="Popover"] div.stButton > button:hover {{
+  background: rgba(245, 185, 66, 0.14) !important;
+  background-color: rgba(245, 185, 66, 0.14) !important;
+  border-color: rgba(245, 185, 66, 0.4) !important;
+  color: #F5B942 !important;
+  -webkit-text-fill-color: #F5B942 !important;
   transform: none !important;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35) !important;
 }}
 
 div[data-testid="stPopoverBody"] div.stButton > button:hover *,
-div[data-testid="stPopoverBody"] div.stButton > button:hover p,
-div[data-testid="stPopoverBody"] div.stButton > button:hover span,
-div[data-baseweb="popover"] div.stButton > button:hover * {{
-  color: #FFFFFF !important;
-  -webkit-text-fill-color: #FFFFFF !important;
+div[data-baseweb="popover"] div.stButton > button:hover *,
+div[data-testid*="Popover"] div.stButton > button:hover * {{
+  color: #F5B942 !important;
+  -webkit-text-fill-color: #F5B942 !important;
 }}
 
-/* Selected/Active Language Button in Popover (Kind=Primary) */
 div[data-testid="stPopoverBody"] div.stButton > button[kind="primary"],
-div[data-testid="stPopoverBody"] div.stButton > button[data-testid="stBaseButton-primary"],
 div[data-baseweb="popover"] div.stButton > button[kind="primary"],
-div[data-baseweb="popover"] div.stButton > button[data-testid="stBaseButton-primary"] {{
-  background: rgba(234, 179, 8, 0.14) !important;
-  background-color: rgba(234, 179, 8, 0.14) !important;
-  border: 1.5px solid #EAB308 !important;
-  color: #FACC15 !important;
-  -webkit-text-fill-color: #FACC15 !important;
+div[data-testid*="Popover"] div.stButton > button[kind="primary"] {{
+  background: rgba(245, 185, 66, 0.22) !important;
+  background-color: rgba(245, 185, 66, 0.22) !important;
+  border: 1px solid rgba(245, 185, 66, 0.5) !important;
+  color: #F5B942 !important;
+  -webkit-text-fill-color: #F5B942 !important;
   font-weight: 700 !important;
 }}
 
 div[data-testid="stPopoverBody"] div.stButton > button[kind="primary"] *,
-div[data-testid="stPopoverBody"] div.stButton > button[kind="primary"] p,
-div[data-testid="stPopoverBody"] div.stButton > button[kind="primary"] span,
-div[data-baseweb="popover"] div.stButton > button[kind="primary"] * {{
-  color: #FACC15 !important;
-  -webkit-text-fill-color: #FACC15 !important;
+div[data-baseweb="popover"] div.stButton > button[kind="primary"] *,
+div[data-testid*="Popover"] div.stButton > button[kind="primary"] * {{
+  color: #F5B942 !important;
+  -webkit-text-fill-color: #F5B942 !important;
   font-weight: 700 !important;
 }}
 
-/* Ensure the popover popup background is deep dark slate with subtle glassmorphic border */
-div[data-testid="stPopoverBody"],
-div[data-baseweb="popover"] {{
-  background: #0B1120 !important;
-  border: 1px solid rgba(255, 255, 255, 0.14) !important;
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.65) !important;
-  border-radius: 8px !important;
-  padding: 12px 14px !important;
+/* C. Secondary Action Buttons & Suggested Query Chips */
+div:not([data-testid*="Popover"]):not([data-baseweb="popover"]) > div.stButton > button[kind="secondary"],
+div:not([data-testid*="Popover"]):not([data-baseweb="popover"]) > div.stButton > button[data-testid="stBaseButton-secondary"]:not([role="radio"]):not([role="checkbox"]):not([data-testid*="Active"]),
+button[kind="secondary"]:not([data-testid="stBaseButton-primary"]):not([role="radio"]):not([role="checkbox"]) {{
+  background: rgba(14, 21, 38, 0.75) !important;
+  background-color: rgba(14, 21, 38, 0.75) !important;
+  color: #E2E8F0 !important;
+  -webkit-text-fill-color: #E2E8F0 !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  border-radius: 6px !important;
+  font-family: 'Space Grotesk', -apple-system, sans-serif !important;
+  font-size: 11.5px !important;
+  font-weight: 600 !important;
+  height: 32px !important;
+  min-height: 32px !important;
+  padding: 0 10px !important;
+  white-space: nowrap !important;
+  text-overflow: ellipsis !important;
+  overflow: hidden !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25) !important;
+  transition: all 0.15s ease-in-out !important;
+  cursor: pointer !important;
+}}
+
+div:not([data-testid*="Popover"]):not([data-baseweb="popover"]) > div.stButton > button[kind="secondary"] *,
+div:not([data-testid*="Popover"]):not([data-baseweb="popover"]) > div.stButton > button[data-testid="stBaseButton-secondary"] * {{
+  color: #E2E8F0 !important;
+  -webkit-text-fill-color: #E2E8F0 !important;
+  font-size: 11.5px !important;
+  font-weight: 600 !important;
+  white-space: nowrap !important;
+}}
+
+div:not([data-testid*="Popover"]):not([data-baseweb="popover"]) > div.stButton > button[kind="secondary"]:hover,
+div:not([data-testid*="Popover"]):not([data-baseweb="popover"]) > div.stButton > button[data-testid="stBaseButton-secondary"]:hover {{
+  background: rgba(245, 185, 66, 0.12) !important;
+  background-color: rgba(245, 185, 66, 0.12) !important;
+  border-color: rgba(245, 185, 66, 0.45) !important;
+  color: #F5B942 !important;
+  -webkit-text-fill-color: #F5B942 !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.35) !important;
+}}
+
+div:not([data-testid*="Popover"]):not([data-baseweb="popover"]) > div.stButton > button[kind="secondary"]:hover *,
+div:not([data-testid*="Popover"]):not([data-baseweb="popover"]) > div.stButton > button[data-testid="stBaseButton-secondary"]:hover * {{
+  color: #F5B942 !important;
+  -webkit-text-fill-color: #F5B942 !important;
+}}
+
+/* D. Primary Action Buttons (Key CTA & Ingestion Trigger Buttons) */
+div:not([data-testid*="Popover"]):not([data-baseweb="popover"]) > div.stButton > button[kind="primary"],
+div:not([data-testid*="Popover"]):not([data-baseweb="popover"]) > div.stButton > button[data-testid="stBaseButton-primary"],
+div.stDownloadButton > button,
+div.stFormSubmitButton > button {{
+  background: #EAB308 !important;
+  background-color: #EAB308 !important;
+  color: #070A12 !important;
+  -webkit-text-fill-color: #070A12 !important;
+  border: 1px solid #CA8A04 !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25) !important;
+  border-radius: 6px !important;
+  font-weight: 700 !important;
+  font-family: 'Space Grotesk', sans-serif !important;
+  font-size: 12.5px !important;
+  height: 34px !important;
+  min-height: 34px !important;
+  padding: 0 14px !important;
+  transition: all 0.15s ease-in-out !important;
+  cursor: pointer !important;
+  white-space: nowrap !important;
+}}
+
+div:not([data-testid*="Popover"]):not([data-baseweb="popover"]) > div.stButton > button[kind="primary"] *,
+div:not([data-testid*="Popover"]):not([data-baseweb="popover"]) > div.stButton > button[data-testid="stBaseButton-primary"] *,
+div.stDownloadButton > button *,
+div.stFormSubmitButton > button * {{
+  color: #070A12 !important;
+  -webkit-text-fill-color: #070A12 !important;
+  font-weight: 700 !important;
+  font-size: 12.5px !important;
+  white-space: nowrap !important;
+}}
+
+div:not([data-testid*="Popover"]):not([data-baseweb="popover"]) > div.stButton > button[kind="primary"]:hover,
+div:not([data-testid*="Popover"]):not([data-baseweb="popover"]) > div.stButton > button[data-testid="stBaseButton-primary"]:hover,
+div.stDownloadButton > button:hover,
+div.stFormSubmitButton > button:hover {{
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3) !important;
+  background: #FACC15 !important;
+  background-color: #FACC15 !important;
+  border-color: #CA8A04 !important;
+}}
+
+div:not([data-testid*="Popover"]):not([data-baseweb="popover"]) > div.stButton > button[kind="primary"]:active,
+div:not([data-testid*="Popover"]):not([data-baseweb="popover"]) > div.stButton > button[data-testid="stBaseButton-primary"]:active {{
+  transform: translateY(1px) !important;
+  background: #CA8A04 !important;
+  background-color: #CA8A04 !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2) !important;
 }}
 
 /* 18. Modern Glassmorphic Cards */
