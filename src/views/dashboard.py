@@ -817,19 +817,19 @@ def render_dashboard_view(navigate_fn=None):
         fai_col1, fai_col2, fai_col3, fai_col4, fai_col5 = st.columns(5)
         fai_q = None
         with fai_col1:
-            if st.button("🇮🇳 Prayagraj Petrol & Tax", key="dash_ai_btn1", width="stretch"):
+            if st.button("🇮🇳 Prayagraj Petrol & Tax", key="dash_ai_btn1", width="stretch", type="primary"):
                 fai_q = "What is the petrol price in Prayagraj and how much tax does Uttar Pradesh take?"
         with fai_col2:
-            if st.button("🌍 Top Petrol Contributor", key="dash_ai_btn2", width="stretch"):
+            if st.button("🌍 Top Petrol Contributor", key="dash_ai_btn2", width="stretch", type="primary"):
                 fai_q = "who is the more contributor of petrol in the world"
         with fai_col3:
-            if st.button("🚢 Strait of Hormuz Risk", key="dash_ai_btn3", width="stretch"):
+            if st.button("🚢 Strait of Hormuz Risk", key="dash_ai_btn3", width="stretch", type="primary"):
                 fai_q = "What is the risk of a disruption in the Strait of Hormuz?"
         with fai_col4:
-            if st.button("🏢 Indian PSU OMCs", key="dash_ai_btn4", width="stretch"):
+            if st.button("🏢 Indian PSU OMCs", key="dash_ai_btn4", width="stretch", type="primary"):
                 fai_q = "What is the market share and refining capacity of Indian PSU OMCs like IOCL, BPCL, and HPCL?"
         with fai_col5:
-            if st.button("🚚 Fleet Fuel Shock", key="dash_ai_btn5", width="stretch"):
+            if st.button("🚚 Fleet Fuel Shock", key="dash_ai_btn5", width="stretch", type="primary"):
                 fai_q = "What would a 10% increase in fuel prices do to my fleet budget?"
 
         dash_ai_input = st.text_input(
@@ -948,15 +948,15 @@ def render_dashboard_view(navigate_fn=None):
                             display: inline-flex;
                             align-items: center;
                             gap: 8px;
-                            background: rgba(14, 21, 38, 0.8);
-                            color: #F9FAFB;
-                            border: 1px solid rgba(255, 255, 255, 0.15);
-                            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+                            background: #EAB308;
+                            color: #070A12;
+                            border: 1px solid #CA8A04;
+                            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
                             padding: 10px 24px;
                             border-radius: 6px;
                             font-family: 'Space Grotesk', sans-serif;
                             font-size: 0.9rem;
-                            font-weight: 700;
+                            font-weight: 800;
                             text-decoration: none;
                             transition: all 0.2s ease;
                         ">Understand India's Fuel Prices →</a>

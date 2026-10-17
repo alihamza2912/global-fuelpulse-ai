@@ -566,24 +566,7 @@ div[data-testid="stFileUploader"] {{
 div[data-testid="stFileUploader"] * {{
   color: #F9FAFB !important;
 }}
-button[data-testid="stBaseButton-secondary"], div.stDownloadButton > button {{
-  background-color: rgba(14, 21, 38, 0.8) !important;
-  color: #F9FAFB !important;
-  border: 1px solid rgba(255, 255, 255, 0.15) !important;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
-  border-radius: 6px !important;
-  font-weight: 700 !important;
-  font-family: 'Space Grotesk', sans-serif !important;
-  font-size: 13px !important;
-  padding: 8px 18px !important;
-  transition: all 0.2s ease !important;
-}}
-button[data-testid="stBaseButton-secondary"]:hover, div.stDownloadButton > button:hover {{
-  background-color: #1A2540 !important;
-  border-color: rgba(245, 185, 66, 0.4) !important;
-  color: #F5B942 !important;
-  transform: translateY(-1px) !important;
-}}
+
 
 /* 16. Header bar and action menu */
 header[data-testid="stHeader"] {{
@@ -614,15 +597,22 @@ li[role="menuitem"]:hover, div[role="menuitem"]:hover {{
   color: #F5B942 !important;
 }}
 
-/* 17. Matte Yellow Buttons */
+/* 17. Universal Matte Yellow Buttons Across the Entire Platform */
+div.stButton > button,
+div.stDownloadButton > button,
 button[kind="primary"],
-div.stButton > button:first-child,
-div.stButton > button {{
+button[kind="secondary"],
+button[data-testid^="stBaseButton"],
+button[data-testid="stBaseButton-secondary"],
+button[data-testid="stBaseButton-primary"],
+button[data-testid^="baseButton"],
+button[data-testid="baseButton-secondary"],
+button[data-testid="baseButton-primary"] {{
   background: #EAB308 !important;
   background-color: #EAB308 !important;
   color: #070A12 !important;
   -webkit-text-fill-color: #070A12 !important;
-  border: 1px solid #CA8A04 !important;
+  border: 1.5px solid #CA8A04 !important;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25) !important;
   border-radius: 6px !important;
   font-weight: 800 !important;
@@ -630,62 +620,77 @@ div.stButton > button {{
   font-size: 13.5px !important;
   padding: 8px 20px !important;
   transition: all 0.15s ease-in-out !important;
+  cursor: pointer !important;
 }}
-button[kind="primary"] *,
-div.stButton > button:first-child *,
+
+/* Force all inner elements, text, spans, divs, paragraphs, icons to be crisp, bold jet-black */
 div.stButton > button *,
-button[kind="primary"] p,
-div.stButton > button:first-child p,
 div.stButton > button p,
-button[kind="primary"] span,
-div.stButton > button:first-child span,
 div.stButton > button span,
+div.stButton > button div,
+div.stButton > button strong,
+div.stButton > button b,
+div.stDownloadButton > button *,
+div.stDownloadButton > button p,
+div.stDownloadButton > button span,
+div.stDownloadButton > button div,
+button[kind="primary"] *,
+button[kind="primary"] p,
+button[kind="primary"] span,
 button[kind="primary"] div,
-div.stButton > button:first-child div,
-div.stButton > button div {{
+button[kind="secondary"] *,
+button[kind="secondary"] p,
+button[kind="secondary"] span,
+button[kind="secondary"] div,
+button[data-testid^="stBaseButton"] *,
+button[data-testid^="stBaseButton"] p,
+button[data-testid^="stBaseButton"] span,
+button[data-testid^="stBaseButton"] div,
+button[data-testid^="baseButton"] *,
+button[data-testid^="baseButton"] p,
+button[data-testid^="baseButton"] span,
+button[data-testid^="baseButton"] div {{
   color: #070A12 !important;
   -webkit-text-fill-color: #070A12 !important;
   font-weight: 800 !important;
+  fill: #070A12 !important;
 }}
+
+/* Button Hover State - Vibrant Matte Lift */
+div.stButton > button:hover,
+div.stDownloadButton > button:hover,
 button[kind="primary"]:hover,
-div.stButton > button:first-child:hover,
-div.stButton > button:hover {{
+button[kind="secondary"]:hover,
+button[data-testid^="stBaseButton"]:hover,
+button[data-testid^="baseButton"]:hover {{
   transform: translateY(-1px) !important;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3) !important;
   background: #FACC15 !important;
   background-color: #FACC15 !important;
-  border: 1px solid #CA8A04 !important;
+  border-color: #CA8A04 !important;
 }}
+
+div.stButton > button:hover *,
+div.stDownloadButton > button:hover *,
 button[kind="primary"]:hover *,
-div.stButton > button:first-child:hover *,
-div.stButton > button:hover * {{
+button[kind="secondary"]:hover *,
+button[data-testid^="stBaseButton"]:hover *,
+button[data-testid^="baseButton"]:hover * {{
   color: #070A12 !important;
   -webkit-text-fill-color: #070A12 !important;
 }}
+
+/* Button Active / Clicked State */
+div.stButton > button:active,
+div.stDownloadButton > button:active,
 button[kind="primary"]:active,
-div.stButton > button:first-child:active,
-div.stButton > button:active {{
+button[kind="secondary"]:active,
+button[data-testid^="stBaseButton"]:active,
+button[data-testid^="baseButton"]:active {{
   transform: translateY(1px) !important;
   background: #CA8A04 !important;
   background-color: #CA8A04 !important;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2) !important;
-}}
-button[kind="secondary"],
-div.stButton > button[kind="secondary"] {{
-  background-color: rgba(14, 21, 38, 0.8) !important;
-  color: #F9FAFB !important;
-  -webkit-text-fill-color: #F9FAFB !important;
-  border: 1px solid rgba(255, 255, 255, 0.15) !important;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
-  border-radius: 6px !important;
-  font-weight: 600 !important;
-  font-family: 'Space Grotesk', sans-serif !important;
-  font-size: 13px !important;
-}}
-button[kind="secondary"] *,
-div.stButton > button[kind="secondary"] * {{
-  color: #F9FAFB !important;
-  -webkit-text-fill-color: #F9FAFB !important;
 }}
 
 /* 18. Modern Glassmorphic Cards */

@@ -71,7 +71,7 @@ with ctrl_c3:
 with ctrl_c4:
     st.write("")
     st.write("")
-    if st.button("⚡ RE-QUERY", width="stretch", help="Re-queries active data store for latest observations"):
+    if st.button("⚡ RE-QUERY", type="primary", width="stretch", help="Re-queries active data store for latest observations"):
         st.cache_data.clear()
         st.rerun()
 

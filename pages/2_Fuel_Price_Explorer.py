@@ -55,7 +55,7 @@ with f_col4:
 # Authorized Refresh Button
 refresh_col1, refresh_col2 = st.columns([6, 2])
 with refresh_col2:
-    if st.button("⚡ Ingest / Re-query Fuel Feeds", width="stretch"):
+    if st.button("⚡ Ingest / Re-query Fuel Feeds", type="primary", width="stretch"):
         with st.spinner("Connecting to external authorized fuel data pipelines..."):
             summary = orchestrator.run_fuel_prices_only()
             st.success(f"Ingested {len(summary)} pipelines successfully.")

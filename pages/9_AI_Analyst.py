@@ -74,23 +74,23 @@ btn_col1, btn_col2, btn_col3, btn_col4, btn_col5 = st.columns(5)
 
 preset_q = None
 with btn_col1:
-    if st.button("🇮🇳 Prayagraj Petrol & Tax", width="stretch"):
+    if st.button("🇮🇳 Prayagraj Petrol & Tax", width="stretch", type="primary"):
         preset_q = "What is the petrol price in Prayagraj and how much tax does Uttar Pradesh take?"
 
 with btn_col2:
-    if st.button("🌍 Top Petrol Contributor", width="stretch"):
+    if st.button("🌍 Top Petrol Contributor", width="stretch", type="primary"):
         preset_q = "who is the more contributor of petrol in the world"
 
 with btn_col3:
-    if st.button("🚢 Strait of Hormuz Risk", width="stretch"):
+    if st.button("🚢 Strait of Hormuz Risk", width="stretch", type="primary"):
         preset_q = "What is the risk of a disruption in the Strait of Hormuz?"
 
 with btn_col4:
-    if st.button("🏢 Indian PSU OMCs", width="stretch"):
+    if st.button("🏢 Indian PSU OMCs", width="stretch", type="primary"):
         preset_q = "What is the market share and refining capacity of Indian PSU OMCs like IOCL, BPCL, and HPCL?"
 
 with btn_col5:
-    if st.button("🚚 Fleet Fuel Shock", width="stretch"):
+    if st.button("🚚 Fleet Fuel Shock", width="stretch", type="primary"):
         preset_q = "What would a 10% increase in fuel prices do to my fleet budget?"
 
 # Natural Language Text Input

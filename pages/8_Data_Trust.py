@@ -32,7 +32,7 @@ render_page_header(
 # Interactive Trigger
 trig_c1, trig_c2 = st.columns([6, 2])
 with trig_c2:
-    if st.button("🔄 Execute Full Pipeline Audit", width="stretch"):
+    if st.button("🔄 Execute Full Pipeline Audit", type="primary", width="stretch"):
         with st.spinner("Executing full ingestion and telemetry validation..."):
             res = orchestrator.run_all()
             st.success(f"Audit completed across {len(res)} connectors.")

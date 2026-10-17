@@ -64,7 +64,7 @@ def render_home_view(navigate_fn=None):
                 st.session_state.active_nav = "⚡ Intelligence Dashboard"
                 st.rerun()
     with c3:
-        if st.button("🇮🇳 Explore India Fuel Center →", use_container_width=True, key="hero_cta_india"):
+        if st.button("🇮🇳 Explore India Fuel Center →", type="primary", use_container_width=True, key="hero_cta_india"):
             if navigate_fn:
                 navigate_fn("India Fuel Center")
             else:
@@ -246,7 +246,7 @@ def render_home_view(navigate_fn=None):
             </p>
         </div>
         """)
-        if st.button("Open Dashboard →", key="btn_nav_dash", use_container_width=True):
+        if st.button("Open Dashboard →", type="primary", key="btn_nav_dash", use_container_width=True):
             if navigate_fn:
                 navigate_fn("Live Intelligence Dashboard")
             else:
@@ -265,7 +265,7 @@ def render_home_view(navigate_fn=None):
             </p>
         </div>
         """)
-        if st.button("Open India Center →", key="btn_nav_india", use_container_width=True):
+        if st.button("Open India Center →", type="primary", key="btn_nav_india", use_container_width=True):
             if navigate_fn:
                 navigate_fn("India Fuel Center")
             else:
@@ -284,7 +284,7 @@ def render_home_view(navigate_fn=None):
             </p>
         </div>
         """)
-        if st.button("Open Trust Center →", key="btn_nav_trust", use_container_width=True):
+        if st.button("Open Trust Center →", type="primary", key="btn_nav_trust", use_container_width=True):
             if navigate_fn:
                 navigate_fn("Data Trust Center")
             else:
