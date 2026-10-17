@@ -123,8 +123,12 @@ def navigate_to(target: str):
         "overview": "🏠 Overview",
         "dashboard": "⚡ Intelligence Dashboard",
         "live intelligence dashboard": "⚡ Intelligence Dashboard",
+        "open dashboard": "⚡ Intelligence Dashboard",
+        "open dashboard →": "⚡ Intelligence Dashboard",
         "india": "🇮🇳 India Fuel Center",
         "india fuel center": "🇮🇳 India Fuel Center",
+        "open india center": "🇮🇳 India Fuel Center",
+        "open india center →": "🇮🇳 India Fuel Center",
         "about": "📖 About Project",
         "about the project": "📖 About Project",
         "how it works": "⚙️ How It Works",
@@ -134,6 +138,9 @@ def navigate_to(target: str):
         "features catalog": "📋 Features",
         "data trust": "🔒 Data Trust",
         "data trust center": "🔒 Data Trust",
+        "data trust & provenance": "🔒 Data Trust",
+        "open trust center": "🔒 Data Trust",
+        "open trust center →": "🔒 Data Trust",
         "methodology": "📐 Methodology",
         "methodology & calculations": "📐 Methodology",
         "roadmap": "🗺️ Roadmap",
@@ -312,8 +319,7 @@ selected_nav = st.pills(
     "Navigation Portal",
     options=NAV_OPTIONS,
     default=NAV_OPTIONS[curr_idx],
-    label_visibility="collapsed",
-    key="global_nav_pills"
+    label_visibility="collapsed"
 )
 
 if selected_nav and selected_nav != st.session_state.active_nav:

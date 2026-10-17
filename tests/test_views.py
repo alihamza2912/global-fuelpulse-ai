@@ -62,3 +62,18 @@ def test_app_tree_nav_sidebar_renders_cleanly():
     assert any("Tree Nav" in str(m.value) for m in at.sidebar.markdown), "Tree Nav component not found in sidebar"
     assert any("Refresh Live Data" in b.label for b in at.sidebar.button), "Live refresh button not found in sidebar"
 
+
+def test_home_platform_suite_buttons_navigate_correctly():
+    """Verifies that clicking 'Open Dashboard →' navigates cleanly to the Intelligence Dashboard."""
+    at = AppTest.from_file("app.py", default_timeout=30)
+    at.run()
+    assert at.session_state["active_nav"] == "🏠 Overview"
+
+    dash_btns = [b for b in at.button if "Open Dashboard" in b.label]
+    assert len(dash_btns) > 0, "Open Dashboard button not found on home view"
+    dash_btns[0].click().run()
+
+    assert at.session_state["active_nav"] == "⚡ Intelligence Dashboard"
+    assert at.query_params.get("tab") == "dashboard" or at.query_params.get("tab") == ["dashboard"]
+    assert len(at.exception) == 0, f"Dashboard navigation raised exception: {at.exception}"
+
