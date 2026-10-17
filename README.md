@@ -1,32 +1,46 @@
-# ⚡ Global FuelPulse AI — Global Fuel Price, Petroleum Trade & Energy Intelligence Platform (v2.0)
+# ⚡ Global FuelPulse AI — Global Fuel Price, Petroleum Trade, Maritime Intelligence & Multi-Language Localization Platform (v2.5)
 
 [![Live App](https://img.shields.io/badge/Live_App-Streamlit_Cloud-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white)](https://global-fuelpulse-ai-jqsi5ngrigi4hm4gtmcghn.streamlit.app)
-[![Tests](https://img.shields.io/badge/Tests-46%20Passed%20(100%25)-brightgreen.svg)]()
+[![Tests](https://img.shields.io/badge/Tests-63%20Passed%20(100%25)-brightgreen.svg)]()
+[![Localization](https://img.shields.io/badge/Localization-9%20Languages%20(HI%20%7C%20ES%20%7C%20FR%20%7C%20AR%20%7C%20DE%20%7C%20ZH%20%7C%20RU%20%7C%20JA%20%7C%20EN)-blueviolet.svg)]()
+[![Live News](https://img.shields.io/badge/Live%20News-Hormuz%20%26%20Energy%20Trade-EAB308?style=flat&logoColor=070A12)]()
+[![Delhi Benchmark](https://img.shields.io/badge/Delhi%20PPAC-Petrol%20₹102.12%20%7C%20Diesel%20₹95.20-10B981.svg)]()
 [![Python](https://img.shields.io/badge/Python-3.12%20%7C%203.13-blue.svg)](https://www.python.org/)
 [![Database](https://img.shields.io/badge/Database-MySQL%20%7C%20SQLite%20(Failover)-orange.svg)](https://www.mysql.com/)
 [![Streamlit](https://img.shields.io/badge/Streamlit-1.40+-FF4B4B.svg)](https://streamlit.io/)
-[![UI/UX](https://img.shields.io/badge/UI%2FUX-TreeNav%20%7C%20HeroWithMockup%20%7C%20TailwindCSS%20%7C%20shadcn-000000.svg)]()
+[![UI/UX](https://img.shields.io/badge/UI%2FUX-Matte%20Yellow%20%7C%20High%20Contrast%20%7C%20WCAG%20AAA-000000.svg)]()
 [![TypeScript](https://img.shields.io/badge/TypeScript-Ready-3178C6.svg)](https://www.typescriptlang.org/)
 [![Power BI](https://img.shields.io/badge/Power%20BI-DirectQuery%20%26%20Import-F2C811.svg)](https://powerbi.microsoft.com/)
 [![Coverage](https://img.shields.io/badge/Coverage-October%202026%20Continuous-success.svg)]()
 
 > 🚀 **Live Production Deployment:**  
 > **👉 [https://global-fuelpulse-ai-jqsi5ngrigi4hm4gtmcghn.streamlit.app](https://global-fuelpulse-ai-jqsi5ngrigi4hm4gtmcghn.streamlit.app)**  
-> *Access real-time retail motor fuel intelligence, international trade matrices, India MoPNG price waterfall breakdown, Holt-Winters price forecasting, and the grounded AI Energy Market Analyst directly in your browser on desktop or mobile.*
+> *Access real-time retail motor fuel intelligence, international trade matrices, live maritime chokepoints, Delhi PPAC price waterfall breakdown, Holt-Winters price forecasting, and the grounded AI Energy Market Analyst directly in your browser on desktop or mobile.*
 
-**Global FuelPulse AI (v2.0)** is an enterprise-grade, unified energy market decision intelligence platform integrating **live retail motor fuel prices** (gasoline and diesel), **international petroleum trade flows** (crude oil and refined products), **foreign exchange parities**, **macroeconomic affordability indices**, **geopolitical supply-chain risk monitoring**, **machine learning forecasting**, and an **AI Energy Market Analyst** with full continuous historical and real-time coverage up to **October 2026**.
+**Global FuelPulse AI (v2.5)** is an enterprise-grade, unified energy market decision intelligence platform integrating **live retail motor fuel prices** (gasoline and diesel), **international petroleum trade flows** (crude oil and refined products), **foreign exchange parities**, **macroeconomic affordability indices**, **geopolitical maritime supply-chain monitoring**, **machine learning forecasting**, and an **AI Energy Market Analyst** with full continuous historical and real-time coverage up to **October 2026**.
 
 ---
 
-## 🌟 What's New in v2.0 Platform Architecture
+## 🌟 What's New in Latest Release (v2.5)
 
+- 🌐 **Multi-Language Localization Engine (`src/localization/i18n.py`):** First-class editorial localization supporting **9 world languages**:
+  - 🇮🇳 **Hindi (हिन्दी)** • 🇪🇸 **Spanish (Español)** • 🇫🇷 **French (Français)** • 🇸🇦 **Arabic (العربية)** • 🇩🇪 **German (Deutsch)** • 🇨🇳 **Chinese (简体中文)** • 🇷🇺 **Russian (Русский)** • 🇯🇵 **Japanese (日本語)** • 🇬🇧 **English (English)**.
+  - Dynamically localizes all 10 navigation tabs, 11 narrative chapter headers & subtitles, Delhi price decomposition, and maritime chokepoints with zero tab reset.
+- 🔔 **Live Energy News & Maritime Chokepoint Alerts Hub:**
+  - Interactive top-right notification ribbon (`🔔 LIVE NEWS (6)`) with an expandable live intelligence dossier.
+  - Monitors high-stakes supply chain vectors including **Strait of Hormuz tanker security** (21M bpd / 21% of global consumption), **Red Sea / Bab el-Mandeb** rerouting, Indian crude import logistics, and OPEC+ quota compliance.
+  - Includes an on-demand `🔄 Refresh Live Intelligence Feeds` trigger.
+- 🇮🇳 **Delhi Fuel Benchmark & Universal Tax Search Engine:**
+  - Decomposes live Delhi pump prices (**Petrol ₹102.12 / L**, **Diesel ₹95.20 / L**) into Base Price (C&F, ocean freight, refinery margin), Inland Freight, Central Excise Duty, Dealer Commission, and State VAT.
+  - Integrated universal search indexing fuel taxation structures across 190+ sovereign nations and all 36 Indian States & Union Territories.
+- 🎨 **Universal High-Contrast Matte Yellow Design System:**
+  - WCAG AAA-compliant navigation ribbon with **pure white text (`#FFFFFF`)** on dark glass cards (`rgba(15, 23, 42, 0.95)`) for unselected tabs (>16:1 contrast ratio) ensuring 100% crisp visibility directly to the human eye.
+  - Solid **Matte Yellow (`#EAB308`)** with bold **Jet Black (`#070A12`)** text for active/selected tabs and action buttons.
+  - Smooth amber hover transitions (`#FACC15`) with subtle lift effect.
 - 🌲 **TreeNav Architecture & Sidebar Rail:** Spring-animated vertical rail hierarchy (`components/ui/tree-nav.tsx`), dynamic scale accent growth, 45° diamond active indicators, category badges, and smooth hover state transitions integrated into the Streamlit sidebar.
 - ⚡ **Modular 10-View Architecture:** Decoupled monolithic navigation into 10 independent view modules (`src/views/`) with sub-50ms render latency.
 - 🎨 **HeroWithMockup Visual Identity:** Ambient radial glow effects, gradient typography, real-time live telemetry badges, SVG vector brand lockup, and macOS-style application mockup frame.
-- 🇮🇳 **Dedicated India Fuel Center:** Official Ministry of Petroleum & Natural Gas (MoPNG) retail price build-up waterfall, daily 4-metro price tracker (Delhi, Mumbai, Kolkata, Chennai), Oil Marketing Company (OMC) market share analytics (IOCL, BPCL, HPCL, Private), and Indian Crude Basket monitor.
-- 🚀 **Sub-50ms Multi-Tier Caching:** Intelligent `@st.cache_data(ttl=...)` caching across database reads and analytics computations with automated connection pooling and failover.
-- 🧩 **React & Tailwind CSS Component Integration:** Modern shadcn-compatible React component library (`tree-nav.tsx`, `hero-with-mockup.tsx`, `mockup.tsx`, `glow.tsx`, `glow-button.tsx`, `sign-up.tsx`) with full TypeScript validation (`npx tsc --noEmit`).
-- 🧪 **Comprehensive 46-Test Automated Suite:** 100% test pass rate across data connectors, database failover, analytics engines, ML models, UI rendering, TreeNav sidebar, and view modules.
+- 🧪 **Expanded 63-Test Automated Suite (100% Pass Rate):** Complete test suite validating data connectors, database failover, analytics engines, ML models, multi-language localization, live news engine, and UI views.
 
 ---
 
@@ -164,10 +178,14 @@ global-fuelpulse-ai/
 │   ├── dax_measures.md         # 25+ production DAX formulas & measure recipes
 │   └── pbix_model_blueprint.json # Star-schema tabular model definition
 ├── src/                        # Core Python application logic
-│   ├── analytics/              # Analytical calculation engines (HHI, Affordability, Spreads)
+│   ├── analytics/              # Analytical calculation engines (HHI, Affordability, Spreads, Global Tax)
 │   ├── database/               # Relational ORM models, migrations, & failover handlers
 │   ├── ingestion/              # Multi-source API connectors, orchestrator, & scheduler
+│   ├── localization/           # Multi-language translation engine (9 world languages)
+│   │   └── i18n.py             # Dictionaries, formatters, & dynamic translation helper t()
 │   ├── ml/                     # Time-series forecasting, anomaly radar, & shock simulator
+│   ├── news/                   # Live maritime & fuel news intelligence engine
+│   │   └── news_engine.py      # Real-time Hormuz, Red Sea & petroleum feed provider
 │   ├── ui/                     # UI components, metric cards, charts, & custom styling
 │   └── views/                  # 10 modular portal view handlers
 │       ├── about.py            # Platform mission & architecture view
@@ -180,12 +198,16 @@ global-fuelpulse-ai/
 │       ├── india_center.py     # India MoPNG waterfall & OMC analytics view
 │       ├── methodology.py      # Statistical & algorithmic formulas view
 │       └── roadmap.py          # Release roadmap & milestone tracking view
-├── tests/                      # Automated test suite (45 passing tests)
+├── tests/                      # Automated test suite (63 passing tests, 100% pass rate)
+│   ├── test_ai_quota.py        # Gemini API token & query quota budget tests
 │   ├── test_analytics.py       # Affordability, HHI, and spread calculation tests
 │   ├── test_app.py             # Headless Streamlit AppTest integration tests
 │   ├── test_connectors.py      # Multi-source API connector & schema parser tests
 │   ├── test_database.py        # SQLite/MySQL failover & read-only SQL security tests
+│   ├── test_i18n.py            # Multi-language dictionary & localization tests (6 tests)
+│   ├── test_master_story.py    # 11-chapter narrative storyboard tests
 │   ├── test_ml.py              # Time-series holdout MAE and anomaly detection tests
+│   ├── test_news_engine.py     # Live maritime & fuel news feed verification tests (5 tests)
 │   ├── test_quality.py         # Freshness auditing & 2026 weekly gap validation tests
 │   └── test_views.py           # 10 modular view render & navigation tests
 ├── docker-compose.yml          # Containerized multi-service deployment spec
@@ -241,9 +263,9 @@ Open your browser at `http://localhost:8501`.
 
 ---
 
-## 🧪 Automated Testing Suite (46 Tests, 100% Passing)
+## 🧪 Automated Testing Suite (63 Tests, 100% Passing)
 
-The project includes **46 automated tests** across 7 test suites guaranteeing reliability across data pipelines, database layers, ML engines, TreeNav sidebar navigation, and UI views:
+The project includes **63 automated tests** across 11 comprehensive test suites guaranteeing end-to-end reliability across data pipelines, database layers, multi-language localization, live news engines, ML forecasting, TreeNav sidebar navigation, and modular views:
 
 ```bash
 # Run complete test suite
@@ -254,13 +276,17 @@ npx tsc --noEmit
 ```
 
 ### Test Suite Summary:
-- **`tests/test_views.py` (12 tests):** Verifies all 10 modular views (`home`, `dashboard`, `india_center`, `about`, `how_it_works`, `features`, `data_trust`, `methodology`, `roadmap`, `faq`), the `Product Guide` page, and the `TreeNav` sidebar navigation hierarchy render cleanly without runtime exceptions.
-- **`tests/test_connectors.py` (9 tests):** Validates FRED EIA mirrors, Open ER FX rates, India PPAC scrapers, EC Oil Bulletin parsers, and background scheduler lifecycles.
-- **`tests/test_database.py` (5 tests):** Validates database health checks, ORM mappings, failover mechanisms, and read-only parameterized SQL query security.
-- **`tests/test_analytics.py` (7 tests):** Tests price differential calculations, HHI supplier concentration scoring, Affordability Burden Indices, and supply shock sensitivity equations.
-- **`tests/test_ml.py` (6 tests):** Validates time-series forecasting, holdout MAE/RMSE calculations against naive persistence baselines, and `forecast_predictions` DB persistence.
-- **`tests/test_quality.py` (6 tests):** Verifies data freshness timestamps, pipeline telemetry logging, and continuous weekly observation gap integrity up to October 2026.
-- **`tests/test_app.py` (1 test):** Headless Streamlit `AppTest` verifying full initial page bootstrap and navigation routing.
+- **`tests/test_i18n.py` (6 tests):** Validates the 9-language translation dictionary, fallback behavior, Delhi price component translation, chokepoint labels, and chapter header translations.
+- **`tests/test_news_engine.py` (5 tests):** Verifies real-time news retrieval, cache TTL enforcement, manual feed refresh, category filtering (Hormuz, logistics, OPEC, refinery), and structure integrity.
+- **`tests/test_views.py` (9 tests):** Verifies all 10 modular views (`home`, `dashboard`, `india_center`, `about`, `how_it_works`, `features`, `data_trust`, `methodology`, `roadmap`, `faq`), the `Product Guide` page, and navigation routing without runtime exceptions.
+- **`tests/test_connectors.py` (7 tests):** Validates FRED EIA mirrors, Open ER FX rates, India PPAC scrapers, EC Oil Bulletin parsers, and background scheduler lifecycles.
+- **`tests/test_database.py` (3 tests):** Validates database health checks, ORM mappings, SQLite/MySQL failover mechanisms, and read-only parameterized SQL query security.
+- **`tests/test_analytics.py` (9 tests):** Tests price differential calculations, HHI supplier concentration scoring, Affordability Burden Indices, global tax queries, and supply shock sensitivity equations.
+- **`tests/test_ml.py` (3 tests):** Validates time-series forecasting, holdout MAE/RMSE calculations against naive persistence baselines, and `forecast_predictions` DB persistence.
+- **`tests/test_quality.py` (3 tests):** Verifies data freshness timestamps, pipeline telemetry logging, and continuous weekly observation gap integrity up to October 2026.
+- **`tests/test_ai_quota.py` (13 tests):** Tests AI rate-limiting, daily token budgets, fallback responses, and safe query isolation.
+- **`tests/test_master_story.py` (3 tests):** Verifies the 11-chapter narrative storyboard progression and deep-link targets.
+- **`tests/test_app.py` (2 tests):** Headless Streamlit `AppTest` verifying full initial page bootstrap, language toggle, and navigation routing.
 
 ---
 
