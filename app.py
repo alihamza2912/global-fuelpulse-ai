@@ -360,7 +360,7 @@ with col_lang:
     all_langs = get_available_languages()
     cur_data = all_langs.get(current_lang, all_langs["en"])
     cur_flag = cur_data.get("flag", "🌐")
-    lang_btn_label = f"🌐 Change Language ({cur_flag})"
+    lang_btn_label = f"🌐 Language ({cur_flag})"
     with st.popover(lang_btn_label, use_container_width=True):
         st.markdown(f"#### 🌐 {t('select_language', current_lang)} ({len(all_langs)} World Languages)")
         st.caption("Scroll down to select and activate your language:")
