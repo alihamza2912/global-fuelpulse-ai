@@ -5,9 +5,11 @@ data requirements, and operational status.
 """
 
 import streamlit as st
+import pandas as pd
 from src.ui_components import (
     render_html,
     get_fuel_client_logo_html,
+    get_lucide_icon_svg,
     COLOR_AMBER,
     COLOR_WHITE,
     COLOR_INK,
@@ -41,6 +43,7 @@ def render_features_view(navigate_fn=None):
             "id": "01",
             "name": "Global Crude Extraction Leaderboard",
             "category": "UPSTREAM INTELLIGENCE",
+            "icon": "database",
             "status": "PRODUCTION / VERIFIED",
             "status_color": "#10B981",
             "what": "Tracks daily and annual crude oil extraction volumes (in million barrels per day - mbpd) for the top 15 producing nations, contrasting OPEC vs Non-OPEC market power.",
@@ -53,6 +56,7 @@ def render_features_view(navigate_fn=None):
             "id": "02",
             "name": "Bilateral Seaborne Trade Flow Matrix",
             "category": "MIDSTREAM LOGISTICS",
+            "icon": "ship",
             "status": "PRODUCTION / VERIFIED",
             "status_color": "#10B981",
             "what": "Origin-destination bilateral matrix capturing physical crude and product tanker flows between sovereign exporters and consuming hubs.",
@@ -65,6 +69,7 @@ def render_features_view(navigate_fn=None):
             "id": "03",
             "name": "International Retail Fuel Price Explorer",
             "category": "DOWNSTREAM PRICING",
+            "icon": "fuel",
             "status": "PRODUCTION / VERIFIED",
             "status_color": "#10B981",
             "what": "Multi-country comparative pricing for Regular Motor Gasoline (Petrol) and Automotive Gasoil (Diesel), harmonized into standardized USD per litre and local currencies.",
@@ -77,6 +82,7 @@ def render_features_view(navigate_fn=None):
             "id": "04",
             "name": "Price Build-Up & Tax Waterfall Analyzer",
             "category": "FISCAL DECOMPOSITION",
+            "icon": "layers",
             "status": "PRODUCTION / VERIFIED",
             "status_color": "#10B981",
             "what": "Decomposes consumer retail pump prices into upstream crude benchmark costs, refinery margin, central excise duty, dealer margin, and regional VAT.",
@@ -89,6 +95,7 @@ def render_features_view(navigate_fn=None):
             "id": "05",
             "name": "Energy Affordability Burden Index",
             "category": "SOCIOECONOMIC IMPACT",
+            "icon": "activity",
             "status": "PRODUCTION / VERIFIED",
             "status_color": "#10B981",
             "what": "Calculates the real economic burden of fuel by benchmarking a 50-litre tank against national GDP per capita and daily minimum wage levels.",
@@ -101,6 +108,7 @@ def render_features_view(navigate_fn=None):
             "id": "06",
             "name": "Maritime Chokepoint & Supply Risk Radar",
             "category": "VULNERABILITY AUDITING",
+            "icon": "shield-check",
             "status": "PRODUCTION / VERIFIED",
             "status_color": "#10B981",
             "what": "Evaluates national dependency on high-risk maritime transit corridors (Strait of Hormuz, Malacca Strait, Suez/Red Sea) and calculates the Herfindahl-Hirschman Index (HHI).",
@@ -113,6 +121,7 @@ def render_features_view(navigate_fn=None):
             "id": "07",
             "name": "Macroeconomic Fuel Shock Simulator",
             "category": "DECISION SUPPORT & PLANNING",
+            "icon": "zap",
             "status": "PRODUCTION / VERIFIED",
             "status_color": "#10B981",
             "what": "Interactive sensitivity model allowing fleet managers and procurement leaders to simulate crude oil spikes (+$5 to +$50/bbl) and local currency depreciations (1% to 25%).",
@@ -125,6 +134,7 @@ def render_features_view(navigate_fn=None):
             "id": "08",
             "name": "SARIMAX & XGBoost Machine Learning Radar",
             "category": "PREDICTIVE MODELING",
+            "icon": "sparkles",
             "status": "PRODUCTION / VERIFIED",
             "status_color": "#10B981",
             "what": "Multi-horizon time-series forecasting engine generating 30-day and 90-day forward retail fuel price projections with 80% and 95% confidence intervals.",
@@ -137,18 +147,20 @@ def render_features_view(navigate_fn=None):
             "id": "09",
             "name": "AI Energy Market Analyst (LLM-Assisted)",
             "category": "SYNTHETIC REASONING",
-            "status": "PRODUCTION / QUOTA-GATED",
-            "status_color": "#60A5FA",
-            "what": "Natural-language query engine powered by Google Gemini, capable of translating plain-English questions into verified read-only SQL queries with quota tracking.",
+            "icon": "bot",
+            "status": "PRODUCTION / ACTIVE • 100% FREE AUTONOMOUS",
+            "status_color": "#10B981",
+            "what": "Natural-language query engine powered by Google Gemini and autonomous SQL synthesis, capable of translating plain-English questions into verified read-only SQL queries with zero quota limits and instant telemetry.",
             "why": "Allows executive stakeholders to extract instant answers without writing SQL queries or navigating multiple charts.",
-            "data": "Full relational schema grounding, in-memory TTL query cache.",
-            "action_text": "View in Dashboard Chapter 09",
-            "nav_target": "Live Intelligence Dashboard"
+            "data": "Full relational schema grounding, in-memory TTL query cache, MoPNG official circulars.",
+            "action_text": "Open Full AI Analyst Studio",
+            "nav_target": "AI_Analyst"
         },
         {
             "id": "10",
             "name": "India Metro Energy Center (PPAC Daily)",
             "category": "REGIONAL BENCHMARKING",
+            "icon": "map-pinned",
             "status": "PRODUCTION / VERIFIED",
             "status_color": "#10B981",
             "what": "Dedicated operational portal tracking verified daily retail pump prices for Delhi, Mumbai, Kolkata, and Chennai, plus Indian Crude Basket and OMC market shares.",
@@ -161,6 +173,7 @@ def render_features_view(navigate_fn=None):
             "id": "11",
             "name": "Automated Quality Auditor & Telemetry Mart",
             "category": "DATA GOVERNANCE",
+            "icon": "shield-check",
             "status": "PRODUCTION / VERIFIED",
             "status_color": "#10B981",
             "what": "Real-time auditing suite verifying observation latencies, data provenance, connector execution runtimes, and zero-tolerance quarantine logs.",
@@ -173,6 +186,7 @@ def render_features_view(navigate_fn=None):
             "id": "12",
             "name": "Power BI & Multi-Format Data Export",
             "category": "ENTERPRISE INTEGRATION",
+            "icon": "download",
             "status": "PRODUCTION / VERIFIED",
             "status_color": "#10B981",
             "what": "Direct export capabilities for all underlying data marts in CSV format, alongside auto-generated Power BI `.pbids` enterprise connection files.",
@@ -184,12 +198,16 @@ def render_features_view(navigate_fn=None):
     ]
 
     for f in features:
+        icon_svg = get_lucide_icon_svg(f.get("icon", "sparkles"), size=18, color="#F5B942")
         render_html(f"""
-        <div style="background: rgba(14, 21, 38, 0.7); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 10px; padding: 20px; margin-bottom: 16px;">
+        <div style="background: rgba(14, 21, 38, 0.7); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 10px; padding: 20px; margin-bottom: 14px;">
             <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 10px; margin-bottom: 10px;">
-                <div>
-                    <span style="font-family: 'Space Grotesk', sans-serif; font-size: 0.75rem; font-weight: 800; color: #F5B942; letter-spacing: 0.06em;">FEATURE {f['id']} // {f['category']}</span>
-                    <h3 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.15rem; font-weight: 800; color: #F9FAFB; margin: 3px 0 0 0;">{f['name']}</h3>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    {icon_svg}
+                    <div>
+                        <span style="font-family: 'Space Grotesk', sans-serif; font-size: 0.75rem; font-weight: 800; color: #F5B942; letter-spacing: 0.06em;">FEATURE {f['id']} // {f['category']}</span>
+                        <h3 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.15rem; font-weight: 800; color: #F9FAFB; margin: 3px 0 0 0;">{f['name']}</h3>
+                    </div>
                 </div>
                 <span style="font-family: 'Space Grotesk', sans-serif; font-size: 0.72rem; font-weight: 800; color: {f['status_color']}; background: rgba(255, 255, 255, 0.05); border: 1px solid {f['status_color']}; padding: 3px 9px; border-radius: 999px;">
                     {f['status']}
@@ -202,3 +220,86 @@ def render_features_view(navigate_fn=None):
             </div>
         </div>
         """)
+
+        if f["id"] == "09":
+            with st.container():
+                render_html("""
+                <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: 8px; padding: 12px 16px; margin: -6px 0 14px 0;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <span style="font-size: 1.15rem;">🤖</span>
+                            <b style="color: #34D399; font-family: 'Space Grotesk', sans-serif; font-size: 0.92rem;">Try Feature 09 Live Now — Free Autonomous Energy Intelligence</b>
+                        </div>
+                        <span style="background: rgba(16, 185, 129, 0.18); color: #34D399; font-size: 0.72rem; font-weight: 800; padding: 2px 8px; border-radius: 4px; border: 1px solid rgba(16, 185, 129, 0.4);">
+                            🟢 ZERO API KEY REQUIRED • 0 QUOTA LIMITS
+                        </span>
+                    </div>
+                    <p style="font-size: 0.78rem; color: #94A3B8; margin: 6px 0 0 0; line-height: 1.4;">
+                        Select any suggested query chip below or ask any question to trigger autonomous SQL query synthesis and market analysis:
+                    </p>
+                </div>
+                """)
+
+                f9_col1, f9_col2, f9_col3, f9_col4, f9_col5 = st.columns(5)
+                f9_q = None
+                with f9_col1:
+                    if st.button("🇮🇳 Prayagraj Petrol & Tax", key="feat_ai_btn1", width="stretch", type="secondary"):
+                        f9_q = "What is the petrol price in Prayagraj and how much tax does Uttar Pradesh take?"
+                with f9_col2:
+                    if st.button("🌍 Top Petrol Contributor", key="feat_ai_btn2", width="stretch", type="secondary"):
+                        f9_q = "who is the more contributor of petrol in the world"
+                with f9_col3:
+                    if st.button("🚢 Strait of Hormuz Risk", key="feat_ai_btn3", width="stretch", type="secondary"):
+                        f9_q = "What is the risk of a disruption in the Strait of Hormuz?"
+                with f9_col4:
+                    if st.button("🏢 Indian PSU OMCs", key="feat_ai_btn4", width="stretch", type="secondary"):
+                        f9_q = "What is the market share and refining capacity of Indian PSU OMCs like IOCL, BPCL, and HPCL?"
+                with f9_col5:
+                    if st.button("🚚 Fleet Fuel Shock", key="feat_ai_btn5", width="stretch", type="secondary"):
+                        f9_q = "What would a 10% increase in fuel prices do to my fleet budget?"
+
+                feat_ai_input = st.text_input(
+                    "Ask any question about fuel rates, state taxes, maritime risks, or crude markets:",
+                    value=f9_q if f9_q else "",
+                    placeholder="e.g. What is the petrol rate in Prayagraj and state tax? (Ask anything freely)",
+                    key="feat_f9_text_input"
+                )
+                if feat_ai_input and feat_ai_input.strip():
+                    with st.spinner("Analyzing with Free Autonomous AI Engine..."):
+                        from src.ai.nl_query_engine import AIEnergyMarketAnalyst
+                        ai_resp = AIEnergyMarketAnalyst.answer_question(feat_ai_input, allow_free_autonomous=True, bypass_session_limits=True)
+                        if ai_resp.get("autonomous_free_mode"):
+                            render_html("""<div style="display:inline-block;padding:5px 12px;background:rgba(16, 185, 129, 0.2);color:#10B981;font-weight:700;font-size:12px;border:1.5px solid #10B981;margin-bottom:8px;border-radius:4px;">🟢 100% Free Autonomous AI Engine (0 Quota • Zero API Key Required)</div>""")
+                        st.markdown(ai_resp["answer_text"])
+                        if ai_resp.get("visualization_fig") is not None:
+                            st.plotly_chart(ai_resp["visualization_fig"], width="stretch", theme=None)
+                        if ai_resp.get("data_records"):
+                            st.dataframe(pd.DataFrame(ai_resp["data_records"]), width="stretch", hide_index=True)
+
+                col_f9_studio, col_f9_dash = st.columns([1, 1])
+                with col_f9_studio:
+                    render_html("""
+                    <a href="/AI_Analyst" target="_self" style="text-decoration: none; display: block;">
+                        <div style="background: #EAB308; color: #070A12; font-family: 'Space Grotesk', sans-serif; font-size: 12.5px; font-weight: 700; height: 34px; line-height: 34px; text-align: center; border-radius: 6px; box-shadow: 0 2px 6px rgba(0,0,0,0.25); cursor: pointer; transition: all 0.15s ease;">
+                            🤖 Open Full AI Analyst Studio (/AI_Analyst) →
+                        </div>
+                    </a>
+                    """)
+                with col_f9_dash:
+                    if st.button("📊 View in Dashboard Chapter 09", key="feat_f9_dash_btn", width="stretch", type="secondary"):
+                        if navigate_fn:
+                            navigate_fn("Live Intelligence Dashboard")
+                        else:
+                            st.session_state.active_nav = "⚡ Intelligence Dashboard"
+                            st.rerun()
+                st.markdown("<div style='margin-bottom: 20px;'></div>", unsafe_allow_html=True)
+        else:
+            col_btn, _ = st.columns([2.0, 3.0])
+            with col_btn:
+                if st.button(f"⚡ {f['action_text']} →", key=f"feat_btn_{f['id']}", width="stretch", type="secondary"):
+                    if navigate_fn:
+                        navigate_fn(f["nav_target"])
+                    else:
+                        st.session_state.active_nav = f["nav_target"]
+                        st.rerun()
+            st.markdown("<div style='margin-bottom: 12px;'></div>", unsafe_allow_html=True)

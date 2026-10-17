@@ -186,6 +186,10 @@ def navigate_to(target: str):
         "docs & faq": "faq",
         "documentation & faq": "faq",
         "❓ docs & faq": "faq",
+        "ai analyst": "dashboard",
+        "ai_analyst": "dashboard",
+        "ai": "dashboard",
+        "gemini": "dashboard",
     }
     canonical = alias_map.get(target.strip().lower(), target if target in CANONICAL_TABS else "home")
     st.session_state.active_canonical = canonical

@@ -294,6 +294,80 @@ def render_home_view(navigate_fn=None):
                 st.session_state.active_nav = "🔒 Data Trust"
                 st.rerun()
 
+    # 5b. Feature 09: AI Energy Market Analyst Spotlight
+    render_html(f"""
+    <div style="background: radial-gradient(circle at 10% 20%, rgba(245, 185, 66, 0.12) 0%, rgba(14, 21, 38, 0.95) 70%), #070A12; border: 1px solid rgba(255, 255, 255, 0.14); border-radius: 12px; padding: 20px 24px; margin: 18px 0 16px 0;">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 8px;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                {get_lucide_icon_svg("bot", size=22, color="#F5B942")}
+                <div>
+                    <span style="font-family: 'Space Grotesk', sans-serif; font-size: 0.72rem; font-weight: 800; color: #F5B942; letter-spacing: 0.08em; text-transform: uppercase;">FEATURE 09 // SYNTHETIC REASONING</span>
+                    <h3 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.15rem; font-weight: 800; color: #F9FAFB; margin: 2px 0 0 0;">AI Energy Market Analyst (LLM-Assisted & Autonomous SQL)</h3>
+                </div>
+            </div>
+            <span style="background: rgba(16, 185, 129, 0.18); color: #34D399; font-family: 'Space Grotesk', sans-serif; font-size: 0.72rem; font-weight: 800; padding: 3px 10px; border-radius: 999px; border: 1px solid rgba(16, 185, 129, 0.4);">
+                ● 100% FREE AUTONOMOUS • 0 QUOTA REQUIRED
+            </span>
+        </div>
+        <p style="font-family: 'Inter', sans-serif; font-size: 0.85rem; color: #94A3B8; margin: 0 0 14px 0; line-height: 1.5;">
+            Natural-language energy market intelligence engine translating plain questions into verified, read-only SQL queries with zero API key dependencies and continuous grounding.
+        </p>
+    </div>
+    """)
+    
+    home_c1, home_c2, home_c3, home_c4, home_c5 = st.columns(5)
+    home_q = None
+    with home_c1:
+        if st.button("🇮🇳 Prayagraj Petrol & Tax", key="home_ai_btn1", width="stretch", type="secondary"):
+            home_q = "What is the petrol price in Prayagraj and how much tax does Uttar Pradesh take?"
+    with home_c2:
+        if st.button("🌍 Top Petrol Contributor", key="home_ai_btn2", width="stretch", type="secondary"):
+            home_q = "who is the more contributor of petrol in the world"
+    with home_c3:
+        if st.button("🚢 Strait of Hormuz Risk", key="home_ai_btn3", width="stretch", type="secondary"):
+            home_q = "What is the risk of a disruption in the Strait of Hormuz?"
+    with home_c4:
+        if st.button("🏢 Indian PSU OMCs", key="home_ai_btn4", width="stretch", type="secondary"):
+            home_q = "What is the market share and refining capacity of Indian PSU OMCs like IOCL, BPCL, and HPCL?"
+    with home_c5:
+        if st.button("🚚 Fleet Fuel Shock", key="home_ai_btn5", width="stretch", type="secondary"):
+            home_q = "What would a 10% increase in fuel prices do to my fleet budget?"
+
+    home_ai_input = st.text_input(
+        "Ask any question about fuel rates, state taxes, maritime risks, or crude markets:",
+        value=home_q if home_q else "",
+        placeholder="e.g. What is the petrol rate in Prayagraj and state tax? (Ask anything freely)",
+        key="home_ai_text_input"
+    )
+    if home_ai_input and home_ai_input.strip():
+        with st.spinner("Analyzing with Free Autonomous AI Engine..."):
+            from src.ai.nl_query_engine import AIEnergyMarketAnalyst
+            home_resp = AIEnergyMarketAnalyst.answer_question(home_ai_input, allow_free_autonomous=True, bypass_session_limits=True)
+            if home_resp.get("autonomous_free_mode"):
+                render_html("""<div style="display:inline-block;padding:5px 12px;background:rgba(16, 185, 129, 0.2);color:#10B981;font-weight:700;font-size:12px;border:1.5px solid #10B981;margin-bottom:8px;border-radius:4px;">🟢 100% Free Autonomous AI Engine (0 Quota • Zero API Key Required)</div>""")
+            st.markdown(home_resp["answer_text"])
+            if home_resp.get("visualization_fig") is not None:
+                st.plotly_chart(home_resp["visualization_fig"], width="stretch", theme=None)
+            if home_resp.get("data_records"):
+                st.dataframe(pd.DataFrame(home_resp["data_records"]), width="stretch", hide_index=True)
+    
+    col_h_studio, col_h_dash = st.columns([1, 1])
+    with col_h_studio:
+        render_html("""
+        <a href="/AI_Analyst" target="_self" style="text-decoration: none; display: block;">
+            <div style="background: #EAB308; color: #070A12; font-family: 'Space Grotesk', sans-serif; font-size: 12.5px; font-weight: 700; height: 34px; line-height: 34px; text-align: center; border-radius: 6px; box-shadow: 0 2px 6px rgba(0,0,0,0.25); cursor: pointer; transition: all 0.15s ease;">
+                🤖 Launch Dedicated AI Analyst Studio (/AI_Analyst) →
+            </div>
+        </a>
+        """)
+    with col_h_dash:
+        if st.button("📊 Explore Dashboard Chapter 09 (Interactive Analyst)", key="home_btn_ai_dash", width="stretch", type="secondary"):
+            if navigate_fn:
+                navigate_fn("Live Intelligence Dashboard")
+            else:
+                st.session_state.active_nav = "⚡ Intelligence Dashboard"
+                st.rerun()
+
     # 6. Honest Scope & Coverage Disclosure
     render_html(f"""
     <div style="background: rgba(14, 21, 38, 0.5); border: 1px dashed rgba(255, 255, 255, 0.15); border-radius: 8px; padding: 16px 20px; font-family: 'Inter', sans-serif; font-size: 0.8rem; color: #94A3B8; line-height: 1.55; margin-top: 14px;">
