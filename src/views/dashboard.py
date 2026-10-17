@@ -793,7 +793,7 @@ def render_dashboard_view(navigate_fn=None):
                                 <span style="background: {match['badge_bg']}; border: 1px solid rgba(255, 255, 255, 0.15); padding: 2px 7px; border-radius: 999px; font-size: 0.65rem; font-weight: 700; color: #F5B942;">{match['type'].upper()}</span>
                             </div>
                             <div style="font-size: 0.75rem; color: #94A3B8; margin-bottom: 10px;">{match['category']}</div>
-                            <a href="{match['target']}" style="display: inline-flex; align-items: center; gap: 5px; background: linear-gradient(135deg, #F5B942 0%, #D9951A 100%); border: 1px solid rgba(255, 255, 255, 0.25); box-shadow: 0 0 10px rgba(245, 185, 66, 0.35); padding: 4px 12px; border-radius: 5px; font-size: 0.72rem; font-weight: 800; color: #070A12; text-decoration: none;">{match['label']} →</a>
+                            <a href="{match['target']}" style="display: inline-flex; align-items: center; gap: 5px; background: #EAB308; border: 1px solid #CA8A04; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25); padding: 4px 12px; border-radius: 5px; font-size: 0.72rem; font-weight: 800; color: #070A12; text-decoration: none;">{match['label']} →</a>
                         </div>
                         """
                     )
@@ -929,10 +929,10 @@ def render_dashboard_view(navigate_fn=None):
                             display: inline-flex;
                             align-items: center;
                             gap: 8px;
-                            background: linear-gradient(135deg, #F5B942 0%, #D9951A 100%);
+                            background: #EAB308;
                             color: #070A12;
-                            border: 1px solid rgba(255, 255, 255, 0.3);
-                            box-shadow: 0 0 20px rgba(245, 185, 66, 0.5), 0 4px 14px rgba(0, 0, 0, 0.4);
+                            border: 1px solid #CA8A04;
+                            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
                             padding: 10px 24px;
                             border-radius: 6px;
                             font-family: 'Space Grotesk', sans-serif;

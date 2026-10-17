@@ -614,33 +614,78 @@ li[role="menuitem"]:hover, div[role="menuitem"]:hover {{
   color: #F5B942 !important;
 }}
 
-/* 17. Buttons with Glow styling */
-button[kind="primary"], div.stButton > button:first-child {{
-  background: linear-gradient(135deg, #F5B942 0%, #D9951A 100%) !important;
+/* 17. Matte Yellow Buttons */
+button[kind="primary"],
+div.stButton > button:first-child,
+div.stButton > button {{
+  background: #EAB308 !important;
+  background-color: #EAB308 !important;
   color: #070A12 !important;
-  border: 1px solid rgba(255, 255, 255, 0.3) !important;
-  box-shadow: 0 0 16px rgba(245, 185, 66, 0.4), 0 4px 12px rgba(0, 0, 0, 0.4) !important;
+  -webkit-text-fill-color: #070A12 !important;
+  border: 1px solid #CA8A04 !important;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25) !important;
   border-radius: 6px !important;
   font-weight: 800 !important;
   font-family: 'Space Grotesk', sans-serif !important;
   font-size: 13.5px !important;
   padding: 8px 20px !important;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  transition: all 0.15s ease-in-out !important;
 }}
-button[kind="primary"]:hover, div.stButton > button:first-child:hover {{
-  transform: translateY(-2px) !important;
-  box-shadow: 0 0 24px rgba(245, 185, 66, 0.7), 0 6px 16px rgba(0, 0, 0, 0.5) !important;
-  background: linear-gradient(135deg, #FFC95C 0%, #E5A324 100%) !important;
+button[kind="primary"] *,
+div.stButton > button:first-child *,
+div.stButton > button *,
+button[kind="primary"] p,
+div.stButton > button:first-child p,
+div.stButton > button p,
+button[kind="primary"] span,
+div.stButton > button:first-child span,
+div.stButton > button span,
+button[kind="primary"] div,
+div.stButton > button:first-child div,
+div.stButton > button div {{
+  color: #070A12 !important;
+  -webkit-text-fill-color: #070A12 !important;
+  font-weight: 800 !important;
 }}
-button[kind="secondary"] {{
+button[kind="primary"]:hover,
+div.stButton > button:first-child:hover,
+div.stButton > button:hover {{
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3) !important;
+  background: #FACC15 !important;
+  background-color: #FACC15 !important;
+  border: 1px solid #CA8A04 !important;
+}}
+button[kind="primary"]:hover *,
+div.stButton > button:first-child:hover *,
+div.stButton > button:hover * {{
+  color: #070A12 !important;
+  -webkit-text-fill-color: #070A12 !important;
+}}
+button[kind="primary"]:active,
+div.stButton > button:first-child:active,
+div.stButton > button:active {{
+  transform: translateY(1px) !important;
+  background: #CA8A04 !important;
+  background-color: #CA8A04 !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2) !important;
+}}
+button[kind="secondary"],
+div.stButton > button[kind="secondary"] {{
   background-color: rgba(14, 21, 38, 0.8) !important;
   color: #F9FAFB !important;
+  -webkit-text-fill-color: #F9FAFB !important;
   border: 1px solid rgba(255, 255, 255, 0.15) !important;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
   border-radius: 6px !important;
   font-weight: 600 !important;
   font-family: 'Space Grotesk', sans-serif !important;
   font-size: 13px !important;
+}}
+button[kind="secondary"] *,
+div.stButton > button[kind="secondary"] * {{
+  color: #F9FAFB !important;
+  -webkit-text-fill-color: #F9FAFB !important;
 }}
 
 /* 18. Modern Glassmorphic Cards */
@@ -769,7 +814,7 @@ def render_command_strip(
 </div>
 <div style="display: flex; align-items: center; gap: 12px;">
 <span style="background: rgba(16, 185, 129, 0.18); color: #34D399; border: 1px solid rgba(16, 185, 129, 0.4); padding: 4px 12px; border-radius: 999px; font-family: 'Space Grotesk', sans-serif; font-size: 12px; font-weight: 700;">● {engine_name} VERIFIED</span>
-<a href="#ch-05" style="background: linear-gradient(135deg, #F5B942 0%, #D9951A 100%); color: #070A12; border: 1px solid rgba(255, 255, 255, 0.25); box-shadow: 0 0 14px rgba(245, 185, 66, 0.4); padding: 6px 14px; border-radius: 6px; font-family: 'Space Grotesk', sans-serif; font-size: 13px; font-weight: 800; text-decoration: none;">EXPLORE MARKETS ↗</a>
+<a href="#ch-05" style="background: #EAB308; color: #070A12; border: 1px solid #CA8A04; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25); padding: 6px 14px; border-radius: 6px; font-family: 'Space Grotesk', sans-serif; font-size: 13px; font-weight: 800; text-decoration: none;">EXPLORE MARKETS ↗</a>
 </div>
 </div>"""
     render_html(nav_html)
@@ -841,7 +886,7 @@ def render_chapter_header(
     """Renders a modern dark chapter banner with clear numbering, divider, and metadata."""
     action_html = ""
     if action_page_url:
-        action_html = f"""<a href="{action_page_url}" style="display: inline-flex; align-items: center; gap: 6px; background: linear-gradient(135deg, #F5B942 0%, #D9951A 100%); color: #070A12; border: 1px solid rgba(255, 255, 255, 0.25); box-shadow: 0 0 14px rgba(245, 185, 66, 0.35); padding: 6px 14px; border-radius: 6px; font-family: 'Space Grotesk', sans-serif; font-size: 13px; font-weight: 800; text-decoration: none; letter-spacing: 0.04em;"><span>{action_label}</span> ↗</a>"""
+        action_html = f"""<a href="{action_page_url}" style="display: inline-flex; align-items: center; gap: 6px; background: #EAB308; color: #070A12; border: 1px solid #CA8A04; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25); padding: 6px 14px; border-radius: 6px; font-family: 'Space Grotesk', sans-serif; font-size: 13px; font-weight: 800; text-decoration: none; letter-spacing: 0.04em;"><span>{action_label}</span> ↗</a>"""
 
     header_html = f"""<div id="{anchor_id}" style="margin-top: 3.5rem; margin-bottom: 1.5rem; padding-top: 1.5rem; border-top: 1px solid rgba(255, 255, 255, 0.12);">
 <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 14px;">

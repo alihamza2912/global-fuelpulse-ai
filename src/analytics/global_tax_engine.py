@@ -1496,7 +1496,7 @@ class GlobalTaxEngine:
             </div>
             """)
             st.markdown(
-                f"<a href='{result.get('deep_link_url', '#ch-05')}' style='display: inline-flex; align-items: center; gap: 6px; background: linear-gradient(135deg, #F5B942 0%, #D9951A 100%); color: #070A12; font-weight: 800; font-size: 0.78rem; padding: 8px 16px; border-radius: 6px; text-decoration: none; margin-top: 8px;'>{result.get('deep_link_label', 'Explore Full Deck')} →</a>",
+                f"<a href='{result.get('deep_link_url', '#ch-05')}' style='display: inline-flex; align-items: center; gap: 6px; background: #EAB308; color: #070A12; border: 1px solid #CA8A04; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25); font-weight: 800; font-size: 0.78rem; padding: 8px 16px; border-radius: 6px; text-decoration: none; margin-top: 8px;'>{result.get('deep_link_label', 'Explore Full Deck')} →</a>",
                 unsafe_allow_html=True
             )
 
