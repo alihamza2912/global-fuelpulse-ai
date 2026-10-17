@@ -175,6 +175,13 @@ class AIEnergyMarketAnalyst:
         cached_resp = question_cache.get(question)
         if cached_resp is not None:
             cached_resp["quota_used"] = False
+            # Reconstitute forecast chart if it was saved without it
+            if cached_resp.get("visualization_fig") is None and "Outlook & Forecast" in cached_resp.get("topic", ""):
+                q_low = question.lower()
+                is_ind = any(w in q_low for w in ["india", "delhi", "prayagraj", "up", "mumbai", "rs", "₹", "inr"])
+                loc_lbl = "India (e.g. Prayagraj / UP ₹101.45/L, Delhi ₹94.72/L, Mumbai ₹103.44/L)" if is_ind else "Global Benchmark Markets"
+                bp = 101.45 if is_ind else 1.28
+                cached_resp["visualization_fig"] = cls._build_forecast_trajectory_chart(base_price=bp, label=loc_lbl)
             return cached_resp
 
         # 3. Check for Direct Database Routing (Simple Price/Trade/Production Questions)

@@ -46,10 +46,19 @@ class QuestionCacheManager:
                 data = json.load(f)
                 now = time.time()
                 # Filter expired
-                self._memory_cache = {
-                    k: v for k, v in data.items()
-                    if (now - v.get("cached_at", 0)) < self.ttl_seconds
-                }
+                loaded = {}
+                for k, v in data.items():
+                    if (now - v.get("cached_at", 0)) < self.ttl_seconds:
+                        entry = v.copy()
+                        resp = entry.get("response", {})
+                        if "visualization_fig_dict" in resp and resp["visualization_fig_dict"]:
+                            try:
+                                import plotly.graph_objects as go
+                                resp["visualization_fig"] = go.Figure(resp["visualization_fig_dict"])
+                            except Exception:
+                                pass
+                        loaded[k] = entry
+                self._memory_cache = loaded
         except Exception as e:
             logger.warning(f"Could not load question cache from disk: {e}")
             self._memory_cache = {}
@@ -86,10 +95,20 @@ class QuestionCacheManager:
                 "original_question": question,
                 "response": mem_resp,
             }
-            # Disk persistence filters non-serializable objects like Figure
+            # Disk persistence converts visualization_fig to dict for JSON serialization
             disk_cache = {}
             for k, entry in self._memory_cache.items():
-                resp_copy = {rk: rv for rk, rv in entry["response"].items() if rk != "visualization_fig"}
+                resp_copy = {}
+                for rk, rv in entry["response"].items():
+                    if rk == "visualization_fig":
+                        if rv is not None and hasattr(rv, "to_dict"):
+                            try:
+                                resp_copy["visualization_fig_dict"] = rv.to_dict()
+                            except Exception:
+                                pass
+                    else:
+                        resp_copy[rk] = rv
+
                 disk_cache[k] = {
                     "cached_at": entry["cached_at"],
                     "original_question": entry["original_question"],
