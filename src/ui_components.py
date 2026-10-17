@@ -86,29 +86,29 @@ def get_logo_mark_svg(size: int = 36) -> str:
 </svg>"""
 
 
-def get_brand_logo_svg(width: int = 280, height: int = 48) -> str:
+def get_brand_logo_svg(width: int = 340, height: int = 54) -> str:
     """Returns the full brand lockup: distinctive vector trade emblem + Global FuelPulse AI typography."""
-    return f"""<svg width="{width}" height="{height}" viewBox="0 0 280 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+    return f"""<svg width="{width}" height="{height}" viewBox="0 0 340 54" fill="none" xmlns="http://www.w3.org/2000/svg">
   <!-- Droplet & Trade Route Orbit Emblem -->
   <g transform="translate(4, 6)">
-    <rect width="36" height="36" rx="8" fill="#0E1526" stroke="rgba(255, 255, 255, 0.15)" stroke-width="1.2"/>
-    <ellipse cx="18" cy="18" rx="14.5" ry="6.2" transform="rotate(-26 18 18)" stroke="#60A5FA" stroke-width="1.4" stroke-dasharray="3 2" opacity="0.85"/>
-    <circle cx="28.5" cy="12.5" r="1.8" fill="#F5B942"/>
-    <path d="M18 7 C18 7 11.5 15.5 11.5 20.5 A6.5 6.5 0 0 0 24.5 20.5 C24.5 15.5 18 7 18 7 Z" fill="url(#gfp_brand_drop)" stroke="#F5B942" stroke-width="1.3"/>
-    <path d="M12 20.5 L15 20.5 L16.8 16.5 L19.5 24.5 L21.2 20.5 L24 20.5" stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <rect width="42" height="42" rx="9" fill="#0E1526" stroke="rgba(255, 255, 255, 0.16)" stroke-width="1.3"/>
+    <ellipse cx="21" cy="21" rx="17" ry="7.2" transform="rotate(-26 21 21)" stroke="#60A5FA" stroke-width="1.5" stroke-dasharray="3.5 2" opacity="0.9"/>
+    <circle cx="33" cy="14.5" r="2.1" fill="#F5B942"/>
+    <path d="M21 8 C21 8 13.5 18 13.5 24 A7.5 7.5 0 0 0 28.5 24 C28.5 18 21 8 21 8 Z" fill="url(#gfp_brand_drop)" stroke="#F5B942" stroke-width="1.4"/>
+    <path d="M14 24 L17.5 24 L19.6 19 L22.8 28.5 L24.8 24 L28 24" stroke="#FFFFFF" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
   </g>
   <defs>
-    <linearGradient id="gfp_brand_drop" x1="18" y1="7" x2="18" y2="27" gradientUnits="userSpaceOnUse">
+    <linearGradient id="gfp_brand_drop" x1="21" y1="8" x2="21" y2="31" gradientUnits="userSpaceOnUse">
       <stop offset="0%" stop-color="#F5B942"/>
       <stop offset="65%" stop-color="#D97706"/>
       <stop offset="100%" stop-color="#0E1526"/>
     </linearGradient>
   </defs>
   <!-- Typography Lockup -->
-  <text x="48" y="24" fill="#F9FAFB" font-family="'Space Grotesk', -apple-system, sans-serif" font-weight="800" font-size="16" letter-spacing="0.04em">GLOBAL FUELPULSE</text>
-  <rect x="228" y="11" width="26" height="16" rx="4" fill="rgba(245, 185, 66, 0.22)" stroke="#F5B942" stroke-width="1"/>
-  <text x="241" y="23" fill="#F5B942" font-family="'Space Grotesk', sans-serif" font-weight="800" font-size="10.5" text-anchor="middle">AI</text>
-  <text x="48" y="39" fill="#94A3B8" font-family="'Inter', sans-serif" font-weight="600" font-size="11" letter-spacing="0.01em">ENERGY INTELLIGENCE PLATFORM</text>
+  <text x="56" y="27" fill="#F9FAFB" font-family="'Space Grotesk', -apple-system, sans-serif" font-weight="800" font-size="18" letter-spacing="0.04em">GLOBAL FUELPULSE</text>
+  <rect x="256" y="13" width="28" height="18" rx="4" fill="rgba(245, 185, 66, 0.22)" stroke="#F5B942" stroke-width="1.2"/>
+  <text x="270" y="26" fill="#F5B942" font-family="'Space Grotesk', sans-serif" font-weight="800" font-size="11.5" text-anchor="middle">AI</text>
+  <text x="56" y="44" fill="#94A3B8" font-family="'Inter', sans-serif" font-weight="700" font-size="11.5" letter-spacing="0.05em">ENERGY INTELLIGENCE PLATFORM</text>
 </svg>"""
 
 
@@ -793,6 +793,62 @@ button[data-testid^="baseButton"]:active {{
   border-radius: 999px;
   font-weight: 700;
   font-size: 12px;
+}}
+
+/* 18. Enlarged Editorial Topic Ribbon & Navigation */
+div[data-testid="stPills"], div[role="radiogroup"] {{
+  gap: 8px !important;
+  margin-top: 6px !important;
+  margin-bottom: 18px !important;
+  display: flex !important;
+  flex-wrap: wrap !important;
+}}
+
+div[data-testid="stPills"] button,
+button[data-testid*="stBaseButton-pills"],
+div[role="radiogroup"] button {{
+  background: rgba(14, 21, 38, 0.9) !important;
+  color: #CBD5E1 !important;
+  -webkit-text-fill-color: #CBD5E1 !important;
+  border: 1px solid rgba(255, 255, 255, 0.16) !important;
+  border-radius: 8px !important;
+  font-family: 'Space Grotesk', -apple-system, sans-serif !important;
+  font-size: 15px !important;
+  font-weight: 700 !important;
+  padding: 10px 18px !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
+  transition: all 0.15s ease-in-out !important;
+}}
+
+div[data-testid="stPills"] button:hover,
+button[data-testid*="stBaseButton-pills"]:hover,
+div[role="radiogroup"] button:hover {{
+  background: rgba(234, 179, 8, 0.18) !important;
+  color: #FACC15 !important;
+  -webkit-text-fill-color: #FACC15 !important;
+  border-color: #EAB308 !important;
+}}
+
+/* Active Selected Pill */
+div[data-testid="stPills"] button[aria-selected="true"],
+button[data-testid*="stBaseButton-pills"][aria-selected="true"],
+div[data-testid="stPills"] button[data-selected="true"],
+div[role="radiogroup"] button[aria-checked="true"] {{
+  background: #EAB308 !important;
+  background-color: #EAB308 !important;
+  color: #070A12 !important;
+  -webkit-text-fill-color: #070A12 !important;
+  border: 1.5px solid #CA8A04 !important;
+  font-weight: 800 !important;
+  box-shadow: 0 4px 14px rgba(234, 179, 8, 0.35) !important;
+}}
+
+div[data-testid="stPills"] button[aria-selected="true"] *,
+button[data-testid*="stBaseButton-pills"][aria-selected="true"] *,
+div[role="radiogroup"] button[aria-checked="true"] * {{
+  color: #070A12 !important;
+  -webkit-text-fill-color: #070A12 !important;
+  font-weight: 800 !important;
 }}
 </style>"""
     render_html(custom_css)

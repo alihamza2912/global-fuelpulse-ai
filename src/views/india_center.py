@@ -21,11 +21,13 @@ from src.ui_components import (
 )
 from src.database.connection import db_manager
 from src.analytics.global_tax_engine import GlobalTaxEngine
+from src.localization.i18n import t, get_current_language
 
 
 
 def render_india_center_view(navigate_fn=None):
     """Renders the comprehensive India Fuel Intelligence Center."""
+    cur_lang = get_current_language()
 
     render_html(f"""
     <div style="background: radial-gradient(circle at 10% 20%, rgba(245, 185, 66, 0.14) 0%, rgba(14, 21, 38, 0.95) 70%), #070A12; border: 1px solid rgba(255, 255, 255, 0.14); border-radius: 12px; padding: 26px 30px; margin-bottom: 24px;">
@@ -78,10 +80,10 @@ def render_india_center_view(navigate_fn=None):
         delhi_petrol = latest_metro[(latest_metro["city"] == "Delhi") & (latest_metro["fuel_type"] == "petrol_regular")]
         val_p = f"₹{delhi_petrol.iloc[0]['price_inr']:.2f}/L" if not delhi_petrol.empty else "₹102.12/L"
         render_instrument_card(
-            label="Delhi Petrol Benchmark",
+            label=f"Delhi {t('petrol_rsp', cur_lang)}",
             value=val_p,
             accent="amber",
-            subtext="PPAC Metro Benchmark ($1.18/L)",
+            subtext=f"PPAC Metro Benchmark ({t('delhi_headline', cur_lang)})",
             code_badge="MS-DELHI"
         )
 
@@ -89,10 +91,10 @@ def render_india_center_view(navigate_fn=None):
         delhi_diesel = latest_metro[(latest_metro["city"] == "Delhi") & (latest_metro["fuel_type"] == "diesel")]
         val_d = f"₹{delhi_diesel.iloc[0]['price_inr']:.2f}/L" if not delhi_diesel.empty else "₹95.20/L"
         render_instrument_card(
-            label="Delhi Diesel Benchmark",
+            label=f"Delhi {t('diesel_rsp', cur_lang)}",
             value=val_d,
             accent="teal",
-            subtext="Commercial Transport ($1.12/L)",
+            subtext="Commercial Transport Benchmark",
             code_badge="HSD-DELHI"
         )
 

@@ -52,6 +52,7 @@ from src.analytics.india_demand_analytics import IndiaDemandAnalytics
 from src.analytics.affordability import AffordabilityAnalytics
 from src.analytics.global_tax_engine import GlobalTaxEngine
 from src.analytics.global_news_engine import GlobalNewsEngine
+from src.localization.i18n import t, get_current_language
 
 
 # ==============================================================================
@@ -741,6 +742,7 @@ def get_searchable_entities():
 
 def render_dashboard_view(navigate_fn=None):
     """Renders the full 11-chapter interactive energy intelligence atlas."""
+    cur_lang = get_current_language()
     # Sticky Chapter Navigation Ribbon
     render_chapter_nav()
 
@@ -1022,12 +1024,12 @@ def render_dashboard_view(navigate_fn=None):
     # ==============================================================================
     render_chapter_header(
         chapter_num="01",
-        title="Global Energy at a Glance",
-        subtitle="A concise executive summary of the most critical energy indicators, global crude flows, and strategic balances.",
+        title=t("chapter_01_title", cur_lang),
+        subtitle=t("chapter_01_subtitle", cur_lang),
         source_tag="US EIA • India PPAC • UN Comtrade • EC Oil Bulletin",
         anchor_id="ch-01",
         action_page_url="/Global_Command_Center",
-        action_label="FULL COMMAND CENTER"
+        action_label=t("explore_drilldown", cur_lang)
     )
 
     k1, k2, k3, k4 = st.columns(4)
@@ -1129,10 +1131,12 @@ def render_dashboard_view(navigate_fn=None):
     # ==============================================================================
     render_chapter_header(
         chapter_num="02",
-        title="Where the World Produces Oil",
-        subtitle="Country-level extraction rankings, regional production shares, and the vital distinction between proven underground reserves and active extraction.",
+        title=t("chapter_02_title", cur_lang),
+        subtitle=t("chapter_02_subtitle", cur_lang),
         source_tag="US EIA International Statistics • OPEC ASB • Energy Institute",
-        anchor_id="ch-02"
+        anchor_id="ch-02",
+        action_page_url="/Supply_Risk",
+        action_label=t("explore_drilldown", cur_lang)
     )
 
     prod_lb = get_cached_production_leaderboard()
@@ -1174,12 +1178,12 @@ def render_dashboard_view(navigate_fn=None):
     # ==============================================================================
     render_chapter_header(
         chapter_num="03",
-        title="Who Exports and Who Imports?",
-        subtitle="Bilateral physical trade flows (HS 2709 Crude Oil & HS 2710 Refined Products), customs valuations, and supplier concentration.",
+        title=t("chapter_03_title", cur_lang),
+        subtitle=t("chapter_03_subtitle", cur_lang),
         source_tag="UN Comtrade Database • EIA Movements",
         anchor_id="ch-03",
         action_page_url="/Global_Trade",
-        action_label="TRADE EXPLORER"
+        action_label=t("explore_drilldown", cur_lang)
     )
 
     trade_matrix, top_exporters, top_importers = get_cached_trade_data(period="2026")
@@ -1214,8 +1218,8 @@ def render_dashboard_view(navigate_fn=None):
     # --------------------------------------------------------------------------
     # MARITIME TRANSPORT & STRATEGIC CHOKEPOINTS SITUATION
     # --------------------------------------------------------------------------
-    st.markdown("#### 🚨 Global Maritime Chokepoints & Seaborne Transport Bottlenecks")
-    st.caption("Real-time AIS tanker throughput, Strait of Hormuz naval alerts, Red Sea rerouting impacts, and strategic bypass pipeline capacities.")
+    st.markdown(f"#### {t('chokepoints_header', cur_lang)}")
+    st.caption(t("chokepoints_caption", cur_lang))
 
     chokepoints = GlobalNewsEngine.get_chokepoint_telemetry()
     cp_cols = st.columns(4)
@@ -1235,13 +1239,13 @@ def render_dashboard_view(navigate_fn=None):
                     <div style="font-size: 20px; font-weight: 800; color: #EAB308; margin-bottom: 2px;">{cp['throughput']}</div>
                     <div style="font-size: 11px; color: #94A3B8; margin-bottom: 8px;">{cp['global_share']}</div>
                     <div style="font-size: 11.5px; color: #CBD5E1; margin-bottom: 4px;">
-                        <strong style="color: #F9FAFB;">Risk Index:</strong> <span style="color: {cp['status_color']}; font-weight: 700;">{cp['risk_index']}</span>
+                        <strong style="color: #F9FAFB;">{t('risk_index', cur_lang)}:</strong> <span style="color: {cp['status_color']}; font-weight: 700;">{cp['risk_index']}</span>
                     </div>
                     <div style="font-size: 11px; color: #94A3B8; line-height: 1.4; margin-bottom: 6px;">
-                        <strong style="color: #CBD5E1;">Key Threat:</strong> {cp['key_risk']}
+                        <strong style="color: #CBD5E1;">{t('key_threat', cur_lang)}:</strong> {cp['key_risk']}
                     </div>
                     <div style="font-size: 11px; color: #64748B; line-height: 1.3;">
-                        <strong style="color: #94A3B8;">Bypass Pipeline:</strong> {cp['contingency']}
+                        <strong style="color: #94A3B8;">{t('bypass_pipeline', cur_lang)}:</strong> {cp['contingency']}
                     </div>
                 </div>
                 """,
@@ -1271,12 +1275,12 @@ def render_dashboard_view(navigate_fn=None):
     # ==============================================================================
     render_chapter_header(
         chapter_num="04",
-        title="Follow the Fuel Price",
-        subtitle="Retail petrol and diesel pump price comparison across 25+ economies: Fiscal taxation vs. domestic producer subsidies.",
+        title=t("chapter_04_title", cur_lang),
+        subtitle=t("chapter_04_subtitle", cur_lang),
         source_tag="US EIA • India PPAC • EC Oil Bulletin • GlobalPetrolPrices",
         anchor_id="ch-04",
         action_page_url="/Fuel_Price_Explorer",
-        action_label="PRICE EXPLORER"
+        action_label=t("explore_drilldown", cur_lang)
     )
 
     f_filter_col1, f_filter_col2 = st.columns([4, 8])
@@ -1339,12 +1343,12 @@ def render_dashboard_view(navigate_fn=None):
     # ==============================================================================
     render_chapter_header(
         chapter_num="05",
-        title="India's Petrol and Diesel Price",
-        subtitle="Understand where your money goes at the pump: From imported crude oil input costs to central excise duty, dealer commissions, and state VAT.",
+        title=t("chapter_05_title", cur_lang),
+        subtitle=t("chapter_05_subtitle", cur_lang),
         source_tag="Petroleum Planning & Analysis Cell (PPAC) • MoPNG",
         anchor_id="ch-05",
         action_page_url="/India_Intelligence",
-        action_label="INDIA DECK"
+        action_label=t("explore_drilldown", cur_lang)
     )
 
     # Fetch cached India Metro Data from fuel_prices
@@ -1417,10 +1421,12 @@ def render_dashboard_view(navigate_fn=None):
     # ==============================================================================
     render_chapter_header(
         chapter_num="06",
-        title="India's Oil Companies",
-        subtitle="Operational footprint and financial measures for Hindustan Petroleum (HPCL) FY2024–25 and peer benchmarking against IOCL and BPCL.",
+        title=t("chapter_06_title", cur_lang),
+        subtitle=t("chapter_06_subtitle", cur_lang),
         source_tag="MoPNG • HPCL Annual Report FY24–25 • BSE/NSE Disclosures",
-        anchor_id="ch-06"
+        anchor_id="ch-06",
+        action_page_url="/India_Intelligence",
+        action_label=t("explore_drilldown", cur_lang)
     )
 
     hpcl, omc_df, hpcl_sales = get_cached_india_company_data()
@@ -1485,10 +1491,12 @@ def render_dashboard_view(navigate_fn=None):
     # ==============================================================================
     render_chapter_header(
         chapter_num="07",
-        title="Where India Consumes Fuel",
-        subtitle="PPAC national petroleum consumption breakdown (HSD, MS, LPG, ATF, Petcoke) and regional geographic demand patterns.",
+        title=t("chapter_07_title", cur_lang),
+        subtitle=t("chapter_07_subtitle", cur_lang),
         source_tag="PPAC Official Consumption Bulletin • MoPNG",
-        anchor_id="ch-07"
+        anchor_id="ch-07",
+        action_page_url="/India_Intelligence",
+        action_label=t("explore_drilldown", cur_lang)
     )
 
     product_demand, regional_demand = get_cached_india_demand_data()
@@ -1517,10 +1525,12 @@ def render_dashboard_view(navigate_fn=None):
     # ==============================================================================
     render_chapter_header(
         chapter_num="08",
-        title="Fuel Taxes and Government Revenue",
-        subtitle="The critical distinction between excise duty rates, state VAT, and actual sovereign tax collections from the petroleum sector.",
+        title=t("chapter_08_title", cur_lang),
+        subtitle=t("chapter_08_subtitle", cur_lang),
         source_tag="PPAC Statistical Dossier • Union Budget & State Finance Accounts",
-        anchor_id="ch-08"
+        anchor_id="ch-08",
+        action_page_url="/India_Intelligence",
+        action_label=t("explore_drilldown", cur_lang)
     )
 
     rev_c1, rev_c2 = st.columns([6, 6])
@@ -1553,12 +1563,12 @@ def render_dashboard_view(navigate_fn=None):
     # ==============================================================================
     render_chapter_header(
         chapter_num="09",
-        title="Energy Risk and Affordability",
-        subtitle="Macroeconomic consumer fuel burden (% daily income proxy) and maritime chokepoint transit vulnerability.",
+        title=t("chapter_09_title", cur_lang),
+        subtitle=t("chapter_09_subtitle", cur_lang),
         source_tag="World Bank Indicators • Global Chokepoints Registry",
         anchor_id="ch-09",
         action_page_url="/Affordability",
-        action_label="AFFORDABILITY & RISK"
+        action_label=t("explore_drilldown", cur_lang)
     )
 
     afford_df = get_cached_affordability_data(reporting_year=2024)
@@ -1580,12 +1590,12 @@ def render_dashboard_view(navigate_fn=None):
     # ==============================================================================
     render_chapter_header(
         chapter_num="10",
-        title="Forecasts and What-If Scenarios",
-        subtitle="Model-supported retail fuel price projections with 95% confidence intervals and an interactive scenario simulation laboratory.",
+        title=t("chapter_10_title", cur_lang),
+        subtitle=t("chapter_10_subtitle", cur_lang),
         source_tag="Scikit-Learn • Statsmodels • Interactive Sensitivity Engine",
         anchor_id="ch-10",
         action_page_url="/Shock_Simulator",
-        action_label="SCENARIO LAB"
+        action_label=t("explore_drilldown", cur_lang)
     )
 
     tab_fc_view, tab_sim_view = st.tabs(["📈 ML Time-Series Forecasts", "⚡ Interactive Sensitivity Sandbox"])
@@ -1716,12 +1726,12 @@ def render_dashboard_view(navigate_fn=None):
     # ==============================================================================
     render_chapter_header(
         chapter_num="11",
-        title="Data Sources and Reliability",
-        subtitle="Full provenance auditing, ETL pipeline execution logs, freshness latencies, and downloadable verified datasets.",
+        title=t("chapter_11_title", cur_lang),
+        subtitle=t("chapter_11_subtitle", cur_lang),
         source_tag="Automated Data Quality & Pipeline Assurance Mart",
         anchor_id="ch-11",
         action_page_url="/Data_Trust",
-        action_label="DATA TRUST CENTER"
+        action_label=t("explore_drilldown", cur_lang)
     )
 
     freshness_list, tele_df, table_cts = get_cached_quality_audit_data()

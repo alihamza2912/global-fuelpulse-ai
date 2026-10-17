@@ -39,6 +39,14 @@ from src.ui_components import (
     COLOR_GRAY_MUTED
 )
 
+from src.localization.i18n import (
+    t,
+    get_current_language,
+    set_language,
+    get_available_languages,
+    get_localized_nav_map
+)
+
 # Modular Product Views
 from src.views.home import render_home_view
 from src.views.dashboard import render_dashboard_view
@@ -78,17 +86,19 @@ ensure_database_ready()
 
 
 # 3. Navigation Structure & URL Routing
-NAV_OPTIONS = [
-    "🏠 Overview",
-    "⚡ Intelligence Dashboard",
-    "🇮🇳 India Fuel Center",
-    "📖 About Project",
-    "⚙️ How It Works",
-    "📋 Features",
-    "🔒 Data Trust",
-    "📐 Methodology",
-    "🗺️ Roadmap",
-    "❓ Docs & FAQ"
+current_lang = get_current_language()
+
+CANONICAL_TABS = [
+    "home",
+    "dashboard",
+    "india",
+    "about",
+    "how_it_works",
+    "features",
+    "data_trust",
+    "methodology",
+    "roadmap",
+    "faq"
 ]
 
 NAV_MAP = {
@@ -103,55 +113,70 @@ NAV_MAP = {
     "🗺️ Roadmap": "roadmap",
     "❓ Docs & FAQ": "faq"
 }
+
 KEY_TO_NAV = {v: k for k, v in NAV_MAP.items()}
 
 # URL Query Param Synchronization
 qp_tab = st.query_params.get("tab") or st.query_params.get("view")
-if "active_nav" not in st.session_state:
-    if qp_tab and qp_tab in KEY_TO_NAV:
-        st.session_state.active_nav = KEY_TO_NAV[qp_tab]
+if "active_canonical" not in st.session_state:
+    if qp_tab and qp_tab in CANONICAL_TABS:
+        st.session_state.active_canonical = qp_tab
     else:
-        st.session_state.active_nav = "🏠 Overview"
-elif qp_tab and qp_tab in KEY_TO_NAV and KEY_TO_NAV[qp_tab] != st.session_state.active_nav:
-    st.session_state.active_nav = KEY_TO_NAV[qp_tab]
+        st.session_state.active_canonical = "home"
+elif qp_tab and qp_tab in CANONICAL_TABS and qp_tab != st.session_state.active_canonical:
+    st.session_state.active_canonical = qp_tab
+
+# Maintain backwards compatibility for tests and legacy callers
+st.session_state.active_nav = KEY_TO_NAV.get(st.session_state.active_canonical, "🏠 Overview")
 
 
 def navigate_to(target: str):
     """Central programmatic navigation function updating state, query parameters, and triggering rerun."""
     alias_map = {
-        "home": "🏠 Overview",
-        "overview": "🏠 Overview",
-        "dashboard": "⚡ Intelligence Dashboard",
-        "live intelligence dashboard": "⚡ Intelligence Dashboard",
-        "open dashboard": "⚡ Intelligence Dashboard",
-        "open dashboard →": "⚡ Intelligence Dashboard",
-        "india": "🇮🇳 India Fuel Center",
-        "india fuel center": "🇮🇳 India Fuel Center",
-        "open india center": "🇮🇳 India Fuel Center",
-        "open india center →": "🇮🇳 India Fuel Center",
-        "about": "📖 About Project",
-        "about the project": "📖 About Project",
-        "how it works": "⚙️ How It Works",
-        "how it works & architecture": "⚙️ How It Works",
-        "architecture": "⚙️ How It Works",
-        "features": "📋 Features",
-        "features catalog": "📋 Features",
-        "data trust": "🔒 Data Trust",
-        "data trust center": "🔒 Data Trust",
-        "data trust & provenance": "🔒 Data Trust",
-        "open trust center": "🔒 Data Trust",
-        "open trust center →": "🔒 Data Trust",
-        "methodology": "📐 Methodology",
-        "methodology & calculations": "📐 Methodology",
-        "roadmap": "🗺️ Roadmap",
-        "roadmap & status": "🗺️ Roadmap",
-        "faq": "❓ Docs & FAQ",
-        "docs & faq": "❓ Docs & FAQ",
-        "documentation & faq": "❓ Docs & FAQ",
+        "home": "home",
+        "overview": "home",
+        "🏠 overview": "home",
+        "dashboard": "dashboard",
+        "live intelligence dashboard": "dashboard",
+        "open dashboard": "dashboard",
+        "open dashboard →": "dashboard",
+        "⚡ intelligence dashboard": "dashboard",
+        "india": "india",
+        "india fuel center": "india",
+        "open india center": "india",
+        "open india center →": "india",
+        "🇮🇳 india fuel center": "india",
+        "about": "about",
+        "about the project": "about",
+        "📖 about project": "about",
+        "how it works": "how_it_works",
+        "how it works & architecture": "how_it_works",
+        "architecture": "how_it_works",
+        "⚙️ how it works": "how_it_works",
+        "features": "features",
+        "features catalog": "features",
+        "📋 features": "features",
+        "data trust": "data_trust",
+        "data trust center": "data_trust",
+        "data trust & provenance": "data_trust",
+        "open trust center": "data_trust",
+        "open trust center →": "data_trust",
+        "🔒 data trust": "data_trust",
+        "methodology": "methodology",
+        "methodology & calculations": "methodology",
+        "📐 methodology": "methodology",
+        "roadmap": "roadmap",
+        "roadmap & status": "roadmap",
+        "🗺️ roadmap": "roadmap",
+        "faq": "faq",
+        "docs & faq": "faq",
+        "documentation & faq": "faq",
+        "❓ docs & faq": "faq",
     }
-    canonical = alias_map.get(target.strip().lower(), target if target in NAV_OPTIONS else "🏠 Overview")
-    st.session_state.active_nav = canonical
-    st.query_params["tab"] = NAV_MAP.get(canonical, "home")
+    canonical = alias_map.get(target.strip().lower(), target if target in CANONICAL_TABS else "home")
+    st.session_state.active_canonical = canonical
+    st.session_state.active_nav = KEY_TO_NAV.get(canonical, "🏠 Overview")
+    st.query_params["tab"] = canonical
     st.rerun()
 
 
@@ -301,30 +326,48 @@ render_html(
 # 5. Top Brand Header Strip with Upper-Right Live Intelligence Notification Center
 from src.analytics.global_news_engine import GlobalNewsEngine
 
-top_left, top_right = st.columns([7, 3])
+top_left, top_lang, top_right = st.columns([5.5, 2.3, 2.2])
 with top_left:
     health = db_manager.check_health()
     engine_name = "MYSQL 8.4" if health["dialect"] == "mysql" else "SQLITE VERIFIED"
     render_html(f"""
-    <div style="background: rgba(14, 21, 38, 0.85); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.12); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); border-radius: 10px; padding: 10px 18px; margin: -0.5rem 0 0.5rem 0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+    <div style="background: rgba(14, 21, 38, 0.85); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.14); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); border-radius: 10px; padding: 8px 18px; margin: -0.5rem 0 0.5rem 0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
         <div style="display: flex; align-items: center; gap: 12px;">
-            {get_brand_logo_svg(width=260, height=40)}
+            {get_brand_logo_svg(width=340, height=54)}
         </div>
         <div style="display: flex; align-items: center; gap: 8px;">
-            <span style="background: rgba(16, 185, 129, 0.18); color: #34D399; border: 1px solid rgba(16, 185, 129, 0.4); padding: 3px 10px; border-radius: 999px; font-family: 'Space Grotesk', sans-serif; font-size: 11px; font-weight: 700;">● {engine_name}</span>
-            <span style="background: rgba(245, 185, 66, 0.18); color: #F5B942; border: 1px solid rgba(245, 185, 66, 0.4); padding: 3px 10px; border-radius: 999px; font-family: 'Space Grotesk', sans-serif; font-size: 11px; font-weight: 700;">LIVE 2026</span>
+            <span style="background: rgba(16, 185, 129, 0.18); color: #34D399; border: 1px solid rgba(16, 185, 129, 0.4); padding: 3px 10px; border-radius: 999px; font-family: 'Space Grotesk', sans-serif; font-size: 11px; font-weight: 700;">● {t('db_verified', current_lang)}</span>
+            <span style="background: rgba(245, 185, 66, 0.18); color: #F5B942; border: 1px solid rgba(245, 185, 66, 0.4); padding: 3px 10px; border-radius: 999px; font-family: 'Space Grotesk', sans-serif; font-size: 11px; font-weight: 700;">{t('live_indicator', current_lang)}</span>
         </div>
     </div>
     """)
 
+with top_lang:
+    all_langs = get_available_languages()
+    lang_labels = {code: f"{data['flag']} {data['native']} ({data['name']})" for code, data in all_langs.items()}
+    lang_codes = list(all_langs.keys())
+    cur_lang_idx = lang_codes.index(current_lang) if current_lang in lang_codes else 0
+    selected_lang = st.selectbox(
+        "🌐 Language",
+        options=lang_codes,
+        index=cur_lang_idx,
+        format_func=lambda code: lang_labels[code],
+        label_visibility="collapsed",
+        key="app_language_selector"
+    )
+    if selected_lang != current_lang:
+        set_language(selected_lang)
+        st.rerun()
+
 with top_right:
     alerts_count = GlobalNewsEngine.get_active_alerts_count()
-    with st.popover(f"🔔 LIVE NEWS ({alerts_count})", use_container_width=True):
-        st.markdown("### 📡 Global Fuel & Chokepoint Wire")
+    news_btn_label = f"{t('live_news_button', current_lang)} ({alerts_count})"
+    with st.popover(news_btn_label, use_container_width=True):
+        st.markdown(f"### 📡 {t('brand_title', current_lang)} — Global Wire")
         
         c_btn, c_time = st.columns([1, 1])
         with c_btn:
-            if st.button("🔄 Refresh Feeds", key="popover_refresh_news", use_container_width=True, type="primary"):
+            if st.button(t("refresh_feeds", current_lang), key="popover_refresh_news", use_container_width=True, type="primary"):
                 GlobalNewsEngine.refresh_news()
                 st.toast("Refreshed live global news & maritime feeds!", icon="📡")
                 st.rerun()
@@ -332,10 +375,10 @@ with top_right:
             st.caption(f"Sync: {GlobalNewsEngine.get_last_refresh_timestamp()}")
 
         tab_hormuz, tab_trade, tab_rates, tab_all = st.tabs([
-            "🚨 Hormuz & Chokepoints",
-            "🚢 Import/Export",
-            "⛽ Delhi & Global Rates",
-            "📰 All Breaking News"
+            f"🚨 {t('nav_trade', current_lang)}",
+            f"🚢 {t('chapter_03_title', current_lang)}",
+            f"⛽ {t('chapter_05_title', current_lang)}",
+            f"📰 {t('live_news_button', current_lang)}"
         ])
         
         with tab_hormuz:
@@ -430,39 +473,49 @@ with top_right:
                 </div>
                 """, unsafe_allow_html=True)
 
-# 6. Interactive Horizontal Product Ribbon Selector
-curr_idx = NAV_OPTIONS.index(st.session_state.active_nav) if st.session_state.active_nav in NAV_OPTIONS else 0
-selected_nav = st.pills(
+# 6. Interactive Horizontal Product Ribbon Selector (Enlarged & Multi-Lingual)
+localized_nav_map = get_localized_nav_map(current_lang)
+label_to_canonical = {label: canonical for canonical, label in localized_nav_map.items()}
+current_localized_options = list(localized_nav_map.values())
+active_canonical = st.session_state.get("active_canonical", "home")
+current_active_label = localized_nav_map.get(active_canonical, current_localized_options[0])
+
+curr_idx = current_localized_options.index(current_active_label) if current_active_label in current_localized_options else 0
+selected_nav_label = st.pills(
     "Navigation Portal",
-    options=NAV_OPTIONS,
-    default=NAV_OPTIONS[curr_idx],
+    options=current_localized_options,
+    default=current_localized_options[curr_idx],
     label_visibility="collapsed"
 )
 
-if selected_nav and selected_nav != st.session_state.active_nav:
-    navigate_to(selected_nav)
+if selected_nav_label and selected_nav_label != current_active_label:
+    canonical = label_to_canonical.get(selected_nav_label, "home")
+    st.session_state.active_canonical = canonical
+    st.session_state.active_nav = KEY_TO_NAV.get(canonical, "🏠 Overview")
+    st.query_params["tab"] = canonical
+    st.rerun()
 
 
 # 7. Modular View Router
-if st.session_state.active_nav == "🏠 Overview":
+if active_canonical == "home":
     render_home_view(navigate_to)
-elif st.session_state.active_nav == "⚡ Intelligence Dashboard":
+elif active_canonical == "dashboard":
     render_dashboard_view(navigate_to)
-elif st.session_state.active_nav == "🇮🇳 India Fuel Center":
+elif active_canonical == "india":
     render_india_center_view(navigate_to)
-elif st.session_state.active_nav == "📖 About Project":
+elif active_canonical == "about":
     render_about_view(navigate_to)
-elif st.session_state.active_nav == "⚙️ How It Works":
+elif active_canonical == "how_it_works":
     render_how_it_works_view(navigate_to)
-elif st.session_state.active_nav == "📋 Features":
+elif active_canonical == "features":
     render_features_view(navigate_to)
-elif st.session_state.active_nav == "🔒 Data Trust":
+elif active_canonical == "data_trust":
     render_data_trust_view(navigate_to)
-elif st.session_state.active_nav == "📐 Methodology":
+elif active_canonical == "methodology":
     render_methodology_view(navigate_to)
-elif st.session_state.active_nav == "🗺️ Roadmap":
+elif active_canonical == "roadmap":
     render_roadmap_view(navigate_to)
-elif st.session_state.active_nav == "❓ Docs & FAQ":
+elif active_canonical == "faq":
     render_faq_view(navigate_to)
 else:
     render_home_view(navigate_to)

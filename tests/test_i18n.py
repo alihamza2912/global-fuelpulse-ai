@@ -1,0 +1,66 @@
+"""
+Unit tests for Global FuelPulse AI Multi-Language Localization (i18n) Engine.
+Validates language registry, translation fallbacks, and multi-lingual UI coverage.
+"""
+
+import pytest
+from src.localization.i18n import (
+    t,
+    get_current_language,
+    set_language,
+    get_available_languages,
+    get_localized_nav_map,
+    SUPPORTED_LANGUAGES,
+    TRANSLATIONS
+)
+
+def test_supported_languages_catalog():
+    langs = get_available_languages()
+    expected_codes = ["en", "hi", "es", "fr", "ar", "de", "zh", "ru", "ja"]
+    for code in expected_codes:
+        assert code in langs, f"Language {code} missing from supported catalog"
+        assert "name" in langs[code]
+        assert "native" in langs[code]
+        assert "flag" in langs[code]
+
+def test_hindi_translations():
+    # Hindi checks
+    assert t("brand_subtitle", "hi") == "ऊर्जा खुफिया एवं बाजार विश्लेषण मंच"
+    assert t("chapter_01_title", "hi") == "वैश्विक ऊर्जा परिदृश्य एक नज़र में"
+    assert t("chapter_05_title", "hi") == "भारत में पेट्रोल और डीजल की कीमतें"
+    assert "पेट्रोल" in t("petrol_rsp", "hi")
+    assert "डीजल" in t("diesel_rsp", "hi")
+
+def test_spanish_translations():
+    # Spanish checks
+    assert t("chapter_01_title", "es") == "Energía Global de un Vistazo"
+    assert t("chapter_03_title", "es") == "¿Quién Exporta y Quién Importa?"
+    assert "Gasolina" in t("petrol_rsp", "es")
+
+def test_french_translations():
+    # French checks
+    assert t("chapter_01_title", "fr") == "L'Énergie Mondiale en un Coup d'Œil"
+    assert t("chapter_05_title", "fr") == "Prix de l'Essence et du Diesel en Inde"
+    assert "Essence" in t("petrol_rsp", "fr")
+
+def test_fallback_behavior():
+    # Non-existent key should return key string itself
+    assert t("non_existent_random_key_12345", "en") == "non_existent_random_key_12345"
+    assert t("non_existent_random_key_12345", "hi") == "non_existent_random_key_12345"
+    
+    # Missing locale on valid key should fall back to English
+    assert t("brand_title", "unsupported_locale") == "GLOBAL FUELPULSE AI"
+
+def test_localized_nav_map():
+    for code in ["en", "hi", "es", "fr", "ar", "de", "zh", "ru", "ja"]:
+        nav_map = get_localized_nav_map(code)
+        assert isinstance(nav_map, dict)
+        assert len(nav_map) == 10
+        expected_tabs = [
+            "home", "dashboard", "india", "about", "how_it_works",
+            "features", "data_trust", "methodology", "roadmap", "faq"
+        ]
+        for tab in expected_tabs:
+            assert tab in nav_map
+            assert isinstance(nav_map[tab], str)
+            assert len(nav_map[tab]) > 0
