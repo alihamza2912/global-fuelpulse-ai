@@ -84,6 +84,69 @@ SUPPORTED_LANGUAGES: Dict[str, Dict[str, str]] = {
         "native": "日本語",
         "flag": "🇯🇵",
         "dir": "ltr"
+    },
+    "pt": {
+        "code": "pt",
+        "name": "Portuguese",
+        "native": "Português",
+        "flag": "🇧🇷",
+        "dir": "ltr"
+    },
+    "it": {
+        "code": "it",
+        "name": "Italian",
+        "native": "Italiano",
+        "flag": "🇮🇹",
+        "dir": "ltr"
+    },
+    "ko": {
+        "code": "ko",
+        "name": "Korean",
+        "native": "한국어",
+        "flag": "🇰🇷",
+        "dir": "ltr"
+    },
+    "tr": {
+        "code": "tr",
+        "name": "Turkish",
+        "native": "Türkçe",
+        "flag": "🇹🇷",
+        "dir": "ltr"
+    },
+    "nl": {
+        "code": "nl",
+        "name": "Dutch",
+        "native": "Nederlands",
+        "flag": "🇳🇱",
+        "dir": "ltr"
+    },
+    "id": {
+        "code": "id",
+        "name": "Indonesian",
+        "native": "Bahasa Indonesia",
+        "flag": "🇮🇩",
+        "dir": "ltr"
+    },
+    "ur": {
+        "code": "ur",
+        "name": "Urdu",
+        "native": "اردو",
+        "flag": "🇵🇰",
+        "dir": "rtl"
+    },
+    "bn": {
+        "code": "bn",
+        "name": "Bengali",
+        "native": "বাংলা",
+        "flag": "🇧🇩",
+        "dir": "ltr"
+    },
+    "ta": {
+        "code": "ta",
+        "name": "Tamil",
+        "native": "தமிழ்",
+        "flag": "🇮🇳",
+        "dir": "ltr"
     }
 }
 
@@ -103,7 +166,16 @@ TRANSLATIONS: Dict[str, Dict[str, str]] = {
         "de": "GLOBAL FUELPULSE AI",
         "zh": "全球燃料脉搏 AI",
         "ru": "GLOBAL FUELPULSE AI",
-        "ja": "グローバル・フューエルパルス AI"
+        "ja": "グローバル・フューエルパルス AI",
+        "pt": "GLOBAL FUELPULSE AI",
+        "it": "GLOBAL FUELPULSE AI",
+        "ko": "글로벌 퓨얼펄스 AI",
+        "tr": "GLOBAL FUELPULSE AI",
+        "nl": "GLOBAL FUELPULSE AI",
+        "id": "GLOBAL FUELPULSE AI",
+        "ur": "گلوبل فیول پلس اے آئی",
+        "bn": "গ্লোবাল ফুয়েলপালস এআই",
+        "ta": "குளோபல் ஃப்யூல் பல்ஸ் AI"
     },
     "brand_subtitle": {
         "en": "ENERGY INTELLIGENCE PLATFORM",
@@ -114,7 +186,16 @@ TRANSLATIONS: Dict[str, Dict[str, str]] = {
         "de": "ENERGIE-INTELLIGENZ-PLATTFORM",
         "zh": "能源情报与市场分析平台",
         "ru": "ПЛАТФОРМА ЭНЕРГЕТИЧЕСКОЙ РАЗВЕДКИ",
-        "ja": "エネルギー市場情報プラットフォーム"
+        "ja": "エネルギー市場情報プラットフォーム",
+        "pt": "PLATAFORMA DE INTELIGÊNCIA ENERGÉTICA",
+        "it": "PIATTAFORMA DI INTELLIGENZA ENERGETICA",
+        "ko": "에너지 인텔리전스 및 시장 분석 플랫폼",
+        "tr": "ENERJİ İSTİHBARAT PLATFORMU",
+        "nl": "ENERGIE-INTELLIGENTIEPLATFORM",
+        "id": "PLATFORM INTELIJEN ENERGI",
+        "ur": "انرجی انٹیلیجنس اور مارکیٹ تجزیہ پلیٹ فارم",
+        "bn": "এনার্জি ইন্টেলিজেন্স ও মার্কেট অ্যানালিটিক্স প্ল্যাটফর্ম",
+        "ta": "ஆற்றல் நுண்ணறிவு மற்றும் சந்தை பகுப்பாய்வு தளம்"
     },
     "live_indicator": {
         "en": "LIVE 2026",
@@ -125,7 +206,16 @@ TRANSLATIONS: Dict[str, Dict[str, str]] = {
         "de": "LIVE 2026",
         "zh": "实时 2026",
         "ru": "В РЕАЛЬНОМ ВРЕМЕНИ 2026",
-        "ja": "ライブ 2026"
+        "ja": "ライブ 2026",
+        "pt": "AO VIVO 2026",
+        "it": "IN TEMPO REALE 2026",
+        "ko": "실시간 2026",
+        "tr": "CANLI 2026",
+        "nl": "LIVE 2026",
+        "id": "LANGSUNG 2026",
+        "ur": "براہ راست 2026",
+        "bn": "লাইভ ২০২৬",
+        "ta": "நேரலை 2026"
     },
     "db_verified": {
         "en": "SQLITE VERIFIED",
@@ -136,18 +226,36 @@ TRANSLATIONS: Dict[str, Dict[str, str]] = {
         "de": "SQLITE VERIFIZIERT",
         "zh": "SQLITE 已验证",
         "ru": "SQLITE ПРОВЕРЕНО",
-        "ja": "SQLITE 検証済み"
+        "ja": "SQLITE 検証済み",
+        "pt": "SQLITE VERIFICADO",
+        "it": "SQLITE VERIFICATO",
+        "ko": "SQLITE 검증됨",
+        "tr": "SQLITE DOĞRULANDI",
+        "nl": "SQLITE GEVERIFIEERD",
+        "id": "SQLITE TERVERIFIKASI",
+        "ur": "تصدیق شدہ ایس کیو لائٹ",
+        "bn": "এসকিউলাইট যাচাইকৃত",
+        "ta": "SQLite சரிபார்க்கப்பட்டது"
     },
     "select_language": {
-        "en": "Language",
-        "hi": "भाषा चुनें",
-        "es": "Idioma",
-        "fr": "Langue",
-        "ar": "اللغة",
-        "de": "Sprache",
-        "zh": "语言选择",
-        "ru": "Язык",
-        "ja": "言語"
+        "en": "Change Language",
+        "hi": "भाषा बदलें",
+        "es": "Cambiar Idioma",
+        "fr": "Changer de Langue",
+        "ar": "تغيير اللغة",
+        "de": "Sprache Ändern",
+        "zh": "切换语言",
+        "ru": "Сменить язык",
+        "ja": "言語を変更",
+        "pt": "Alterar Idioma",
+        "it": "Cambia Lingua",
+        "ko": "언어 변경",
+        "tr": "Dili Değiştir",
+        "nl": "Taal Wijzigen",
+        "id": "Ubah Bahasa",
+        "ur": "زبان تبدیل کریں",
+        "bn": "ভাষা পরিবর্তন করুন",
+        "ta": "மொழியை மாற்றவும்"
     },
     "live_news_button": {
         "en": "🔔 LIVE NEWS",
@@ -158,7 +266,16 @@ TRANSLATIONS: Dict[str, Dict[str, str]] = {
         "de": "🔔 LIVE-NACHRICHTEN",
         "zh": "🔔 实时快讯",
         "ru": "🔔 СВЕЖИЕ НОВОСТИ",
-        "ja": "🔔 ライブニュース"
+        "ja": "🔔 ライブニュース",
+        "pt": "🔔 NOTÍCIAS AO VIVO",
+        "it": "🔔 NOTIZIE IN DIRETTA",
+        "ko": "🔔 실시간 뉴스",
+        "tr": "🔔 CANLI HABERLER",
+        "nl": "🔔 LIVE NIEUWS",
+        "id": "🔔 BERITA TERKINI",
+        "ur": "🔔 تازہ ترین خبریں",
+        "bn": "🔔 লাইভ সংবাদ",
+        "ta": "🔔 நேரலைச் செய்திகள்"
     },
     "refresh_feeds": {
         "en": "🔄 Refresh Feeds",
@@ -169,7 +286,16 @@ TRANSLATIONS: Dict[str, Dict[str, str]] = {
         "de": "🔄 Feeds aktualisieren",
         "zh": "🔄 刷新情报",
         "ru": "🔄 Обновить ленту",
-        "ja": "🔄 フィード更新"
+        "ja": "🔄 フィード更新",
+        "pt": "🔄 Atualizar Notícias",
+        "it": "🔄 Aggiorna Notizie",
+        "ko": "🔄 뉴스 새로고침",
+        "tr": "🔄 Akışı Yenile",
+        "nl": "🔄 Feeds vernieuwen",
+        "id": "🔄 Segarkan Berita",
+        "ur": "🔄 خبریں تازہ کریں",
+        "bn": "🔄 সংবাদ রিফ্রেশ করুন",
+        "ta": "🔄 செய்திகளைப் புதுப்பிக்கவும்"
     },
 
     # --------------------------------------------------------------------------
@@ -184,7 +310,16 @@ TRANSLATIONS: Dict[str, Dict[str, str]] = {
         "de": "🏠 Übersicht",
         "zh": "🏠 概览",
         "ru": "🏠 Обзор",
-        "ja": "🏠 概要"
+        "ja": "🏠 概要",
+        "pt": "🏠 Visão Geral",
+        "it": "🏠 Panoramica",
+        "ko": "🏠 개요",
+        "tr": "🏠 Genel Bakış",
+        "nl": "🏠 Overzicht",
+        "id": "🏠 Ikhtisar",
+        "ur": "🏠 جائزہ",
+        "bn": "🏠 সারসংক্ষেপ",
+        "ta": "🏠 மேலோட்டம்"
     },
     "nav_dashboard": {
         "en": "⚡ Intelligence Dashboard",
@@ -195,7 +330,16 @@ TRANSLATIONS: Dict[str, Dict[str, str]] = {
         "de": "⚡ Lagezentrum",
         "zh": "⚡ 市场智能仪表板",
         "ru": "⚡ Центр аналитики",
-        "ja": "⚡ インテリジェンス・ダッシュボード"
+        "ja": "⚡ インテリジェンス・ダッシュボード",
+        "pt": "⚡ Painel de Inteligência",
+        "it": "⚡ Dashboard di Intelligence",
+        "ko": "⚡ 인텔리전스 대시보드",
+        "tr": "⚡ İstihbarat Paneli",
+        "nl": "⚡ Intelligentiedashboard",
+        "id": "⚡ Dasbor Intelijen",
+        "ur": "⚡ انٹیلیجنس ڈیش بورڈ",
+        "bn": "⚡ ইন্টেলিজেন্স ড্যাশবোর্ড",
+        "ta": "⚡ நுண்ணறிவு பலகை"
     },
     "nav_india": {
         "en": "🇮🇳 India Fuel Center",
@@ -206,7 +350,16 @@ TRANSLATIONS: Dict[str, Dict[str, str]] = {
         "de": "🇮🇳 Indien-Zentrum",
         "zh": "🇮🇳 印度燃料中心",
         "ru": "🇮🇳 Центр топлива Индии",
-        "ja": "🇮🇳 インド燃料センター"
+        "ja": "🇮🇳 インド燃料センター",
+        "pt": "🇮🇳 Centro de Combustível da Índia",
+        "it": "🇮🇳 Centro Carburanti India",
+        "ko": "🇮🇳 인도 연료 센터",
+        "tr": "🇮🇳 Hindistan Yakıt Merkezi",
+        "nl": "🇮🇳 India Brandstofcentrum",
+        "id": "🇮🇳 Pusat Bahan Bakar India",
+        "ur": "🇮🇳 بھارت فیول سینٹر",
+        "bn": "🇮🇳 ভারত জ্বালানি কেন্দ্র",
+        "ta": "🇮🇳 இந்திய எரிபொருள் மையம்"
     },
     "nav_trade": {
         "en": "🚢 Trade & Hormuz",
@@ -217,7 +370,16 @@ TRANSLATIONS: Dict[str, Dict[str, str]] = {
         "de": "🚢 Handel & Straße von Hormus",
         "zh": "🚢 原油贸易与霍尔木兹",
         "ru": "🚢 Торговля и Ормуз",
-        "ja": "🚢 貿易とホルムズ海峡"
+        "ja": "🚢 貿易とホルムズ海峡",
+        "pt": "🚢 Comércio e Ormuz",
+        "it": "🚢 Commercio e Hormuz",
+        "ko": "🚢 무역 및 호르무즈",
+        "tr": "🚢 Ticaret ve Hürmüz",
+        "nl": "🚢 Handel & Straat van Hormuz",
+        "id": "🚢 Perdagangan & Selat Hormuz",
+        "ur": "🚢 تجارت اور آبنائے ہرمز",
+        "bn": "🚢 বাণিজ্য ও হরমুজ প্রণালী",
+        "ta": "🚢 வர்த்தகம் மற்றும் ஹார்முஸ்"
     },
     "nav_affordability": {
         "en": "⚖️ Affordability",
@@ -228,7 +390,16 @@ TRANSLATIONS: Dict[str, Dict[str, str]] = {
         "de": "⚖️ Erschwinglichkeit",
         "zh": "⚖️ 燃料可负担性",
         "ru": "⚖️ Ценовая доступность",
-        "ja": "⚖️ 燃料購入負担指数"
+        "ja": "⚖️ 燃料購入負担指数",
+        "pt": "⚖️ Acessibilidade",
+        "it": "⚖️ Accessibilità Prezzi",
+        "ko": "⚖️ 연료 가격 부담도",
+        "tr": "⚖️ Satın Alınabilirlik",
+        "nl": "⚖️ Betaalbaarheid",
+        "id": "⚖️ Keterjangkauan Harga",
+        "ur": "⚖️ سکت اور قیمتیں",
+        "bn": "⚖️ ক্রয়ক্ষমতা সূচক",
+        "ta": "⚖️ மலிவுத்தன்மை"
     },
     "nav_supply_risk": {
         "en": "🛡️ Supply Risk",
@@ -239,7 +410,16 @@ TRANSLATIONS: Dict[str, Dict[str, str]] = {
         "de": "🛡️ Versorgungsrisiko",
         "zh": "🛡️ 供应集中度风险",
         "ru": "🛡️ Риск поставок",
-        "ja": "🛡️ 供給リスク評価"
+        "ja": "🛡️ 供給リスク評価",
+        "pt": "🛡️ Risco de Suprimento",
+        "it": "🛡️ Rischio di Fornitura",
+        "ko": "🛡️ 공급망 위험도",
+        "tr": "🛡️ Tedarik Riski",
+        "nl": "🛡️ Leveringsrisico",
+        "id": "🛡️ Risiko Pasokan",
+        "ur": "🛡️ رسد کا خطرہ",
+        "bn": "🛡️ সরবরাহ ঝুঁকি",
+        "ta": "🛡️ விநியோக இடர்"
     },
     "nav_shock_simulator": {
         "en": "⚡ Shock Simulator",
@@ -250,7 +430,16 @@ TRANSLATIONS: Dict[str, Dict[str, str]] = {
         "de": "⚡ Schock-Simulator",
         "zh": "⚡ 地缘供给冲击模拟器",
         "ru": "⚡ Симулятор шоков",
-        "ja": "⚡ 供給ショック・シミュレーター"
+        "ja": "⚡ 供給ショック・シミュレーター",
+        "pt": "⚡ Simulador de Choque",
+        "it": "⚡ Simulatore di Shock",
+        "ko": "⚡ 공급 충격 시뮬레이터",
+        "tr": "⚡ Şok Simülatörü",
+        "nl": "⚡ Schoksimulator",
+        "id": "⚡ Simulator Guncangan",
+        "ur": "⚡ سپلائی شاک سمیلیٹر",
+        "bn": "⚡ সরবরাহ শক সিমুলেটর",
+        "ta": "⚡ விநியோக அதிர்ச்சி மாதிரி"
     },
     "nav_forecasting": {
         "en": "📈 Forecasting",
@@ -261,7 +450,16 @@ TRANSLATIONS: Dict[str, Dict[str, str]] = {
         "de": "📈 Preisprognosen",
         "zh": "📈 价格预测模型",
         "ru": "📈 Прогнозирование цен",
-        "ja": "📈 価格予測レーダー"
+        "ja": "📈 価格予測レーダー",
+        "pt": "📈 Previsões",
+        "it": "📈 Previsioni",
+        "ko": "📈 가격 전망",
+        "tr": "📈 Fiyat Tahmini",
+        "nl": "📈 Prijsvoorspellingen",
+        "id": "📈 Prakiraan Harga",
+        "ur": "📈 قیمتوں کی پیش گوئی",
+        "bn": "📈 মূল্য পূর্বাভাস",
+        "ta": "📈 விலை முன்னறிவிப்பு"
     },
     "nav_data_trust": {
         "en": "🔒 Data Trust",
@@ -272,7 +470,16 @@ TRANSLATIONS: Dict[str, Dict[str, str]] = {
         "de": "🔒 Datenintegrität",
         "zh": "🔒 数据可信度与审计",
         "ru": "🔒 Достоверность данных",
-        "ja": "🔒 データ信頼性センター"
+        "ja": "🔒 データ信頼性センター",
+        "pt": "🔒 Confiança de Dados",
+        "it": "🔒 Fiducia nei Dati",
+        "ko": "🔒 데이터 신뢰성",
+        "tr": "🔒 Veri Güvenilirliği",
+        "nl": "🔒 Gegevensbetrouwbaarheid",
+        "id": "🔒 Kepercayaan Data",
+        "ur": "🔒 ڈیٹا پر اعتماد",
+        "bn": "🔒 ডেটা নির্ভরযোগ্যতা",
+        "ta": "🔒 தரவு நம்பகத்தன்மை"
     },
     "nav_ai_analyst": {
         "en": "🤖 AI Analyst",
@@ -283,7 +490,16 @@ TRANSLATIONS: Dict[str, Dict[str, str]] = {
         "de": "🤖 KI-Analyst",
         "zh": "🤖 AI 能源市场分析师",
         "ru": "🤖 ИИ-аналитик",
-        "ja": "🤖 AIエネルギーアナリスト"
+        "ja": "🤖 AIエネルギーアナリスト",
+        "pt": "🤖 Analista de IA",
+        "it": "🤖 Analista IA",
+        "ko": "🤖 AI 에너지 분석가",
+        "tr": "🤖 Yapay Zeka Analisti",
+        "nl": "🤖 AI-energieanalist",
+        "id": "🤖 Analis AI",
+        "ur": "🤖 اے آئی انرجی تجزیہ کار",
+        "bn": "🤖 এআই এনার্জি বিশ্লেষক",
+        "ta": "🤖 AI ஆற்றல் ஆய்வாளர்"
     },
     "nav_about": {
         "en": "📖 About Project",
@@ -294,7 +510,16 @@ TRANSLATIONS: Dict[str, Dict[str, str]] = {
         "de": "📖 Über das Projekt",
         "zh": "📖 关于项目",
         "ru": "📖 О проекте",
-        "ja": "📖 プロジェクトについて"
+        "ja": "📖 プロジェクトについて",
+        "pt": "📖 Sobre o Projeto",
+        "it": "📖 Informazioni sul Progetto",
+        "ko": "📖 프로젝트 소개",
+        "tr": "📖 Proje Hakkında",
+        "nl": "📖 Over het Project",
+        "id": "📖 Tentang Proyek",
+        "ur": "📖 منصوبے کے بارے میں",
+        "bn": "📖 প্রকল্প সম্পর্কে",
+        "ta": "📖 திட்டம் பற்றி"
     },
     "nav_how_it_works": {
         "en": "⚙️ How It Works",
@@ -305,7 +530,16 @@ TRANSLATIONS: Dict[str, Dict[str, str]] = {
         "de": "⚙️ Funktionsweise",
         "zh": "⚙️ 系统架构与运作逻辑",
         "ru": "⚙️ Архитектура и работа",
-        "ja": "⚙️ システム構造と動作原理"
+        "ja": "⚙️ システム構造と動作原理",
+        "pt": "⚙️ Como Funciona",
+        "it": "⚙️ Come Funziona",
+        "ko": "⚙️ 시스템 구조 및 원리",
+        "tr": "⚙️ Nasıl Çalışır",
+        "nl": "⚙️ Hoe Het Werkt",
+        "id": "⚙️ Cara Kerja",
+        "ur": "⚙️ یہ کیسے کام کرتا ہے",
+        "bn": "⚙️ কীভাবে কাজ করে",
+        "ta": "⚙️ செயல்படும் விதம்"
     },
     "nav_features": {
         "en": "📋 Features",
@@ -316,7 +550,16 @@ TRANSLATIONS: Dict[str, Dict[str, str]] = {
         "de": "📋 Funktionsübersicht",
         "zh": "📋 核心功能全景目录",
         "ru": "📋 Возможности платформы",
-        "ja": "📋 プラットフォーム機能一覧"
+        "ja": "📋 プラットフォーム機能一覧",
+        "pt": "📋 Recursos",
+        "it": "📋 Funzionalità",
+        "ko": "📋 기능 목록",
+        "tr": "📋 Özellikler",
+        "nl": "📋 Functies",
+        "id": "📋 Fitur",
+        "ur": "📋 خصوصیات",
+        "bn": "📋 সুবিধাসমূহ",
+        "ta": "📋 அம்சங்கள்"
     },
     "nav_methodology": {
         "en": "📐 Methodology",
@@ -327,7 +570,16 @@ TRANSLATIONS: Dict[str, Dict[str, str]] = {
         "de": "📐 Methodik & Formeln",
         "zh": "📐 计算方法论与算法规范",
         "ru": "📐 Методология расчетов",
-        "ja": "📐 算定手法とアルゴリズム"
+        "ja": "📐 算定手法とアルゴリズム",
+        "pt": "📐 Metodologia",
+        "it": "📐 Metodologia",
+        "ko": "📐 방법론 및 알고리즘",
+        "tr": "📐 Metodoloji",
+        "nl": "📐 Methodologie",
+        "id": "📐 Metodologi",
+        "ur": "📐 طریقہ کار",
+        "bn": "📐 কার্যপদ্ধতি",
+        "ta": "📐 முறைமை"
     },
     "nav_roadmap": {
         "en": "🗺️ Roadmap",
@@ -338,7 +590,16 @@ TRANSLATIONS: Dict[str, Dict[str, str]] = {
         "de": "🗺️ Entwicklungs-Roadmap",
         "zh": "🗺️ 演进路线图与里程碑",
         "ru": "🗺️ Дорожная карта",
-        "ja": "🗺️ ロードマップと開発計画"
+        "ja": "🗺️ ロードマップと開発計画",
+        "pt": "🗺️ Roteiro",
+        "it": "🗺️ Tabella di Marcia",
+        "ko": "🗺️ 개발 로드맵",
+        "tr": "🗺️ Yol Haritası",
+        "nl": "🗺️ Routekaart",
+        "id": "🗺️ Peta Jalan",
+        "ur": "🗺️ روڈ میپ",
+        "bn": "🗺️ রোডম্যাপ",
+        "ta": "🗺️ திட்ட வரைபடம்"
     },
     "nav_faq": {
         "en": "❓ Docs & FAQ",
@@ -349,7 +610,16 @@ TRANSLATIONS: Dict[str, Dict[str, str]] = {
         "de": "❓ Dokumentation & FAQ",
         "zh": "❓ 架构文档与常见疑问",
         "ru": "❓ Документация и FAQ",
-        "ja": "❓ ドキュメントとよくある質問"
+        "ja": "❓ ドキュメントとよくある質問",
+        "pt": "❓ Docs e FAQ",
+        "it": "❓ Documentazione e FAQ",
+        "ko": "❓ 문서 및 자주 묻는 질문",
+        "tr": "❓ Belgeler ve SSS",
+        "nl": "❓ Documentatie & FAQ",
+        "id": "❓ Dokumentasi & FAQ",
+        "ur": "❓ دستاویزات اور سوالات",
+        "bn": "❓ নির্দেশিকা ও প্রশ্নোত্তর",
+        "ta": "❓ ஆவணங்கள் மற்றும் கேள்விகள்"
     },
 
     # --------------------------------------------------------------------------

@@ -32,6 +32,7 @@ from src.ui_components import (
     render_command_strip,
     render_html,
     get_brand_logo_svg,
+    get_logo_mark_svg,
     get_fuel_client_logo_html,
     COLOR_AMBER,
     COLOR_WHITE,
@@ -326,40 +327,73 @@ render_html(
 # 5. Top Brand Header Strip with Upper-Right Live Intelligence Notification Center
 from src.analytics.global_news_engine import GlobalNewsEngine
 
-top_left, top_lang, top_right = st.columns([5.5, 2.3, 2.2])
-with top_left:
+col_brand, col_lang, col_news = st.columns([5.2, 2.5, 2.3])
+with col_brand:
     health = db_manager.check_health()
     engine_name = "MYSQL 8.4" if health["dialect"] == "mysql" else "SQLITE VERIFIED"
     render_html(f"""
-    <div style="background: rgba(14, 21, 38, 0.85); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.14); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); border-radius: 10px; padding: 8px 18px; margin: -0.5rem 0 0.5rem 0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
-        <div style="display: flex; align-items: center; gap: 12px;">
-            {get_brand_logo_svg(width=340, height=54)}
+    <div style="background: rgba(14, 21, 38, 0.92); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1.5px solid rgba(255, 255, 255, 0.16); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.55); border-radius: 12px; padding: 10px 18px; margin: -0.5rem 0 0.5rem 0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+        <div style="display: flex; align-items: center; gap: 14px;">
+            {get_logo_mark_svg(size=44)}
+            <div>
+                <div style="display: flex; align-items: center; gap: 8px; line-height: 1.1;">
+                    <span style="font-family: 'Space Grotesk', -apple-system, sans-serif; font-size: 1.45rem; font-weight: 900; letter-spacing: -0.01em; color: #FFFFFF; text-transform: uppercase;">
+                        GLOBAL FUELPULSE
+                    </span>
+                    <span style="background: #EAB308; color: #070A12; font-family: 'Space Grotesk', sans-serif; font-size: 0.8rem; font-weight: 900; padding: 3px 8px; border-radius: 6px; letter-spacing: 0.05em; display: inline-block;">
+                        AI
+                    </span>
+                </div>
+                <div style="font-family: 'Space Grotesk', -apple-system, sans-serif; font-size: 0.68rem; font-weight: 700; color: #94A3B8; letter-spacing: 0.14em; text-transform: uppercase; margin-top: 3px;">
+                    {t('brand_subtitle', current_lang)}
+                </div>
+            </div>
         </div>
         <div style="display: flex; align-items: center; gap: 8px;">
-            <span style="background: rgba(16, 185, 129, 0.18); color: #34D399; border: 1px solid rgba(16, 185, 129, 0.4); padding: 3px 10px; border-radius: 999px; font-family: 'Space Grotesk', sans-serif; font-size: 11px; font-weight: 700;">● {t('db_verified', current_lang)}</span>
-            <span style="background: rgba(245, 185, 66, 0.18); color: #F5B942; border: 1px solid rgba(245, 185, 66, 0.4); padding: 3px 10px; border-radius: 999px; font-family: 'Space Grotesk', sans-serif; font-size: 11px; font-weight: 700;">{t('live_indicator', current_lang)}</span>
+            <span style="background: rgba(16, 185, 129, 0.18); color: #34D399; border: 1px solid rgba(16, 185, 129, 0.4); padding: 4px 10px; border-radius: 999px; font-family: 'Space Grotesk', sans-serif; font-size: 11px; font-weight: 700;">● {engine_name}</span>
+            <span style="background: rgba(245, 185, 66, 0.18); color: #F5B942; border: 1px solid rgba(245, 185, 66, 0.4); padding: 4px 10px; border-radius: 999px; font-family: 'Space Grotesk', sans-serif; font-size: 11px; font-weight: 700;">● {t('live_indicator', current_lang)}</span>
         </div>
     </div>
     """)
 
-with top_lang:
+with col_lang:
     all_langs = get_available_languages()
-    lang_labels = {code: f"{data['flag']} {data['native']} ({data['name']})" for code, data in all_langs.items()}
-    lang_codes = list(all_langs.keys())
-    cur_lang_idx = lang_codes.index(current_lang) if current_lang in lang_codes else 0
-    selected_lang = st.selectbox(
-        "🌐 Language",
-        options=lang_codes,
-        index=cur_lang_idx,
-        format_func=lambda code: lang_labels[code],
-        label_visibility="collapsed",
-        key="app_language_selector"
-    )
-    if selected_lang != current_lang:
-        set_language(selected_lang)
-        st.rerun()
+    cur_data = all_langs.get(current_lang, all_langs["en"])
+    lang_btn_label = f"🌐 Change Language ({cur_data['flag']} {cur_data['native']})"
+    with st.popover(lang_btn_label, use_container_width=True):
+        st.markdown(f"#### 🌐 {t('select_language', current_lang)} ({len(all_langs)} World Languages)")
+        st.caption("Scroll down to select and activate your language:")
+        
+        with st.container(height=300):
+            for code, data in all_langs.items():
+                is_selected = (code == current_lang)
+                active_mark = "✓ " if is_selected else ""
+                item_label = f"{active_mark}{data['flag']}  {data['native']}  ({data['name']})"
+                if st.button(
+                    item_label,
+                    key=f"lang_btn_{code}",
+                    use_container_width=True,
+                    type="primary" if is_selected else "secondary"
+                ):
+                    if code != current_lang:
+                        set_language(code)
+                        st.rerun()
+        
+        st.markdown("---")
+        lang_codes = list(all_langs.keys())
+        cur_idx = lang_codes.index(current_lang) if current_lang in lang_codes else 0
+        dropdown_pick = st.selectbox(
+            "Or jump directly via dropdown:",
+            options=lang_codes,
+            index=cur_idx,
+            format_func=lambda c: f"{all_langs[c]['flag']} {all_langs[c]['native']} ({all_langs[c]['name']})",
+            key="popover_quick_lang_select"
+        )
+        if dropdown_pick != current_lang:
+            set_language(dropdown_pick)
+            st.rerun()
 
-with top_right:
+with col_news:
     alerts_count = GlobalNewsEngine.get_active_alerts_count()
     news_btn_label = f"{t('live_news_button', current_lang)} ({alerts_count})"
     with st.popover(news_btn_label, use_container_width=True):

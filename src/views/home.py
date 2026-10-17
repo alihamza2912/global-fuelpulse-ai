@@ -39,7 +39,7 @@ def render_home_view(navigate_fn=None):
             <!-- Category Eyebrow Pill -->
             <div style="display: inline-flex; align-items: center; gap: 8px; background: rgba(245, 185, 66, 0.12); border: 1px solid rgba(245, 185, 66, 0.35); padding: 5px 14px; border-radius: 9999px; font-family: 'Space Grotesk', sans-serif; font-size: 0.74rem; font-weight: 800; color: #F5B942; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 12px; box-shadow: 0 0 16px rgba(245, 185, 66, 0.2);">
                 <span style="width: 8px; height: 8px; border-radius: 50%; background: #10B981; display: inline-block;"></span>
-                GLOBAL FUELPULSE AI • {t('home_eyebrow', cur_lang)}
+                {t('home_eyebrow', cur_lang)}
             </div>
 
             <!-- Gradient Heading -->
