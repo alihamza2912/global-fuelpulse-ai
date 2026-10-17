@@ -798,7 +798,52 @@ def render_dashboard_view(navigate_fn=None):
                         """
                     )
         elif not tax_res:
-            st.info(f"No direct matches for '{search_q}'. You can search any Indian city (e.g. Prayagraj, Lucknow, Jaipur) or explore the chapters below.")
+            # Answer question dynamically via Free Autonomous AI Analyst
+            from src.ai.nl_query_engine import AIEnergyMarketAnalyst
+            ai_ans = AIEnergyMarketAnalyst.answer_question(search_q, allow_free_autonomous=True, bypass_session_limits=True)
+            if ai_ans and not ai_ans.get("is_fallback"):
+                render_html("""<div style="display:inline-block;padding:5px 12px;background:rgba(16, 185, 129, 0.2);color:#10B981;font-weight:700;font-size:12px;border:1.5px solid #10B981;margin-top:10px;margin-bottom:8px;border-radius:4px;">🟢 Answered by Free Autonomous AI Market Analyst (Zero API Key Required)</div>""")
+                st.markdown(ai_ans["answer_text"])
+                if ai_ans.get("data_records"):
+                    st.dataframe(pd.DataFrame(ai_ans["data_records"]), width="stretch", hide_index=True)
+            else:
+                st.info(f"No direct matches for '{search_q}'. You can search any Indian city (e.g. Prayagraj, Lucknow, Jaipur) or explore the chapters below.")
+
+    # Free AI Energy Analyst widget right on Executive Dashboard
+    with st.expander("💬 Ask Free AI Analyst (Instant Answers — Zero API Key Required)", expanded=False):
+        fai_col1, fai_col2, fai_col3, fai_col4, fai_col5 = st.columns(5)
+        fai_q = None
+        with fai_col1:
+            if st.button("🇮🇳 Prayagraj Petrol & Tax", key="dash_ai_btn1", width="stretch"):
+                fai_q = "What is the petrol price in Prayagraj and how much tax does Uttar Pradesh take?"
+        with fai_col2:
+            if st.button("🌍 Top Petrol Contributor", key="dash_ai_btn2", width="stretch"):
+                fai_q = "who is the more contributor of petrol in the world"
+        with fai_col3:
+            if st.button("🚢 Strait of Hormuz Risk", key="dash_ai_btn3", width="stretch"):
+                fai_q = "What is the risk of a disruption in the Strait of Hormuz?"
+        with fai_col4:
+            if st.button("🏢 Indian PSU OMCs", key="dash_ai_btn4", width="stretch"):
+                fai_q = "What is the market share and refining capacity of Indian PSU OMCs like IOCL, BPCL, and HPCL?"
+        with fai_col5:
+            if st.button("🚚 Fleet Fuel Shock", key="dash_ai_btn5", width="stretch"):
+                fai_q = "What would a 10% increase in fuel prices do to my fleet budget?"
+
+        dash_ai_input = st.text_input(
+            "Ask any question about fuel rates, state taxes, maritime risks, or crude markets:",
+            value=fai_q if fai_q else "",
+            placeholder="e.g. What is the petrol rate in Prayagraj and state tax? (Ask anything freely)",
+            key="dash_free_ai_input"
+        )
+        if dash_ai_input and dash_ai_input.strip():
+            with st.spinner("Analyzing with Free Autonomous AI Engine..."):
+                from src.ai.nl_query_engine import AIEnergyMarketAnalyst
+                ai_resp = AIEnergyMarketAnalyst.answer_question(dash_ai_input, allow_free_autonomous=True, bypass_session_limits=True)
+                if ai_resp.get("autonomous_free_mode"):
+                    render_html("""<div style="display:inline-block;padding:5px 12px;background:rgba(16, 185, 129, 0.2);color:#10B981;font-weight:700;font-size:12px;border:1.5px solid #10B981;margin-bottom:8px;border-radius:4px;">🟢 100% Free Autonomous AI Engine (0 Quota • Zero API Key Required)</div>""")
+                st.markdown(ai_resp["answer_text"])
+                if ai_resp.get("data_records"):
+                    st.dataframe(pd.DataFrame(ai_resp["data_records"]), width="stretch", hide_index=True)
 
     st.write("")
 

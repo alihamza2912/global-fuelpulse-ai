@@ -116,7 +116,7 @@ def test_per_minute_rate_limit():
 
 
 def test_missing_api_key_graceful_message():
-    """Verifies that a missing API key returns a friendly notice without crashing."""
+    """Verifies that a missing API key returns a friendly notice without crashing when autonomous mode is off."""
     client = GeminiFreeTierClient(api_key="")
     assert client.is_key_configured() is False
 
@@ -128,6 +128,46 @@ def test_missing_api_key_graceful_message():
     assert ans["is_fallback"] is True
     assert "The AI assistant requires a free Gemini API key" in ans["answer_text"]
     assert "GEMINI_API_KEY" in ans["answer_text"]
+
+
+def test_autonomous_free_ai_mode_without_api_key():
+    """Verifies that free autonomous mode answers questions seamlessly without any API key or quota."""
+    client = GeminiFreeTierClient(api_key="")
+    assert client.is_key_configured() is False
+
+    # 1. European refining margins query with allow_free_autonomous=True
+    ans_europe = AIEnergyMarketAnalyst.answer_question(
+        question="What is the outlook for refining margins in Europe?",
+        session_id="free_ai_session_1",
+        bypass_session_limits=True,
+        allow_free_autonomous=True
+    )
+    assert ans_europe["is_fallback"] is False
+    assert ans_europe["autonomous_free_mode"] is True
+    assert ans_europe["quota_used"] is False
+    assert "refining" in ans_europe["answer_text"].lower()
+
+    # 2. Prayagraj petrol tax query
+    ans_prayagraj = AIEnergyMarketAnalyst.answer_question(
+        question="What is the petrol price in Prayagraj and how much tax does the state take?",
+        session_id="free_ai_session_2",
+        bypass_session_limits=True,
+        allow_free_autonomous=True
+    )
+    assert ans_prayagraj["is_fallback"] is False
+    assert "101.45" in ans_prayagraj["answer_text"]
+    assert "Prayagraj" in ans_prayagraj["answer_text"]
+
+    # 3. Indian PSU OMCs query
+    ans_omc = AIEnergyMarketAnalyst.answer_question(
+        question="What is the market share of IOCL, BPCL and HPCL?",
+        session_id="free_ai_session_3",
+        bypass_session_limits=True,
+        allow_free_autonomous=True
+    )
+    assert ans_omc["is_fallback"] is False
+    assert "IOCL" in ans_omc["answer_text"]
+    assert "BPCL" in ans_omc["answer_text"]
 
 
 def test_concurrent_multi_user_locking():

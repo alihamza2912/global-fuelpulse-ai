@@ -1067,22 +1067,30 @@ class GlobalTaxEngine:
         global country, province, or international metro.
         Returns a rich structured telemetry packet with exact breakdown and state tax calculations.
         """
-        if not query or not query.strip():
-            return None
-
+        import re
         q = query.strip().lower()
 
-        # Step 1: Check India states & cities
+        # Step 1: Exact matches against India State names
         for state_name, data in cls.INDIA_TAX_DATA.items():
             state_lower = state_name.lower()
-            # Direct state match
-            if q == state_lower or q in state_lower or state_lower in q:
+            if q == state_lower:
                 return cls._build_india_response(state_name, data, matched_city=None, query=query)
-            # Check cities
+
+        # Step 2: Exact matches against Global Jurisdictions / Countries
+        for region_name, data in cls.GLOBAL_TAX_DATA.items():
+            region_lower = region_name.lower()
+            country_lower = data.get("country", "").lower()
+            if q == region_lower or q == country_lower:
+                return cls._build_global_response(region_name, data, matched_city=None, query=query)
+
+        # Step 3: Check India states & cities via word boundaries
+        for state_name, data in cls.INDIA_TAX_DATA.items():
+            state_lower = state_name.lower()
+            if re.search(r'\b' + re.escape(state_lower) + r'\b', q):
+                return cls._build_india_response(state_name, data, matched_city=None, query=query)
             for city in data["cities"]:
-                if q == city or q in city or city in q:
+                if re.search(r'\b' + re.escape(city) + r'\b', q):
                     matched_display = city.title()
-                    # Special cases formatting
                     if city in ["noida", "greater noida"]:
                         matched_display = city.upper()
                     elif city in ["prayagraj", "allahabad"]:
@@ -1091,19 +1099,41 @@ class GlobalTaxEngine:
                         matched_display = "Bengaluru"
                     return cls._build_india_response(state_name, data, matched_city=matched_display, query=query)
 
-        # Step 2: Check global jurisdictions
+        # Step 4: Check global jurisdictions, countries & cities via word boundaries
         for region_name, data in cls.GLOBAL_TAX_DATA.items():
             region_lower = region_name.lower()
-            if q == region_lower or q in region_lower or region_lower in q:
+            country_lower = data.get("country", "").lower()
+            if country_lower and re.search(r'\b' + re.escape(country_lower) + r'\b', q):
+                return cls._build_global_response(region_name, data, matched_city=None, query=query)
+            if re.search(r'\b' + re.escape(region_lower) + r'\b', q):
                 return cls._build_global_response(region_name, data, matched_city=None, query=query)
             for city in data["cities"]:
-                if q == city or q in city or city in q:
+                if re.search(r'\b' + re.escape(city) + r'\b', q):
                     matched_display = city.title()
                     if city in ["la", "sf", "nyc", "uk", "usa", "uae", "ksa", "bc", "ca", "tx", "ny", "fl"]:
                         matched_display = city.upper()
                     return cls._build_global_response(region_name, data, matched_city=matched_display, query=query)
 
+        # Step 5: Check common state aliases (e.g. "UP" for Uttar Pradesh)
+        aliases = {
+            "up": "Uttar Pradesh",
+            "uttar pradesh": "Uttar Pradesh",
+            "mp": "Madhya Pradesh",
+            "ap": "Andhra Pradesh",
+            "hp": "Himachal Pradesh",
+            "tn": "Tamil Nadu",
+            "wb": "West Bengal",
+            "delhi": "Delhi (NCT)",
+            "uk": "Uttarakhand",
+            "mh": "Maharashtra"
+        }
+        for alias, state_target in aliases.items():
+            if re.search(r'\b' + re.escape(alias) + r'\b', q) and state_target in cls.INDIA_TAX_DATA:
+                return cls._build_india_response(state_target, cls.INDIA_TAX_DATA[state_target], matched_city=None, query=query)
+
         return None
+
+    resolve = resolve_query
 
     @classmethod
     def _build_india_response(cls, state_name: str, data: Dict[str, Any], matched_city: Optional[str], query: str) -> Dict[str, Any]:
