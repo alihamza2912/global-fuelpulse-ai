@@ -240,28 +240,6 @@ tree_nav_html = f"""
 """
 render_html(tree_nav_html, container=st.sidebar)
 
-# Programmatic Buttons for Test Coverage & Fallback
-NAV_TREE_BADGES = {
-    "🏠 Overview": "Home",
-    "⚡ Intelligence Dashboard": "Live",
-    "🇮🇳 India Fuel Center": "MoPNG",
-    "📖 About Project": "v2.0",
-    "⚙️ How It Works": "ETL",
-    "📋 Features": "12 Mod",
-    "🔒 Data Trust": "SLA",
-    "📐 Methodology": "Math",
-    "🗺️ Roadmap": "2026",
-    "❓ Docs & FAQ": "Docs",
-}
-
-with st.sidebar.expander("⚡ Quick Portal Jump (Buttons)", expanded=False):
-    for opt in NAV_OPTIONS:
-        is_active = (opt == st.session_state.active_nav)
-        badge = NAV_TREE_BADGES.get(opt, "View")
-        btn_label = f"◆ {opt}  [{badge}]" if is_active else f"◇ {opt}  [{badge}]"
-        if st.button(btn_label, key=f"side_portal_{opt}", use_container_width=True, type="primary" if is_active else "secondary"):
-            navigate_to(opt)
-
 # Live Pipeline Refresh Controls & Timestamps
 st.sidebar.markdown("### ⚡ Live Pipeline Sync")
 if st.sidebar.button("⚡ Refresh Live Data", key="sidebar_live_refresh_btn", use_container_width=True):
