@@ -8,6 +8,7 @@ Crisp White Typography (#F9FAFB), and Petroleum Amber (#F5B942).
 import streamlit as st
 import pandas as pd
 import textwrap
+import urllib.parse
 from typing import Optional, Dict, Any, List
 from datetime import datetime
 from config.settings import settings
@@ -110,6 +111,52 @@ def get_brand_logo_svg(width: int = 340, height: int = 54) -> str:
   <text x="270" y="26" fill="#F5B942" font-family="'Space Grotesk', sans-serif" font-weight="800" font-size="11.5" text-anchor="middle">AI</text>
   <text x="56" y="44" fill="#94A3B8" font-family="'Inter', sans-serif" font-weight="700" font-size="11.5" letter-spacing="0.05em">ENERGY INTELLIGENCE PLATFORM</text>
 </svg>"""
+
+
+# ==============================================================================
+# 3b. NEWS GLOBE ICON (BROADCAST-STYLE VECTOR EMBLEM)
+# ==============================================================================
+def get_news_globe_icon_svg(size: int = 24) -> str:
+    """
+    Returns the vector News Globe icon: vibrant cyan/sky-blue globe sphere with crisp
+    white coordinate grid lines and a horizontal red banner labeled 'NEWS' with folded
+    crimson 3D tails. Matches the international broadcast news emblem aesthetic.
+    """
+    return f"""<svg width="{size}" height="{size}" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Left Ribbon Back Fold -->
+  <path d="M 10 50 C 10 59 18 64 22 64 L 22 52 Z" fill="#9F1239" />
+  <!-- Right Ribbon Back Fold -->
+  <path d="M 90 50 C 90 59 82 64 78 64 L 78 52 Z" fill="#9F1239" />
+
+  <!-- Globe Sphere -->
+  <circle cx="50" cy="50" r="34" fill="#38BDF8" />
+
+  <!-- Globe Coordinate Grid Lines -->
+  <line x1="50" y1="16" x2="50" y2="84" stroke="#FFFFFF" stroke-width="2.6" stroke-linecap="round" />
+  <line x1="16" y1="50" x2="84" y2="50" stroke="#FFFFFF" stroke-width="2.6" stroke-linecap="round" />
+  <path d="M 23 34 Q 50 42 77 34" fill="none" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" />
+  <path d="M 23 66 Q 50 58 77 66" fill="none" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" />
+  <path d="M 50 16 C 34 16 28 32 28 50 C 28 68 34 84 50 84" fill="none" stroke="#FFFFFF" stroke-width="2.2" />
+  <path d="M 50 16 C 66 16 72 32 72 50 C 72 68 66 84 50 84" fill="none" stroke="#FFFFFF" stroke-width="2.2" />
+  <circle cx="50" cy="50" r="34" fill="none" stroke="#0284C7" stroke-width="1.8" />
+
+  <!-- Ribbon Side Folds Under (Dark Crimson) -->
+  <path d="M 16 58 C 14 62 16 66 22 66 L 22 58 Z" fill="#881337" />
+  <path d="M 84 58 C 86 62 84 66 78 66 L 78 58 Z" fill="#881337" />
+
+  <!-- Central Red NEWS Banner -->
+  <rect x="14" y="37" width="72" height="26" rx="4" fill="#EF4444" />
+
+  <!-- Text: NEWS -->
+  <text x="50" y="55.5" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-weight="900" font-size="16" fill="#FFFFFF" text-anchor="middle" letter-spacing="0.5">NEWS</text>
+</svg>"""
+
+
+def get_news_globe_icon_data_uri() -> str:
+    """Returns an optimized URL-encoded data URI of the News Globe SVG icon for CSS pseudo-elements."""
+    svg = get_news_globe_icon_svg(24)
+    compact_svg = " ".join(line.strip() for line in svg.splitlines() if line.strip())
+    return "data:image/svg+xml," + urllib.parse.quote(compact_svg)
 
 
 def get_fuel_client_logo_html() -> str:
@@ -754,7 +801,30 @@ div[data-testid="stPopoverButton"] > button div {{
   padding: 0 !important;
 }}
 
-/* 17c. Sleek, Compact Slate-Grey Buttons inside Popover Menus (Original Website Dropdown Format) */
+/* 17c. News Globe Vector Icon on Header Live News Button (Matches User Reference Image) */
+div[data-testid="column"]:nth-of-type(3) div[data-testid="stPopover"] > button p,
+div[data-testid="column"]:nth-of-type(3) div[data-testid="stPopoverButton"] > button p {{
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}}
+
+div[data-testid="column"]:nth-of-type(3) div[data-testid="stPopover"] > button p::before,
+div[data-testid="column"]:nth-of-type(3) div[data-testid="stPopoverButton"] > button p::before {{
+  content: "" !important;
+  display: inline-block !important;
+  width: 22px !important;
+  height: 22px !important;
+  margin-right: 7px !important;
+  vertical-align: -3px !important;
+  background-image: url("{get_news_globe_icon_data_uri()}") !important;
+  background-repeat: no-repeat !important;
+  background-position: center !important;
+  background-size: contain !important;
+  flex-shrink: 0 !important;
+}}
+
+/* 17d. Sleek, Compact Slate-Grey Buttons inside Popover Menus (Original Website Dropdown Format) */
 div[data-testid="stPopoverBody"] div.stButton > button,
 div[data-baseweb="popover"] div.stButton > button,
 div[data-testid="stPopoverContent"] div.stButton > button,

@@ -92,3 +92,21 @@ def test_expanded_live_news_catalog():
         assert "timestamp" in item
         assert any(unit in item["timestamp"] for unit in ["mins ago", "hour", "hours", "Just now", "Live Wire"])
 
+
+def test_news_globe_icon_svg():
+    from src.ui_components import get_news_globe_icon_svg
+    svg = get_news_globe_icon_svg(36)
+    assert '<svg width="36" height="36"' in svg
+    assert "NEWS" in svg
+    assert "#38BDF8" in svg  # Cyan/sky blue globe sphere
+    assert "#EF4444" in svg  # Red banner
+    assert "#9F1239" in svg  # Crimson 3D ribbon back fold
+
+
+def test_news_globe_icon_data_uri():
+    from src.ui_components import get_news_globe_icon_data_uri
+    uri = get_news_globe_icon_data_uri()
+    assert uri.startswith("data:image/svg+xml,")
+    assert "NEWS" in uri
+
+

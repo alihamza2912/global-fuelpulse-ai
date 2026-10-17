@@ -33,6 +33,7 @@ from src.ui_components import (
     render_html,
     get_brand_logo_svg,
     get_logo_mark_svg,
+    get_news_globe_icon_svg,
     get_fuel_client_logo_html,
     COLOR_AMBER,
     COLOR_WHITE,
@@ -398,7 +399,19 @@ with col_news:
     alerts_count = GlobalNewsEngine.get_active_alerts_count()
     news_btn_label = f"{t('live_news_button', current_lang)} ({alerts_count})"
     with st.popover(news_btn_label, use_container_width=True):
-        st.markdown(f"### 📡 {t('brand_title', current_lang)} — Global Wire")
+        render_html(f"""
+        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid rgba(255, 255, 255, 0.12);">
+            {get_news_globe_icon_svg(size=40)}
+            <div>
+                <div style="font-family: 'Space Grotesk', -apple-system, sans-serif; font-size: 1.15rem; font-weight: 800; color: #F9FAFB; letter-spacing: -0.01em;">
+                    {t('brand_title', current_lang)} — Global Wire
+                </div>
+                <div style="font-size: 0.72rem; color: #94A3B8; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; margin-top: 2px;">
+                    Real-Time Maritime Intelligence & Energy Wire
+                </div>
+            </div>
+        </div>
+        """)
         
         c_btn, c_time = st.columns([1, 1])
         with c_btn:
