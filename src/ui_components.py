@@ -754,6 +754,113 @@ div[data-testid="stPopoverButton"] > button div {{
   padding: 0 !important;
 }}
 
+/* 17c. Sleek, Compact Slate-Grey Buttons inside Popover Menus (Original Website Dropdown Format) */
+div[data-testid="stPopoverBody"] div.stButton > button,
+div[data-baseweb="popover"] div.stButton > button,
+div[data-testid="stPopoverContent"] div.stButton > button,
+div[data-testid="stPopoverBody"] button[kind="secondary"],
+div[data-testid="stPopoverBody"] button[kind="primary"],
+div[data-baseweb="popover"] button[kind="secondary"],
+div[data-baseweb="popover"] button[kind="primary"] {{
+  background: #1E293B !important;
+  background-color: #1E293B !important;
+  color: #F1F5F9 !important;
+  -webkit-text-fill-color: #F1F5F9 !important;
+  border: 1px solid rgba(255, 255, 255, 0.09) !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25) !important;
+  border-radius: 6px !important;
+  height: 34px !important;
+  min-height: 34px !important;
+  max-height: 34px !important;
+  line-height: 34px !important;
+  padding: 0 12px !important;
+  margin: 3px 0 !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  text-align: left !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  transition: all 0.15s ease-in-out !important;
+  cursor: pointer !important;
+  width: 100% !important;
+}}
+
+/* Inner text and icons of popover buttons */
+div[data-testid="stPopoverBody"] div.stButton > button *,
+div[data-testid="stPopoverBody"] div.stButton > button p,
+div[data-testid="stPopoverBody"] div.stButton > button span,
+div[data-testid="stPopoverBody"] div.stButton > button div,
+div[data-baseweb="popover"] div.stButton > button *,
+div[data-baseweb="popover"] div.stButton > button p,
+div[data-baseweb="popover"] div.stButton > button span,
+div[data-baseweb="popover"] div.stButton > button div {{
+  color: #F1F5F9 !important;
+  -webkit-text-fill-color: #F1F5F9 !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  text-align: left !important;
+  justify-content: flex-start !important;
+  line-height: 1 !important;
+}}
+
+/* Hover state for popover dropdown buttons */
+div[data-testid="stPopoverBody"] div.stButton > button:hover,
+div[data-baseweb="popover"] div.stButton > button:hover,
+div[data-testid="stPopoverContent"] div.stButton > button:hover {{
+  background: #334155 !important;
+  background-color: #334155 !important;
+  border-color: rgba(255, 255, 255, 0.25) !important;
+  color: #FFFFFF !important;
+  -webkit-text-fill-color: #FFFFFF !important;
+  transform: none !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35) !important;
+}}
+
+div[data-testid="stPopoverBody"] div.stButton > button:hover *,
+div[data-testid="stPopoverBody"] div.stButton > button:hover p,
+div[data-testid="stPopoverBody"] div.stButton > button:hover span,
+div[data-baseweb="popover"] div.stButton > button:hover * {{
+  color: #FFFFFF !important;
+  -webkit-text-fill-color: #FFFFFF !important;
+}}
+
+/* Selected/Active Language Button in Popover (Kind=Primary) */
+div[data-testid="stPopoverBody"] div.stButton > button[kind="primary"],
+div[data-testid="stPopoverBody"] div.stButton > button[data-testid="stBaseButton-primary"],
+div[data-baseweb="popover"] div.stButton > button[kind="primary"],
+div[data-baseweb="popover"] div.stButton > button[data-testid="stBaseButton-primary"] {{
+  background: rgba(234, 179, 8, 0.14) !important;
+  background-color: rgba(234, 179, 8, 0.14) !important;
+  border: 1.5px solid #EAB308 !important;
+  color: #FACC15 !important;
+  -webkit-text-fill-color: #FACC15 !important;
+  font-weight: 700 !important;
+}}
+
+div[data-testid="stPopoverBody"] div.stButton > button[kind="primary"] *,
+div[data-testid="stPopoverBody"] div.stButton > button[kind="primary"] p,
+div[data-testid="stPopoverBody"] div.stButton > button[kind="primary"] span,
+div[data-baseweb="popover"] div.stButton > button[kind="primary"] * {{
+  color: #FACC15 !important;
+  -webkit-text-fill-color: #FACC15 !important;
+  font-weight: 700 !important;
+}}
+
+/* Ensure the popover popup background is deep dark slate with subtle glassmorphic border */
+div[data-testid="stPopoverBody"],
+div[data-baseweb="popover"] {{
+  background: #0B1120 !important;
+  border: 1px solid rgba(255, 255, 255, 0.14) !important;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.65) !important;
+  border-radius: 8px !important;
+  padding: 12px 14px !important;
+}}
+
 /* 18. Modern Glassmorphic Cards */
 .editorial-card, .instrument-card {{
   background: rgba(14, 21, 38, 0.75);

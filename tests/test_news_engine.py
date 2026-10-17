@@ -62,5 +62,33 @@ def test_active_alerts_and_refresh():
     
     refresh_result = GlobalNewsEngine.refresh_news()
     assert refresh_result["status"] == "SUCCESS"
-    assert refresh_result["total_articles"] >= 6
+    assert refresh_result["total_articles"] >= 18
     assert isinstance(refresh_result["refreshed_at"], str)
+
+def test_multilingual_chokepoints_telemetry():
+    # Test Hindi
+    hi_cps = GlobalNewsEngine.get_chokepoint_telemetry("hi")
+    assert len(hi_cps) == 4
+    hi_names = [cp["name"] for cp in hi_cps]
+    assert "होर्मुज जलडमरूमध्य" in hi_names
+    assert "बाब अल-मंदेब / लाल सागर" in hi_names
+    assert "मलक्का जलडमरूमध्य" in hi_names
+    assert "स्वेज नहर" in hi_names
+    hi_hormuz = next(cp for cp in hi_cps if cp["name"] == "होर्मुज जलडमरूमध्य")
+    assert "उच्च नौसैनिक गश्त" in hi_hormuz["status"]
+    assert "ड्रोन" in hi_hormuz["key_risk"]
+    assert "फुजैराह" in hi_hormuz["contingency"]
+
+    # Test Spanish
+    es_cps = GlobalNewsEngine.get_chokepoint_telemetry("es")
+    es_names = [cp["name"] for cp in es_cps]
+    assert "Estrecho de Ormuz" in es_names
+    assert "Canal de Suez" in es_names
+
+def test_expanded_live_news_catalog():
+    news = GlobalNewsEngine.get_live_news_feed()
+    assert len(news) >= 18
+    for item in news:
+        assert "timestamp" in item
+        assert any(unit in item["timestamp"] for unit in ["mins ago", "hour", "hours", "Just now", "Live Wire"])
+

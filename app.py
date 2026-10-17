@@ -418,7 +418,7 @@ with col_news:
         
         with tab_hormuz:
             st.markdown("#### 🔴 Maritime Transit Risk Monitor")
-            for chk in GlobalNewsEngine.get_chokepoint_telemetry():
+            for chk in GlobalNewsEngine.get_chokepoint_telemetry(current_lang):
                 st.markdown(f"""
                 <div style="background: rgba(14, 21, 38, 0.9); border: 1px solid rgba(255, 255, 255, 0.12); border-left: 4px solid {chk['status_color']}; border-radius: 6px; padding: 10px 12px; margin-bottom: 8px;">
                     <div style="display: flex; justify-content: space-between; align-items: center;">
@@ -433,7 +433,7 @@ with col_news:
                 
         with tab_trade:
             st.markdown("#### 🚢 Global Petroleum Import & Export")
-            for item in GlobalNewsEngine.get_live_news_feed(category="TRADE_FLOWS"):
+            for item in GlobalNewsEngine.get_live_news_feed(category="TRADE_FLOWS", lang=current_lang):
                 metrics_html = " ".join([f"<span style='background: rgba(59,130,246,0.18); color: #60A5FA; padding: 2px 6px; border-radius: 4px; font-size: 0.68rem;'><b>{k}:</b> {v}</span>" for k, v in item['metrics'].items()])
                 st.markdown(f"""
                 <div style="background: rgba(14, 21, 38, 0.9); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 6px; padding: 10px 12px; margin-bottom: 8px;">
@@ -495,7 +495,7 @@ with col_news:
             
         with tab_all:
             st.markdown("#### 📰 Complete Real-Time Intelligence Chronology")
-            for item in GlobalNewsEngine.get_live_news_feed():
+            for item in GlobalNewsEngine.get_live_news_feed(lang=current_lang):
                 st.markdown(f"""
                 <div style="background: rgba(14, 21, 38, 0.9); border: 1px solid rgba(255, 255, 255, 0.12); border-left: 3px solid {item['impact_color']}; border-radius: 6px; padding: 10px 12px; margin-bottom: 8px;">
                     <div style="display: flex; justify-content: space-between; align-items: center;">

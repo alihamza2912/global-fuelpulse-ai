@@ -87,3 +87,39 @@ def test_home_and_india_translations_across_languages():
             en_val = t(key, "en")
             assert val != ""
 
+
+def test_deep_localization_keys():
+    """Verifies that executive briefing, methodological distinction, and maritime alerts expander exist across languages."""
+    keys = [
+        "exec_briefing_title",
+        "exec_briefing_cartel",
+        "exec_briefing_shale",
+        "exec_briefing_india",
+        "method_distinction_title",
+        "method_distinction_text",
+        "maritime_alerts_expander",
+        "market_signals_leaderboard",
+        "world_extraction_geo",
+        "top_10_producers_title",
+        "regional_prod_shares_title",
+        "top_5_exporters_title",
+        "top_5_importers_title",
+        "bilateral_trade_flows_title",
+        "tracked_daily_flow",
+        "opec_coordinated_share",
+        "non_opec_output",
+        "top_geological_reserve"
+    ]
+    for lang in ["hi", "es", "fr", "ar", "de", "zh", "ru", "ja"]:
+        for k in keys:
+            val = t(k, lang)
+            assert val != k, f"Key {k} missing in {lang}"
+            assert len(val) > 0
+
+    # Specifically verify Hindi translations
+    assert "कार्यकारी" in t("exec_briefing_title", "hi")
+    assert "ओपेक+" in t("exec_briefing_cartel", "hi")
+    assert "पद्धतिगत" in t("method_distinction_title", "hi")
+    assert "कच्चे तेल" in t("method_distinction_text", "hi")
+    assert "समुद्री परिवहन" in t("maritime_alerts_expander", "hi")
+

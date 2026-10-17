@@ -1075,7 +1075,7 @@ def render_dashboard_view(navigate_fn=None):
     col_map, col_leader = st.columns([7, 5])
 
     with col_map:
-        st.markdown("#### 🗺️ World Petroleum Extraction Geography")
+        st.markdown(f"#### {t('world_extraction_geo', cur_lang)}")
         prod_data = prod_lb
         fig_world = get_cached_world_production_map(prod_data)
         st.plotly_chart(fig_world, width="stretch", theme=None)
@@ -1104,7 +1104,7 @@ def render_dashboard_view(navigate_fn=None):
 
 
     with col_leader:
-        st.markdown("#### ⚡ Market Signals & Leaderboard")
+        st.markdown(f"#### {t('market_signals_leaderboard', cur_lang)}")
         top_producers = prod_data.head(6)[["country_name", "crude_prod_mbpd_2024", "share_of_global_pct", "is_opec"]]
         top_producers = top_producers.rename(columns={
             "country_name": "Producer",
@@ -1117,10 +1117,10 @@ def render_dashboard_view(navigate_fn=None):
         render_html(
             f"""
             <div style="background: rgba(14, 21, 38, 0.75); backdrop-filter: blur(14px); padding: 14px 16px; border: 1px solid rgba(255, 255, 255, 0.12); box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3); border-radius: 6px; font-size: 0.84rem; line-height: 1.6; color: #F9FAFB;">
-                <b>EXECUTIVE BRIEFING:</b><br>
-                • <b>Cartel Dynamics:</b> OPEC+ nations coordinate ~55% of world tracked oil supply, holding the largest low-cost swing capacity.<br>
-                • <b>US Shale Hegemony:</b> The United States leads extraction with 13.2 mbpd, serving as the dominant non-OPEC pricing anchor.<br>
-                • <b>India Geopolitics:</b> 88.2% foreign crude intake makes national fiscal balances sensitive to freight corridors and crude swings.
+                <b>{t('exec_briefing_title', cur_lang)}</b><br>
+                • {t('exec_briefing_cartel', cur_lang)}<br>
+                • {t('exec_briefing_shale', cur_lang)}<br>
+                • {t('exec_briefing_india', cur_lang)}
             </div>
             """
         )
@@ -1144,30 +1144,30 @@ def render_dashboard_view(navigate_fn=None):
 
     p1, p2, p3, p4 = st.columns(4)
     with p1:
-        render_instrument_card("Tracked Daily Flow", f"{opec_split['total_tracked_mbpd']} mbpd", accent="amber", subtext="Crude + Lease Condensate")
+        render_instrument_card(t("tracked_daily_flow", cur_lang), f"{opec_split['total_tracked_mbpd']} mbpd", accent="amber", subtext="Crude + Lease Condensate")
     with p2:
-        render_instrument_card("OPEC+ Coordinated Share", f"{opec_split['opec_plus_share_pct']}%", accent="copper", subtext=f"{opec_split['opec_plus_mbpd']} mbpd managed")
+        render_instrument_card(t("opec_coordinated_share", cur_lang), f"{opec_split['opec_plus_share_pct']}%", accent="copper", subtext=f"{opec_split['opec_plus_mbpd']} mbpd managed")
     with p3:
-        render_instrument_card("Non-OPEC Output", f"{opec_split['non_opec_share_pct']}%", accent="teal", subtext=f"{opec_split['non_opec_mbpd']} mbpd market-driven")
+        render_instrument_card(t("non_opec_output", cur_lang), f"{opec_split['non_opec_share_pct']}%", accent="teal", subtext=f"{opec_split['non_opec_mbpd']} mbpd market-driven")
     with p4:
-        render_instrument_card("Top Geological Reserve", "267.2B bbl", accent="amber", subtext="Saudi Aramco (81 yrs R/P)", code_badge="SAU")
+        render_instrument_card(t("top_geological_reserve", cur_lang), "267.2B bbl", accent="amber", subtext="Saudi Aramco (81 yrs R/P)", code_badge="SAU")
 
     cp_chart1, cp_chart2 = st.columns([7, 5])
     fig_prod_bar, fig_reg = get_cached_ch02_charts(prod_lb, regional_prod)
 
     with cp_chart1:
-        st.markdown("#### 📊 Top 10 Crude Oil Producing Nations (2024 vs 2023)")
+        st.markdown(f"#### 📊 {t('top_10_producers_title', cur_lang)}")
         st.plotly_chart(fig_prod_bar, width="stretch", theme=None)
 
     with cp_chart2:
-        st.markdown("#### 🌐 Regional Production Shares")
+        st.markdown(f"#### 🌐 {t('regional_prod_shares_title', cur_lang)}")
         st.plotly_chart(fig_reg, width="stretch", theme=None)
 
     render_html(
         f"""
         <div style="background: rgba(14, 21, 38, 0.75); backdrop-filter: blur(14px); padding: 12px 16px; border-left: 3px solid {COLOR_AMBER}; border: 1px solid rgba(255, 255, 255, 0.12); box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3); border-radius: 4px; font-size: 0.84rem; color: #F9FAFB; margin-top: 6px; line-height: 1.5;">
-            <b>METHODOLOGICAL DISTINCTION:</b> 
-            This dataset strictly accounts for <b>crude oil and lease condensate</b>. It explicitly excludes Natural Gas Liquids (NGLs), refinery processing gains, and biofuels. Proven reserves represent underground resources recoverable under current economic and operating conditions, whereas production measures active daily extraction rate.
+            <b>{t('method_distinction_title', cur_lang)}</b> 
+            {t('method_distinction_text', cur_lang)}
         </div>
         """
     )
@@ -1192,17 +1192,17 @@ def render_dashboard_view(navigate_fn=None):
     t_col1, t_col2 = st.columns([6, 6])
 
     with t_col1:
-        st.markdown("#### 🚢 Top 5 Petroleum Exporters (Tracked Seaborne Flow)")
+        st.markdown(f"#### 🚢 {t('top_5_exporters_title', cur_lang)}")
         if fig_exp is not None:
             st.plotly_chart(fig_exp, width="stretch", theme=None)
 
     with t_col2:
-        st.markdown("#### 📥 Top 5 Petroleum Importers (Daily Intake)")
+        st.markdown(f"#### 📥 {t('top_5_importers_title', cur_lang)}")
         if fig_imp is not None:
             st.plotly_chart(fig_imp, width="stretch", theme=None)
 
     # Bilateral Trade Flows Table
-    st.markdown("#### 📑 Verified Bilateral Trade Flows (HS 2709 Crude & HS 2710 Products)")
+    st.markdown(f"#### 📑 {t('bilateral_trade_flows_title', cur_lang)}")
     if not trade_matrix.empty:
         cols_to_use = [c for c in ["exporter_name", "importer_name", "quantity", "quantity_unit", "value_usd", "source_id"] if c in trade_matrix.columns]
         display_matrix = trade_matrix[cols_to_use].rename(columns={
@@ -1221,7 +1221,7 @@ def render_dashboard_view(navigate_fn=None):
     st.markdown(f"#### {t('chokepoints_header', cur_lang)}")
     st.caption(t("chokepoints_caption", cur_lang))
 
-    chokepoints = GlobalNewsEngine.get_chokepoint_telemetry()
+    chokepoints = GlobalNewsEngine.get_chokepoint_telemetry(cur_lang)
     cp_cols = st.columns(4)
     for idx, cp in enumerate(chokepoints):
         with cp_cols[idx % 4]:
@@ -1252,8 +1252,8 @@ def render_dashboard_view(navigate_fn=None):
                 unsafe_allow_html=True
             )
 
-    with st.expander("📡 View Breaking Maritime Transport & Bilateral Flow Alerts (Live Wire)", expanded=False):
-        m_news = GlobalNewsEngine.get_live_news_feed(category="HORMUZ_MARITIME") + GlobalNewsEngine.get_live_news_feed(category="TRADE_FLOWS")
+    with st.expander(t("maritime_alerts_expander", cur_lang), expanded=False):
+        m_news = GlobalNewsEngine.get_live_news_feed(category="HORMUZ_MARITIME", lang=cur_lang) + GlobalNewsEngine.get_live_news_feed(category="TRADE_FLOWS", lang=cur_lang)
         for item in m_news[:4]:
             st.markdown(
                 f"""
