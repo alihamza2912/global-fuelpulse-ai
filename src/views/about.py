@@ -9,6 +9,7 @@ from src.ui_components import (
     render_html,
     render_instrument_card,
     get_fuel_client_logo_html,
+    get_lucide_icon_svg,
     COLOR_AMBER,
     COLOR_WHITE,
     COLOR_INK,
@@ -64,10 +65,10 @@ def render_about_view(navigate_fn=None):
 
     col_geo, col_tax = st.columns(2, gap="medium")
     with col_geo:
-        render_html("""
+        render_html(f"""
         <div style="background: rgba(14, 21, 38, 0.7); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 10px; padding: 20px; height: 100%;">
             <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 10px;">
-                <span style="font-size: 1.2rem;">🌍</span>
+                {get_lucide_icon_svg("globe", size=20, color="#F5B942")}
                 <span style="font-family: 'Space Grotesk', sans-serif; font-weight: 800; color: #F5B942; font-size: 1rem;">Geological & Upstream Drivers</span>
             </div>
             <div style="font-family: 'Inter', sans-serif; font-size: 0.88rem; line-height: 1.55; color: #94A3B8;">
@@ -82,10 +83,10 @@ def render_about_view(navigate_fn=None):
         """)
 
     with col_tax:
-        render_html("""
+        render_html(f"""
         <div style="background: rgba(14, 21, 38, 0.7); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 10px; padding: 20px; height: 100%;">
             <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 10px;">
-                <span style="font-size: 1.2rem;">🏛️</span>
+                {get_lucide_icon_svg("landmark", size=20, color="#60A5FA")}
                 <span style="font-family: 'Space Grotesk', sans-serif; font-weight: 800; color: #60A5FA; font-size: 1rem;">Sovereign Fiscal & Tax Regimes</span>
             </div>
             <div style="font-family: 'Inter', sans-serif; font-size: 0.88rem; line-height: 1.55; color: #94A3B8;">

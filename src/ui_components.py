@@ -159,6 +159,57 @@ def get_news_globe_icon_data_uri(size: int = 36) -> str:
     return "data:image/svg+xml," + urllib.parse.quote(compact_svg)
 
 
+# ==============================================================================
+# 3c. COHESIVE LUCIDE VECTOR ICON SYSTEM
+# ==============================================================================
+LUCIDE_ICON_PATHS: Dict[str, str] = {
+    "layout-dashboard": '<rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/>',
+    "chart-no-axes-combined": '<path d="M12 16v5"/><path d="M16 14v7"/><path d="M20 10v11"/><path d="m22 3-8.646 8.646a.5.5 0 0 1-.708 0L9.354 8.354a.5.5 0 0 0-.707 0L2 15"/><path d="M4 18v3"/><path d="M8 14v7"/>',
+    "map-pinned": '<path d="M18 8c0 4.5-6 9-6 9s-6-4.5-6-9a6 6 0 0 1 12 0"/><circle cx="12" cy="8" r="2"/><path d="M8.835 14H5a1 1 0 0 0-.9.56l-1.9 3.8A1 1 0 0 0 3.1 20h17.8a1 1 0 0 0 .9-1.64l-1.9-3.8a1 1 0 0 0-.9-.56h-3.835"/>',
+    "info": '<circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>',
+    "workflow": '<rect width="8" height="8" x="3" y="3" rx="2"/><path d="M7 11v4a2 2 0 0 0 2 2h4"/><rect width="8" height="8" x="13" y="13" rx="2"/>',
+    "layers": '<path d="m12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83Z"/><path d="m22 17.65-9.17 4.16a2 2 0 0 1-1.66 0L2 17.65"/><path d="m22 12.65-9.17 4.16a2 2 0 0 1-1.66 0L2 12.65"/>',
+    "shield-check": '<path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/>',
+    "flask-conical": '<path d="M10 2v7.527a2 2 0 0 1-.211.896L4.72 20.55a1 1 0 0 0 .9 1.45h12.76a1 1 0 0 0 .9-1.45l-5.069-10.127A2 2 0 0 1 14 9.527V2"/><path d="M8.5 2h7"/><path d="M7 16h10"/>',
+    "route": '<circle cx="6" cy="19" r="3"/><path d="M9 19h8.5a3.5 3.5 0 0 0 0-7h-11a3.5 3.5 0 0 1 0-7H15"/><circle cx="18" cy="5" r="3"/>',
+    "book-open": '<path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/>',
+    "languages": '<path d="m5 8 6 6"/><path d="m4 14 6-6 2-3"/><path d="M2 5h12"/><path d="M7 2h1"/><path d="m22 22-5-10-5 10"/><path d="M14 18h6"/>',
+    "newspaper": '<path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"/><path d="M18 14h-8"/><path d="M15 18h-5"/><path d="M10 6h8v4h-8V6Z"/>',
+    "database": '<ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/><path d="M3 12c0 1.66 4 3 9 3s9-1.34 9-3"/>',
+    "activity": '<path d="M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.48 12H2"/>',
+    "sparkles": '<path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/>',
+    "droplet": '<path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7z"/>',
+    "zap": '<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>',
+    "search": '<circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>',
+    "refresh-cw": '<path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/>',
+    "chevron-right": '<path d="m9 18 6-6-6-6"/>',
+    "chevron-down": '<path d="m6 9 6 6 6-6"/>',
+    "check": '<path d="M20 6 9 17l-5-5"/>',
+    "external-link": '<path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>',
+    "globe": '<circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/>',
+    "landmark": '<line x1="3" x2="21" y1="22" y2="22"/><line x1="6" x2="6" y1="18" y2="11"/><line x1="10" x2="10" y1="18" y2="11"/><line x1="14" x2="14" y1="18" y2="11"/><line x1="18" x2="18" y1="18" y2="11"/><polygon points="12 2 20 7 4 7"/>'
+}
+
+
+def get_lucide_icon_svg(
+    name: str,
+    size: int = 18,
+    color: str = "currentColor",
+    stroke_width: float = 2.0,
+    class_name: str = ""
+) -> str:
+    """Returns an accessible, pure-SVG vector element matching Lucide React icons."""
+    clean_name = name.lower().strip().replace("_", "-")
+    path_data = LUCIDE_ICON_PATHS.get(clean_name, LUCIDE_ICON_PATHS.get("activity", ""))
+    cls_attr = f' class="{class_name}"' if class_name else ''
+    return (
+        f'<svg width="{size}" height="{size}" viewBox="0 0 24 24" fill="none" '
+        f'stroke="{color}" stroke-width="{stroke_width}" stroke-linecap="round" '
+        f'stroke-linejoin="round"{cls_attr} style="vertical-align: -2px; display: inline-block; flex-shrink: 0;">'
+        f'{path_data}</svg>'
+    )
+
+
 def get_fuel_client_logo_html() -> str:
     """Returns a client-facing badge with the distinctive fuel trade logo."""
     return f"""
@@ -183,6 +234,90 @@ def get_fuel_client_logo_html() -> str:
         </span>
     </div>
     """
+
+
+def render_app_header_brand_html(current_lang: str, engine_name: str, live_text: str) -> str:
+    """Renders the balanced, unified top application header bar with Lucide vector icons."""
+    from src.localization.i18n import t
+    brand_sub = t('brand_subtitle', current_lang)
+    db_icon = get_lucide_icon_svg("database", size=13, color="#34D399")
+    act_icon = get_lucide_icon_svg("activity", size=13, color="#F5B942")
+    logo_svg = get_logo_mark_svg(size=38)
+    return f"""
+    <div class="fuelpulse-header-bar">
+        <div style="display: flex; align-items: center; gap: 12px;">
+            {logo_svg}
+            <div>
+                <div style="display: flex; align-items: center; gap: 8px; line-height: 1.1;">
+                    <span style="font-family: 'Space Grotesk', -apple-system, sans-serif; font-size: 1.25rem; font-weight: 800; letter-spacing: -0.01em; color: #FFFFFF; text-transform: uppercase;">
+                        GLOBAL FUELPULSE
+                    </span>
+                    <span style="background: #EAB308; color: #070A12; font-family: 'Space Grotesk', sans-serif; font-size: 0.72rem; font-weight: 900; padding: 2px 7px; border-radius: 4px; letter-spacing: 0.05em; display: inline-block;">
+                        AI
+                    </span>
+                </div>
+                <div style="font-family: 'Space Grotesk', -apple-system, sans-serif; font-size: 0.65rem; font-weight: 700; color: #94A3B8; letter-spacing: 0.12em; text-transform: uppercase; margin-top: 3px;">
+                    {brand_sub}
+                </div>
+            </div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+            <span class="fuelpulse-status-pill fuelpulse-status-emerald">
+                {db_icon}
+                <span>{engine_name}</span>
+            </span>
+            <span class="fuelpulse-status-pill fuelpulse-status-amber">
+                {act_icon}
+                <span>{live_text}</span>
+            </span>
+        </div>
+    </div>
+    """
+
+
+def render_two_tier_nav_html(current_lang: str, active_canonical: str) -> str:
+    """Renders the structured two-tier navigation system with Lucide vector icons."""
+    from src.localization.i18n import get_clean_nav_label
+
+    tier_1_items = [
+        {"tab": "home", "icon": "layout-dashboard", "label": get_clean_nav_label("home", current_lang)},
+        {"tab": "dashboard", "icon": "chart-no-axes-combined", "label": get_clean_nav_label("dashboard", current_lang), "badge": "Live"},
+        {"tab": "india", "icon": "map-pinned", "label": get_clean_nav_label("india", current_lang), "badge": "MoPNG"},
+        {"tab": "about", "icon": "info", "label": get_clean_nav_label("about", current_lang)},
+        {"tab": "how_it_works", "icon": "workflow", "label": get_clean_nav_label("how_it_works", current_lang)},
+    ]
+
+    tier_2_items = [
+        {"tab": "features", "icon": "layers", "label": get_clean_nav_label("features", current_lang), "badge": "12 Mod"},
+        {"tab": "data_trust", "icon": "shield-check", "label": get_clean_nav_label("data_trust", current_lang), "badge": "SLA"},
+        {"tab": "methodology", "icon": "flask-conical", "label": get_clean_nav_label("methodology", current_lang)},
+        {"tab": "roadmap", "icon": "route", "label": get_clean_nav_label("roadmap", current_lang), "badge": "2026"},
+        {"tab": "faq", "icon": "book-open", "label": get_clean_nav_label("faq", current_lang), "badge": "Docs"},
+    ]
+
+    def render_tier_bar(items, tier_title):
+        links = []
+        for it in items:
+            is_active = (it["tab"] == active_canonical)
+            active_cls = " active" if is_active else ""
+            icon_color = "#F5B942" if is_active else "#94A3B8"
+            icon_svg = get_lucide_icon_svg(it["icon"], size=15, color=icon_color)
+            badge_html = f'<span class="fuelpulse-nav-badge">{it["badge"]}</span>' if it.get("badge") else ''
+            links.append(
+                f'<a href="?tab={it["tab"]}" target="_self" class="fuelpulse-nav-link{active_cls}">'
+                f'{icon_svg}<span>{it["label"]}</span>{badge_html}</a>'
+            )
+        return (
+            f'<div class="fuelpulse-nav-tier">'
+            f'<span class="fuelpulse-nav-tier-label">{tier_title}</span>'
+            f'{"".join(links)}'
+            f'</div>'
+        )
+
+    t1 = render_tier_bar(tier_1_items, "CORE")
+    t2 = render_tier_bar(tier_2_items, "GOVERNANCE & SPECS")
+    return f'<div class="fuelpulse-nav-shell">{t1}{t2}</div>'
+
 
 
 def get_animated_grid_css(container_class: str = "fuelpulse-hero-backdrop") -> str:
@@ -255,6 +390,153 @@ def apply_theme():
 @keyframes stapp-grid-drift {{
   from {{ background-position: 0 0, 0 0, 0 0, 0 0; }}
   to   {{ background-position: 144px 144px, 144px 144px, 144px 144px, 144px 144px; }}
+}}
+
+/* 0. Responsive Centered Layout Container (1360px max-width, zero horizontal overflow) */
+.block-container {{
+  max-width: 1360px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  padding-top: 1rem !important;
+  padding-bottom: 3.5rem !important;
+  padding-left: 24px !important;
+  padding-right: 24px !important;
+  box-sizing: border-box !important;
+}}
+
+@media (max-width: 1024px) {{
+  .block-container {{
+    padding-left: 18px !important;
+    padding-right: 18px !important;
+    padding-top: 0.75rem !important;
+  }}
+}}
+
+@media (max-width: 768px) {{
+  .block-container {{
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+    padding-top: 0.5rem !important;
+  }}
+}}
+
+/* Universal Header & Action Bar Container */
+.fuelpulse-header-bar {{
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  background: rgba(14, 21, 38, 0.90) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  border-radius: 10px !important;
+  padding: 8px 16px !important;
+  margin-bottom: 12px !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4) !important;
+  gap: 14px !important;
+  flex-wrap: wrap !important;
+}}
+
+.fuelpulse-status-pill {{
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  padding: 3px 9px !important;
+  border-radius: 999px !important;
+  font-family: 'Space Grotesk', sans-serif !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.04em !important;
+  line-height: 1 !important;
+}}
+
+.fuelpulse-status-emerald {{
+  background: rgba(16, 185, 129, 0.16) !important;
+  color: #34D399 !important;
+  border: 1px solid rgba(16, 185, 129, 0.35) !important;
+}}
+
+.fuelpulse-status-amber {{
+  background: rgba(245, 185, 66, 0.16) !important;
+  color: #F5B942 !important;
+  border: 1px solid rgba(245, 185, 66, 0.35) !important;
+}}
+
+/* Structured Two-Tier Navigation System */
+.fuelpulse-nav-shell {{
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 6px !important;
+  margin-bottom: 20px !important;
+  width: 100% !important;
+}}
+
+.fuelpulse-nav-tier {{
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  flex-wrap: wrap !important;
+  background: rgba(11, 17, 32, 0.75) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: 8px !important;
+  padding: 4px 6px !important;
+}}
+
+.fuelpulse-nav-link {{
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 7px !important;
+  height: 36px !important;
+  padding: 0 13px !important;
+  border-radius: 6px !important;
+  font-family: 'Space Grotesk', -apple-system, sans-serif !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  color: #94A3B8 !important;
+  text-decoration: none !important;
+  transition: all 0.15s ease-in-out !important;
+  border: 1px solid transparent !important;
+  white-space: nowrap !important;
+  cursor: pointer !important;
+}}
+
+.fuelpulse-nav-link:hover {{
+  background: rgba(255, 255, 255, 0.06) !important;
+  color: #F9FAFB !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+}}
+
+.fuelpulse-nav-link.active {{
+  background: rgba(234, 179, 8, 0.12) !important;
+  color: #F5B942 !important;
+  border-color: rgba(234, 179, 8, 0.45) !important;
+  font-weight: 800 !important;
+  box-shadow: 0 0 12px rgba(234, 179, 8, 0.15) !important;
+}}
+
+.fuelpulse-nav-tier-label {{
+  font-size: 10px !important;
+  font-weight: 800 !important;
+  color: #64748B !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.08em !important;
+  padding: 0 8px !important;
+  user-select: none !important;
+}}
+
+.fuelpulse-nav-badge {{
+  display: inline-flex !important;
+  align-items: center !important;
+  height: 16px !important;
+  padding: 0 5px !important;
+  border-radius: 4px !important;
+  font-size: 10px !important;
+  font-weight: 700 !important;
+  background: rgba(234, 179, 8, 0.16) !important;
+  color: #F5B942 !important;
+  border: 1px solid rgba(234, 179, 8, 0.32) !important;
+  margin-left: 4px !important;
+  line-height: 1 !important;
 }}
 
 /* 1. Global page canvas with dark animated grid backdrop */

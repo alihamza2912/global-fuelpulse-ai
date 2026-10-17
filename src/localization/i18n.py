@@ -2366,3 +2366,24 @@ def get_localized_nav_map(lang: Optional[str] = None) -> Dict[str, str]:
         ("faq", "nav_faq")
     ]
     return {canonical: t(key, active_lang) for canonical, key in nav_keys}
+
+
+import re
+EMOJI_PATTERN = re.compile(r'[\U00010000-\U0010ffff\u2600-\u26ff\u2700-\u27bf\ufe0f\u200d\u2300-\u23ff]+')
+
+
+def strip_emojis(text: str) -> str:
+    """Safely removes emoji characters while strictly preserving all world scripts."""
+    if not text:
+        return ""
+    return EMOJI_PATTERN.sub('', text).strip()
+
+
+def get_clean_nav_label(canonical: str, lang: Optional[str] = None) -> str:
+    """Returns the clean localized label without platform emojis for Lucide icon pairing."""
+    active_lang = lang or get_current_language()
+    nav_map = get_localized_nav_map(active_lang)
+    raw = nav_map.get(canonical, canonical)
+    clean = strip_emojis(raw)
+    return clean or raw
+

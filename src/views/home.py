@@ -13,6 +13,7 @@ from src.ui_components import (
     render_instrument_card,
     get_brand_logo_svg,
     get_fuel_client_logo_html,
+    get_lucide_icon_svg,
     apply_clean_layout,
     COLOR_AMBER,
     COLOR_WHITE,
@@ -56,8 +57,8 @@ def render_home_view(navigate_fn=None):
     </div>
     """)
 
-    # 2. Hero Action Buttons (Primary Glow CTA + Secondary Link)
-    c1, c2, c3, c4 = st.columns([3, 4, 3, 2])
+    # 2. Hero Action Buttons (Centered Balanced 2-CTA Grid)
+    _, c2, c3, _ = st.columns([2.5, 3.5, 3.5, 2.5])
     with c2:
         if st.button(t('home_cta_dashboard', cur_lang), type="primary", use_container_width=True, key="hero_cta_dash"):
             if navigate_fn:
@@ -240,7 +241,7 @@ def render_home_view(navigate_fn=None):
         render_html(f"""
         <div style="background: rgba(14, 21, 38, 0.65); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; padding: 18px; margin-bottom: 14px; min-height: 170px;">
             <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
-                <span style="font-size: 1.2rem;">⚡</span>
+                {get_lucide_icon_svg("chart-no-axes-combined", size=20, color="#F5B942")}
                 <span style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; color: #F9FAFB; font-size: 0.95rem;">{t('home_card_dash_title', cur_lang)}</span>
             </div>
             <p style="font-size: 0.82rem; color: #94A3B8; line-height: 1.45; margin-bottom: 12px;">
@@ -259,7 +260,7 @@ def render_home_view(navigate_fn=None):
         render_html(f"""
         <div style="background: rgba(14, 21, 38, 0.65); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; padding: 18px; margin-bottom: 14px; min-height: 170px;">
             <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
-                <span style="font-size: 1.2rem;">🇮🇳</span>
+                {get_lucide_icon_svg("map-pinned", size=20, color="#60A5FA")}
                 <span style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; color: #F9FAFB; font-size: 0.95rem;">{t('home_card_india_title', cur_lang)}</span>
             </div>
             <p style="font-size: 0.82rem; color: #94A3B8; line-height: 1.45; margin-bottom: 12px;">
@@ -278,7 +279,7 @@ def render_home_view(navigate_fn=None):
         render_html(f"""
         <div style="background: rgba(14, 21, 38, 0.65); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; padding: 18px; margin-bottom: 14px; min-height: 170px;">
             <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
-                <span style="font-size: 1.2rem;">🔒</span>
+                {get_lucide_icon_svg("shield-check", size=20, color="#34D399")}
                 <span style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; color: #F9FAFB; font-size: 0.95rem;">{t('home_card_trust_title', cur_lang)}</span>
             </div>
             <p style="font-size: 0.82rem; color: #94A3B8; line-height: 1.45; margin-bottom: 12px;">

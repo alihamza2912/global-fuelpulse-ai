@@ -116,7 +116,7 @@ def render_how_it_works_view(navigate_fn=None):
             <ul style="font-family: 'Inter', sans-serif; font-size: 0.83rem; line-height: 1.6; color: #94A3B8; margin: 0; padding-left: 18px;">
                 <li><b style="color: #F9FAFB;">Streamlit 1.40+</b> (Websocket Compr.)</li>
                 <li><b style="color: #F9FAFB;">Plotly 5.24</b> (GPU WebGL Graphics)</li>
-                <li><b style="color: #F9FAFB;">Pytest 9.0+</b> (39 Automated Tests)</li>
+                <li><b style="color: #F9FAFB;">Pytest 9.0+</b> (69 Automated Tests)</li>
                 <li><b style="color: #F9FAFB;">AppTest</b> (Headless UI Assurance)</li>
             </ul>
         </div>

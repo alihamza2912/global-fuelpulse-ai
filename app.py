@@ -35,6 +35,9 @@ from src.ui_components import (
     get_logo_mark_svg,
     get_news_globe_icon_svg,
     get_fuel_client_logo_html,
+    render_app_header_brand_html,
+    render_two_tier_nav_html,
+    get_lucide_icon_svg,
     COLOR_AMBER,
     COLOR_WHITE,
     COLOR_INK,
@@ -120,13 +123,21 @@ KEY_TO_NAV = {v: k for k, v in NAV_MAP.items()}
 
 # URL Query Param Synchronization
 qp_tab = st.query_params.get("tab") or st.query_params.get("view")
-if "active_canonical" not in st.session_state:
-    if qp_tab and qp_tab in CANONICAL_TABS:
-        st.session_state.active_canonical = qp_tab
-    else:
-        st.session_state.active_canonical = "home"
-elif qp_tab and qp_tab in CANONICAL_TABS and qp_tab != st.session_state.active_canonical:
-    st.session_state.active_canonical = qp_tab
+if qp_tab:
+    if isinstance(qp_tab, list):
+        qp_tab = qp_tab[0]
+    tab_aliases = {
+        "trust": "data_trust",
+        "data-trust": "data_trust",
+        "architecture": "how_it_works",
+        "center": "india",
+        "overview": "home",
+    }
+    canonical_tab = tab_aliases.get(str(qp_tab).lower().strip(), str(qp_tab).lower().strip())
+    if canonical_tab in CANONICAL_TABS:
+        st.session_state.active_canonical = canonical_tab
+elif "active_canonical" not in st.session_state:
+    st.session_state.active_canonical = "home"
 
 # Maintain backwards compatibility for tests and legacy callers
 st.session_state.active_nav = KEY_TO_NAV.get(st.session_state.active_canonical, "🏠 Overview")
@@ -159,6 +170,7 @@ def navigate_to(target: str):
         "features catalog": "features",
         "📋 features": "features",
         "data trust": "data_trust",
+        "trust": "data_trust",
         "data trust center": "data_trust",
         "data trust & provenance": "data_trust",
         "open trust center": "data_trust",
@@ -187,7 +199,7 @@ render_html(
     f"""
     <div style="padding: 10px 0 14px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.1); margin-bottom: 12px;">
         <div style="font-family: 'Space Grotesk', -apple-system, sans-serif; font-size: 1.15rem; font-weight: 800; color: #F9FAFB; display: flex; align-items: center; gap: 8px;">
-            <span style="color: #3B82F6;">⚡</span> {t('brand_title', current_lang)}
+            {get_lucide_icon_svg('zap', size=20, color='#F5B942')} {t('brand_title', current_lang)}
         </div>
         <div style="font-family: 'Space Grotesk', -apple-system, sans-serif; font-size: 0.74rem; color: #94A3B8; font-weight: 700; letter-spacing: 0.06em; margin-top: 2px;">
             {t('brand_subtitle', current_lang)} v2.0
@@ -328,34 +340,11 @@ render_html(
 # 5. Top Brand Header Strip with Upper-Right Live Intelligence Notification Center
 from src.analytics.global_news_engine import GlobalNewsEngine
 
-col_brand, col_lang, col_news = st.columns([5.0, 2.5, 2.5], vertical_alignment="center")
+col_brand, col_lang, col_news = st.columns([7.0, 1.5, 1.5], vertical_alignment="center")
 with col_brand:
     health = db_manager.check_health()
     engine_name = "MYSQL 8.4" if health["dialect"] == "mysql" else "SQLITE VERIFIED"
-    render_html(f"""
-    <div style="background: rgba(14, 21, 38, 0.92); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1.5px solid rgba(255, 255, 255, 0.16); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.55); border-radius: 12px; padding: 10px 18px; margin: 0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
-        <div style="display: flex; align-items: center; gap: 14px;">
-            {get_logo_mark_svg(size=44)}
-            <div>
-                <div style="display: flex; align-items: center; gap: 8px; line-height: 1.1;">
-                    <span style="font-family: 'Space Grotesk', -apple-system, sans-serif; font-size: 1.45rem; font-weight: 900; letter-spacing: -0.01em; color: #FFFFFF; text-transform: uppercase;">
-                        GLOBAL FUELPULSE
-                    </span>
-                    <span style="background: #EAB308; color: #070A12; font-family: 'Space Grotesk', sans-serif; font-size: 0.8rem; font-weight: 900; padding: 3px 8px; border-radius: 6px; letter-spacing: 0.05em; display: inline-block;">
-                        AI
-                    </span>
-                </div>
-                <div style="font-family: 'Space Grotesk', -apple-system, sans-serif; font-size: 0.68rem; font-weight: 700; color: #94A3B8; letter-spacing: 0.14em; text-transform: uppercase; margin-top: 3px;">
-                    {t('brand_subtitle', current_lang)}
-                </div>
-            </div>
-        </div>
-        <div style="display: flex; align-items: center; gap: 8px;">
-            <span style="background: rgba(16, 185, 129, 0.18); color: #34D399; border: 1px solid rgba(16, 185, 129, 0.4); padding: 4px 10px; border-radius: 999px; font-family: 'Space Grotesk', sans-serif; font-size: 11px; font-weight: 700;">● {engine_name}</span>
-            <span style="background: rgba(245, 185, 66, 0.18); color: #F5B942; border: 1px solid rgba(245, 185, 66, 0.4); padding: 4px 10px; border-radius: 999px; font-family: 'Space Grotesk', sans-serif; font-size: 11px; font-weight: 700;">● {t('live_indicator', current_lang)}</span>
-        </div>
-    </div>
-    """)
+    render_html(render_app_header_brand_html(current_lang, engine_name, t('live_indicator', current_lang)))
 
 with col_lang:
     all_langs = get_available_languages()
@@ -521,29 +510,10 @@ with col_news:
                 </div>
                 """, unsafe_allow_html=True)
 
-# 6. Interactive Horizontal Product Ribbon Selector (Enlarged & Multi-Lingual)
-localized_nav_map = get_localized_nav_map(current_lang)
-label_to_canonical = {label: canonical for canonical, label in localized_nav_map.items()}
-current_localized_options = list(localized_nav_map.values())
+# 6. Structured Two-Tier Product Navigation
 active_canonical = st.session_state.get("active_canonical", "home")
-current_active_label = localized_nav_map.get(active_canonical, current_localized_options[0])
-
-curr_idx = current_localized_options.index(current_active_label) if current_active_label in current_localized_options else 0
-selected_nav_label = st.pills(
-    "Navigation Portal",
-    options=current_localized_options,
-    selection_mode="single",
-    default=current_localized_options[curr_idx],
-    key=f"nav_pills_{current_lang}_{active_canonical}",
-    label_visibility="collapsed"
-)
-
-if selected_nav_label and selected_nav_label != current_active_label:
-    canonical = label_to_canonical.get(selected_nav_label, "home")
-    st.session_state.active_canonical = canonical
-    st.session_state.active_nav = KEY_TO_NAV.get(canonical, "🏠 Overview")
-    st.query_params["tab"] = canonical
-    st.rerun()
+st.session_state.active_nav = KEY_TO_NAV.get(active_canonical, "🏠 Overview")
+render_html(render_two_tier_nav_html(current_lang, active_canonical))
 
 
 # 7. Modular View Router
