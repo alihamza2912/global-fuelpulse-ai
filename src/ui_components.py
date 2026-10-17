@@ -461,33 +461,50 @@ tr:hover td {{
 
 /* 10. Tabs */
 button[data-baseweb="tab"] {{
-  background-color: rgba(14, 21, 38, 0.6) !important;
-  color: #94A3B8 !important;
-  border: 1px solid rgba(255, 255, 255, 0.10) !important;
+  background-color: rgba(14, 21, 38, 0.75) !important;
+  color: #FFFFFF !important;
+  -webkit-text-fill-color: #FFFFFF !important;
+  border: 1px solid rgba(255, 255, 255, 0.16) !important;
   border-bottom: none !important;
   border-radius: 6px 6px 0px 0px !important;
-  font-weight: 600 !important;
+  font-weight: 700 !important;
   font-family: 'Space Grotesk', sans-serif !important;
   font-size: 14px !important;
-  padding: 8px 18px !important;
+  padding: 9px 20px !important;
   margin-right: 4px !important;
+}}
+button[data-baseweb="tab"] * {{
+  color: #FFFFFF !important;
+  -webkit-text-fill-color: #FFFFFF !important;
+  font-weight: 700 !important;
 }}
 button[data-baseweb="tab"][aria-selected="true"] {{
   background-color: #0E1526 !important;
-  color: #F5B942 !important;
+  color: #FACC15 !important;
+  -webkit-text-fill-color: #FACC15 !important;
   font-weight: 800 !important;
-  border-top: 2px solid #F5B942 !important;
+  border-top: 2.5px solid #EAB308 !important;
   border-bottom: 2px solid #0E1526 !important;
 }}
+button[data-baseweb="tab"][aria-selected="true"] * {{
+  color: #FACC15 !important;
+  -webkit-text-fill-color: #FACC15 !important;
+  font-weight: 800 !important;
+}}
 button[data-baseweb="tab"]:hover {{
-  color: #F9FAFB !important;
+  color: #FACC15 !important;
+  -webkit-text-fill-color: #FACC15 !important;
   background-color: #151F38 !important;
 }}
+button[data-baseweb="tab"]:hover * {{
+  color: #FACC15 !important;
+  -webkit-text-fill-color: #FACC15 !important;
+}}
 div[data-baseweb="tab-highlight"] {{
-  background-color: #F5B942 !important;
+  background-color: #EAB308 !important;
 }}
 div[data-baseweb="tab-border"] {{
-  background-color: rgba(255, 255, 255, 0.12) !important;
+  background-color: rgba(255, 255, 255, 0.16) !important;
   height: 2px !important;
 }}
 
@@ -597,19 +614,16 @@ li[role="menuitem"]:hover, div[role="menuitem"]:hover {{
   color: #F5B942 !important;
 }}
 
-/* 17. Universal Matte Yellow Buttons Across the Entire Platform */
+/* 17. Universal Action Buttons (Matte Yellow with Bold Jet Black Text) */
 div.stButton > button,
 div.stDownloadButton > button,
+div.stFormSubmitButton > button,
 div[data-testid="stPopover"] > button,
 div[data-testid="stPopoverButton"] > button,
-button[kind="primary"],
-button[kind="secondary"],
-button[data-testid^="stBaseButton"],
-button[data-testid="stBaseButton-secondary"],
-button[data-testid="stBaseButton-primary"],
-button[data-testid^="baseButton"],
-button[data-testid="baseButton-secondary"],
-button[data-testid="baseButton-primary"] {{
+div:not([data-testid="stButtonGroup"]):not([data-baseweb="button-group"]):not([data-testid="stPills"]) > button[kind="primary"],
+div:not([data-testid="stButtonGroup"]):not([data-baseweb="button-group"]):not([data-testid="stPills"]) > button[kind="secondary"]:not([role="radio"]):not([role="checkbox"]):not([data-testid*="Active"]),
+div:not([data-testid="stButtonGroup"]):not([data-baseweb="button-group"]):not([data-testid="stPills"]) > button[data-testid="stBaseButton-primary"],
+div:not([data-testid="stButtonGroup"]):not([data-baseweb="button-group"]):not([data-testid="stPills"]) > button[data-testid="stBaseButton-secondary"]:not([role="radio"]):not([role="checkbox"]):not([data-testid*="Active"]) {{
   background: #EAB308 !important;
   background-color: #EAB308 !important;
   color: #070A12 !important;
@@ -625,7 +639,7 @@ button[data-testid="baseButton-primary"] {{
   cursor: pointer !important;
 }}
 
-/* Force all inner elements, text, spans, divs, paragraphs, icons to be crisp, bold jet-black */
+/* Force all inner elements of standard action buttons to be crisp, bold jet-black */
 div.stButton > button *,
 div.stButton > button p,
 div.stButton > button span,
@@ -636,27 +650,19 @@ div.stDownloadButton > button *,
 div.stDownloadButton > button p,
 div.stDownloadButton > button span,
 div.stDownloadButton > button div,
+div.stFormSubmitButton > button *,
+div.stFormSubmitButton > button p,
+div.stFormSubmitButton > button span,
+div.stFormSubmitButton > button div,
 div[data-testid="stPopover"] > button *,
 div[data-testid="stPopover"] > button p,
 div[data-testid="stPopover"] > button span,
 div[data-testid="stPopover"] > button div,
 div[data-testid="stPopoverButton"] > button *,
-button[kind="primary"] *,
-button[kind="primary"] p,
-button[kind="primary"] span,
-button[kind="primary"] div,
-button[kind="secondary"] *,
-button[kind="secondary"] p,
-button[kind="secondary"] span,
-button[kind="secondary"] div,
-button[data-testid^="stBaseButton"] *,
-button[data-testid^="stBaseButton"] p,
-button[data-testid^="stBaseButton"] span,
-button[data-testid^="stBaseButton"] div,
-button[data-testid^="baseButton"] *,
-button[data-testid^="baseButton"] p,
-button[data-testid^="baseButton"] span,
-button[data-testid^="baseButton"] div {{
+div:not([data-testid="stButtonGroup"]):not([data-baseweb="button-group"]):not([data-testid="stPills"]) > button[kind="primary"] *,
+div:not([data-testid="stButtonGroup"]):not([data-baseweb="button-group"]):not([data-testid="stPills"]) > button[kind="secondary"]:not([role="radio"]):not([role="checkbox"]):not([data-testid*="Active"]) *,
+div:not([data-testid="stButtonGroup"]):not([data-baseweb="button-group"]):not([data-testid="stPills"]) > button[data-testid="stBaseButton-primary"] *,
+div:not([data-testid="stButtonGroup"]):not([data-baseweb="button-group"]):not([data-testid="stPills"]) > button[data-testid="stBaseButton-secondary"]:not([role="radio"]):not([role="checkbox"]):not([data-testid*="Active"]) * {{
   color: #070A12 !important;
   -webkit-text-fill-color: #070A12 !important;
   font-weight: 800 !important;
@@ -666,12 +672,11 @@ button[data-testid^="baseButton"] div {{
 /* Button Hover State - Vibrant Matte Lift */
 div.stButton > button:hover,
 div.stDownloadButton > button:hover,
+div.stFormSubmitButton > button:hover,
 div[data-testid="stPopover"] > button:hover,
 div[data-testid="stPopoverButton"] > button:hover,
-button[kind="primary"]:hover,
-button[kind="secondary"]:hover,
-button[data-testid^="stBaseButton"]:hover,
-button[data-testid^="baseButton"]:hover {{
+div:not([data-testid="stButtonGroup"]):not([data-baseweb="button-group"]):not([data-testid="stPills"]) > button[kind="primary"]:hover,
+div:not([data-testid="stButtonGroup"]):not([data-baseweb="button-group"]):not([data-testid="stPills"]) > button[kind="secondary"]:not([role="radio"]):not([role="checkbox"]):hover {{
   transform: translateY(-1px) !important;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3) !important;
   background: #FACC15 !important;
@@ -681,12 +686,11 @@ button[data-testid^="baseButton"]:hover {{
 
 div.stButton > button:hover *,
 div.stDownloadButton > button:hover *,
+div.stFormSubmitButton > button:hover *,
 div[data-testid="stPopover"] > button:hover *,
 div[data-testid="stPopoverButton"] > button:hover *,
-button[kind="primary"]:hover *,
-button[kind="secondary"]:hover *,
-button[data-testid^="stBaseButton"]:hover *,
-button[data-testid^="baseButton"]:hover * {{
+div:not([data-testid="stButtonGroup"]):not([data-baseweb="button-group"]):not([data-testid="stPills"]) > button[kind="primary"]:hover *,
+div:not([data-testid="stButtonGroup"]):not([data-baseweb="button-group"]):not([data-testid="stPills"]) > button[kind="secondary"]:not([role="radio"]):not([role="checkbox"]):hover * {{
   color: #070A12 !important;
   -webkit-text-fill-color: #070A12 !important;
 }}
@@ -694,12 +698,11 @@ button[data-testid^="baseButton"]:hover * {{
 /* Button Active / Clicked State */
 div.stButton > button:active,
 div.stDownloadButton > button:active,
+div.stFormSubmitButton > button:active,
 div[data-testid="stPopover"] > button:active,
 div[data-testid="stPopoverButton"] > button:active,
-button[kind="primary"]:active,
-button[kind="secondary"]:active,
-button[data-testid^="stBaseButton"]:active,
-button[data-testid^="baseButton"]:active {{
+div:not([data-testid="stButtonGroup"]):not([data-baseweb="button-group"]):not([data-testid="stPills"]) > button[kind="primary"]:active,
+div:not([data-testid="stButtonGroup"]):not([data-baseweb="button-group"]):not([data-testid="stPills"]) > button[kind="secondary"]:not([role="radio"]):not([role="checkbox"]):active {{
   transform: translateY(1px) !important;
   background: #CA8A04 !important;
   background-color: #CA8A04 !important;
@@ -795,60 +798,171 @@ button[data-testid^="baseButton"]:active {{
   font-size: 12px;
 }}
 
-/* 18. Enlarged Editorial Topic Ribbon & Navigation */
-div[data-testid="stPills"], div[role="radiogroup"] {{
-  gap: 8px !important;
-  margin-top: 6px !important;
-  margin-bottom: 18px !important;
+/* 18. Enlarged Editorial Topic Ribbon & Navigation (High-Contrast Universal Visibility) */
+div[data-testid="stButtonGroup"],
+div.stButtonGroup,
+div[data-baseweb="button-group"],
+div[data-testid="stPills"],
+div[role="radiogroup"] {{
+  gap: 10px !important;
+  margin-top: 8px !important;
+  margin-bottom: 22px !important;
   display: flex !important;
   flex-wrap: wrap !important;
+  align-items: center !important;
 }}
 
+/* Unselected Navigation Pills - Crystal Clear Pure White on Dark Glass Card */
+div[data-testid="stButtonGroup"] button,
+div[data-testid="stButtonGroup"] button[aria-checked="false"],
+div[data-testid="stButtonGroup"] button:not([aria-checked="true"]):not([data-testid*="Active"]),
+div.stButtonGroup button,
+div[data-baseweb="button-group"] button,
 div[data-testid="stPills"] button,
-button[data-testid*="stBaseButton-pills"],
-div[role="radiogroup"] button {{
-  background: rgba(14, 21, 38, 0.9) !important;
-  color: #CBD5E1 !important;
-  -webkit-text-fill-color: #CBD5E1 !important;
-  border: 1px solid rgba(255, 255, 255, 0.16) !important;
+div[role="radiogroup"] button,
+button[data-testid*="stBaseButton-pills"] {{
+  background: rgba(15, 23, 42, 0.95) !important;
+  background-color: rgba(15, 23, 42, 0.95) !important;
+  color: #FFFFFF !important;
+  -webkit-text-fill-color: #FFFFFF !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.28) !important;
   border-radius: 8px !important;
   font-family: 'Space Grotesk', -apple-system, sans-serif !important;
   font-size: 15px !important;
   font-weight: 700 !important;
-  padding: 10px 18px !important;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
-  transition: all 0.15s ease-in-out !important;
+  padding: 10px 20px !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4) !important;
+  transition: all 0.18s ease-in-out !important;
+  cursor: pointer !important;
+  opacity: 1 !important;
 }}
 
+/* Force ALL inner elements, text, spans, divs of unselected pills to be Pure White (#FFFFFF) */
+div[data-testid="stButtonGroup"] button *,
+div[data-testid="stButtonGroup"] button p,
+div[data-testid="stButtonGroup"] button span,
+div[data-testid="stButtonGroup"] button div,
+div[data-testid="stButtonGroup"] button[aria-checked="false"] *,
+div[data-testid="stButtonGroup"] button[aria-checked="false"] p,
+div[data-testid="stButtonGroup"] button[aria-checked="false"] span,
+div[data-testid="stButtonGroup"] button[aria-checked="false"] div,
+div.stButtonGroup button *,
+div.stButtonGroup button p,
+div.stButtonGroup button span,
+div.stButtonGroup button div,
+div[data-baseweb="button-group"] button *,
+div[data-baseweb="button-group"] button p,
+div[data-baseweb="button-group"] button span,
+div[data-baseweb="button-group"] button div,
+div[data-testid="stPills"] button *,
+div[data-testid="stPills"] button p,
+div[data-testid="stPills"] button span,
+div[data-testid="stPills"] button div,
+div[role="radiogroup"] button *,
+div[role="radiogroup"] button p,
+div[role="radiogroup"] button span,
+div[role="radiogroup"] button div,
+button[data-testid*="stBaseButton-pills"] *,
+button[data-testid*="stBaseButton-pills"] p,
+button[data-testid*="stBaseButton-pills"] span,
+button[data-testid*="stBaseButton-pills"] div {{
+  color: #FFFFFF !important;
+  -webkit-text-fill-color: #FFFFFF !important;
+  font-family: 'Space Grotesk', -apple-system, sans-serif !important;
+  font-weight: 700 !important;
+  font-size: 15px !important;
+  opacity: 1 !important;
+}}
+
+/* Hover State on Navigation Pills - Vibrant Matte Yellow Border & Text */
+div[data-testid="stButtonGroup"] button:hover,
+div.stButtonGroup button:hover,
+div[data-baseweb="button-group"] button:hover,
 div[data-testid="stPills"] button:hover,
-button[data-testid*="stBaseButton-pills"]:hover,
 div[role="radiogroup"] button:hover {{
-  background: rgba(234, 179, 8, 0.18) !important;
+  background: rgba(234, 179, 8, 0.22) !important;
+  background-color: rgba(234, 179, 8, 0.22) !important;
+  border-color: #EAB308 !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 14px rgba(234, 179, 8, 0.35) !important;
+}}
+
+div[data-testid="stButtonGroup"] button:hover *,
+div[data-testid="stButtonGroup"] button:hover p,
+div[data-testid="stButtonGroup"] button:hover span,
+div.stButtonGroup button:hover *,
+div[data-baseweb="button-group"] button:hover *,
+div[data-testid="stPills"] button:hover *,
+div[role="radiogroup"] button:hover * {{
   color: #FACC15 !important;
   -webkit-text-fill-color: #FACC15 !important;
-  border-color: #EAB308 !important;
+  font-weight: 800 !important;
 }}
 
-/* Active Selected Pill */
+/* Active / Selected Pill - Solid Matte Yellow with Bold Jet Black Text */
+div[data-testid="stButtonGroup"] button[aria-checked="true"],
+div[data-testid="stButtonGroup"] button[data-testid*="Active"],
+div[data-testid="stButtonGroup"] button[kind*="Active"],
+div[data-testid="stButtonGroup"] button[aria-selected="true"],
+div[data-testid="stButtonGroup"] button[data-selected="true"],
+div.stButtonGroup button[aria-checked="true"],
+div.stButtonGroup button[data-testid*="Active"],
+div.stButtonGroup button[kind*="Active"],
+div[data-baseweb="button-group"] button[aria-checked="true"],
+div[data-baseweb="button-group"] button[data-testid*="Active"],
+div[data-baseweb="button-group"] button[kind*="Active"],
+div[role="radiogroup"] button[aria-checked="true"],
+div[role="radiogroup"] button[data-testid*="Active"],
+div[role="radiogroup"] button[kind*="Active"],
 div[data-testid="stPills"] button[aria-selected="true"],
-button[data-testid*="stBaseButton-pills"][aria-selected="true"],
 div[data-testid="stPills"] button[data-selected="true"],
-div[role="radiogroup"] button[aria-checked="true"] {{
+button[data-testid*="stBaseButton-pills"][aria-selected="true"],
+button[data-testid*="pillsActive"],
+button[data-testid*="secondaryActive"],
+button[data-testid*="primaryActive"] {{
   background: #EAB308 !important;
   background-color: #EAB308 !important;
   color: #070A12 !important;
   -webkit-text-fill-color: #070A12 !important;
-  border: 1.5px solid #CA8A04 !important;
+  border: 2px solid #CA8A04 !important;
   font-weight: 800 !important;
-  box-shadow: 0 4px 14px rgba(234, 179, 8, 0.35) !important;
+  box-shadow: 0 4px 16px rgba(234, 179, 8, 0.45) !important;
+  transform: translateY(-1px) !important;
 }}
 
+/* Force all inner elements of active/selected pill to bold jet-black */
+div[data-testid="stButtonGroup"] button[aria-checked="true"] *,
+div[data-testid="stButtonGroup"] button[aria-checked="true"] p,
+div[data-testid="stButtonGroup"] button[aria-checked="true"] span,
+div[data-testid="stButtonGroup"] button[aria-checked="true"] div,
+div[data-testid="stButtonGroup"] button[data-testid*="Active"] *,
+div[data-testid="stButtonGroup"] button[data-testid*="Active"] p,
+div[data-testid="stButtonGroup"] button[data-testid*="Active"] span,
+div[data-testid="stButtonGroup"] button[data-testid*="Active"] div,
+div[data-testid="stButtonGroup"] button[kind*="Active"] *,
+div.stButtonGroup button[aria-checked="true"] *,
+div.stButtonGroup button[data-testid*="Active"] *,
+div.stButtonGroup button[kind*="Active"] *,
+div[data-baseweb="button-group"] button[aria-checked="true"] *,
+div[data-baseweb="button-group"] button[data-testid*="Active"] *,
+div[data-baseweb="button-group"] button[kind*="Active"] *,
+div[role="radiogroup"] button[aria-checked="true"] *,
+div[role="radiogroup"] button[aria-checked="true"] p,
+div[role="radiogroup"] button[aria-checked="true"] span,
+div[role="radiogroup"] button[aria-checked="true"] div,
+div[role="radiogroup"] button[data-testid*="Active"] *,
+div[role="radiogroup"] button[kind*="Active"] *,
 div[data-testid="stPills"] button[aria-selected="true"] *,
+div[data-testid="stPills"] button[data-selected="true"] *,
 button[data-testid*="stBaseButton-pills"][aria-selected="true"] *,
-div[role="radiogroup"] button[aria-checked="true"] * {{
+button[data-testid*="pillsActive"] *,
+button[data-testid*="secondaryActive"] *,
+button[data-testid*="primaryActive"] * {{
   color: #070A12 !important;
   -webkit-text-fill-color: #070A12 !important;
   font-weight: 800 !important;
+  font-size: 15px !important;
+  fill: #070A12 !important;
 }}
 </style>"""
     render_html(custom_css)

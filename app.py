@@ -484,7 +484,9 @@ curr_idx = current_localized_options.index(current_active_label) if current_acti
 selected_nav_label = st.pills(
     "Navigation Portal",
     options=current_localized_options,
+    selection_mode="single",
     default=current_localized_options[curr_idx],
+    key=f"nav_pills_{current_lang}_{active_canonical}",
     label_visibility="collapsed"
 )
 
