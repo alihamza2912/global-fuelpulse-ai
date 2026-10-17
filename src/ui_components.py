@@ -152,9 +152,9 @@ def get_news_globe_icon_svg(size: int = 24) -> str:
 </svg>"""
 
 
-def get_news_globe_icon_data_uri() -> str:
+def get_news_globe_icon_data_uri(size: int = 36) -> str:
     """Returns an optimized URL-encoded data URI of the News Globe SVG icon for CSS pseudo-elements."""
-    svg = get_news_globe_icon_svg(24)
+    svg = get_news_globe_icon_svg(size)
     compact_svg = " ".join(line.strip() for line in svg.splitlines() if line.strip())
     return "data:image/svg+xml," + urllib.parse.quote(compact_svg)
 
@@ -766,10 +766,10 @@ div[data-testid="stPopoverButton"] {{
 
 div[data-testid="stPopover"] > button,
 div[data-testid="stPopoverButton"] > button {{
-  height: 38px !important;
-  min-height: 38px !important;
-  max-height: 38px !important;
-  line-height: 38px !important;
+  height: 42px !important;
+  min-height: 42px !important;
+  max-height: 42px !important;
+  line-height: 42px !important;
   width: 100% !important;
   white-space: nowrap !important;
   overflow: hidden !important;
@@ -801,7 +801,7 @@ div[data-testid="stPopoverButton"] > button div {{
   padding: 0 !important;
 }}
 
-/* 17c. News Globe Vector Icon on Header Live News Button (Matches User Reference Image) */
+/* 17c. News Globe Vector Icon on Header Live News Button (36px Header Display) */
 div[data-testid="column"]:nth-of-type(3) div[data-testid="stPopover"] > button p,
 div[data-testid="column"]:nth-of-type(3) div[data-testid="stPopoverButton"] > button p {{
   display: inline-flex !important;
@@ -813,11 +813,11 @@ div[data-testid="column"]:nth-of-type(3) div[data-testid="stPopover"] > button p
 div[data-testid="column"]:nth-of-type(3) div[data-testid="stPopoverButton"] > button p::before {{
   content: "" !important;
   display: inline-block !important;
-  width: 22px !important;
-  height: 22px !important;
-  margin-right: 7px !important;
-  vertical-align: -3px !important;
-  background-image: url("{get_news_globe_icon_data_uri()}") !important;
+  width: 36px !important;
+  height: 36px !important;
+  margin-right: 8px !important;
+  vertical-align: middle !important;
+  background-image: url("{get_news_globe_icon_data_uri(36)}") !important;
   background-repeat: no-repeat !important;
   background-position: center !important;
   background-size: contain !important;

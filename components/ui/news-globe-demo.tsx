@@ -6,9 +6,9 @@ export const NewsGlobeDemo: React.FC = () => {
     <div className="flex flex-col gap-4 p-6 bg-[#070A12] text-white rounded-xl border border-white/10">
       <h3 className="text-lg font-bold">News Globe Icon Integrations</h3>
       <div className="flex flex-wrap items-center gap-4">
-        {/* Header Action Button (Classic 38px Matte Yellow) */}
-        <button className="h-[38px] px-4 bg-[#EAB308] hover:bg-[#FACC15] text-[#070A12] font-black text-xs uppercase tracking-wider rounded-md inline-flex items-center gap-2 border border-[#CA8A04] transition-all cursor-pointer">
-          <NewsGlobeIcon size={20} />
+        {/* Header Action Button (Classic 42px Matte Yellow with 36px Icon) */}
+        <button className="h-[42px] px-4 bg-[#EAB308] hover:bg-[#FACC15] text-[#070A12] font-black text-xs uppercase tracking-wider rounded-md inline-flex items-center gap-2 border border-[#CA8A04] transition-all cursor-pointer">
+          <NewsGlobeIcon size={36} />
           <span>LIVE NEWS (18)</span>
         </button>
 

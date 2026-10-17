@@ -7,7 +7,7 @@ export interface NewsGlobeIconProps extends React.SVGProps<SVGSVGElement> {
 }
 
 export const NewsGlobeIcon: React.FC<NewsGlobeIconProps> = ({
-  size = 24,
+  size = 36,
   className,
   ...props
 }) => {

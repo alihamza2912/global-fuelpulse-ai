@@ -401,7 +401,7 @@ with col_news:
     with st.popover(news_btn_label, use_container_width=True):
         render_html(f"""
         <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid rgba(255, 255, 255, 0.12);">
-            {get_news_globe_icon_svg(size=40)}
+            {get_news_globe_icon_svg(size=36)}
             <div>
                 <div style="font-family: 'Space Grotesk', -apple-system, sans-serif; font-size: 1.15rem; font-weight: 800; color: #F9FAFB; letter-spacing: -0.01em;">
                     {t('brand_title', current_lang)} — Global Wire
