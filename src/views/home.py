@@ -73,8 +73,27 @@ def render_home_view(navigate_fn=None):
 
     st.write("")
 
+    # Fetch live headline benchmarks from database with current benchmarks
+    brent_val = "$84.20 / bbl"
+    delhi_diesel_val = "₹93.22 / L"
+    try:
+        with db_manager.engine.connect() as conn:
+            r_brent = conn.execute(db_manager.safe_sql(
+                "SELECT value FROM fact_energy_indicator WHERE indicator_code='BRENT_CRUDE_SPOT' ORDER BY period DESC LIMIT 1"
+            )).fetchone()
+            if r_brent:
+                brent_val = f"${float(r_brent[0]):.2f} / bbl"
+
+            r_delhi = conn.execute(db_manager.safe_sql(
+                "SELECT price_local FROM fuel_prices WHERE country_iso3='IND' AND location_id='IND_DEL' AND fuel_type='diesel' ORDER BY observation_date DESC LIMIT 1"
+            )).fetchone()
+            if r_delhi:
+                delhi_diesel_val = f"₹{float(r_delhi[0]):.2f} / L"
+    except Exception:
+        pass
+
     # 3. The Interactive Browser Mockup Container
-    render_html("""
+    render_html(f"""
     <div style="position: relative; max-width: 1100px; margin: 8px auto 28px auto; z-index: 10;">
         <div style="background: rgba(14, 21, 38, 0.95); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.16); box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7), 0 0 40px rgba(245, 185, 66, 0.15); border-radius: 12px; overflow: hidden;">
             
@@ -95,12 +114,12 @@ def render_home_view(navigate_fn=None):
             <div style="padding: 16px 20px 8px 20px; background: rgba(7, 10, 18, 0.6); border-bottom: 1px solid rgba(255, 255, 255, 0.08); display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px;">
                 <div style="background: rgba(14, 21, 38, 0.8); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; padding: 12px 14px;">
                     <div style="font-family: 'Space Grotesk', sans-serif; font-size: 0.7rem; font-weight: 700; color: #94A3B8; text-transform: uppercase;">BRENT CRUDE SPOT</div>
-                    <div style="font-family: 'Space Grotesk', sans-serif; font-size: 1.35rem; font-weight: 800; color: #F5B942;">$76.80 / bbl</div>
+                    <div style="font-family: 'Space Grotesk', sans-serif; font-size: 1.35rem; font-weight: 800; color: #F5B942;">{brent_val}</div>
                     <div style="font-size: 0.7rem; color: #10B981; font-weight: 600;">▲ Daily Reference Benchmark</div>
                 </div>
                 <div style="background: rgba(14, 21, 38, 0.8); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; padding: 12px 14px;">
                     <div style="font-family: 'Space Grotesk', sans-serif; font-size: 0.7rem; font-weight: 700; color: #94A3B8; text-transform: uppercase;">DELHI DIESEL PUMP</div>
-                    <div style="font-family: 'Space Grotesk', sans-serif; font-size: 1.35rem; font-weight: 800; color: #F9FAFB;">₹87.62 / L</div>
+                    <div style="font-family: 'Space Grotesk', sans-serif; font-size: 1.35rem; font-weight: 800; color: #F9FAFB;">{delhi_diesel_val}</div>
                     <div style="font-size: 0.7rem; color: #60A5FA; font-weight: 600;">Official PPAC Metro Benchmark</div>
                 </div>
                 <div style="background: rgba(14, 21, 38, 0.8); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; padding: 12px 14px;">

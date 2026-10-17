@@ -68,8 +68,8 @@ def get_cached_sync_timestamps():
 @st.cache_data(ttl=600, show_spinner=False)
 def get_cached_telemetry():
     """Fetches key headline price benchmarks."""
-    brent_val = "$76.80 / bbl"
-    delhi_diesel_val = "₹87.62 / L"
+    brent_val = "$84.20 / bbl"
+    delhi_diesel_val = "₹93.22 / L"
     try:
         with db_manager.engine.connect() as conn:
             r_brent = conn.execute(db_manager.safe_sql(
@@ -928,7 +928,7 @@ def render_dashboard_view(navigate_fn=None):
     with k4:
         render_instrument_card(
             label="India Import Reliance",
-            value="87.8%",
+            value="88.2%",
             accent="red",
             subtext="Domestic Refinery Throughput",
             code_badge="IND"
@@ -959,7 +959,7 @@ def render_dashboard_view(navigate_fn=None):
                 <b>EXECUTIVE BRIEFING:</b><br>
                 • <b>Cartel Dynamics:</b> OPEC+ nations coordinate ~55% of world tracked oil supply, holding the largest low-cost swing capacity.<br>
                 • <b>US Shale Hegemony:</b> The United States leads extraction with 13.2 mbpd, serving as the dominant non-OPEC pricing anchor.<br>
-                • <b>India Geopolitics:</b> 87.8% foreign crude intake makes national fiscal balances sensitive to freight corridors and crude swings.
+                • <b>India Geopolitics:</b> 88.2% foreign crude intake makes national fiscal balances sensitive to freight corridors and crude swings.
             </div>
             """
         )
