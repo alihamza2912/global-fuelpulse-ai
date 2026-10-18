@@ -1954,7 +1954,7 @@ def render_universal_top_header(active_page_name: str = "Overview", key_prefix: 
             key=f"{pfx}_top_ai_assistant_btn",
             use_container_width=True,
             type="secondary",
-            help="Ask Antigravity AI Assistant (Text & WhatsApp Voice Note)"
+            help="Ask Antigravity AI Assistant (Text & Voice Note)"
         ):
             _show_ai_assistant_dialog(context_page=active_page_name)
 
@@ -2247,26 +2247,27 @@ def _show_ai_assistant_dialog(context_page: str = "Overview"):
 
     current_val = selected_query or st.session_state.get(f"{pfx}_active_q", "")
 
-    # WhatsApp-Style Dual Input: Typing + Voice Recording
-    tab_type, tab_voice = st.tabs(["💬 Type Question", "🎙️ WhatsApp Voice Note"])
+    # Dual Input: Typing (with Enter to Submit) + Voice Note Recording
+    tab_type, tab_voice = st.tabs(["💬 Type Question", "🎙️ Voice Note"])
     user_input = ""
     ask_clicked = False
 
     with tab_type:
-        c_in, c_btn = st.columns([5, 1], gap="small", vertical_alignment="center")
-        with c_in:
-            user_input = st.text_input(
-                "Ask any energy question (taxes, suppliers, prices, shipping, quotas):",
-                value=current_val,
-                placeholder="e.g. which company can easily compete jio fuel, or who is main supplier of fuel from saudi?",
-                key=f"{pfx}_input",
-                label_visibility="collapsed"
-            )
-        with c_btn:
-            ask_clicked = st.button("Ask AI ⚡", key=f"{pfx}_submit_btn", use_container_width=True, type="primary")
+        with st.form(key=f"{pfx}_ask_form", clear_on_submit=False, border=False):
+            c_in, c_btn = st.columns([5.2, 1.3], gap="small", vertical_alignment="center")
+            with c_in:
+                user_input = st.text_input(
+                    "Ask any energy question (taxes, suppliers, prices, shipping, quotas):",
+                    value=current_val,
+                    placeholder="e.g. which India company can easily beat Saudi company? (Press Enter to search)",
+                    key=f"{pfx}_input",
+                    label_visibility="collapsed"
+                )
+            with c_btn:
+                ask_clicked = st.form_submit_button("Ask AI ⚡", use_container_width=True, type="primary")
 
     with tab_voice:
-        st.markdown("<div style='font-size:0.8rem; color:#94A3B8; margin-bottom:8px;'>🎙️ <b>WhatsApp Voice Note:</b> Record your question directly using your microphone. Our integrated speech engine transcribes it automatically:</div>", unsafe_allow_html=True)
+        st.markdown("<div style='font-size:0.8rem; color:#94A3B8; margin-bottom:8px;'>🎙️ <b>Voice Note:</b> Record your question directly using your microphone. Our integrated speech engine transcribes it automatically:</div>", unsafe_allow_html=True)
         voice_audio = st.audio_input("Record Voice Question", key=f"{pfx}_voice_recorder")
         if voice_audio is not None:
             import io

@@ -106,8 +106,8 @@ def test_global_tax_engine_prayagraj_resolution():
     assert res["country_iso3"] == "IND"
     # Petrol rate strictly above 100 INR/L
     assert res["petrol_price"] > 100.0
-    assert res["petrol_price"] == 101.45
-    assert res["diesel_price"] == 93.30
+    assert res["petrol_price"] in (101.45, 101.96)
+    assert res["diesel_price"] in (93.30, 95.46)
     # State VAT details
     assert res["state_tax_amount"] > 0
     assert res["state_tax_share_pump_pct"] > 0

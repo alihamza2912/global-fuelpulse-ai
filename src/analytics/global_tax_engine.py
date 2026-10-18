@@ -33,6 +33,8 @@ class GlobalTaxEngine:
     SAR_USD_RATE = 0.2667
     # BRL to USD benchmark
     BRL_USD_RATE = 0.18
+    # RUB to USD benchmark
+    RUB_USD_RATE = 0.011
 
     # ==========================================================================
     # 1. INDIAN STATES AND UNION TERRITORIES TAX DATABASE (MoPNG & State VAT Circulars)
@@ -48,8 +50,8 @@ class GlobalTaxEngine:
             "vat_petrol_min": 14.85,
             "vat_diesel_pct": 15.54,
             "vat_diesel_min": 10.45,
-            "petrol_rsp": 101.45,
-            "diesel_rsp": 93.30,
+            "petrol_rsp": 101.96,
+            "diesel_rsp": 95.46,
             "base_petrol": 57.40,
             "freight_petrol": 0.35,
             "central_excise_petrol": 19.90,
@@ -75,8 +77,8 @@ class GlobalTaxEngine:
             "vat_petrol_cess": 5.12,
             "vat_diesel_pct": 21.0,
             "vat_diesel_cess": 3.00,
-            "petrol_rsp": 106.31,
-            "diesel_rsp": 94.27,
+            "petrol_rsp": 111.21,
+            "diesel_rsp": 97.83,
             "base_petrol": 57.40,
             "freight_petrol": 0.38,
             "central_excise_petrol": 19.90,
@@ -148,8 +150,8 @@ class GlobalTaxEngine:
             "vat_petrol_cess": 11.52,
             "vat_diesel_pct": 11.0,
             "vat_diesel_cess": 9.62,
-            "petrol_rsp": 102.63,
-            "diesel_rsp": 94.24,
+            "petrol_rsp": 107.74,
+            "diesel_rsp": 99.55,
             "base_petrol": 57.40,
             "freight_petrol": 0.40,
             "central_excise_petrol": 19.90,
@@ -174,8 +176,8 @@ class GlobalTaxEngine:
             "vat_petrol_min": 13.12,
             "vat_diesel_pct": 17.0,
             "vat_diesel_min": 7.70,
-            "petrol_rsp": 105.85,
-            "diesel_rsp": 92.76,
+            "petrol_rsp": 113.51,
+            "diesel_rsp": 99.82,
             "base_petrol": 57.40,
             "freight_petrol": 0.44,
             "central_excise_petrol": 19.90,
@@ -973,20 +975,20 @@ class GlobalTaxEngine:
             "flag": "🇦🇪",
             "currency": "AED",
             "currency_symbol": "AED",
-            "statutory_authority": "UAE Ministry of Energy & Infrastructure / FTA",
-            "petrol_rsp": 2.85,      # AED 2.85 / Litre (~$0.78 USD)
-            "diesel_rsp": 2.92,      # AED 2.92 / Litre (~$0.79 USD)
-            "base_petrol": 2.45,
+            "statutory_authority": "UAE Ministry of Energy & Infrastructure / Fuel Price Committee",
+            "petrol_rsp": 4.28,      # Special 95: AED 4.28 / Litre; Super 98: AED 4.40 / L (~$1.17 - $1.20 USD)
+            "diesel_rsp": 4.80,      # AED 4.80 / Litre (~$1.31 USD)
+            "base_petrol": 3.82,
             "freight_petrol": 0.08,
             "federal_excise_petrol": 0.00,   # Zero fuel excise duty
             "dealer_margin_petrol": 0.18,
-            "state_tax_petrol": 0.14,        # 5% Federal VAT
-            "state_tax_pct": 4.9,
+            "state_tax_petrol": 0.20,        # 5% Federal VAT
+            "state_tax_pct": 5.0,
             "cities": [
                 "united arab emirates", "uae", "dubai", "abu dhabi", "sharjah",
                 "al ain", "ajman", "ras al khaimah", "fujairah", "umm al quwain"
             ],
-            "tax_statute_note": "Fully deregulated retail pricing pegged to international refined product benchmarks without fuel excise; only a low 5% standard VAT is charged."
+            "tax_statute_note": "Retail fuel prices are announced monthly by the UAE Fuel Price Committee pegged directly to international refined product benchmarks without fuel excise duty; only a low 5% standard Value Added Tax (VAT) is charged across all Emirates (Special 95: AED 4.28/L, Super 98: AED 4.40/L, Diesel: AED 4.80/L)."
         },
         "Saudi Arabia": {
             "country": "Saudi Arabia",
@@ -996,20 +998,68 @@ class GlobalTaxEngine:
             "flag": "🇸🇦",
             "currency": "SAR",
             "currency_symbol": "SAR",
-            "statutory_authority": "Zakat, Tax and Customs Authority (ZATCA)",
-            "petrol_rsp": 2.18,      # SAR 2.18 / Litre (~$0.58 USD)
-            "diesel_rsp": 1.15,      # SAR 1.15 / Litre (~$0.31 USD)
+            "statutory_authority": "Saudi Aramco / Zakat, Tax and Customs Authority (ZATCA)",
+            "petrol_rsp": 2.18,      # Gasoline 91: SAR 2.18 / Litre (~$0.58 USD); Gasoline 95: SAR 2.33 / L
+            "diesel_rsp": 1.79,      # SAR 1.79 / Litre (~$0.48 USD)
             "base_petrol": 1.75,
             "freight_petrol": 0.04,
             "federal_excise_petrol": 0.00,   # Domestic price caps (Royal Decree)
             "dealer_margin_petrol": 0.11,
             "state_tax_petrol": 0.28,        # 15% VAT
-            "state_tax_pct": 12.8,
+            "state_tax_pct": 13.0,
             "cities": [
                 "saudi", "saudi arabia", "kingdom of saudi arabia", "ksa", "saudis", "riyadh", "jeddah", "mecca", "medina",
                 "dammam", "khobar", "dhahran", "jubail", "yanbu", "tabuk", "taif"
             ],
-            "tax_statute_note": "Saudi Arabia levies a standard 15% Value Added Tax (VAT) administered by ZATCA (Zakat, Tax and Customs Authority) across commercial transactions and retail motor fuel. Crucially, there is 0% personal income tax on salaries and individual earnings for citizens and resident workers. Domestic motor fuel prices are subsidized and capped by Royal Decree (Gasoline 91 capped at SAR 2.18/L, Diesel at SAR 1.15/L)."
+            "tax_statute_note": "Saudi Arabia levies a standard 15% Value Added Tax (VAT) administered by ZATCA across retail motor fuel. Domestic motor fuel prices are standardized and capped by Royal Decree under Saudi Aramco oversight (Gasoline 91 capped at SAR 2.18/L, Gasoline 95 at SAR 2.33/L, Diesel at SAR 1.79/L)."
+        },
+        "Russian Federation": {
+            "country": "Russian Federation",
+            "country_iso3": "RUS",
+            "type": "Sovereign Nation",
+            "capital": "Moscow",
+            "flag": "🇷🇺",
+            "currency": "RUB",
+            "currency_symbol": "₽",
+            "statutory_authority": "Federal Tax Service of Russia (FNS) / Ministry of Energy",
+            "petrol_rsp": 80.80,     # AI-95: ₽80.80 / Litre (~$0.89 USD); AI-92: ₽74.51 / L
+            "diesel_rsp": 81.16,     # ₽81.16 / Litre (~$0.96 USD)
+            "base_petrol": 42.50,
+            "freight_petrol": 2.80,
+            "federal_excise_petrol": 15.05,  # Federal excise duty (~₽15.05/L for Euro-5)
+            "dealer_margin_petrol": 6.98,
+            "state_tax_petrol": 13.47,       # 20% Value Added Tax (NDS)
+            "state_tax_pct": 20.0,
+            "cities": [
+                "russia", "russian federation", "moscow", "st petersburg", "saint petersburg",
+                "kazan", "novosibirsk", "yekaterinburg", "samara", "omsk", "chelyabinsk",
+                "rostov", "ufa", "volgograd", "krasnoyarsk", "vladivostok"
+            ],
+            "tax_statute_note": "Retail fuels in Russia are subject to mineral extraction tax (MET), export damping subsidies/penalties, federal fuel excise duty (~₽15.05/L for Euro-5), and standard 20% Value Added Tax (VAT) under Rosstat benchmarks."
+        },
+        "United States (National Average)": {
+            "country": "United States",
+            "country_iso3": "USA",
+            "type": "Sovereign Nation",
+            "capital": "Washington, D.C.",
+            "flag": "🇺🇸",
+            "currency": "USD",
+            "currency_symbol": "$",
+            "statutory_authority": "Internal Revenue Service (IRS) / U.S. EIA / AAA",
+            "petrol_rsp": 1.136,     # $4.30 / gallon (~$1.136 USD / Litre)
+            "diesel_rsp": 1.228,     # $4.65 / gallon (~$1.228 USD / Litre)
+            "base_petrol": 0.68,
+            "freight_petrol": 0.05,
+            "federal_excise_petrol": 0.0486, # 18.4 cents/gallon federal excise (~$0.0486/L)
+            "dealer_margin_petrol": 0.16,
+            "state_tax_petrol": 0.1974,      # National average state & local tax
+            "state_tax_pct": 17.4,
+            "cities": [
+                "usa", "united states", "us", "america", "national average", "u s national average",
+                "united states national average", "us average", "houston", "texas", "new york",
+                "los angeles", "california", "chicago", "miami", "dallas"
+            ],
+            "tax_statute_note": "U.S. federal excise duty is fixed at 18.4 cents per gallon on gasoline (~$0.0486/L) and 24.4 cents per gallon on diesel. Combined state and local taxes average an additional 32.5 cents per gallon nationwide."
         },
         "Brazil": {
             "country": "Brazil",
@@ -1283,7 +1333,8 @@ class GlobalTaxEngine:
             "AUD": cls.AUD_USD_RATE,
             "AED": cls.AED_USD_RATE,
             "SAR": cls.SAR_USD_RATE,
-            "BRL": cls.BRL_USD_RATE
+            "BRL": cls.BRL_USD_RATE,
+            "RUB": cls.RUB_USD_RATE
         }
         fx_to_usd = rate_map.get(curr, 1.0)
         petrol_usd = round(petrol_rsp * fx_to_usd, 2)

@@ -108,18 +108,24 @@ with btn_col4:
     if st.button("🚢 Strait of Hormuz Risk", use_container_width=True, type="secondary"):
         preset_q = "What is the risk of a disruption in the Strait of Hormuz?"
 
-# WhatsApp-Style Dual Input: Typing + Voice Recording
-tab_type, tab_voice = st.tabs(["💬 Type Question", "🎙️ WhatsApp Voice Note"])
+# Dual Input: Typing (with Enter to Submit) + Voice Note Recording
+tab_type, tab_voice = st.tabs(["💬 Type Question", "🎙️ Voice Note"])
 with tab_type:
-    text_q = st.text_input(
-        "Ask a market intelligence question freely:",
-        value=preset_q if preset_q else "",
-        placeholder="e.g. which company can easily compete jio fuel, or What is the petrol rate in Prayagraj?"
-    )
+    with st.form(key="page9_ask_form", clear_on_submit=False, border=False):
+        c_in, c_btn = st.columns([5.2, 1.3], gap="small", vertical_alignment="center")
+        with c_in:
+            text_q = st.text_input(
+                "Ask a market intelligence question freely:",
+                value=preset_q if preset_q else "",
+                placeholder="e.g. which India company can easily beat Saudi company? (Press Enter to search)",
+                label_visibility="collapsed"
+            )
+        with c_btn:
+            ask_page9_btn = st.form_submit_button("Ask AI ⚡", use_container_width=True, type="primary")
 
 voice_q = None
 with tab_voice:
-    st.markdown("<div style='font-size:0.82rem; color:#94A3B8; margin-bottom:8px;'>🎙️ <b>WhatsApp Voice Note:</b> Record your question directly using your microphone. Our speech recognizer transcribes it automatically:</div>", unsafe_allow_html=True)
+    st.markdown("<div style='font-size:0.82rem; color:#94A3B8; margin-bottom:8px;'>🎙️ <b>Voice Note:</b> Record your question directly using your microphone. Our speech recognizer transcribes it automatically:</div>", unsafe_allow_html=True)
     voice_audio = st.audio_input("Record Voice Question", key="page9_voice_recorder")
     if voice_audio is not None:
         import io
@@ -137,17 +143,26 @@ with tab_voice:
         except Exception:
             st.info("💡 Audio captured. You can also type your question directly in the Type Question tab.")
 
-user_question = voice_q or text_q
+active_q = None
+if (ask_page9_btn and text_q.strip()):
+    active_q = text_q.strip()
+elif voice_q:
+    active_q = voice_q.strip()
+elif preset_q:
+    active_q = preset_q.strip()
 
-if user_question:
+if active_q:
     with st.spinner("Analyzing question, checking cache & energy data mart..."):
         response = AIEnergyMarketAnalyst.answer_question(
-            question=user_question,
+            question=active_q,
             session_id=sess_id,
             allow_free_autonomous=True,
             enforce_user_daily_limit=True
         )
+        st.session_state["page9_last_resp"] = response
 
+if "page9_last_resp" in st.session_state and st.session_state["page9_last_resp"]:
+    response = st.session_state["page9_last_resp"]
     st.markdown("---")
 
     # Render quota/source badges
