@@ -119,9 +119,9 @@ def render_data_trust_view(navigate_fn=None):
                     <span style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; color: #F9FAFB; font-size: 0.95rem;">{name}</span>
                 </div>
                 <div style="display: flex; gap: 8px; font-family: 'Space Grotesk', sans-serif; font-size: 0.75rem;">
-                    <span style="color: #60A5FA; background: rgba(59, 130, 246, 0.12); padding: 2px 8px; border-radius: 4px;">Cadence: {cadence}</span>
-                    <span style="color: #34D399; background: rgba(52, 211, 153, 0.12); padding: 2px 8px; border-radius: 4px;">SLA: {sla}</span>
-                    <span style="color: #94A3B8; background: rgba(255, 255, 255, 0.05); padding: 2px 8px; border-radius: 4px;">License: {lic}</span>
+                    <span style="color: #60A5FA; background: rgba(59, 130, 246, 0.12); padding: 2px 8px; border-radius: 4px;">{t('trust_lbl_cadence', cur_lang)}: {cadence}</span>
+                    <span style="color: #34D399; background: rgba(52, 211, 153, 0.12); padding: 2px 8px; border-radius: 4px;">{t('trust_lbl_sla', cur_lang)}: {sla}</span>
+                    <span style="color: #94A3B8; background: rgba(255, 255, 255, 0.05); padding: 2px 8px; border-radius: 4px;">{t('trust_lbl_license', cur_lang)}: {lic}</span>
                 </div>
             </div>
             <div style="font-family: 'Inter', sans-serif; font-size: 0.84rem; color: #94A3B8; line-height: 1.45;">

@@ -45,13 +45,13 @@ def render_about_view(navigate_fn=None):
     </div>
     """, unsafe_allow_html=True)
 
-    render_html("""
+    render_html(f"""
     <div style="background: rgba(14, 21, 38, 0.7); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 10px; padding: 22px; margin-bottom: 24px; font-family: 'Inter', sans-serif; font-size: 0.92rem; line-height: 1.65; color: #94A3B8;">
         <p style="margin-top: 0;">
-            Energy is the invisible substrate of modern civilization. Every freight container moving across oceans, every haulage truck delivering goods between cities, and every agricultural tractor tilling fields operates on refined petroleum distillates. Yet public understanding of fuel pricing remains distorted by political rhetoric and oversimplified headlines.
+            {t('about_sec1_p1', cur_lang)}
         </p>
         <p style="margin-bottom: 0;">
-            <b>Global FuelPulse AI</b> was engineered to replace guesswork with empirical, deterministic market intelligence. We track physical oil from the wellhead to seaborne tankers, through complex refinery hydrocrackers, past sovereign fiscal tax tollgates, and into the commercial fuel pump. By integrating real-world datasets across 25 sovereign economies and Indian metro centers, we give decision-makers an auditable lens into energy economics.
+            {t('about_sec1_p2', cur_lang)}
         </p>
     </div>
     """)

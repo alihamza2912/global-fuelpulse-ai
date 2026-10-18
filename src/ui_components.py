@@ -2454,7 +2454,7 @@ def render_universal_top_header(active_page_name: str = "Overview", key_prefix: 
         lang_btn_label = f"🌐 Lang ({cur_flag})" if current_lang != "hi" else f"🌐 भाषा ({cur_flag})"
         with st.popover(lang_btn_label, use_container_width=True):
             st.markdown(f"#### 🌐 {t('select_language', current_lang)} ({len(all_langs)} World Languages)")
-            st.caption("Select and activate your language across the entire platform:")
+            st.caption(t("lang_modal_sub", current_lang))
             with st.container(height=340):
                 for code, data in all_langs.items():
                     is_selected = (code == current_lang)
@@ -2482,7 +2482,7 @@ def render_universal_top_header(active_page_name: str = "Overview", key_prefix: 
                         {t('brand_title', current_lang)} — Global Wire
                     </div>
                     <div style="font-size: 0.72rem; color: #94A3B8; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; margin-top: 2px;">
-                        Real-Time Maritime Intelligence & Energy Wire
+                        {t('news_wire_title', current_lang)}
                     </div>
                 </div>
             </div>
@@ -2492,7 +2492,7 @@ def render_universal_top_header(active_page_name: str = "Overview", key_prefix: 
             <div style="background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.35); border-radius: 6px; padding: 7px 12px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
                 <div style="display: flex; align-items: center; gap: 8px;">
                     <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #10B981; box-shadow: 0 0 6px #10B981;"></span>
-                    <span style="font-size: 0.76rem; font-weight: 700; color: #34D399;">🟢 Live News: Auto-Synchronized</span>
+                    <span style="font-size: 0.76rem; font-weight: 700; color: #34D399;">{t('news_live_status', current_lang)}</span>
                 </div>
                 <div style="font-size: 0.70rem; color: #94A3B8; font-family: monospace;">{GlobalNewsEngine.get_last_refresh_timestamp()}</div>
             </div>
@@ -2506,7 +2506,7 @@ def render_universal_top_header(active_page_name: str = "Overview", key_prefix: 
             ])
             
             with tab_hormuz:
-                st.markdown("#### 🔴 Maritime Transit Risk Monitor")
+                st.markdown(f"#### 🔴 {t('news_maritime_monitor', current_lang)}")
                 for chk in GlobalNewsEngine.get_chokepoint_telemetry(current_lang):
                     st.markdown(f"""
                     <div style="background: rgba(14, 21, 38, 0.9); border: 1px solid rgba(255, 255, 255, 0.12); border-left: 4px solid {chk['status_color']}; border-radius: 6px; padding: 10px 12px; margin-bottom: 8px;">

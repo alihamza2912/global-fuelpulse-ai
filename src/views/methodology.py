@@ -43,10 +43,10 @@ def render_methodology_view(navigate_fn=None):
     </div>
     """, unsafe_allow_html=True)
 
-    render_html("""
+    render_html(f"""
     <div style="background: rgba(14, 21, 38, 0.7); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 10px; padding: 20px; margin-bottom: 20px; font-family: 'Inter', sans-serif; font-size: 0.88rem; line-height: 1.6; color: #94A3B8;">
         <p style="margin-top: 0;">
-            To calculate genuine price movement over time without contamination from cross-city geographic variance, all observations are partitioned strictly by the tuple <code>(country_iso3, location_id, fuel_type, brand_name)</code>.
+            {t('meth_sec1_desc', cur_lang)}
         </p>
     </div>
     """)
@@ -67,10 +67,10 @@ def render_methodology_view(navigate_fn=None):
     </div>
     """, unsafe_allow_html=True)
 
-    render_html("""
+    render_html(f"""
     <div style="background: rgba(14, 21, 38, 0.7); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 10px; padding: 20px; margin-bottom: 20px; font-family: 'Inter', sans-serif; font-size: 0.88rem; line-height: 1.6; color: #94A3B8;">
         <p style="margin-top: 0;">
-            We employ the Herfindahl-Hirschman Index (HHI) to quantify import reliance on sovereign supplier nations. Let $s_i$ be the percentage share of crude oil imported from supplier $i$:
+            {t('meth_sec2_desc', cur_lang)}
         </p>
     </div>
     """)
@@ -96,10 +96,10 @@ def render_methodology_view(navigate_fn=None):
     </div>
     """, unsafe_allow_html=True)
 
-    render_html("""
+    render_html(f"""
     <div style="background: rgba(14, 21, 38, 0.7); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 10px; padding: 20px; margin-bottom: 20px; font-family: 'Inter', sans-serif; font-size: 0.88rem; line-height: 1.6; color: #94A3B8;">
         <p style="margin-top: 0;">
-            Raw price per litre ($/L) fails to reflect socioeconomic purchasing power. A $1.10/L price in an emerging economy poses a vastly higher financial strain than $1.80/L in Western Europe. We compute the <b>50-Litre Fill-Up Burden</b> against daily income:
+            {t('meth_sec3_desc', cur_lang)}
         </p>
     </div>
     """)
@@ -117,10 +117,10 @@ def render_methodology_view(navigate_fn=None):
     </div>
     """, unsafe_allow_html=True)
 
-    render_html(r"""
+    render_html(f"""
     <div style="background: rgba(14, 21, 38, 0.7); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 10px; padding: 20px; margin-bottom: 20px; font-family: 'Inter', sans-serif; font-size: 0.88rem; line-height: 1.6; color: #94A3B8;">
         <p style="margin-top: 0;">
-            The interactive shock simulator models the impact of an exogenous crude oil supply shock ($\Delta C$ in USD/bbl) and local currency depreciation ($\% \Delta FX$) on fleet operating budgets:
+            {t('meth_sec4_desc', cur_lang)}
         </p>
     </div>
     """)
@@ -132,9 +132,9 @@ def render_methodology_view(navigate_fn=None):
     \Delta \text{Expenditure}_{\text{monthly}} = V_{\text{fleet}} \times \left( P_{\text{simulated}} - P_{\text{baseline}} \right)
     """)
 
-    render_html(r"""
+    render_html(f"""
     <div style="background: rgba(14, 21, 38, 0.5); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 6px; padding: 12px 16px; margin-bottom: 20px; font-family: 'Space Grotesk', sans-serif; font-size: 0.8rem; color: #94A3B8;">
-        Where $\beta_{\text{crude}} \approx 0.72$ (empirical short-run pass-through coefficient) and $\beta_{\text{FX}} \approx 0.85$ (imported commodity currency elasticity).
+        {t('meth_sec4_where', cur_lang)}
     </div>
     """)
 
@@ -147,10 +147,10 @@ def render_methodology_view(navigate_fn=None):
     </div>
     """, unsafe_allow_html=True)
 
-    render_html("""
+    render_html(f"""
     <div style="background: rgba(14, 21, 38, 0.7); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 10px; padding: 20px; margin-bottom: 20px; font-family: 'Inter', sans-serif; font-size: 0.88rem; line-height: 1.6; color: #94A3B8;">
         <p style="margin-top: 0;">
-            All machine learning and econometric price projections (SARIMAX, XGBoost, Prophet) undergo out-of-sample backtesting across a 12-week holdout validation window using three standard error metrics:
+            {t('meth_sec5_desc', cur_lang)}
         </p>
     </div>
     """)

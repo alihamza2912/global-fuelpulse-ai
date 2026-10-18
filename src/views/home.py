@@ -300,16 +300,16 @@ def render_home_view(navigate_fn=None):
             <div style="display: flex; align-items: center; gap: 10px;">
                 {get_lucide_icon_svg("bot", size=24, color="#F5B942")}
                 <div>
-                    <span style="font-family: 'Space Grotesk', sans-serif; font-size: 0.72rem; font-weight: 800; color: #F5B942; letter-spacing: 0.08em; text-transform: uppercase;">FEATURE 09 // SYNTHETIC REASONING</span>
-                    <h3 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.22rem; font-weight: 800; color: #F9FAFB; margin: 2px 0 0 0;">AI Energy Market Analyst (LLM-Assisted & Autonomous SQL)</h3>
+                    <span style="font-family: 'Space Grotesk', sans-serif; font-size: 0.72rem; font-weight: 800; color: #F5B942; letter-spacing: 0.08em; text-transform: uppercase;">{t('home_f9_category', cur_lang)}</span>
+                    <h3 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.22rem; font-weight: 800; color: #F9FAFB; margin: 2px 0 0 0;">{t('home_f9_title', cur_lang)}</h3>
                 </div>
             </div>
             <span style="background: rgba(16, 185, 129, 0.18); color: #34D399; font-family: 'Space Grotesk', sans-serif; font-size: 0.72rem; font-weight: 800; padding: 4px 12px; border-radius: 999px; border: 1px solid rgba(16, 185, 129, 0.4);">
-                ● 100% FREE AUTONOMOUS • 3 QUESTIONS / 24H QUOTA
+                {t('home_f9_badge', cur_lang)}
             </span>
         </div>
         <p style="font-family: 'Inter', sans-serif; font-size: 0.9rem; color: #94A3B8; margin: 0 0 16px 0; line-height: 1.6;">
-            Natural-language energy market intelligence engine translating plain questions into verified, read-only SQL queries with zero API key dependencies, tamper-resistant 24-hour rate limiting, and continuous grounding. Accessible anytime across all pages via the <b>floating assistant (🤖)</b> in the bottom right corner.
+            {t('home_f9_desc', cur_lang)}
         </p>
     </div>
     """)

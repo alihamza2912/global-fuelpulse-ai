@@ -2885,5 +2885,1364 @@ VIEWS_TRANSLATIONS = {
         "zh": "• <b>HHI &gt; 2,500:</b> 高度寡头集中风险格局（受制裁与地缘阻断冲击风险极高）",
         "ru": "• <b>HHI &gt; 2,500:</b> Высококонцентрированные поставки (Повышенный санкционный / геополитический риск)",
         "ja": "• <b>HHI &gt; 2,500:</b> 高度集中供給（禁輸・地政学的リスク極大）"
-    }
+    },
+    "lang_modal_sub": {       'ar': 'اختر وفعّل لغتك المفضلة عبر كامل المنصة:',
+        'de': 'Wählen und aktivieren Sie Ihre bevorzugte Sprache auf der gesamten Plattform:',
+        'en': 'Select and activate your language across the entire platform:',
+        'es': 'Seleccione y active su idioma preferido en toda la plataforma:',
+        'fr': 'Sélectionnez et activez votre langue préférée sur toute la plateforme:',
+        'hi': 'पूरे प्लेटफॉर्म पर अपनी पसंदीदा भाषा चुनें और सक्रिय करें:',
+        'ja': 'プラットフォーム全体で適用する言語を選択して有効化：',
+        'ru': 'Выберите и активируйте язык интерфейса для всей платформы:',
+        'zh': '在整个平台上选择并激活您的首选语言：'},
+    "news_wire_title": {       'ar': 'نشرة استخبارات النقل البحري وأسواق الطاقة الفورية',
+        'de': 'Echtzeit-Maritime Intelligence & Energie-Nachrichten',
+        'en': 'Real-Time Maritime Intelligence & Energy Wire',
+        'es': 'Inteligencia Marítima y Alertas Energéticas en Tiempo Real',
+        'fr': 'Intelligence Maritime et Flux Énergétique en Temps Réel',
+        'hi': 'वास्तविक समय समुद्री खुफिया एवं ऊर्जा समाचार',
+        'ja': 'リアルタイム海上インテリジェンス＆エネルギー速報',
+        'ru': 'Морская разведка и оперативные сводки по энергетике в реальном времени',
+        'zh': '海运战略物流情报与全球能源实时快讯'},
+    "news_live_status": {       'ar': '🟢 الأخبار المباشرة: مزامنة تلقائية مستمرة',
+        'de': '🟢 Live-Nachrichten: Automatisch synchronisiert',
+        'en': '🟢 Live News: Auto-Synchronized',
+        'es': '🟢 Noticias en Vivo: Sincronización Automática',
+        'fr': '🟢 Actualités en Direct: Synchronisation Automatique',
+        'hi': '🟢 लाइव समाचार: स्वतः समन्वयित',
+        'ja': '🟢 ライブニュース：自動同期中',
+        'ru': '🟢 Оперативные новости: автосинхронизация',
+        'zh': '🟢 实时快讯：系统自动同步'},
+    "news_maritime_monitor": {       'ar': 'مرصد مخاطر المرور عبر الممرات البحرية',
+        'de': 'Überwachung des maritimen Transitrisikos',
+        'en': 'Maritime Transit Risk Monitor',
+        'es': 'Monitor de Riesgo de Tránsito Marítimo',
+        'fr': 'Moniteur des Risques de Transit Maritime',
+        'hi': 'समुद्री पारगमन जोखिम मॉनिटर',
+        'ja': '海上航路通過リスク常時監視モニター',
+        'ru': 'Мониторинг рисков морского транзита',
+        'zh': '战略海峡与海上航道过境风险雷达'},
+    "home_f9_category": {       'ar': 'الميزة 09 // الاستدلال التحليلي المتقدم',
+        'de': 'FUNKTION 09 // SYNTHETISCHE ANALYSE',
+        'en': 'FEATURE 09 // SYNTHETIC REASONING',
+        'es': 'CARACTERÍSTICA 09 // RAZONAMIENTO SINTÉTICO',
+        'fr': 'FONCTIONNALITÉ 09 // RAISONNEMENT SYNTHÉTIQUE',
+        'hi': 'फीचर 09 // सिंथेटिक तर्क (Reasoning)',
+        'ja': '機能 09 // 複合的自律推論エンジン',
+        'ru': 'МОДУЛЬ 09 // СИНТЕТИЧЕСКИЙ АНАЛИЗ И РАССУЖДЕНИЕ',
+        'zh': '核心功能 09 // 能源领域大模型综合推理'},
+    "home_f9_title": {       'ar': 'محلل أسواق الطاقة بالذكاء الاصطناعي (توليد SQL ذاتي مدعوم بالنماذج اللغوية)',
+        'de': 'KI-Energiemarkt-Analyst (LLM-gestützt & autonomes SQL)',
+        'en': 'AI Energy Market Analyst (LLM-Assisted & Autonomous SQL)',
+        'es': 'Analista de Mercados Energéticos con IA (Asistido por LLM y SQL Autónomo)',
+        'fr': "Analyste des Marchés de l'Énergie IA (Assisté par LLM et SQL Autonome)",
+        'hi': 'एआई ऊर्जा बाजार विश्लेषक (एलएलएम-सहायता प्राप्त एवं स्वायत्त एसक्यूएल)',
+        'ja': 'AI エネルギー市場アナリスト (LLM連携＆自律型SQL合成)',
+        'ru': 'ИИ-аналитик энергетических рынков (LLM и автономный SQL)',
+        'zh': 'AI 全球能源市场分析师（大语言模型辅助与自主 SQL 生成）'},
+    "home_f9_badge": {       'ar': '● مستقل ومجاني 100% • 3 أسئلة / حصة كل 24 ساعة',
+        'de': '● 100% FREI AUTONOM • KONTINGENT: 3 FRAGEN / 24H',
+        'en': '● 100% FREE AUTONOMOUS • 3 QUESTIONS / 24H QUOTA',
+        'es': '● 100% AUTÓNOMO GRATUITO • CUOTA DE 3 PREGUNTAS / 24H',
+        'fr': '● 100% AUTONOME GRATUIT • QUOTA DE 3 QUESTIONS / 24H',
+        'hi': '● 100% निःशुल्क स्वायत्त • 3 प्रश्न / 24 घंटे कोटा',
+        'ja': '● 100% 完全無料自律型 • 24時間あたり3回の無料質問枠',
+        'ru': '● 100% АВТОНОМНЫЙ БЕСПЛАТНЫЙ • ЛИМИТ 3 ВОПРОСА В СУТКИ',
+        'zh': '● 100% 免费自主运行 • 每日 3 次深度问答额度'},
+    "home_f9_desc": {       'ar': 'محرك استخباراتي رائد لأسواق الطاقة يترجم الأسئلة الشائعة باللغة الطبيعية إلى استعلامات SQL معتمدة '
+              'للقراءة فقط، دون الحاجة لمفاتيح API خارجية، مع حماية الحصص اليومية. متاح في جميع الأوقات عبر المساعد '
+              'الذكي العائم (🤖) أسفل الشاشة.',
+        'de': 'Verarbeitet natürlichsprachige Energieanfragen in verifizierte SQL-Abfragen mit integrierter '
+              'Ratenbegrenzung. Jederzeit verfügbar über den schwebenden KI-Assistenten (🤖) unten rechts.',
+        'en': 'Natural-language energy market intelligence engine translating plain questions into verified, read-only '
+              'SQL queries with zero API key dependencies, tamper-resistant 24-hour rate limiting, and continuous '
+              'grounding. Accessible anytime across all pages via the floating assistant (🤖) in the bottom right '
+              'corner.',
+        'es': 'Motor de inteligencia energética en lenguaje natural que traduce preguntas sencillas en consultas SQL '
+              'seguras de solo lectura, sin necesidad de claves API, con límite diario de 24 horas. Accesible en '
+              'cualquier momento mediante el asistente flotante (🤖).',
+        'fr': "Moteur d'intelligence énergétique en langage naturel traduisant des questions simples en requêtes SQL "
+              'vérifiées en lecture seule, sans clé API requise, avec contrôle strict des quotas journaliers. '
+              "Accessible via l'assistant flottant (🤖).",
+        'hi': 'प्राकृतिक-भाषा ऊर्जा बाजार खुफिया इंजन जो सामान्य प्रश्नों को सत्यापित, केवल-पठनीय SQL प्रश्नों में '
+              'अनुवादित करता है। इसमें किसी एपीआई कुंजी की आवश्यकता नहीं, 24 घंटे की दर सीमा और निरंतर सत्यता है। नीचे '
+              'दाएं कोने में फ्लोटिंग सहायक (🤖) के माध्यम से किसी भी समय सुलभ।',
+        'ja': '平易な質問を検証済みの読み取り専用SQLクエリに自動変換する自然言語エネルギーインテリジェンスエンジン。APIキー不要、24時間レート制限完備。右下のフローティングアシスタント(🤖)から常時利用可能。',
+        'ru': 'Движок анализа энергетических рынков на естественном языке, переводящий вопросы в проверенные '
+              'SQL-запросы без необходимости ввода API-ключей с суточным лимитом. Доступен в правом нижнем углу (🤖).',
+        'zh': '自然语言能源市场情报系统，自动将业务提问转化为经安全校验的只读 SQL 语句并给出深度研判，无需用户配置任何 API 密钥，受 24 小时配额保护。可通过右下角浮动助手 (🤖) 随时调用。'},
+    "feat_lbl_feature": {       'ar': 'الميزة',
+        'de': 'FUNKTION',
+        'en': 'FEATURE',
+        'es': 'CARACTERÍSTICA',
+        'fr': 'FONCTIONNALITÉ',
+        'hi': 'फीचर',
+        'ja': '機能',
+        'ru': 'МОДУЛЬ',
+        'zh': '核心功能'},
+    "feat_lbl_what": {       'ar': 'ما تقدمه الميزة:',
+        'de': 'Funktionsweise:',
+        'en': 'What it does:',
+        'es': 'Qué hace:',
+        'fr': 'Fonctionnalité:',
+        'hi': 'यह क्या करता है:',
+        'ja': '機能の概要：',
+        'ru': 'Назначение:',
+        'zh': '功能概述：'},
+    "feat_lbl_why": {       'ar': 'أهميتها الاستراتيجية:',
+        'de': 'Strategischer Mehrwert:',
+        'en': 'Why it matters:',
+        'es': 'Por qué es importante:',
+        'fr': "Pourquoi c'est important:",
+        'hi': 'यह क्यों महत्वपूर्ण है:',
+        'ja': '重要性と価値：',
+        'ru': 'Ключевая ценность:',
+        'zh': '业务价值：'},
+    "feat_lbl_sources": {       'ar': 'مصادر البيانات المدخلة:',
+        'de': 'Eingangsdatenquellen:',
+        'en': 'Input data sources:',
+        'es': 'Fuentes de datos:',
+        'fr': 'Sources de données:',
+        'hi': 'इनपुट डेटा स्रोत:',
+        'ja': '参照データソース：',
+        'ru': 'Источники данных:',
+        'zh': '输入数据源：'},
+    "feat_lbl_verified": {       'ar': 'جاهز للإنتاج / موثق',
+        'de': 'PRODUKTION / VERIFIZIERT',
+        'en': 'PRODUCTION / VERIFIED',
+        'es': 'PRODUCCIÓN / VERIFICADO',
+        'fr': 'PRODUCTION / VÉRIFIÉ',
+        'hi': 'उत्पादन / सत्यापित',
+        'ja': '本番稼働 / 検証済み',
+        'ru': 'ПРОДАКШН / ВЕРИФИЦИРОВАНО',
+        'zh': '生产环境 / 已核验'},
+    "feat_lbl_active_f9": {       'ar': 'جاهز للإنتاج / نشط • مستقل ومجاني 100%',
+        'de': 'PRODUKTION / AKTIV • 100% FREI AUTONOM',
+        'en': 'PRODUCTION / ACTIVE • 100% FREE AUTONOMOUS',
+        'es': 'PRODUCCIÓN / ACTIVO • 100% AUTÓNOMO GRATUITO',
+        'fr': 'PRODUCTION / ACTIF • 100% AUTONOME GRATUIT',
+        'hi': 'उत्पादन / सक्रिय • 100% निःशुल्क स्वायत्त',
+        'ja': '本番稼働 / アクティブ • 100% 完全無料自律型',
+        'ru': 'ПРОДАКШН / АКТИВЕН • 100% АВТОНОМНЫЙ БЕСПЛАТНЫЙ',
+        'zh': '生产环境 / 活跃运行 • 100% 免费自主'},
+    "feat_01_name": {       'ar': 'لوحة صدارة إنتاج واستخراج النفط الخام العالمي',
+        'de': 'Globale Rangliste der Rohölförderung',
+        'en': 'Global Crude Extraction Leaderboard',
+        'es': 'Clasificación Mundial de Extracción de Crudo',
+        'fr': "Classement Mondial de l'Extraction de Pétrole Brut",
+        'hi': 'वैश्विक कच्चा तेल निष्कर्षण लीडरबोर्ड',
+        'ja': '世界原油採掘リーダーボード',
+        'ru': 'Мировой рейтинг добычи сырой нефти',
+        'zh': '全球主要产油国原油开采排行榜'},
+    "feat_01_cat": {       'ar': 'استخبارات الإنتاج الأولي (UPSTREAM)',
+        'de': 'UPSTREAM-INTELLIGENCE',
+        'en': 'UPSTREAM INTELLIGENCE',
+        'es': 'INTELIGENCIA UPSTREAM',
+        'fr': 'INTELLIGENCE AMONT',
+        'hi': 'अपस्ट्रीम खुफिया (Upstream)',
+        'ja': '上流・採掘インテリジェンス',
+        'ru': 'РАЗВЕДКА И ДОБЫЧА (UPSTREAM)',
+        'zh': '上游勘探与开采情报'},
+    "feat_01_what": {       'ar': 'تتبع أحجام استخراج النفط الخام اليومية والسنوية (بملايين البراميل يومياً) لأكبر 15 دولة منتجة، مع '
+              'مقارنة القوة السوقية لأوبك مقابل المنتجين المستقلين.',
+        'de': 'Erfasst tägliche und jährliche Fördermengen (in Mio. Barrel/Tag) der 15 größten Förderländer und '
+              'vergleicht OPEC- mit Nicht-OPEC-Marktmacht.',
+        'en': 'Tracks daily and annual crude oil extraction volumes (in million barrels per day - mbpd) for the top 15 '
+              'producing nations, contrasting OPEC vs Non-OPEC market power.',
+        'es': 'Rastrea volúmenes de extracción de crudo diarios y anuales (en millones de barriles por día - mbpd) de '
+              'los 15 principales países productores, contrastando la OPEP con los no OPEP.',
+        'fr': "Suit les volumes quotidiens et annuels d'extraction de brut (en millions de barils/jour) des 15 "
+              'premiers pays producteurs, opposant OPEP et non-OPEP.',
+        'hi': 'ओपेक बनाम गैर-ओपेक बाजार शक्ति की तुलना करते हुए शीर्ष 15 उत्पादक देशों के लिए दैनिक और वार्षिक कच्चे '
+              'तेल निष्कर्षण मात्रा (मिलियन बैरल प्रति दिन - mbpd) को ट्रैक करता है।',
+        'ja': '主要産油国上位15カ国の原油採掘量（日量百万バレル - mbpd）を追跡し、OPECと非OPECの市場支配力を対比。',
+        'ru': 'Отслеживает суточные и годовые объемы добычи сырой нефти (млн барр./сутки) 15 ведущих стран, '
+              'сопоставляя ОПЕК и независимых производителей.',
+        'zh': '持续追踪全球前 15 大产油国的日均与年度原油开采体量（百万桶/日 mbpd），动态对比欧佩克 (OPEC) 与非欧佩克产油国的全球市场定价权与份额。'},
+    "feat_01_why": {       'ar': 'يحدد درجة تركز الإنتاج ومسار توسع أو انكماش إمدادات الطاقة العالمية.',
+        'de': 'Zeigt Konzentration im Upstream-Sektor und Trends des globalen Angebots auf.',
+        'en': 'Identifies upstream market concentration and baseline global supply expansion or curtailment.',
+        'es': 'Identifica la concentración del mercado upstream y la expansión o recorte del suministro global.',
+        'fr': "Identifie la concentration du marché amont et les dynamiques de l'offre mondiale.",
+        'hi': 'अपस्ट्रीम बाजार एकाग्रता और आधारभूत वैश्विक आपूर्ति विस्तार या कटौती की पहचान करता है।',
+        'ja': '上流市場の寡占度を評価し、世界的な増産・減産動向を特定。',
+        'ru': 'Определяет концентрацию добычи и тенденции мирового предложения нефти.',
+        'zh': '精准识别上游原油供应集中度，为研判全球基准产能扩张、产油国自愿减产协议与供给安全提供基石。'},
+    "feat_01_data": {       'ar': 'جدول إدارة معلومات الطاقة الأمريكية (EIA 11.1b)، والنشرات الإحصائية السنوية لمنظمة أوبك.',
+        'de': 'US EIA Tabelle 11.1b, Offizielle Jahresberichte der OPEC.',
+        'en': 'US EIA Table 11.1b, Official OPEC Annual Statistical Bulletins.',
+        'es': 'Tabla 11.1b de la US EIA, Boletines Estadísticos Anuales Oficiales de la OPEP.',
+        'fr': "US EIA Tableau 11.1b, Bulletins statistiques annuels de l'OPEP.",
+        'hi': 'यूएस ईआईए तालिका 11.1b, आधिकारिक ओपेक वार्षिक सांख्यिकीय बुलेटिन।',
+        'ja': '米国EIA Table 11.1b、OPEC公式年次統計公報。',
+        'ru': 'Таблица 11.1b US EIA, официальные бюллетени ОПЕК.',
+        'zh': '美国能源信息署 (US EIA) Table 11.1b、石油输出国组织 (OPEC) 官方年度统计公报。'},
+    "feat_01_act": {       'ar': 'عرض الفصل 02 في لوحة التحكم',
+        'de': 'Im Dashboard Kapitel 02 ansehen',
+        'en': 'View in Dashboard Chapter 02',
+        'es': 'Ver en el Capítulo 02 del Panel',
+        'fr': 'Voir dans le Chapitre 02 du Tableau de Bord',
+        'hi': 'डैशबोर्ड अध्याय 02 में देखें',
+        'ja': 'ダッシュボード第02章で表示',
+        'ru': 'Смотреть в главе 02 дашборда',
+        'zh': '进入仪表板第 02 章查阅'},
+    "feat_02_name": {       'ar': 'مصفوفة تدفقات التجارة البحرية الثنائية للنفط',
+        'de': 'Bilaterale Seeverkehrs-Handelsflussmatrix',
+        'en': 'Bilateral Seaborne Trade Flow Matrix',
+        'es': 'Matriz de Flujos Comerciales Marítimos Bilaterales',
+        'fr': 'Matrice des Échanges Maritimes Bilatéraux',
+        'hi': 'द्विपक्षीय समुद्री व्यापार प्रवाह मैट्रिक्स',
+        'ja': '二国間海上石油貿易マトリックス',
+        'ru': 'Матрица двусторонних морских торговых потоков',
+        'zh': '全球海运原油双边贸易流向矩阵'},
+    "feat_02_cat": {       'ar': 'اللوجستيات والنقل البحري (MIDSTREAM)',
+        'de': 'MIDSTREAM-LOGISTIK',
+        'en': 'MIDSTREAM LOGISTICS',
+        'es': 'LOGÍSTICA MIDSTREAM',
+        'fr': 'LOGISTIQUE INTERMÉDIAIRE',
+        'hi': 'मिडस्ट्रीम लॉजिस्टिक्स (Midstream)',
+        'ja': '中流・海上輸送ロジスティクス',
+        'ru': 'ТРАНСПОРТИРОВКА И ЛОГИСТИКА (MIDSTREAM)',
+        'zh': '中游远洋航运与管道物流'},
+    "feat_02_what": {       'ar': 'مصفوفة ثنائية تربط بين المصدر والوجهة لتتبع حركة ناقلات النفط الخام والمشتقات البترولية بين الدول '
+              'المصدرة والمراكز المستهلكة.',
+        'de': 'Herkunfts-Ziel-Matrix, die Rohöl- und Tankerbewegungen zwischen Exporteuren und Verbrauchszentren '
+              'abbildet.',
+        'en': 'Origin-destination bilateral matrix capturing physical crude and product tanker flows between sovereign '
+              'exporters and consuming hubs.',
+        'es': 'Matriz bilateral origen-destino que captura flujos de petroleros entre exportadores soberanos y centros '
+              'de consumo.',
+        'fr': 'Matrice origine-destination retraçant les flux de pétroliers entre pays exportateurs et grands centres '
+              'de consommation.',
+        'hi': 'संप्रभु निर्यातकों और उपभोक्ता केंद्रों के बीच भौतिक कच्चे तेल और उत्पाद टैंकर प्रवाह को दर्शाने वाला '
+              'मूल-गंतव्य द्विपक्षीय मैट्रिक्स।',
+        'ja': '原油および石油製品タンカーの輸出国と消費国の間の物理的貿易フローを記録する二国間マトリックス。',
+        'ru': 'Матрица «источник-назначение» физических потоков танкерной нефти и нефтепродуктов между экспортерами и '
+              'потребителями.',
+        'zh': '起讫点 (O-D) 双边贸易矩阵，完整捕获主权出口国与主要消费经济体之间的超大型油轮 (VLCC) 与成品油海运物理流向。'},
+    "feat_02_why": {       'ar': 'يكشف عن الاعتماد المتبادل في مجال الطاقة وكثافة الصادرات والفوائض أو العجوزات التجارية البترولية.',
+        'de': 'Verdeutlicht energetische Abhängigkeiten, Exportintensitäten und Handelsbilanzen.',
+        'en': 'Reveals energy interdependence, export intensities, and sovereign trade surpluses/deficits.',
+        'es': 'Revela la interdependencia energética, la intensidad exportadora y los superávits/déficits comerciales.',
+        'fr': "Révèle l'interdépendance énergétique, l'intensité des exportations et les soldes commerciaux "
+              'souverains.',
+        'hi': 'ऊर्जा परस्पर निर्भरता, निर्यात तीव्रता, और संप्रभु व्यापार अधिशेष/घाटे को प्रकट करता है।',
+        'ja': 'エネルギー相互依存関係、輸出強度、国家間の貿易収支構造を可視化。',
+        'ru': 'Отражает энергетическую взаимозависимость и торговые балансы стран.',
+        'zh': '清晰揭示全球能源相互依存度、海运供应链暴露程度以及主权能源贸易顺逆差格局。'},
+    "feat_02_data": {       'ar': 'قاعدة بيانات التجارة التابعة للأمم المتحدة (UN Comtrade) لرموز النظام المنسق 2709 و 2710.',
+        'de': 'UN Comtrade Petroleum Trade Mart (Harmonisierte Systemcodes 2709 & 2710).',
+        'en': 'UN Comtrade Petroleum Trade Mart (Harmonized System Codes 2709 & 2710).',
+        'es': 'UN Comtrade Petroleum Trade Mart (Códigos del Sistema Armonizado 2709 y 2710).',
+        'fr': 'UN Comtrade Petroleum Trade Mart (Codes SH 2709 et 2710).',
+        'hi': 'संयुक्त राष्ट्र कॉमट्रेड पेट्रोलियम ट्रेड मार्ट (हार्मोनाइज्ड सिस्टम कोड 2709 और 2710)।',
+        'ja': '国連コモトレード石油貿易マート (HSコード 2709および2710)。',
+        'ru': 'База ООН UN Comtrade (Коды ТН ВЭД 2709 и 2710).',
+        'zh': '联合国商品贸易数据库 (UN Comtrade) 石油贸易集市（海关税则 HS 编码 2709 与 2710）。'},
+    "feat_02_act": {       'ar': 'عرض الفصل 03 في لوحة التحكم',
+        'de': 'Im Dashboard Kapitel 03 ansehen',
+        'en': 'View in Dashboard Chapter 03',
+        'es': 'Ver en el Capítulo 03 del Panel',
+        'fr': 'Voir dans le Chapitre 03 du Tableau de Bord',
+        'hi': 'डैशबोर्ड अध्याय 03 में देखें',
+        'ja': 'ダッシュボード第03章で表示',
+        'ru': 'Смотреть в главе 03 дашборда',
+        'zh': '进入仪表板第 03 章查阅'},
+    "feat_03_name": {       'ar': 'مستكشف أسعار وقود التجزئة الدولية والمقارنة العالمية',
+        'de': 'Internationaler Explorer für Kraftstoffpreise',
+        'en': 'International Retail Fuel Price Explorer',
+        'es': 'Explorador Internacional de Precios de Combustibles Minoristas',
+        'fr': 'Explorateur International des Prix des Carburants au Détail',
+        'hi': 'अंतर्राष्ट्रीय खुदरा ईंधन मूल्य एक्सप्लोरर',
+        'ja': '国際燃料小売価格エクスプローラー',
+        'ru': 'Международный обозреватель розничных цен на топливо',
+        'zh': '全球终端零售燃油价格探索器'},
+    "feat_03_cat": {       'ar': 'تسعير التجزئة والتوزيع (DOWNSTREAM)',
+        'de': 'DOWNSTREAM-PREISE',
+        'en': 'DOWNSTREAM PRICING',
+        'es': 'PRECIOS DOWNSTREAM',
+        'fr': 'PRIX EN AVAL',
+        'hi': 'डाउनस्ट्रीम मूल्य निर्धारण (Downstream)',
+        'ja': '下流・給油所小売価格',
+        'ru': 'РОЗНИЦА И СБЫТ (DOWNSTREAM)',
+        'zh': '下游炼化与零售定价'},
+    "feat_03_what": {       'ar': 'تسعير مقارن متعدد الدول لبنزين السيارات والديزل، مع توحيد القياس بالدولار لكل لتر والعملات المحلية.',
+        'de': 'Länderübergreifender Preisvergleich für Benzin und Diesel in standardisierten USD/Liter und '
+              'Landeswährungen.',
+        'en': 'Multi-country comparative pricing for Regular Motor Gasoline (Petrol) and Automotive Gasoil (Diesel), '
+              'harmonized into standardized USD per litre and local currencies.',
+        'es': 'Precios comparativos entre países de gasolina y diésel, unificados a USD/litro y monedas locales.',
+        'fr': "Tarification comparative multi-pays pour l'essence et le gazole, harmonisée en USD/litre et devises "
+              'locales.',
+        'hi': 'नियमित मोटर गैसोलीन (पेट्रोल) और ऑटोमोटिव गैसऑयल (डीजल) के लिए बहु-देशीय तुलनात्मक मूल्य निर्धारण, '
+              'मानकीकृत अमरीकी डालर प्रति लीटर और स्थानीय मुद्राओं में सामंजस्य स्थापित।',
+        'ja': 'レギュラーガソリンおよび軽油の国際比較価格を標準化米ドル（USD/L）および現地通貨で統一表示。',
+        'ru': 'Сравнительный анализ цен на бензин и дизель в разных странах в пересчете на доллары за литр и '
+              'нацвалюты.',
+        'zh': '覆盖全球主要经济体标准车用汽油 (Petrol) 与车用柴油 (Diesel) 的横向对比价格体系，标准化换算为美元/升 ($/L) 及所在国法定货币。'},
+    "feat_03_why": {       'ar': 'يمكن من تخطيط مسارات أساطيل النقل الدولية وتتبع فوارق الأسعار وتحليل نسبة سعر الديزل إلى البنزين.',
+        'de': 'Ermöglicht grenzüberschreitende Flottenoptimierung und Analyse der Preisabstände.',
+        'en': 'Enables cross-border fleet routing, international price disparity tracking, and diesel-to-petrol ratio '
+              'analysis.',
+        'es': 'Permite planificar rutas de flotas internacionales, rastrear disparidades de precios y ratios '
+              'diésel/gasolina.',
+        'fr': "Facilite l'optimisation des flottes internationales, le suivi des écarts de prix et le ratio "
+              'diesel/essence.',
+        'hi': 'सीमा पार बेड़े रूटिंग, अंतर्राष्ट्रीय मूल्य असमानता ट्रैकिंग, और डीजल-से-पेट्रोल अनुपात विश्लेषण को '
+              'सक्षम बनाता है।',
+        'ja': '国境を越えた商用車ルーティング、価格格差追跡、軽油対ガソリン価格比率分析を実現。',
+        'ru': 'Помогает оптимизировать международные маршруты и отслеживать разницу цен между странами.',
+        'zh': '赋能跨国货运车队补能路径优化、跨国加油套利空间监控以及柴汽比价经济学指标测算。'},
+    "feat_03_data": {       'ar': 'EIA الأمريكية، و PPAC الهندية، ونشرة النفط للمفوضية الأوروبية، وأسعار الصرف المفتوحة.',
+        'de': 'US EIA, Indien PPAC, EU-Ölbulletin, Open Exchange Rates.',
+        'en': 'US EIA, India PPAC, European Commission Oil Bulletin, Open Exchange Rates.',
+        'es': 'US EIA, PPAC de India, Boletín de Petróleo de la Comisión Europea, Open Exchange Rates.',
+        'fr': 'US EIA, PPAC Inde, Bulletin Pétrolier de la Commission Européenne, Open Exchange Rates.',
+        'hi': 'यूएस ईआईए, भारत पीपीएसी, यूरोपीय आयोग ऑयल बुलेटिन, ओपन एक्सचेंज रेट्स।',
+        'ja': '米国EIA、インドPPAC、欧州委員会石油公報、Open Exchange Rates。',
+        'ru': 'US EIA, PPAC Индии, Нефтяной бюллетень Еврокомиссии, курсы Open Exchange Rates.',
+        'zh': '美国能源信息署 (EIA)、印度石油规划分析机构 (PPAC)、欧盟委员会石油公报、Open Exchange Rates 实时汇率系统。'},
+    "feat_03_act": {       'ar': 'عرض الفصل 04 في لوحة التحكم',
+        'de': 'Im Dashboard Kapitel 04 ansehen',
+        'en': 'View in Dashboard Chapter 04',
+        'es': 'Ver en el Capítulo 04 del Panel',
+        'fr': 'Voir dans le Chapitre 04 du Tableau de Bord',
+        'hi': 'डैशबोर्ड अध्याय 04 में देखें',
+        'ja': 'ダッシュボード第04章で表示',
+        'ru': 'Смотреть в главе 04 дашборда',
+        'zh': '进入仪表板第 04 章查阅'},
+    "feat_04_name": {       'ar': 'محلل الشلال التراكمي للأسعار وتفكيك الضرائب',
+        'de': 'Preis-Build-Up- und Steuer-Waterfall-Analyzer',
+        'en': 'Price Build-Up & Tax Waterfall Analyzer',
+        'es': 'Analizador de Cascada de Precios e Impuestos',
+        'fr': 'Analyseur en Cascade des Prix et des Taxes',
+        'hi': 'मूल्य निर्माण और कर वॉटरफॉल विश्लेषक',
+        'ja': '価格構成算定＆税制ウォーターフォール分析器',
+        'ru': 'Анализатор структуры цены и налогового водопада',
+        'zh': '终端成品油定价拆解与综合税负瀑布流分析仪'},
+    "feat_04_cat": {       'ar': 'التفكيك المالي والضريبي (FISCAL DECOMPOSITION)',
+        'de': 'STEUERLICHE DEKOMPOSITION',
+        'en': 'FISCAL DECOMPOSITION',
+        'es': 'DESCOMPOSICIÓN FISCAL',
+        'fr': 'DÉCOMPOSITION FISCALE',
+        'hi': 'राजकोषीय अपघटन (Fiscal Decomposition)',
+        'ja': '財政税制分解分析',
+        'ru': 'ФИСКАЛЬНАЯ ДЕКОМПОЗИЦИЯ',
+        'zh': '主权财税与消费税率穿透分解'},
+    "feat_04_what": {       'ar': 'يفكك أسعار مضخات الوقود إلى تكاليف الخام، وهوامش التكرير، والرسوم الجمركية المركزية، وهوامش الوكلاء، '
+              'وضريبة القيمة المضافة الإقليمية.',
+        'de': 'Zerlegt Zapfsäulenpreise in Rohölkosten, Raffineriemarge, Verbrauchssteuern, Händlermarge und regionale '
+              'Mehrwertsteuer.',
+        'en': 'Decomposes consumer retail pump prices into upstream crude benchmark costs, refinery margin, central '
+              'excise duty, dealer margin, and regional VAT.',
+        'es': 'Descompone el precio en el surtidor en costo del crudo, margen de refinación, impuestos especiales, '
+              'margen del distribuidor e IVA regional.',
+        'fr': 'Décompose le prix à la pompe en coût du brut, marge de raffinage, accises fédérales, commission du '
+              'distributeur et TVA régionale.',
+        'hi': 'उपभोक्ता खुदरा पंप कीमतों को अपस्ट्रीम कच्चे बेंचमार्क लागत, रिफाइनरी मार्जिन, केंद्रीय उत्पाद शुल्क, '
+              'डीलर मार्जिन और क्षेत्रीय वैट में विभाजित करता है।',
+        'ja': 'ガソリン給油所店頭価格を、原油コスト、精製マージン、連邦物品税、販売店手数料、州付加価値税（VAT）に精密分解。',
+        'ru': 'Раскладывает розничную цену на АЗС на стоимость нефти, маржу НПЗ, акцизы, дилерскую маржу и '
+              'региональный НДС.',
+        'zh': '穿透拆解终端零售油价：上游基准原油成本、炼油裂解毛利、中央特别消费税、经销商分销佣金以及各邦属地增值税 (VAT)。'},
+    "feat_04_why": {       'ar': 'يوضح بدقة العبء الضريبي السيادي المفروض مقارنة بالتكلفة الفعلية للسلعة في كل لتر وقود.',
+        'de': 'Verdeutlicht den exakten staatlichen Steueranteil gegenüber den Rohstoffkosten je Liter.',
+        'en': 'Demystifies the exact sovereign tax wedge vs commodity cost within each litre of motor fuel.',
+        'es': 'Demuestra la brecha fiscal exacta frente al costo de la materia prima en cada litro.',
+        'fr': "Démystifie la part exacte des taxes d'État par rapport au coût réel de la matière première par litre.",
+        'hi': 'मोटर ईंधन के प्रत्येक लीटर में वस्तु लागत बनाम सटीक संप्रभु कर के अंतर को स्पष्ट करता है।',
+        'ja': '燃料1リットルあたりに含まれる政府税金負担額と純原油コストの比率を透明化。',
+        'ru': 'Показывает точную долю налогов государства в каждом литре моторного топлива.',
+        'zh': '彻底理清每升车用燃油中纯商品物理开采成本与主权政府财政税收夹角（Tax Wedge）的真实占比。'},
+    "feat_04_data": {       'ar': 'تعاميم تسعير المشتقات النفطية الصادرة عن وزارة البترول والغاز الطبيعي الهندية (MoPNG)، و PPAC.',
+        'de': 'Offizielle Preisbildungsrundschreiben des indischen Erdölministeriums (MoPNG), PPAC.',
+        'en': 'Ministry of Petroleum & Natural Gas (MoPNG) Price Build-Up Circulars, PPAC.',
+        'es': 'Circulares oficiales de precios del Ministerio de Petróleo y Gas Natural (MoPNG), PPAC.',
+        'fr': 'Circulaires de décomposition des prix du Ministère du Pétrole et du Gaz Naturel (MoPNG), PPAC.',
+        'hi': 'पेट्रोलियम और प्राकृतिक गैस मंत्रालय (MoPNG) मूल्य निर्माण परिपत्र, पीपीएसी।',
+        'ja': 'インド石油天然ガス省 (MoPNG) 価格算定通達、PPAC公表資料。',
+        'ru': 'Официальные циркуляры ценообразования Министерства нефти и газа Индии (MoPNG), PPAC.',
+        'zh': '印度石油与天然气部 (MoPNG) 官方价格构成公报、PPAC 权威规章。'},
+    "feat_04_act": {       'ar': 'عرض مركز الوقود الهندي',
+        'de': 'Im Indien-Treibstoffzentrum ansehen',
+        'en': 'View in India Fuel Center',
+        'es': 'Ver en el Centro de Combustibles de India',
+        'fr': "Voir dans le Centre des Carburants de l'Inde",
+        'hi': 'भारत ईंधन केंद्र में देखें',
+        'ja': 'インド燃料センターで表示',
+        'ru': 'Смотреть в индийском топливном центре',
+        'zh': '进入印度能源中心查阅'},
+    "feat_05_name": {       'ar': 'مؤشر عبء القدرة على تحمل تكاليف الطاقة',
+        'de': 'Erschwinglichkeitsindex für Energieausgaben',
+        'en': 'Energy Affordability Burden Index',
+        'es': 'Índice de Carga de Asequibilidad Energética',
+        'fr': "Indice du Fardeau de l'Accessibilité Énergétique",
+        'hi': 'ऊर्जा सामर्थ्य बोझ सूचकांक',
+        'ja': 'エネルギー購買負担指数',
+        'ru': 'Индекс доступности энергии относительно доходов',
+        'zh': '居民可支配收入能源消费承受力负担指数'},
+    "feat_05_cat": {       'ar': 'الأثر الاجتماعي والاقتصادي (SOCIOECONOMIC)',
+        'de': 'SOZIOÖKONOMISCHE AUSWIRKUNGEN',
+        'en': 'SOCIOECONOMIC IMPACT',
+        'es': 'IMPACTO SOCIOECONÓMICO',
+        'fr': 'IMPACT SOCIO-ÉCONOMIQUE',
+        'hi': 'सामाजिक-आर्थिक प्रभाव (Socioeconomic)',
+        'ja': '社会経済的影響',
+        'ru': 'СОЦИАЛЬНО-ЭКОНОМИЧЕСКОЕ ВЛИЯНИЕ',
+        'zh': '宏观民生与社会经济影响测度'},
+    "feat_05_what": {       'ar': 'يحسب العبء الاقتصادي الحقيقي للوقود من خلال قياس تكلفة ملء خزان سعة 50 لتراً مقارنة بنصيب الفرد من '
+              'الناتج المحلي والحد الأدنى للأجور.',
+        'de': 'Berechnet die reale finanzielle Belastung einer 50-Liter-Tankfüllung im Verhältnis zum Pro-Kopf-BIP und '
+              'Mindestlöhnen.',
+        'en': 'Calculates the real economic burden of fuel by benchmarking a 50-litre tank against national GDP per '
+              'capita and daily minimum wage levels.',
+        'es': 'Calcula la carga económica real del combustible comparando un tanque de 50 litros con el PIB per cápita '
+              'y salarios mínimos.',
+        'fr': 'Calcule le fardeau économique réel du carburant en comparant un plein de 50L au PIB par habitant et au '
+              'salaire minimum.',
+        'hi': 'राष्ट्रीय प्रति व्यक्ति सकल घरेलू उत्पाद और दैनिक न्यूनतम मजदूरी स्तरों के खिलाफ 50-लीटर टैंक की तुलना '
+              'करके ईंधन के वास्तविक आर्थिक बोझ की गणना करता है।',
+        'ja': '乗用車50L満タン給油の費用を各国の一人当たりGDPおよび最低賃金と比較し、家計への実質負担を指数化。',
+        'ru': 'Рассчитывает реальное экономическое бремя заправки 50-литрового бака относительно подушевого ВВП и '
+              'минимальной зарплаты.',
+        'zh': '通过将单次 50 升私家车加满油箱的花费，对标各国名义日均人均 GDP 与法定最低日薪水平，精准量化能源真实承受力。'},
+    "feat_05_why": {       'ar': 'يوضح لماذا يمثل سعر 1.10 دولار/لتر في دولة نامية عبئاً مالياً أشد وطأة بكثير من 1.85 دولار/لتر في دولة '
+              'مرتفعة الدخل.',
+        'de': 'Zeigt, warum 1,10 $/L in Entwicklungsländern eine ungleich höhere Belastung darstellt als 1,85 $/L in '
+              'Hocheinkommensländern.',
+        'en': 'Exposes why a $1.10/L fuel price in a developing nation represents a far greater economic burden than '
+              '$1.85/L in a high-income nation.',
+        'es': 'Demuestra por qué $1.10/L en un país en desarrollo representa un esfuerzo económico mucho mayor que '
+              '$1.85/L en un país de altos ingresos.',
+        'fr': 'Démontre pourquoi 1,10 $/L dans un pays en développement pèse bien plus lourd que 1,85 $/L dans une '
+              'nation à revenu élevé.',
+        'hi': 'यह उजागर करता है कि किसी विकासशील देश में $1.10/लीटर ईंधन की कीमत किसी उच्च आय वाले देश में $1.85/लीटर '
+              'की तुलना में बहुत अधिक आर्थिक बोझ क्यों दर्शाती है।',
+        'ja': '途上国の1.10ドル/Lが、高所得国の1.85ドル/Lよりもはるかに深刻な生活苦をもたらす構造的理由を解明。',
+        'ru': 'Объясняет, почему 1,10 $/л в развивающейся стране — это намного более тяжелое бремя, чем 1,85 $/л в '
+              'богатой стране.',
+        'zh': '直观揭示为什么发展中国家看似偏低的 $1.10/升终端价格，给普通劳工带来的实际生活成本压迫远大于发达国家的 $1.85/升。'},
+    "feat_05_data": {       'ar': 'المؤشرات الاقتصادية للبنك الدولي، وقاعدة بيانات منظمة العمل الدولية (ILO) للحد الأدنى للأجور.',
+        'de': 'Wirtschaftsindikatoren der Weltbank, Mindestlohndatenbank der ILO.',
+        'en': 'World Bank Economic Indicators, ILO Minimum Wage Database.',
+        'es': 'Indicadores Económicos del Banco Mundial, Base de Datos de Salarios Mínimos de la OIT.',
+        'fr': "Indicateurs économiques de la Banque Mondiale, Base de données des salaires minima de l'OIT.",
+        'hi': 'विश्व बैंक आर्थिक संकेतक, आईएलओ न्यूनतम वेतन डेटाबेस।',
+        'ja': '世界銀行経済指標、国際労働機関 (ILO) 最低賃金データベース。',
+        'ru': 'Экономические показатели Всемирного банка, база данных минимальных зарплат МОТ (ILO).',
+        'zh': '世界银行宏观经济数据库 (World Bank Indicators)、国际劳工组织 (ILO) 法定最低工资库。'},
+    "feat_05_act": {       'ar': 'عرض الفصل 06 في لوحة التحكم',
+        'de': 'Im Dashboard Kapitel 06 ansehen',
+        'en': 'View in Dashboard Chapter 06',
+        'es': 'Ver en el Capítulo 06 del Panel',
+        'fr': 'Voir dans le Chapitre 06 du Tableau de Bord',
+        'hi': 'डैशबोर्ड अध्याय 06 में देखें',
+        'ja': 'ダッシュボード第06章で表示',
+        'ru': 'Смотреть в главе 06 дашборда',
+        'zh': '进入仪表板第 06 章查阅'},
+    "feat_06_name": {       'ar': 'رادار مخاطر المضائق البحرية وسلاسل الإمداد العالمية',
+        'de': 'Radar für maritime Engpässe & Lieferrisiken',
+        'en': 'Maritime Chokepoint & Supply Risk Radar',
+        'es': 'Radar de Cuellos de Botella Marítimos y Riesgo de Suministro',
+        'fr': "Radar des Goulots d'Étranglement Maritimes et des Risques d'Approvisionnement",
+        'hi': 'समुद्री चोकपॉइंट और आपूर्ति जोखिम रडार',
+        'ja': '海上チョークポイント＆供給リスクレーダー',
+        'ru': 'Радар уязвимости морских проливов и рисков поставок',
+        'zh': '战略海峡咽喉过境依赖与海运断供风险雷达'},
+    "feat_06_cat": {       'ar': 'تدقيق المخاطر ونقاط الضعف (VULNERABILITY)',
+        'de': 'VULNERABILITÄTSANALYSE',
+        'en': 'VULNERABILITY AUDITING',
+        'es': 'AUDITORÍA DE VULNERABILIDAD',
+        'fr': 'AUDIT DE VULNÉRABILITÉ',
+        'hi': 'कमजोरी ऑडिटिंग (Vulnerability)',
+        'ja': '脆弱性監査・リスク評価',
+        'ru': 'АУДИТ УЯЗВИМОСТИ',
+        'zh': '地缘脆弱性与供应链审计'},
+    "feat_06_what": {       'ar': 'يقيم اعتماد الدول على ممرات العبور البحرية عالية المخاطر (مضيق هرمز، مضيق ملقا، قناة السويس/البحر '
+              'الأحمر) ويحسب مؤشر هيرفيندال-هيرشمان (HHI).',
+        'de': 'Bewertet Abhängigkeiten von Risikokorridoren (Straße von Hormus, Malakka, Sues/Rotes Meer) und '
+              'berechnet den HHI.',
+        'en': 'Evaluates national dependency on high-risk maritime transit corridors (Strait of Hormuz, Malacca '
+              'Strait, Suez/Red Sea) and calculates the Herfindahl-Hirschman Index (HHI).',
+        'es': 'Evalúa la dependencia de corredores de alto riesgo (Estrecho de Ormuz, Malaca, Suez/Mar Rojo) y calcula '
+              'el HHI.',
+        'fr': "Évalue la dépendance aux détroits à haut risque (Ormuz, Malacca, Suez/Mer Rouge) et calcule l'indice "
+              'HHI.',
+        'hi': 'उच्च जोखिम वाले समुद्री पारगमन गलियारों (होर्मुज जलडमरूमध्य, मलक्का जलडमरूमध्य, स्वेज/लाल सागर) पर '
+              'राष्ट्रीय निर्भरता का मूल्यांकन करता है और एचएचआई (HHI) की गणना करता है।',
+        'ja': 'ホルムズ海峡、マラッカ海峡、スエズ運河・紅海等の航路依存度を評価し、HHI集中度指数を算出。',
+        'ru': 'Оценивает зависимость стран от Ормузского и Малаккского проливов, Суэца и Красного моря, вычисляя '
+              'индекс HHI.',
+        'zh': '量化评估各主权国对全球最高危海运咽喉（霍尔木兹海峡、马六甲海峡、苏伊士运河/红海）的过境依赖度，实时测算赫芬达尔-赫希曼集中度指数 (HHI)。'},
+    "feat_06_why": {       'ar': 'يقيس كمياً مدى هشاشة الإمدادات للدول التي تعتمد اعتماداً شديداً على مسار استيراد بحري واحد.',
+        'de': 'Quantifiziert Ausfallrisiken für Länder, die von einzelnen Seewegen abhängig sind.',
+        'en': 'Quantifies supply disruption vulnerability for nations heavily reliant on singular import routes.',
+        'es': 'Cuantifica la vulnerabilidad a cortes de suministro en países dependientes de rutas únicas.',
+        'fr': "Quantifie la vulnérabilité aux ruptures d'approvisionnement des pays dépendant de routes uniques.",
+        'hi': 'एकल आयात मार्गों पर भारी निर्भर देशों के लिए आपूर्ति व्यवधान की भेद्यता को मापता है।',
+        'ja': '単一航路に極度に依存する輸入国の供給途絶リスクを定量化。',
+        'ru': 'Оценивает риск срыва поставок для стран с высокой зависимостью от единичных маршрутов.',
+        'zh': '严谨量化高度依赖单一或少数海上航道的沿海及内陆进口国的原油断供脆弱性指数。'},
+    "feat_06_data": {       'ar': 'سجلات حمولات النقل البحري، وأوزان الاستيراد الثنائية من قاعدة بيانات الأمم المتحدة (UN Comtrade).',
+        'de': 'Maritime Durchsatzdaten, bilaterale Importgewichte von UN Comtrade.',
+        'en': 'Maritime transit throughput records, UN Comtrade bilateral import weights.',
+        'es': 'Registros de tráfico marítimo, ponderaciones de importación bilateral de UN Comtrade.',
+        'fr': "Registres de transit maritime, pondérations des importations bilatérales d'UN Comtrade.",
+        'hi': 'समुद्री पारगमन थ्रूपुट रिकॉर्ड, संयुक्त राष्ट्र कॉमट्रेड द्विपक्षीय आयात भार।',
+        'ja': '主要海峡通航船舶スループット記録、国連Comtrade二国間輸入ウェイト。',
+        'ru': 'Данные о пропускной способности морских путей, веса импорта UN Comtrade.',
+        'zh': '国际战略水道船舶通航吨位记录、联合国 Comtrade 双边海运贸易权重。'},
+    "feat_06_act": {       'ar': 'عرض الفصل 07 في لوحة التحكم',
+        'de': 'Im Dashboard Kapitel 07 ansehen',
+        'en': 'View in Dashboard Chapter 07',
+        'es': 'Ver en el Capítulo 07 del Panel',
+        'fr': 'Voir dans le Chapitre 07 du Tableau de Bord',
+        'hi': 'डैशबोर्ड अध्याय 07 में देखें',
+        'ja': 'ダッシュボード第07章で表示',
+        'ru': 'Смотреть в главе 07 дашборда',
+        'zh': '进入仪表板第 07 章查阅'},
+    "feat_07_name": {       'ar': 'محاكي صدمات أسعار الوقود والاقتصاد الكلي',
+        'de': 'Makroökonomischer Kraftstoff-Schock-Simulator',
+        'en': 'Macroeconomic Fuel Shock Simulator',
+        'es': 'Simulador Macroeconómico de Shocks de Combustible',
+        'fr': 'Simulateur Macroéconomique de Chocs Pétroliers',
+        'hi': 'मैक्रोइकॉनॉमिक ईंधन शॉक सिम्युलेटर',
+        'ja': 'マクロ経済燃料ショックシミュレーター',
+        'ru': 'Макроэкономический симулятор топливных шоков',
+        'zh': '宏观原油供给冲击与通胀压力沙箱仿真器'},
+    "feat_07_cat": {       'ar': 'دعم القرار والتخطيط الاستراتيجي (DECISION SUPPORT)',
+        'de': 'ENTSCHEIDUNGSHILFE & PLANUNG',
+        'en': 'DECISION SUPPORT & PLANNING',
+        'es': 'SOPORTE A DECISIONES Y PLANIFICACIÓN',
+        'fr': 'AIDE À LA DÉCISION ET PLANIFICATION',
+        'hi': 'निर्णय समर्थन एवं योजना (Decision Support)',
+        'ja': '意思決定支援＆シナリオ計画',
+        'ru': 'ПОДДЕРЖКА ПРИНЯТИЯ РЕШЕНИЙ И ПЛАНИРОВАНИЕ',
+        'zh': '战略采购决策支持与推演系统'},
+    "feat_07_what": {       'ar': 'نموذج حساسية تفاعلي يتيح لمديري أساطيل النقل ومسؤولي المشتريات محاكاة قفزات أسعار النفط الخام والتراجع '
+              'في أسعار صرف العملات المحلية.',
+        'de': 'Interaktives Sensitivitätsmodell zur Simulation von Ölpreisschocks (+5 bis +50 $/Barrel) und '
+              'Währungsabwertungen.',
+        'en': 'Interactive sensitivity model allowing fleet managers and procurement leaders to simulate crude oil '
+              'spikes (+$5 to +$50/bbl) and local currency depreciations (1% to 25%).',
+        'es': 'Modelo de sensibilidad que simula subidas del crudo (+$5 a +$50/bbl) y depreciaciones monetarias (1% a '
+              '25%).',
+        'fr': 'Modèle de sensibilité simulant des hausses du brut (+5 $ à +50 $/baril) et des dépréciations '
+              'monétaires.',
+        'hi': 'इंटरैक्टिव संवेदनशीलता मॉडल बेड़े प्रबंधकों और खरीद नेताओं को कच्चे तेल में वृद्धि (+$5 से +$50/बैरल) '
+              'और स्थानीय मुद्रा के अवमूल्यन (1% से 25%) का अनुकरण करने की अनुमति देता है।',
+        'ja': '原油価格高騰（+$5〜+$50/bbl）および現地通貨下落（1%〜25%）を瞬時に感度分析できるシミュレーションモデル。',
+        'ru': 'Интерактивная модель чувствительности для симуляции взлетов цен на нефть и падения курсов нацвалют.',
+        'zh': '高交互计量经济学沙箱，支持企业车队与能源采购主管自主调节原油价格暴涨（+$5 至 +$50/桶）及本币汇率贬值幅度（1% 至 25%）。'},
+    "feat_07_why": {       'ar': 'يتوقع بدقة تضخم تكاليف الأساطيل الشهرية ويحدد نسب تمرير الرسوم الإضافية اللازمة لتفادي الخسائر.',
+        'de': 'Prognostiziert monatliche Fuhrparkmehrkosten und ermittelt nötige Treibstoffzuschläge.',
+        'en': 'Accurately projects monthly fleet cost inflations and evaluates required fuel surcharge pass-through '
+              'rates.',
+        'es': 'Proyecta la inflación mensual del costo de flotas y calcula los recargos de combustible requeridos.',
+        'fr': "Projette avec précision l'inflation des coûts de flotte et calcule les surcharges nécessaires.",
+        'hi': 'मासिक बेड़े की लागत मुद्रास्फीति का सटीक अनुमान लगाता है और आवश्यक ईंधन अधिभार पास-थ्रू दरों का '
+              'मूल्यांकन करता है।',
+        'ja': '商用車フリートの月間追加燃料コストを試算し、適切なサーチャージ転嫁率を迅速判定。',
+        'ru': 'Прогнозирует рост расходов автопарка и оценивает необходимую надбавку на топливо.',
+        'zh': '精准测算运输车队在极端供给黑天鹅事件下的月度运营成本增量，科学制定保本运价燃油附加费转移率。'},
+    "feat_07_data": {       'ar': 'معاملات المرونة التجريبية لتمرير الأسعار، مع حجم الأسطول وحجم الاستهلاك الشهري.',
+        'de': 'Empirische Pass-Through-Elastizitäten, Fuhrparkgröße und monatliche Verbrauchswerte.',
+        'en': 'Empirical pass-through elasticities, user fleet size and monthly volume inputs.',
+        'es': 'Elasticidades empíricas de traspaso, tamaño de flota del usuario e insumos de volumen.',
+        'fr': 'Élasticités empiriques de transmission, taille de flotte et volumes mensuels saisis.',
+        'hi': 'अनुभवजन्य पास-थ्रू लोच, उपयोगकर्ता बेड़े का आकार और मासिक मात्रा इनपुट।',
+        'ja': '実証的価格転嫁弾力性、ユーザー指定保有台数および月間燃料消費量。',
+        'ru': 'Эмпирическая эластичность трансмиссии, размер автопарка и параметры потребления.',
+        'zh': '实证计量经济学价格传导弹性系数、用户自定义车队规模与单月油品消耗容积。'},
+    "feat_07_act": {       'ar': 'عرض الفصل 08 في لوحة التحكم',
+        'de': 'Im Dashboard Kapitel 08 ansehen',
+        'en': 'View in Dashboard Chapter 08',
+        'es': 'Ver en el Capítulo 08 del Panel',
+        'fr': 'Voir dans le Chapitre 08 du Tableau de Bord',
+        'hi': 'डैशबोर्ड अध्याय 08 में देखें',
+        'ja': 'ダッシュボード第08章で表示',
+        'ru': 'Смотреть в главе 08 дашборда',
+        'zh': '进入仪表板第 08 章查阅'},
+    "feat_08_name": {       'ar': 'رادار التنبؤ بالتعلم الآلي عبر خوارزميات SARIMAX و XGBoost',
+        'de': 'SARIMAX & XGBoost Machine-Learning-Radar',
+        'en': 'SARIMAX & XGBoost Machine Learning Radar',
+        'es': 'Radar de Machine Learning con SARIMAX y XGBoost',
+        'fr': "Radar d'Apprentissage Automatique SARIMAX et XGBoost",
+        'hi': 'SARIMAX और XGBoost मशीन लर्निंग रडार',
+        'ja': 'SARIMAX＆XGBoost 機械学習予測レーダー',
+        'ru': 'Радар машинного обучения SARIMAX и XGBoost',
+        'zh': 'SARIMAX 与 XGBoost 机器学习前瞻预测雷达'},
+    "feat_08_cat": {       'ar': 'النمذجة التنبؤية بالذكاء الاصطناعي (PREDICTIVE)',
+        'de': 'PRÄDIKTIVE MODELLIERUNG',
+        'en': 'PREDICTIVE MODELING',
+        'es': 'MODELADO PREDICTIVO',
+        'fr': 'MODÉLISATION PRÉDICTIVE',
+        'hi': 'पूर्वानुमानित मॉडलिंग (Predictive)',
+        'ja': '予測モデリング・機械学習',
+        'ru': 'ПРОГНОЗНОЕ МОДЕЛИРОВАНИЕ',
+        'zh': '多周期时间序列算法建模'},
+    "feat_08_what": {       'ar': 'محرك تنبؤ زمني متعدد الآفاق يولد توقعات لأسعار وقود التجزئة لـ 30 و 90 يوماً مقبلة، مع فترات ثقة '
+              'إحصائية بنسبة 80% و 95%.',
+        'de': 'Zeitreihenprognose-Engine für 30- und 90-Tage-Kraftstoffpreisprojektionen mit 80% und 95% '
+              'Konfidenzintervallen.',
+        'en': 'Multi-horizon time-series forecasting engine generating 30-day and 90-day forward retail fuel price '
+              'projections with 80% and 95% confidence intervals.',
+        'es': 'Motor de pronóstico de series temporales a 30 y 90 días con intervalos de confianza del 80% y 95%.',
+        'fr': 'Moteur de prévision à 30 et 90 jours avec intervalles de confiance à 80% et 95%.',
+        'hi': 'बहु-क्षितिज समय-श्रृंखला पूर्वानुमान इंजन जो 80% और 95% विश्वास अंतराल के साथ 30-दिन और 90-दिन आगे के '
+              'खुदरा ईंधन मूल्य अनुमान उत्पन्न करता है।',
+        'ja': '80%および95%の信頼区間を伴う30日後・90日後の将来小売燃料価格を生成するマルチ期間時系列予測エンジン。',
+        'ru': 'Прогнозный движок временных рядов на 30 и 90 дней вперед с 80% и 95% доверительными интервалами.',
+        'zh': '多周期时间序列统计推断引擎，输出未来 30 天与 90 天终端燃油价格走势预测曲线，并动态计算 80% 与 95% 严谨统计置信包络线。'},
+    "feat_08_why": {       'ar': 'يوفر توقعات سعرية كمية دقيقة تأخذ في الاعتبار الأنماط الموسمية وتأثير تأخر أسعار النفط الفورية.',
+        'de': 'Liefert quantitative Preiserwartungen unter Einbeziehung von Saisonalität und Rohöl-Lags.',
+        'en': 'Provides quantitative forward price expectations incorporating seasonal demand patterns and crude spot '
+              'lags.',
+        'es': 'Ofrece expectativas de precios incorporando estacionalidad y rezagos del crudo.',
+        'fr': 'Fournit des anticipations de prix intégrant la saisonnalité et les délais de transmission du brut.',
+        'hi': 'मौसमी मांग पैटर्न और कच्चे तेल के अंतराल को शामिल करते हुए मात्रात्मक अग्रिम मूल्य अपेक्षाएं प्रदान '
+              'करता है।',
+        'ja': '季節的需要変動や原油スポット価格の波及タイムラグを織り込んだ定量的フォワード価格指標を提供。',
+        'ru': 'Формирует количественные ценовые ожидания с учетом сезонности и временных лагов спотовых цен.',
+        'zh': '深度融合农忙冬季取暖等季节性需求周期，以及国际布伦特原油现货向零售端传导的时滞效应，输出前瞻量化参考。'},
+    "feat_08_data": {       'ar': 'السلاسل الزمنية التاريخية الأسبوعية لأسعار الوقود، ومحددات الانحدار المتأخرة لنفط برنت الفوري.',
+        'de': 'Historische wöchentliche Zeitreihen, zeitverzögerte Brent-Rohöl-Regressoren.',
+        'en': 'Historical weekly fuel price time-series, Brent crude spot lag regressors.',
+        'es': 'Series temporales semanales de precios, regresores rezagados de crudo Brent.',
+        'fr': 'Séries temporelles hebdomadaires des prix, régressions avec décalage sur le Brent.',
+        'hi': 'ऐतिहासिक साप्ताहिक ईंधन मूल्य समय-श्रृंखला, ब्रेंट क्रूड स्पॉट लैग रिग्रेसर्स।',
+        'ja': '過去の週間燃料価格時系列データ、ブレント原油スポット価格のラグ回帰変数。',
+        'ru': 'Исторические временные ряды цен на топливо, лаговые регрессоры нефти Brent.',
+        'zh': '高保真周度历史燃油零售价格序列、北海布伦特 (Brent) 原油现货多阶滞后自回归特征项。'},
+    "feat_08_act": {       'ar': 'عرض الفصل 10 في لوحة التحكم',
+        'de': 'Im Dashboard Kapitel 10 ansehen',
+        'en': 'View in Dashboard Chapter 10',
+        'es': 'Ver en el Capítulo 10 del Panel',
+        'fr': 'Voir dans le Chapitre 10 du Tableau de Bord',
+        'hi': 'डैशबोर्ड अध्याय 10 में देखें',
+        'ja': 'ダッシュボード第10章で表示',
+        'ru': 'Смотреть в главе 10 дашборда',
+        'zh': '进入仪表板第 10 章查阅'},
+    "feat_09_name": {       'ar': 'محلل أسواق الطاقة بالذكاء الاصطناعي (المستقل والتوليدي)',
+        'de': 'KI-Energiemarkt-Analyst (LLM-gestützt)',
+        'en': 'AI Energy Market Analyst (LLM-Assisted)',
+        'es': 'Analista de Mercados Energéticos con IA (Asistido por LLM)',
+        'fr': "Analyste des Marchés de l'Énergie IA (Assisté par LLM)",
+        'hi': 'एआई ऊर्जा बाजार विश्लेषक (एलएलएम-सहायता प्राप्त)',
+        'ja': 'AI エネルギー市場アナリスト (LLM連携)',
+        'ru': 'ИИ-аналитик рынков энергоносителей (LLM)',
+        'zh': 'AI 能源大模型智能分析师（自主 SQL 与全库推理）'},
+    "feat_09_cat": {       'ar': 'الاستدلال والتوليد الذكي (SYNTHETIC REASONING)',
+        'de': 'SYNTHETISCHE ANALYSE',
+        'en': 'SYNTHETIC REASONING',
+        'es': 'RAZONAMIENTO SINTÉTICO',
+        'fr': 'RAISONNEMENT SYNTHÉTIQUE',
+        'hi': 'सिंथेटिक तर्क (Synthetic Reasoning)',
+        'ja': '合成的自律推論',
+        'ru': 'СИНТЕТИЧЕСКИЙ АНАЛИЗ',
+        'zh': '多维语义理解与知识图谱合成推理'},
+    "feat_09_what": {       'ar': 'محرك استعلام باللغة الطبيعية مدعوم بنماذج Google Gemini وتوليد استعلامات SQL الذاتي، يترجم الأسئلة '
+              'الاعتيادية إلى استعلامات SQL معتمدة مع سرعة فائقة.',
+        'de': 'Natürlichsprachige Abfrage-Engine, angetrieben von Google Gemini und autonomer SQL-Synthese.',
+        'en': 'Natural-language query engine powered by Google Gemini and autonomous SQL synthesis, capable of '
+              'translating plain-English questions into verified read-only SQL queries with zero quota limits and '
+              'instant telemetry.',
+        'es': 'Motor de consultas en lenguaje natural impulsado por Google Gemini y SQL autónomo que traduce preguntas '
+              'en consultas SQL seguras.',
+        'fr': 'Moteur de requêtes en langage naturel propulsé par Google Gemini et SQL autonome, traduisant les '
+              'questions en requêtes vérifiées.',
+        'hi': 'Google Gemini और स्वायत्त SQL संश्लेषण द्वारा संचालित प्राकृतिक-भाषा क्वेरी इंजन, जो शून्य कोटा सीमाओं '
+              'और त्वरित टेलीमेट्री के साथ सामान्य प्रश्नों को सत्यापित केवल-पठनीय SQL प्रश्नों में अनुवाद करने में '
+              'सक्षम है।',
+        'ja': 'Google Geminiおよび自律的SQL合成エンジンを搭載し、自然言語の質問を検証済みの安全なSQLクエリに変換して即時回答。',
+        'ru': 'Движок запросов на естественном языке на базе Google Gemini и автономного SQL, преобразующий вопросы в '
+              'безопасные SQL-запросы.',
+        'zh': '由谷歌 Gemini 大模型与自主 SQL 编译器强力驱动的对话式分析引擎，能够将自然语言提问无缝转换为可信安全的只读 SQL 指令，具备亚秒级数据透视能力。'},
+    "feat_09_why": {       'ar': 'يتيح للمدراء وصناع القرار استخلاص إجابات وحقائق فورية دون الحاجة لكتابة استعلامات تقنية أو التنقل بين '
+              'الجداول المعقدة.',
+        'de': 'Ermöglicht Führungskräften sofortige Antworten ohne SQL-Kenntnisse oder Durchsuchen vieler Diagramme.',
+        'en': 'Allows executive stakeholders to extract instant answers without writing SQL queries or navigating '
+              'multiple charts.',
+        'es': 'Permite a los ejecutivos obtener respuestas inmediatas sin redactar SQL ni navegar por múltiples '
+              'gráficos.',
+        'fr': "Permet aux dirigeants d'extraire des réponses instantanées sans rédiger de requêtes SQL ni parcourir "
+              'des graphiques complexes.',
+        'hi': 'कार्यकारी हितधारकों को SQL प्रश्न लिखे बिना या कई चार्टों को नेविगेट किए बिना त्वरित उत्तर निकालने की '
+              'अनुमति देता है।',
+        'ja': '経営幹部やアナリストがSQLを書くことなく、自然言語で問いかけるだけで必要なデータと洞察を即座に抽出可能。',
+        'ru': 'Позволяет руководству мгновенно получать аналитику без знания SQL и ручного поиска по отчетам.',
+        'zh': '使高级管理层及能源战略分析师无需手写任何数据库代码或在数十个图表中手动翻找，即可秒级获取权威定量数据结论。'},
+    "feat_09_data": {       'ar': 'ربط كامل بمخطط قواعد البيانات العلائقية، وذاكرة تخزين مؤقت سريعة، والتعاميم الرسمية لوزارة النفط MoPNG.',
+        'de': 'Vollständiges relationales Schema-Grounding, In-Memory-TTL-Cache und offizielle MoPNG-Rundschreiben.',
+        'en': 'Full relational schema grounding, in-memory TTL query cache, MoPNG official circulars.',
+        'es': 'Anclaje completo al esquema relacional, caché en memoria y circulares oficiales de MoPNG.',
+        'fr': 'Ancrage sur schéma relationnel complet, cache mémoire TTL et circulaires officielles du MoPNG.',
+        'hi': 'पूर्ण रिलेशनल स्कीमा ग्राउंडिंग, इन-मेमोरी टीटीएल क्वेरी कैश, एमओपीएनजी आधिकारिक परिपत्र।',
+        'ja': '完全なリレーショナルスキーマグラウンディング、インメモリTTLクエリキャッシュ、MoPNG公式通達。',
+        'ru': 'Полная привязка к реляционной схеме, кэш запросов в оперативной памяти, циркуляры MoPNG.',
+        'zh': '全局星型数据仓库真实 Schema 深度语义绑定、毫秒级 TTL 内存查询加速层、印度 MoPNG 官方物价档案。'},
+    "feat_09_act": {       'ar': 'فتح استوديو محلل الذكاء الاصطناعي الكامل',
+        'de': 'Vollständiges KI-Analysten-Studio öffnen',
+        'en': 'Open Full AI Analyst Studio',
+        'es': 'Abrir Estudio Completo de IA',
+        'fr': "Ouvrir le Studio d'Analyse IA Complet",
+        'hi': 'पूर्ण एआई विश्लेषक स्टूडियो खोलें',
+        'ja': '専用AIアナリスト・スタジオを開く',
+        'ru': 'Открыть студию ИИ-аналитика',
+        'zh': '打开独立 AI 能源分析师工作室'},
+    "feat_10_name": {       'ar': 'مركز طاقة المدن الهندية الرئيسية (تحديث يومي من PPAC)',
+        'de': 'Indien-Metropolen-Energiezentrum (PPAC Täglich)',
+        'en': 'India Metro Energy Center (PPAC Daily)',
+        'es': 'Centro Energético de Metrópolis de India (PPAC Diario)',
+        'fr': "Centre Énergétique des Métropoles de l'Inde (PPAC Quotidien)",
+        'hi': 'भारत मेट्रो ऊर्जा केंद्र (पीपीएसी दैनिक)',
+        'ja': 'インド主要都市エネルギーセンター (PPAC日次更新)',
+        'ru': 'Энергетический центр мегаполисов Индии (PPAC ежедневно)',
+        'zh': '印度核心都市圈能源大盘（PPAC 每日官方权威流）'},
+    "feat_10_cat": {       'ar': 'المعايير الإقليمية الوطنية (REGIONAL)',
+        'de': 'REGIONALES BENCHMARKING',
+        'en': 'REGIONAL BENCHMARKING',
+        'es': 'BENCHMARKING REGIONAL',
+        'fr': 'BENCHMARKING RÉGIONAL',
+        'hi': 'क्षेत्रीय बेंचमार्किंग (Regional)',
+        'ja': '地域別ベンチマーク分析',
+        'ru': 'РЕГИОНАЛЬНЫЙ БЕНЧМАРКИНГ',
+        'zh': '国家与区域级市场权威基准标杆'},
+    "feat_10_what": {       'ar': 'بوابة مخصصة تتبع يومياً الأسعار المعتمدة في دلهي، مومباي، كولكاتا، وتشيناي، وسلة النفط الخام الهندي '
+              'وحصص شركات التسويق.',
+        'de': 'Betriebsportal für tägliche Zapfsäulenpreise in Delhi, Mumbai, Kolkata und Chennai sowie indischen '
+              'Rohölkorb und OMC-Marktanteile.',
+        'en': 'Dedicated operational portal tracking verified daily retail pump prices for Delhi, Mumbai, Kolkata, and '
+              'Chennai, plus Indian Crude Basket and OMC market shares.',
+        'es': 'Portal dedicado que rastrea precios minoristas diarios en Delhi, Bombay, Calcuta y Madrás, más la Cesta '
+              'de Crudo Indio y cuotas de mercado.',
+        'fr': 'Portail dédié suivant quotidiennement les prix à la pompe à Delhi, Mumbai, Kolkata et Chennai, le '
+              'panier de brut indien et les parts de marché des distributeurs.',
+        'hi': 'दिल्ली, मुंबई, कोलकाता और चेन्नई के लिए सत्यापित दैनिक खुदरा पंप कीमतों के साथ-साथ भारतीय कच्चा तेल '
+              'बास्केट और ओएमसी बाजार शेयरों पर नज़र रखने वाला समर्पित परिचालन पोर्टल।',
+        'ja': 'デリー、ムンバイ、コルカタ、チェンナイの公認日次小売価格、インド原油バスケット価格、石油元売り各社の市場シェアを網羅。',
+        'ru': 'Портал с ежедневными розничными ценами в Дели, Мумбаи, Калькутте и Ченнаи, корзиной индийской нефти и '
+              'долями рынка OMC.',
+        'zh': '专注印度国家级能源市场的专属监控平台，跟踪德里、孟买、加尔各答、钦奈四大大都市官方零售挂牌价、印度原油综合篮子 (Indian Crude Basket) 以及三大国有油企 (IOCL/BPCL/HPCL) '
+              '零售网络占比。'},
+    "feat_10_why": {       'ar': 'يمنح مشغلي الأساطيل وشركات الشحن وصناع السياسات في الهند شفافية مطلقة حول المعايير المعتمدة.',
+        'de': 'Bietet indischen Flottenbetreibern, Spediteuren und Regulierungsbehörden maßgebliche Preistransparenz.',
+        'en': 'Gives Indian fleet operators, shippers, and policy observers authoritative benchmark transparency.',
+        'es': 'Proporciona a transportistas, navieras y analistas en India una transparencia de referencia '
+              'indiscutible.',
+        'fr': 'Offre aux transporteurs, chargeurs et régulateurs en Inde une transparence de référence.',
+        'hi': 'भारतीय बेड़े ऑपरेटरों, शिपर्स और नीति पर्यवेक्षकों को आधिकारिक बेंचमार्क पारदर्शिता प्रदान करता है।',
+        'ja': 'インド国内の商用車事業者、海運業者、政策立案者に透明性の高い公認ベンチマークを提供。',
+        'ru': 'Обеспечивает автоперевозчикам и регуляторам в Индии прозрачность официальных цен.',
+        'zh': '为全印物流运输企业、大宗商品买家及财税政策研究者提供绝对真实、不可篡改的法定价格基准。'},
+    "feat_10_data": {       'ar': 'خلية التخطيط والتحليل البترولي (PPAC)، وزارة النفط MoPNG، والإفصاحات الرسمية لشركات IOCL و BPCL و HPCL.',
+        'de': 'Petroleum Planning & Analysis Cell (PPAC), MoPNG, Offenlegungen von IOCL/BPCL/HPCL.',
+        'en': 'Petroleum Planning & Analysis Cell (PPAC), MoPNG, IOCL/BPCL/HPCL public disclosures.',
+        'es': 'PPAC, MoPNG, informes públicos de IOCL, BPCL y HPCL.',
+        'fr': "PPAC, MoPNG, publications officielles d'IOCL, BPCL et HPCL.",
+        'hi': 'पेट्रोलियम योजना एवं विश्लेषण प्रकोष्ठ (पीपीएसी), एमओपीएनजी, आईओसीएल/बीपीसीएल/एचपीसीएल सार्वजनिक '
+              'खुलासे।',
+        'ja': '石油企画分析室 (PPAC)、石油天然ガス省 (MoPNG)、IOCL/BPCL/HPCL公式開示情報。',
+        'ru': 'PPAC, MoPNG, публичная отчетность компаний IOCL/BPCL/HPCL.',
+        'zh': '印度石油规划与分析机构 (PPAC)、印度石油天然气部 (MoPNG)、印度三大国有 OMC 财报与网点披露信息。'},
+    "feat_10_act": {       'ar': 'عرض مركز الوقود الهندي',
+        'de': 'Indien-Treibstoffzentrum ansehen',
+        'en': 'View India Fuel Center',
+        'es': 'Ver el Centro de Combustibles de India',
+        'fr': "Voir le Centre des Carburants de l'Inde",
+        'hi': 'भारत ईंधन केंद्र देखें',
+        'ja': 'インド燃料センターを開く',
+        'ru': 'Смотреть в индийском центре топлива',
+        'zh': '进入印度能源中心查阅'},
+    "feat_11_name": {       'ar': 'مدقق جودة البيانات الآلي ومركز القياس عن بُعد',
+        'de': 'Automatisierter Qualitätsauditor & Telemetrie-Mart',
+        'en': 'Automated Quality Auditor & Telemetry Mart',
+        'es': 'Auditor Automatizado de Calidad y Mart de Telemetría',
+        'fr': 'Auditeur Automatisé de Qualité et Centre de Télémétrie',
+        'hi': 'स्वचालित गुणवत्ता लेखा परीक्षक एवं टेलीमेट्री मार्ट',
+        'ja': '自動データ品質監査＆テレメトリマート',
+        'ru': 'Автоматизированный аудитор качества данных и витрина телеметрии',
+        'zh': '数据质量自动化审计引擎与 ETL 执行遥测集市'},
+    "feat_11_cat": {       'ar': 'حوكمة ونزاهة البيانات (DATA GOVERNANCE)',
+        'de': 'DATEN-GOVERNANCE',
+        'en': 'DATA GOVERNANCE',
+        'es': 'GOBERNANZA DE DATOS',
+        'fr': 'GOUVERNANCE DES DONNÉES',
+        'hi': 'डेटा गवर्नेंस (Data Governance)',
+        'ja': 'データガバナンス・品質保証',
+        'ru': 'УПРАВЛЕНИЕ ДАННЫМИ (GOVERNANCE)',
+        'zh': '企业级数据资产治理与生命周期审计'},
+    "feat_11_what": {       'ar': 'نظام تدقيق فوري يتحقق من فترات التأخير، ومصدر البيانات، وأوقات تشغيل موصلات ETL، وسجلات العزل الصارمة '
+              'للبيانات الشاذة.',
+        'de': 'Echtzeit-Auditsystem zur Überwachung von Latenzen, Datenherkunft, Laufzeiten und Quarantäneprotokollen.',
+        'en': 'Real-time auditing suite verifying observation latencies, data provenance, connector execution '
+              'runtimes, and zero-tolerance quarantine logs.',
+        'es': 'Suite de auditoría en tiempo real que verifica latencias, procedencia de datos, tiempos de ejecución y '
+              'registros de cuarentena.',
+        'fr': "Suite d'audit en temps réel vérifiant la fraîcheur, la traçabilité des données, les temps de "
+              'connecteurs et la quarantaine.',
+        'hi': 'वास्तविक समय की ऑडिटिंग सुइट जो अवलोकन विलंबता, डेटा स्रोत, कनेक्टर निष्पादन समय, और शून्य-सहिष्णुता '
+              'संगरोध लॉग की पुष्टि करती है।',
+        'ja': 'データ取得レイテンシ、出所真正性、コネクタ実行時間、異常値隔離ログをリアルタイムで常時検証。',
+        'ru': 'Комплекс аудита в реальном времени, проверяющий задержки, происхождение данных, время работы '
+              'коннекторов и журнал карантина.',
+        'zh': '全天候质量审计套件，实时校验各宏观接口更新延迟、数据出处溯源、ETL 管道执行耗时毫秒数以及零容忍异常数据隔离日志。'},
+    "feat_11_why": {       'ar': 'يضمن سلامة البيانات بنسبة 100% وينبه المشغلين فوراً لأي تأخر في التحديثات أو تغييرات في واجهات البرمجة.',
+        'de': 'Garantiert Datenintegrität und warnt bei veralteten Feeds oder Schnittstellenänderungen.',
+        'en': 'Guarantees data integrity and alerts operators to stale feeds or upstream API format changes.',
+        'es': 'Garantiza la integridad de datos y alerta a los operadores ante fuentes obsoletas o cambios en APIs.',
+        'fr': "Garantit l'intégrité des données et alerte les opérateurs en cas de flux obsolètes ou de modifications "
+              "d'API.",
+        'hi': 'डेटा अखंडता की गारंटी देता है और पुराने फ़ीड या अपस्ट्रीम एपीआई प्रारूप परिवर्तनों के लिए ऑपरेटरों को '
+              'सचेत करता है।',
+        'ja': 'データの完全性を担保し、ソースの鮮度低下や上流APIの仕様変更を即座にオペレーターへ通知。',
+        'ru': 'Гарантирует точность данных и предупреждает об устаревших источниках или сбоях в API.',
+        'zh': '为全系统提供工业级数据置信度保障，一旦上游官方数据源格式变更或断更，系统立即自动触发警报并隔离。'},
+    "feat_11_data": {       'ar': 'جدول `etl_run_log` التحليلي، وفحوصات السلامة الهيكلية لقواعد البيانات.',
+        'de': 'Tabelle `etl_run_log`, Prüfroutinen des Datenbankschemas.',
+        'en': '`etl_run_log` table, database schema inspection pragma.',
+        'es': 'Tabla `etl_run_log`, pragma de inspección del esquema de base de datos.',
+        'fr': "Table `etl_run_log`, pragmas d'inspection du schéma de base de données.",
+        'hi': '`etl_run_log` तालिका, डेटाबेस स्कीमा निरीक्षण प्रैग्मा।',
+        'ja': '`etl_run_log` 監査テーブル、データベーススキーマ検証プラグマ。',
+        'ru': 'Таблица `etl_run_log`, диагностические прагмы проверки структуры БД.',
+        'zh': '核心 `etl_run_log` 审计流水表、SQLAlchemy 与 SQLite/MySQL 底层表结构 Pragma 校验器。'},
+    "feat_11_act": {       'ar': 'عرض مركز موثوقية البيانات',
+        'de': 'Data-Trust-Center ansehen',
+        'en': 'View Data Trust Center',
+        'es': 'Ver Centro de Confianza de Datos',
+        'fr': 'Voir le Centre de Confiance des Données',
+        'hi': 'डेटा ट्रस्ट केंद्र देखें',
+        'ja': 'データトラストセンターを開く',
+        'ru': 'Смотреть в Центре доверия к данным',
+        'zh': '进入数据可信审计中心查阅'},
+    "feat_12_name": {       'ar': 'تصدير البيانات بصيغ متعددة والتكامل مع Microsoft Power BI',
+        'de': 'Power BI & Multiformat-Datenexport',
+        'en': 'Power BI & Multi-Format Data Export',
+        'es': 'Exportación de Datos Multiformato e Integración con Power BI',
+        'fr': 'Exportation Multi-Formats et Intégration Power BI',
+        'hi': 'Power BI और मल्टी-फॉर्मेट डेटा निर्यात',
+        'ja': 'Power BI連携＆マルチフォーマット・データエクスポート',
+        'ru': 'Экспорт данных в разных форматах и интеграция с Power BI',
+        'zh': '企业级多格式数据导出与微软 Power BI 直连套件'},
+    "feat_12_cat": {       'ar': 'تكامل الأنظمة المؤسسية (ENTERPRISE)',
+        'de': 'UNTERNEHMENSINTEGRATION',
+        'en': 'ENTERPRISE INTEGRATION',
+        'es': 'INTEGRACIÓN EMPRESARIAL',
+        'fr': "INTÉGRATION D'ENTREPRISE",
+        'hi': 'एंटरप्राइज एकीकरण (Integration)',
+        'ja': 'エンタープライズシステム統合',
+        'ru': 'КОРПОРАТИВНАЯ ИНТЕГРАЦИЯ',
+        'zh': '企业 IT 架构与商业智能直连集成'},
+    "feat_12_what": {       'ar': 'إمكانية تصدير كامل قواعد البيانات بصيغة CSV، مع توليد ملفات اتصال أوتوماتيكية `.pbids` لمنصة Microsoft '
+              'Power BI المؤسسية.',
+        'de': 'Direkter CSV-Export aller Datenbestände sowie automatisch generierte Power BI '
+              '`.pbids`-Verbindungsdateien.',
+        'en': 'Direct export capabilities for all underlying data marts in CSV format, alongside auto-generated Power '
+              'BI `.pbids` enterprise connection files.',
+        'es': 'Capacidad de exportación directa en CSV y generación automática de archivos de conexión `.pbids` para '
+              'Power BI.',
+        'fr': "Exportation directe en CSV et génération automatique de fichiers de connexion d'entreprise Power BI "
+              '`.pbids`.',
+        'hi': 'सीएसवी प्रारूप में सभी अंतर्निहित डेटा मार्ट के लिए प्रत्यक्ष निर्यात क्षमताएं, साथ ही स्वतः उत्पन्न '
+              'Power BI `.pbids` उद्यम कनेक्शन फाइलें।',
+        'ja': '全データマートのCSV直接エクスポート機能および自動生成されるPower BIエンタープライズ接続用 `.pbids` ファイル。',
+        'ru': 'Прямой экспорт витрин данных в CSV и автоматическая генерация файлов подключения Power BI `.pbids`.',
+        'zh': '为全系统底层所有事实与维度数据模型提供标准的 CSV 格式一键导出，并支持自动生成企业级 Microsoft Power BI `.pbids` 数据源直连描述文件。'},
+    "feat_12_why": {       'ar': 'يسمح لفرق العمل والتحليل المؤسسية باستيراد بيانات المنصة مباشرة وبسلاسة إلى لوحات معلومات ذكاء الأعمال '
+              '(BI) الداخلية.',
+        'de': 'Ermöglicht Unternehmen die nahtlose Einbindung der FuelPulse-Daten in interne BI-Systeme.',
+        'en': 'Allows enterprise teams to seamlessly ingest FuelPulse AI data directly into internal corporate BI '
+              'dashboards.',
+        'es': 'Permite integrar fluidamente los datos de FuelPulse AI en los paneles de control internos de las '
+              'empresas.',
+        'fr': "Permet aux équipes d'entreprise d'intégrer facilement les données FuelPulse AI dans leurs tableaux de "
+              'bord BI internes.',
+        'hi': 'एंटरप्राइज टीमों को आंतरिक कॉर्पोरेट बीआई डैशबोर्ड में सीधे फ्यूलपल्स एआई डेटा को शामिल करने की अनुमति '
+              'देता है।',
+        'ja': '企業の分析チームが社内BIダッシュボードへFuelPulse AIの最新データをシームレスに直接連携・インポート可能。',
+        'ru': 'Позволяет корпоративным клиентам бесшовно загружать данные FuelPulse AI в свои BI-дашборды.',
+        'zh': '支持大型能源央企、跨国航运巨头与金融投研机构将系统高精度数据直连导入内网 Power BI 或 Tableau 决策看板中。'},
+    "feat_12_data": {       'ar': 'تصدير الاستعلامات العلائقية عبر جميع جداول قواعد البيانات المعتمدة.',
+        'de': 'Relationale Abfrage-Exporte aller Datenbanktabellen.',
+        'en': 'Relational query exports across all database tables.',
+        'es': 'Consultas relacionales sobre todas las tablas de la base de datos.',
+        'fr': "Requêtes d'exportation relationnelles sur l'ensemble des tables.",
+        'hi': 'सभी डेटाबेस तालिकाओं में रिलेशनल क्वेरी निर्यात।',
+        'ja': '全データベーステーブルにわたるリレーショナルクエリ出力。',
+        'ru': 'Экспорт реляционных запросов по всем таблицам базы данных.',
+        'zh': '涵盖系统全部事实表、维度表与宏观衍生指标表的标准关系型 SQL 数据输出流。'},
+    "feat_12_act": {       'ar': 'تصدير البيانات من لوحة التحكم',
+        'de': 'Aus dem Dashboard exportieren',
+        'en': 'Export from Dashboard',
+        'es': 'Exportar desde el Panel',
+        'fr': 'Exporter depuis le Tableau de Bord',
+        'hi': 'डैशबोर्ड से निर्यात करें',
+        'ja': 'ダッシュボードからエクスポート',
+        'ru': 'Экспортировать из дашборда',
+        'zh': '前往仪表板执行数据导出'},
+    "feat_f9_try_title": {       'ar': 'جرّب الميزة 09 الآن مباشرة — استخبارات طاقة مستقلة ومجانية',
+        'de': 'Funktion 09 jetzt live testen — Freie autonome Energie-Intelligenz',
+        'en': 'Try Feature 09 Live Now — Free Autonomous Energy Intelligence',
+        'es': 'Pruebe la Función 09 en Vivo — Inteligencia Energética Autónoma Gratuita',
+        'fr': 'Essayez la Fonction 09 en Direct — Intelligence Énergétique Autonome Gratuite',
+        'hi': 'फीचर 09 को लाइव आज़माएं — निःशुल्क स्वायत्त ऊर्जा खुफिया',
+        'ja': '機能09を今すぐ体験 — 完全無料の自律型エネルギーインテリジェンス',
+        'ru': 'Попробуйте модуль 09 прямо сейчас — бесплатная автономная аналитика',
+        'zh': '即刻体验功能 09 现场实测 — 免费自主能源智能分析引擎'},
+    "feat_f9_try_badge": {       'ar': '🟢 3 أسئلة مجانية / 24 ساعة • اربط مفتاح Antigravity للاستخدام غير المحدود',
+        'de': '🟢 3 KOSTENLOSE FRAGEN/24H • ANTIGRAVITY-TOKEN FÜR UNBEGRENZTE NUTZUNG',
+        'en': '🟢 3 FREE QUESTIONS/24H • ATTACH ANTIGRAVITY TOKEN FOR UNLIMITED',
+        'es': '🟢 3 PREGUNTAS GRATIS/24H • AGREGUE TOKEN ANTIGRAVITY PARA USO ILIMITADO',
+        'fr': "🟢 3 QUESTIONS GRATUITES/24H • AJOUTEZ UN TOKEN ANTIGRAVITY POUR L'ILLIMITÉ",
+        'hi': '🟢 3 निःशुल्क प्रश्न/24 घंटे • असीमित उपयोग हेतु एंटीग्रेविटी टोकन जोड़ें',
+        'ja': '🟢 24時間あたり3回無料質問枠 • トークン登録で無制限アクセス',
+        'ru': '🟢 3 БЕСПЛАТНЫХ ВОПРОСА В СУТКИ • ПОДКЛЮЧИТЕ ТОКЕН ANTIGRAVITY ДЛЯ БЕЗЛИМИТА',
+        'zh': '🟢 每日 3 次免费提问（24小时周期）• 配置开发者密钥可享无限次访问'},
+    "feat_f9_try_desc": {       'ar': 'اختر أحد الأسئلة المقترحة أدناه أو اكتب سؤالك لتوليد استعلامات SQL وتحليل السوق فورياً:',
+        'de': 'Wählen Sie eine der vorgeschlagenen Fragen oder stellen Sie Ihre eigene, um autonome SQL-Synthese und '
+              'Marktanalyse zu starten:',
+        'en': 'Select any suggested query chip below or ask any question to trigger autonomous SQL query synthesis and '
+              'market analysis:',
+        'es': 'Seleccione una consulta sugerida o escriba su pregunta para activar la síntesis de SQL autónoma y el '
+              'análisis de mercado:',
+        'fr': 'Sélectionnez une requête suggérée ou posez une question pour déclencher la synthèse SQL autonome et '
+              "l'analyse de marché:",
+        'hi': 'स्वायत्त SQL क्वेरी संश्लेषण और बाजार विश्लेषण को ट्रिगर करने के लिए नीचे दिए गए किसी भी सुझाए गए चिप '
+              'का चयन करें या कोई प्रश्न पूछें:',
+        'ja': '下のクエリ候補を選択するか自由に質問を入力し、自律的SQL合成と市場分析を実行：',
+        'ru': 'Выберите предложенный вопрос или задайте свой для автономного формирования SQL и анализа рынка:',
+        'zh': '从下方快捷提问卡片中任选一项，或在输入框中自由提问，即可触发大模型与自主 SQL 协同生成的市场研判：'},
+    "feat_chip_saudi": {       'ar': '🇸🇦 ضرائب وأسعار السعودية',
+        'de': '🇸🇦 Saudi-Arabien Steuern & Preise',
+        'en': '🇸🇦 Saudi Tax & Rates',
+        'es': '🇸🇦 Tasas e Impuestos en Arabia Saudí',
+        'fr': '🇸🇦 Taxes et Prix en Arabie Saoudite',
+        'hi': '🇸🇦 सऊदी कर एवं दरें',
+        'ja': '🇸🇦 サウジアラビア税制＆燃料価格',
+        'ru': '🇸🇦 Налоги и цены в Саудовской Аравии',
+        'zh': '🇸🇦 沙特燃油税制与零售价'},
+    "feat_chip_prayagraj": {       'ar': '🇮🇳 أسعار وضريبة بنزين براياغراج',
+        'de': '🇮🇳 Prayagraj Benzin & Steuern',
+        'en': '🇮🇳 Prayagraj Petrol & Tax',
+        'es': '🇮🇳 Gasolina e Impuestos en Prayagraj',
+        'fr': '🇮🇳 Essence et Taxes à Prayagraj',
+        'hi': '🇮🇳 प्रयागराज पेट्रोल एवं कर',
+        'ja': '🇮🇳 プラヤグラジのガソリン価格と州税',
+        'ru': '🇮🇳 Цены на бензин и налоги в Праяградже',
+        'zh': '🇮🇳 印度普拉亚格拉吉油价与邦税'},
+    "feat_chip_top_contrib": {       'ar': '🌍 أكبر المساهمين في إنتاج البنزين',
+        'de': '🌍 Größter Benzinproduzent weltweit',
+        'en': '🌍 Top Petrol Contributor',
+        'es': '🌍 Mayor Contribuyente de Gasolina',
+        'fr': "🌍 Plus Grand Contributeur d'Essence",
+        'hi': '🌍 शीर्ष पेट्रोल उत्पादक',
+        'ja': '🌍 世界最大のガソリン供給国',
+        'ru': '🌍 Крупнейший производитель бензина в мире',
+        'zh': '🌍 全球最核心成品油贡献国'},
+    "feat_chip_hormuz": {       'ar': '🚢 مخاطر مضيق هرمز',
+        'de': '🚢 Risiko Straße von Hormus',
+        'en': '🚢 Strait of Hormuz Risk',
+        'es': '🚢 Riesgo del Estrecho de Ormuz',
+        'fr': "🚢 Risque du Détroit d'Ormuz",
+        'hi': '🚢 होर्मुज जलडमरूमध्य जोखिम',
+        'ja': '🚢 ホルムズ海峡の地政学リスク',
+        'ru': '🚢 Риски в Ормузском проливе',
+        'zh': '🚢 霍尔木兹海峡地缘封锁风险'},
+    "feat_chip_psu": {       'ar': '🏢 شركات تسويق النفط الحكومية في الهند',
+        'de': '🏢 Staatliche indische OMCs',
+        'en': '🏢 Indian PSU OMCs',
+        'es': '🏢 Petroleras Estatales de India',
+        'fr': '🏢 Distributeurs Publics en Inde',
+        'hi': '🏢 भारतीय पीएसयू ओएमसी',
+        'ja': '🏢 インド国営石油公社 (PSU OMC)',
+        'ru': '🏢 Государственные нефтяные компании Индии',
+        'zh': '🏢 印度三大国有炼油与分销巨头'},
+    "feat_ai_input_label": {       'ar': 'اطرح أي سؤال حول أسعار الوقود، والضرائب المحلية، والمخاطر البحرية، أو أسواق النفط الخام:',
+        'de': 'Stellen Sie Fragen zu Kraftstoffpreisen, Steuern, maritimen Risiken oder Rohölmärkten:',
+        'en': 'Ask any question about fuel rates, state taxes, maritime risks, or crude markets:',
+        'es': 'Pregunte sobre precios de combustibles, impuestos estatales, riesgos marítimos o mercados de crudo:',
+        'fr': 'Posez une question sur les prix des carburants, taxes locales, risques maritimes ou marchés du brut:',
+        'hi': 'ईंधन दरों, राज्य करों, समुद्री जोखिमों, या कच्चे तेल के बाजारों के बारे में कोई भी प्रश्न पूछें:',
+        'ja': '燃料価格、州税、海上リスク、原油市場動向について自由に質問を入力：',
+        'ru': 'Задайте любой вопрос о ценах на топливо, налогах, рисках морских перевозок или рынке нефти:',
+        'zh': '自由提问全球油价、邦级燃油税负、海运海峡安全或国际原油市场变局：'},
+    "feat_ai_input_placeholder": {       'ar': 'مثال: كم تبلغ نسبة الضرائب على الوقود في السعودية، أو ما هو سعر البنزين في براياغراج؟',
+        'de': 'z.B. Wie hoch sind die Treibstoffsteuern in Saudi-Arabien oder Was kostet Benzin in Prayagraj?',
+        'en': 'e.g. how much Saudi take tax from there people, or What is petrol rate in Prayagraj?',
+        'es': 'ej. ¿cuántos impuestos cobra Arabia Saudí a su gente?, o ¿cuál es el precio de la gasolina en '
+              'Prayagraj?',
+        'fr': "ex. quel est le niveau des taxes sur le carburant en Arabie Saoudite, ou Quel est le prix de l'essence "
+              'à Prayagraj?',
+        'hi': 'उदा. सऊदी अपने लोगों से कितना टैक्स लेता है, या प्रयागराज में पेट्रोल का भाव क्या है?',
+        'ja': '例：サウジアラビアの燃料税率は？ または プラヤグラジの最新ガソリン価格は？',
+        'ru': 'напр., сколько налогов берет Саудовская Аравия с населения, или какая цена бензина в Праяградже?',
+        'zh': '例如：沙特阿拉伯政府征收多少燃油税？或者 印度普拉亚格拉吉的最新汽油价格是多少？'},
+    "trust_lbl_cadence": {       'ar': 'دورية التحديث',
+        'de': 'Aktualisierungsturnus',
+        'en': 'Cadence',
+        'es': 'Frecuencia',
+        'fr': 'Périodicité',
+        'hi': 'आवृत्ति (Cadence)',
+        'ja': '更新頻度',
+        'ru': 'Периодичность',
+        'zh': '更新频度'},
+    "trust_lbl_sla": {       'ar': 'اتفاقية مستوى الخدمة (SLA)',
+        'de': 'SLA',
+        'en': 'SLA',
+        'es': 'SLA',
+        'fr': 'SLA',
+        'hi': 'एसएलए (SLA)',
+        'ja': 'SLA許容遅延',
+        'ru': 'SLA',
+        'zh': 'SLA 延迟保障'},
+    "trust_lbl_license": {       'ar': 'الترخيص القانوني',
+        'de': 'Lizenz',
+        'en': 'License',
+        'es': 'Licencia',
+        'fr': 'Licence',
+        'hi': 'लाइसेंस',
+        'ja': 'ライセンス',
+        'ru': 'Лицензия',
+        'zh': '合规开源授权'},
+    "rm_status_core": {       'ar': 'المحرك العلائقي الأساسي',
+        'de': 'Zentrale relationale Engine',
+        'en': 'Core Relational Engine',
+        'es': 'Motor Relacional Principal',
+        'fr': 'Moteur Relationnel Central',
+        'hi': 'कोर रिलेशनल इंजन',
+        'ja': 'コア・リレーショナルエンジン',
+        'ru': 'Базовый реляционный движок',
+        'zh': '核心关系型数据库引擎'},
+    "rm_status_core_sub": {       'ar': 'مخطط نجمي يدعم SQLite و MySQL',
+        'de': 'SQLite / MySQL Sternschema',
+        'en': 'SQLite / MySQL Star Schema',
+        'es': 'Esquema en Estrella SQLite / MySQL',
+        'fr': 'Schéma en Étoile SQLite / MySQL',
+        'hi': 'SQLite / MySQL स्टार स्कीमा',
+        'ja': 'SQLite / MySQL スタースキーマ',
+        'ru': 'Звездная схема SQLite / MySQL',
+        'zh': '星型模型持久化存储 (SQLite / MySQL)'},
+    "rm_status_conn": {       'ar': 'موصلات استيراد البيانات المباشرة',
+        'de': 'Echtzeit-Ingestion-Connectors',
+        'en': 'Live Ingestion Connectors',
+        'es': 'Conectores de Ingesta en Vivo',
+        'fr': "Connecteurs d'Ingestion en Direct",
+        'hi': 'लाइव डेटा अंतर्ग्रहण कनेक्टर्स',
+        'ja': 'リアルタイムデータ収集コネクタ',
+        'ru': 'Коннекторы сбора данных в реальном времени',
+        'zh': '多源实时数据抓取连接器'},
+    "rm_status_conn_sub": {       'ar': 'PPAC • EIA • EC • أسعار الصرف FX',
+        'de': 'PPAC • EIA • EC • Währungen FX',
+        'en': 'PPAC • EIA • EC • FX',
+        'es': 'PPAC • EIA • EC • Divisas FX',
+        'fr': 'PPAC • EIA • EC • Devises FX',
+        'hi': 'PPAC • EIA • EC • FX',
+        'ja': 'PPAC • EIA • EC • 為替レート FX',
+        'ru': 'PPAC • EIA • EC • Валюты FX',
+        'zh': 'PPAC • EIA • 欧盟 EC • 实时外汇 FX'},
+    "rm_status_cache": {       'ar': 'طبقة التخزين المؤقت متعددة المستويات',
+        'de': 'Mehrstufige Cache-Schicht',
+        'en': 'Multi-Tier Cache Layer',
+        'es': 'Capa de Caché Multicapa',
+        'fr': 'Couche de Cache Multi-Niveaux',
+        'hi': 'मल्टी-टियर कैश लेयर',
+        'ja': 'マルチティア・キャッシュ階層',
+        'ru': 'Многоуровневый слой кэширования',
+        'zh': '多级高性能内存缓存层'},
+    "rm_status_cache_sub": {       'ar': 'استجابة أقل من 50 مللي ثانية للخرائط والاستعلامات',
+        'de': 'Sub-50ms TopoJSON & Abfrage-Cache',
+        'en': 'Sub-50ms TopoJSON & Query Warm',
+        'es': 'TopoJSON sub-50ms y Caché Caliente',
+        'fr': 'TopoJSON sub-50ms et Requêtes Chaudes',
+        'hi': '50ms से कम TopoJSON एवं क्वेरी वार्म',
+        'ja': '50ms未満 TopoJSON地理データ＆クエリ即応',
+        'ru': 'Менее 50 мс для TopoJSON и прогрев запросов',
+        'zh': '亚50毫秒级矢量地理数据与热点查询预热'},
+    "rm_status_ml": {       'ar': 'رادار التنبؤ بالتعلم الآلي',
+        'de': 'Prädiktives ML-Radar',
+        'en': 'Predictive ML Radar',
+        'es': 'Radar Predictivo de Machine Learning',
+        'fr': "Radar Prédictif d'Apprentissage Automatique",
+        'hi': 'पूर्वानुमानित मशीन लर्निंग रडार',
+        'ja': '機械学習・将来予測レーダー',
+        'ru': 'Радар прогнозного машинного обучения',
+        'zh': '前瞻性机器学习预测雷达'},
+    "rm_status_ml_sub": {       'ar': 'محركات SARIMAX و XGBoost',
+        'de': 'SARIMAX & XGBoost Engines',
+        'en': 'SARIMAX & XGBoost Engines',
+        'es': 'Motores SARIMAX y XGBoost',
+        'fr': 'Moteurs SARIMAX et XGBoost',
+        'hi': 'SARIMAX एवं XGBoost इंजन',
+        'ja': 'SARIMAX＆XGBoost アルゴリズムエンジン',
+        'ru': 'Алгоритмы SARIMAX и XGBoost',
+        'zh': '双重算法引擎 (SARIMAX 与 XGBoost)'},
+    "rm_status_ai": {       'ar': 'محرك الذكاء الاصطناعي للغة الطبيعية',
+        'de': 'KI-Verarbeitungs-Engine für natürliche Sprache',
+        'en': 'AI Natural Language Engine',
+        'es': 'Motor de Lenguaje Natural con IA',
+        'fr': 'Moteur de Langage Naturel IA',
+        'hi': 'एआई प्राकृतिक भाषा इंजन',
+        'ja': 'AI 自然言語処理エンジン',
+        'ru': 'ИИ-движок обработки естественного языка',
+        'zh': 'AI 能源大模型自然语言处理引擎'},
+    "rm_status_ai_sub": {       'ar': 'محمي بالحصص عبر Gemini 1.5 Pro / Flash',
+        'de': 'Kontingentgesichert mit Gemini 1.5 Pro / Flash',
+        'en': 'Gemini 1.5 Pro / Flash Quota Gated',
+        'es': 'Protegido por Cuota con Gemini 1.5 Pro / Flash',
+        'fr': 'Contrôlé par Quota Gemini 1.5 Pro / Flash',
+        'hi': 'Gemini 1.5 Pro / Flash कोटा संरक्षित',
+        'ja': 'Gemini 1.5 Pro / Flash クォータ保護対応',
+        'ru': 'Защищен квотой на базе Gemini 1.5 Pro / Flash',
+        'zh': '受配额保护的 Gemini 1.5 Pro / Flash 高精模型'},
+    "rm_status_audit": {       'ar': 'مدقق جودة البيانات الآلي',
+        'de': 'Automatisierter Qualitätsprüfer',
+        'en': 'Automated Quality Auditor',
+        'es': 'Auditor Automatizado de Calidad',
+        'fr': 'Auditeur Automatisé de Qualité',
+        'hi': 'स्वचालित गुणवत्ता लेखा परीक्षक',
+        'ja': '自動データ品質監査システム',
+        'ru': 'Автоматизированный аудитор качества',
+        'zh': '全天候自动化数据质量审计器'},
+    "rm_status_audit_sub": {       'ar': 'سجل نظيف: صفر انتهاكات حجر صحي',
+        'de': 'Keine Quarantäne-Verstöße',
+        'en': 'Zero Quarantine Violations',
+        'es': 'Cero Violaciones de Cuarentena',
+        'fr': 'Zéro Violation de Quarantaine',
+        'hi': 'शून्य संगरोध उल्लंघन',
+        'ja': '異常データ隔離違反ゼロ（整合性100%）',
+        'ru': 'Ноль нарушений карантина данных',
+        'zh': '零受损异常数据污染记录（100% 隔离）'},
+    "how_orch_p1": {       'ar': 'يستخدم المنسق المركزي <code>PipelineOrchestrator</code> قفل أمان غير حاجب '
+              '(<code>threading.Lock()</code>). عندما ينقر المستخدم على <b>⚡ تحديث البيانات المباشرة</b> أو ينطلق جدول '
+              'التحديث الآلي، يتحقق النظام مما إذا كانت هناك عملية مزامنة أخرى قيد التشغيل بالفعل. في حال وجودها، يتم '
+              'رفض التكرار لمنع قفل قاعدة البيانات ومنع الهدر في استهلاك واجهات البرمجة.',
+        'de': 'Der zentrale <code>PipelineOrchestrator</code> nutzt eine nicht-blockierende Mutex-Sperre '
+              '(<code>threading.Lock()</code>), um gleichzeitige doppelte Ausführungen abzufangen und Schreibkonflikte '
+              'in der Datenbank zu verhindern.',
+        'en': 'The central <code>PipelineOrchestrator</code> utilizes a non-blocking mutex lock '
+              '(<code>threading.Lock()</code>). When a user clicks <b>⚡ Refresh Live Data</b> or an automated '
+              'scheduler trigger fires, the pipeline verifies whether another sync process is already active. If '
+              'active, concurrent duplicate executions are gracefully refused, preventing database write-lock '
+              'contention and redundant API quota consumption.',
+        'es': 'El <code>PipelineOrchestrator</code> central utiliza un bloqueo mutex no bloqueante '
+              '(<code>threading.Lock()</code>). Cuando un usuario hace clic en <b>⚡ Actualizar Datos en Vivo</b>, el '
+              'sistema verifica si ya hay otro proceso de sincronización activo, rechazando ejecuciones duplicadas '
+              'para evitar contención en la base de datos.',
+        'fr': 'Le <code>PipelineOrchestrator</code> central utilise un verrou mutex non bloquant '
+              "(<code>threading.Lock()</code>). Lorsqu'un utilisateur clique sur <b>⚡ Rafraîchir les données</b>, le "
+              'pipeline vérifie si une synchronisation est déjà active et refuse les doublons pour préserver la base '
+              'de données.',
+        'hi': 'केंद्रीय <code>PipelineOrchestrator</code> एक गैर-अवरोधक म्यूटेक्स लॉक (<code>threading.Lock()</code>) '
+              'का उपयोग करता है। जब कोई उपयोगकर्ता <b>⚡ लाइव डेटा ताज़ा करें</b> पर क्लिक करता है या एक स्वचालित '
+              'शेड्यूलर ट्रिगर सक्रिय होता है, तो पाइपलाइन पुष्टि करती है कि क्या कोई अन्य सिंक प्रक्रिया पहले से '
+              'सक्रिय है। यदि सक्रिय है, तो समवर्ती डुप्लिकेट निष्पादन अस्वीकार कर दिए जाते हैं, जिससे डेटाबेस '
+              'राइट-लॉक विवाद और अनावश्यक एपीआई कोटा की खपत को रोका जा सके।',
+        'ja': '中央の <code>PipelineOrchestrator</code> はノンブロッキング・ミューテックスロック（<code>threading.Lock()</code>）を採用。<b>⚡ '
+              'ライブデータを更新</b>クリック時や自動トリガー時、他の同期処理が稼働中であれば重複実行を安全に抑制し、DB書き込みロックの競合とAPIクォータ消費を未然に防止。',
+        'ru': 'Центральный диспетчер <code>PipelineOrchestrator</code> использует мьютекс-блокировку '
+              '(<code>threading.Lock()</code>). При запуске обновления пайплайн проверяет, не выполняется ли уже '
+              'синхронизация, предотвращая блокировку БД и лишний расход квот API.',
+        'zh': '核心 `PipelineOrchestrator` 调度引擎采用非阻塞互斥锁机制 (`threading.Lock()`)。无论是用户手动触发 <b>⚡ 刷新实时数据</b> '
+              '还是后台定时触发器就绪，流水线都会严格核验是否有正在运行的任务。若已有同步执行中，重复并发请求将优雅拦截，坚决杜绝数据库写锁争用与无谓的 API 额度浪费。'},
+    "how_orch_p2": {       'ar': 'تسجل كل خطوة من خطوات جمع البيانات قياسات الأداء التشغيلي في جدول <code>etl_run_log</code>: اسم الموصل، '
+              'ووقت البدء، والمدة بالمللي ثانية، وعدد الصفوف المحفوظة، وأي استثناءات برمجية، وتُعرض هذه القياسات '
+              'بشفافية تامة في <b>مركز موثوقية البيانات</b>.',
+        'de': 'Jeder Ingestion-Schritt protokolliert Telemetriedaten in <code>etl_run_log</code>: Connector-Name, '
+              'Zeitstempel, Laufzeit in ms, Zeilenzahlen und Fehler. Diese Daten sind transparent im '
+              '<b>Data-Trust-Center</b> einsehbar.',
+        'en': 'Every ingestion step records execution telemetry into <code>etl_run_log</code>: connector name, start '
+              'timestamp, completion duration (milliseconds), row count fetched, row count committed, and error '
+              'exceptions (if any). This telemetry is openly displayed in the <b>Data Trust Center</b> for full '
+              'operational transparency.',
+        'es': 'Cada paso de ingesta registra telemetría en <code>etl_run_log</code>: nombre del conector, marca de '
+              'tiempo, duración (ms), filas obtenidas, filas confirmadas y excepciones, mostrándose todo en el '
+              '<b>Centro de Confianza de Datos</b>.',
+        'fr': "Chaque étape d'ingestion enregistre ses métriques dans <code>etl_run_log</code>: nom du connecteur, "
+              'horodatage, durée en millisecondes, lignes traitées et erreurs éventuelles, consultables dans le '
+              '<b>Centre de Confiance des Données</b>.',
+        'hi': 'प्रत्येक डेटा अंतर्ग्रहण चरण <code>etl_run_log</code> में निष्पादन टेलीमेट्री रिकॉर्ड करता है: कनेक्टर '
+              'नाम, प्रारंभ समय टिकट, पूर्णता अवधि (मिलीसेकंड), प्राप्त पंक्तियों की संख्या, डेटाबेस में प्रतिबद्ध '
+              'पंक्तियां, और त्रुटि अपवाद (यदि कोई हो)। यह टेलीमेट्री पूर्ण परिचालन पारदर्शिता के लिए <b>डेटा ट्रस्ट '
+              'सेंटर</b> में खुलकर प्रदर्शित की जाती है।',
+        'ja': '全収集工程が <code>etl_run_log</code> に実行テレメトリを記録：コネクタ名、開始日時、所要時間（ミリ秒）、取得行数、格納行数、例外エラー。全監査ログは '
+              '<b>データトラストセンター</b> で完全公開。',
+        'ru': 'Каждый этап сбора записывает телеметрию в <code>etl_run_log</code>: имя коннектора, время запуска, '
+              'длительность (мс), число строк и ошибки. Эта телеметрия открыто отображается в <b>Центре доверия к '
+              'данным</b>.',
+        'zh': '每一次数据采集动作均在 <code>etl_run_log</code> 中留下不可篡改的元数据审计痕迹：连接器名称、启动时间戳、毫秒级耗时、抓取行数、成功持久化行数及异常堆栈，所有运行状态在 '
+              '<b>数据可信审计中心</b> 面向所有用户完全透明公开。'},
+    "about_sec1_p1": {       'ar': 'تُعد الطاقة الركيزة الخفية والأساس الحيوي للحضارة الحديثة. فكل حاوية بضائع تعبر المحيطات، وكل شاحنة نقل '
+              'تنقل السلع بين المدن، وكل جرار زراعي يحرث الحقول يعتمد على المشتقات النفطية المكررة. ومع ذلك، يظل الفهم '
+              'العام لآليات تسعير الوقود مشوهاً بالخطابات السياسية والعناوين المبسطة.',
+        'de': 'Energie ist das unsichtbare Fundament moderner Zivilisation. Jeder Frachtcontainer, jeder Lastwagen und '
+              'jeder Traktor arbeitet mit raffinierten Erdöldestillaten. Dennoch wird das öffentliche Verständnis von '
+              'Kraftstoffpreisen oft durch vereinfachte Schlagzeilen verzerrt.',
+        'en': 'Energy is the invisible substrate of modern civilization. Every freight container moving across oceans, '
+              'every haulage truck delivering goods between cities, and every agricultural tractor tilling fields '
+              'operates on refined petroleum distillates. Yet public understanding of fuel pricing remains distorted '
+              'by political rhetoric and oversimplified headlines.',
+        'es': 'La energía es el sustrato invisible de la civilización moderna. Cada contenedor que cruza océanos, cada '
+              'camión de transporte que reparte bienes y cada tractor agrícola opera con derivados del petróleo. Sin '
+              'embargo, la comprensión pública sobre los precios sigue distorsionada por titulares simplistas.',
+        'fr': "L'énergie est le socle invisible de la civilisation moderne. Chaque conteneur traversant les océans, "
+              'chaque camion de fret et chaque tracteur agricole dépend des distillats raffinés de pétrole. Pourtant, '
+              'la compréhension publique de la tarification des carburants reste faussée par des discours '
+              'simplificateurs.',
+        'hi': 'ऊर्जा आधुनिक सभ्यता का अदृश्य आधार है। महासागरों में चलने वाला प्रत्येक मालवाहक कंटेनर, शहरों के बीच '
+              'सामान पहुंचाने वाला प्रत्येक ट्रक और खेतों में चलने वाला प्रत्येक ट्रैक्टर परिष्कृत पेट्रोलियम उत्पादों '
+              'पर काम करता है। फिर भी ईंधन मूल्य निर्धारण के बारे में सार्वजनिक समझ राजनीतिक बयानबाजी और अति-सरलीकृत '
+              'सुर्खियों से विकृत रहती है।',
+        'ja': 'エネルギーは現代文明の不可視の基盤です。海洋を渡る海上コンテナ、都市間輸送を担う大型トラック、農地を耕すトラクターに至るまで、精製石油留分に依存しています。しかし燃料価格の形成メカニズムは、単純化された見出しによって正しく理解されていません。',
+        'ru': 'Энергия — невидимый фундамент современной цивилизации. Морские контейнеровозы, грузовой автотранспорт и '
+              'сельскохозяйственные тракторы работают на очищенных нефтепродуктах. Однако понимание ценообразования на '
+              'топливо часто искажается политической риторикой.',
+        'zh': '能源是现代人类文明不可或缺的隐形基石。无论是远洋航运集装箱、城际干线物流车队，还是耕耘田野的农用拖拉机，均高度依赖成品石油裂解馏分。然而公众对成品油定价机制的认知，往往长期被政治宣导与扁平片面的头条舆论所遮蔽。'},
+    "about_sec1_p2": {       'ar': 'تم تطوير <b>Global FuelPulse AI</b> لاستبدال التخمين باستخبارات سوقية تجريبية وحتمية دقيقة. نحن نتتبع '
+              'مسار النفط الخام الحقيقي من رأس البئر إلى ناقلات النفط البحرية، مروراً بوحدات التكسير الهيدروجيني في '
+              'المصافي، وعبر بوابات الرسوم والضرائب السيادية، وحتى مضخة الوقود التجارية. ومن خلال ربط قواعد البيانات '
+              'الواقعية عبر 25 اقتصاداً سيادياً والمراكز الحضرية الكبرى في الهند، نمنح صناع القرار أداة تدقيقية موثوقة '
+              'في اقتصاديات الطاقة.',
+        'de': '<b>Global FuelPulse AI</b> wurde entwickelt, um Schätzungen durch fundierte Marktintelligenz zu '
+              'ersetzen. Wir verfolgen Öl von der Quelle über Tanker und Raffinerien bis zur Zapfsäule in 25 '
+              'Volkswirtschaften.',
+        'en': '<b>Global FuelPulse AI</b> was engineered to replace guesswork with empirical, deterministic market '
+              'intelligence. We track physical oil from the wellhead to seaborne tankers, through complex refinery '
+              'hydrocrackers, past sovereign fiscal tax tollgates, and into the commercial fuel pump. By integrating '
+              'real-world datasets across 25 sovereign economies and Indian metro centers, we give decision-makers an '
+              'auditable lens into energy economics.',
+        'es': '<b>Global FuelPulse AI</b> fue diseñado para reemplazar conjeturas con inteligencia de mercado '
+              'empírica. Rastreamos el petróleo físico desde el pozo hasta los buques cisterna, refinerías, peajes '
+              'fiscales y surtidores comerciales, ofreciendo a los tomadores de decisiones una visión auditable en 25 '
+              'economías.',
+        'fr': '<b>Global FuelPulse AI</b> a été conçu pour remplacer les suppositions par une intelligence de marché '
+              "empirique. Nous suivons le pétrole brut du puits jusqu'aux pétroliers, raffineries, péages fiscaux et "
+              'stations-service dans 25 économies souveraines.',
+        'hi': '<b>ग्लोबल फ्यूलपल्स एआई (Global FuelPulse AI)</b> को अनुमान के स्थान पर अनुभवजन्य, सटीक बाजार खुफिया '
+              'जानकारी प्रदान करने के लिए तैयार किया गया है। हम तेल के कुएं से लेकर समुद्री टैंकरों, रिफाइनरियों, '
+              'सरकारी कर संरचनाओं से होते हुए वाणिज्यिक ईंधन पंप तक तेल की यात्रा को ट्रैक करते हैं। 25 देशों और '
+              'भारतीय मेट्रो केंद्रों के वास्तविक डेटा को एकीकृत करके, हम निर्णयकर्ताओं को ऊर्जा अर्थशास्त्र का एक '
+              'विश्वसनीय दृष्टिकोण देते हैं।',
+        'ja': '<b>Global FuelPulse AI</b> '
+              'は、推測や憶測を排除し、厳密な実証的市場インテリジェンスを提供するために設計されました。油田の坑口から外洋タンカー、製油所の水素化分解装置、主権国家の税関ゲートウェイ、最終給油ノズルに至るまで物理的サプライチェーンを追跡。世界25大経済圏およびインド大都市圏の実データを統合し、エネルギー経済の監査可能な意思決定支援を提供します。',
+        'ru': '<b>Global FuelPulse AI</b> создан для замены догадок эмпирической рыночной аналитикой. Мы отслеживаем '
+              'путь нефти от скважины до танкеров, НПЗ, фискальных налоговых сборов и топливораздаточной колонки в 25 '
+              'странах.',
+        'zh': '<b>Global FuelPulse AI</b> '
+              '的诞生正是为了以确凿严密的实证数据破除经验主义与模糊猜测。我们全景追踪原油从油田井口、远洋油轮、炼厂加氢裂化装置，穿透主权国家财税征管各级节点直至终端加油零售站。通过整合覆盖全球 25 '
+              '个主权经济体与印度四大都会核心区的真实数据，为战略决策层提供经得起穿透审计的能源经济学洞察。'},
+    "meth_sec1_desc": {       'ar': 'لحساب حركة الأسعار الحقيقية عبر الزمن دون تداخل أو تشويش ناتج عن الفروق الجغرافية بين المدن، يتم تقسيم '
+              'وتصنيف كافة الملاحظات بدقة متناهية وفق التركيبة <code>(country_iso3, location_id, fuel_type, '
+              'brand_name)</code>.',
+        'de': 'Um echte Preisbewegungen ohne geografische Verzerrung zu berechnen, werden alle Beobachtungen streng '
+              'nach <code>(country_iso3, location_id, fuel_type, brand_name)</code> unterteilt.',
+        'en': 'To calculate genuine price movement over time without contamination from cross-city geographic '
+              'variance, all observations are partitioned strictly by the tuple <code>(country_iso3, location_id, '
+              'fuel_type, brand_name)</code>.',
+        'es': 'Para calcular el movimiento de precios real en el tiempo sin contaminación por variaciones geográficas, '
+              'las observaciones se particionan por la tupla <code>(country_iso3, location_id, fuel_type, '
+              'brand_name)</code>.',
+        'fr': "Pour calculer l'évolution réelle des prix sans contamination géographique, toutes les observations sont "
+              'partitionnées strictement par le tuple <code>(country_iso3, location_id, fuel_type, brand_name)</code>.',
+        'hi': 'शहरों के बीच भौगोलिक भिन्नता के संदूषण के बिना समय के साथ वास्तविक मूल्य उतार-चढ़ाव की गणना करने के '
+              'लिए, सभी अवलोकनों को <code>(country_iso3, location_id, fuel_type, brand_name)</code> के आधार पर सख्ती '
+              'से विभाजित किया जाता है।',
+        'ja': '都市間の地理的差異による歪みを生じさせることなく純粋な時間的価格推移を算定するため、すべての観測値は <code>(country_iso3, location_id, fuel_type, '
+              'brand_name)</code> のタプル単位で厳密に分割されます。',
+        'ru': 'Для расчета динамики цен без географических искажений все наблюдения строго группируются по кортежу '
+              '<code>(country_iso3, location_id, fuel_type, brand_name)</code>.',
+        'zh': '为了剔除跨城市地域空间差异对价格波动所产生的统计污染，所有观测样本均基于四元组唯一键严格隔离分片：<code>(country_iso3, location_id, fuel_type, '
+              'brand_name)</code>。'},
+    "meth_sec2_desc": {       'ar': 'نستخدم مؤشر هيرفيندال-هيرشمان (HHI) للقياس الكمي لمستوى الاعتماد على الدول الموردة للنفط الخام. لتكن '
+              '$s_i$ الحصة المئوية للنفط الخام المستورد من المورد $i$:',
+        'de': 'Wir verwenden den Herfindahl-Hirschman-Index (HHI), um die Importabhängigkeit zu quantifizieren. Sei '
+              '$s_i$ der prozentuale Anteil des Lieferanten $i$:',
+        'en': 'We employ the Herfindahl-Hirschman Index (HHI) to quantify import reliance on sovereign supplier '
+              'nations. Let $s_i$ be the percentage share of crude oil imported from supplier $i$:',
+        'es': 'Utilizamos el Índice Herfindahl-Hirschman (HHI) para cuantificar la dependencia de importación en '
+              'proveedores soberanos. Sea $s_i$ el porcentaje importado del proveedor $i$:',
+        'fr': "Nous utilisons l'indice de Herfindahl-Hirschman (HHI) pour quantifier la dépendance aux importations "
+              'pétrolières. Soit $s_i$ la part en pourcentage du fournisseur $i$:',
+        'hi': 'हम आपूर्तिकर्ता देशों पर आयात निर्भरता को मापने के लिए हर्पिंडाहल-हिर्शमैन इंडेक्स (HHI) का उपयोग करते '
+              'हैं। मान लें कि $s_i$ आपूर्तिकर्ता $i$ से आयातित कच्चे तेल का प्रतिशत हिस्सा है:',
+        'ja': '特定の原油供給国への輸入依存度および供給集中度を定量化するため、ハーフィンダール・ハーシュマン指数（HHI）を採用しています。供給国 $i$ からの輸入シェア率を $s_i$ とすると：',
+        'ru': 'Мы используем индекс Херфиндаля-Хиршмана (HHI) для количественной оценки зависимости от '
+              'стран-поставщиков. Пусть $s_i$ — процентная доля поставщика $i$:',
+        'zh': '我们采用国际通行的赫芬达尔-赫希曼指数 (HHI) 量化评估对特定主权供应国的原油进口依赖度与供应集中度。设 $s_i$ 为来自供应国 $i$ 的原油进口实物量百分比份额：'},
+    "meth_sec3_desc": {       'ar': 'لا يعكس السعر المجرد لكل لتر بالدولار القدرة الشرائية الاجتماعية والاقتصادية الحقيقية للمواطنين؛ إذ إن '
+              'سعر 1.10 دولار/لتر في اقتصاد ناشئ يمثل عبئاً مالياً أثقل بكثير مقارنة بـ 1.80 دولار/لتر في أوروبا '
+              'الغربية. لذلك نحسب <b>مؤشر عبء تعبئة 50 لتراً</b> مقارنة بالدخل اليومي:',
+        'de': 'Der Rohpreis pro Liter ($/L) spiegelt nicht die Kaufkraft wider. 1,10 $/L in einem Schwellenland '
+              'belasten weit mehr als 1,80 $/L in Westeuropa. Wir berechnen die <b>50-Liter-Tanklast</b> im Verhältnis '
+              'zum Tageseinkommen:',
+        'en': 'Raw price per litre ($/L) fails to reflect socioeconomic purchasing power. A $1.10/L price in an '
+              'emerging economy poses a vastly higher financial strain than $1.80/L in Western Europe. We compute the '
+              '<b>50-Litre Fill-Up Burden</b> against daily income:',
+        'es': 'El precio nominal por litro ($/L) no refleja el poder adquisitivo real. Un precio de $1.10/L en una '
+              'economía emergente genera una carga financiera mucho mayor que $1.80/L en Europa Occidental. Calculamos '
+              'la <b>Carga de Llenado de 50 Litros</b> frente al ingreso diario:',
+        'fr': "Le prix brut au litre ($/L) ne reflète pas le pouvoir d'achat socio-économique réel. Un prix de 1,10 "
+              '$/L dans une économie émergente représente un fardeau bien plus lourd que 1,80 $/L en Europe '
+              "occidentale. Nous calculons la <b>Charge d'un plein de 50 litres</b> par rapport au revenu journalier:",
+        'hi': 'प्रति लीटर का कच्चा मूल्य ($/L) सामाजिक-आर्थिक क्रय शक्ति को प्रतिबिंबित करने में विफल रहता है। एक '
+              'उभरती हुई अर्थव्यवस्था में $1.10/लीटर की कीमत पश्चिमी यूरोप में $1.80/लीटर की तुलना में बहुत अधिक '
+              'वित्तीय बोझ डालती है। हम दैनिक आय के विरुद्ध <b>50-लीटर टैंक भराव भार</b> की गणना करते हैं:',
+        'ja': '単純な米ドル換算の単価（$/L）では、社会経済的な購買力平価を反映できません。新興国における1.10ドル/Lは、西欧諸国における1.80ドル/Lよりもはるかに深刻な家計負担となります。当システムでは、1日あたり所得に対する<b>50リットル満タン給油負担率</b>を算定します：',
+        'ru': 'Номинальная цена за литр ($/л) не отражает реальную покупательную способность. Цена $1.10/л в '
+              'развивающейся стране создает гораздо большую нагрузку, чем $1.80/л в Западной Европе. Мы рассчитываем '
+              '<b>нагрузку 50-литрового бака</b> относительно дневного дохода:',
+        'zh': '单纯按美元折算的每升零售价格 ($/L) 无法真实刻画国民实际经济购买力与民生负担。在发展中国家，1.10 美元/升的油价所造成的财政挤压远高于西欧高收入国家的 1.80 美元/升。我们以 <b>50 '
+              '升全箱加油支出</b> 占人均单日收入的百分比进行精确测算：'},
+    "meth_sec4_desc": {       'ar': 'يحاكي نموذج صدمات الاقتصاد الكلي التفاعلي تأثير صدمة معروض النفط الخام الخارجية ($\\Delta C$ '
+              'بالدولار/برميل) وانخفاض قيمة العملة المحلية ($\\% \\Delta FX$) على الميزانيات التشغيلية لأساطيل النقل:',
+        'de': 'Der Schock-Simulator modelliert die Auswirkungen von Rohölschocks ($\\Delta C$ in USD/bbl) und '
+              'Währungsabwertungen ($\\% \\Delta FX$) auf Fuhrparkbudgets:',
+        'en': 'The interactive shock simulator models the impact of an exogenous crude oil supply shock ($\\Delta C$ '
+              'in USD/bbl) and local currency depreciation ($\\% \\Delta FX$) on fleet operating budgets:',
+        'es': 'El simulador interactivo de shocks modela el impacto de un shock en el suministro de crudo ($\\Delta C$ '
+              'en USD/bbl) y la depreciación de la moneda local ($\\% \\Delta FX$) en flotas:',
+        'fr': "Le simulateur de chocs modélise l'impact d'une hausse du brut ($\\Delta C$ en USD/bbl) et de la "
+              'dépréciation monétaire ($\\% \\Delta FX$) sur les coûts de flotte:',
+        'hi': 'इंटरैक्टिव शॉक सिम्युलेटर फ्लीट ऑपरेटिंग बजट पर बाहरी कच्चे तेल आपूर्ति झटके ($\\Delta C$ अमेरिकी '
+              'डॉलर/बैरल में) और स्थानीय मुद्रा के अवमूल्यन ($\\% \\Delta FX$) के प्रभाव को मॉडल करता है:',
+        'ja': 'マクロ経済ショック・シミュレーターは、外生的な原油供給ショック（$\\Delta C$、USD/バレル）および現地通貨下落率（$\\% \\Delta '
+              'FX$）が車両運行事業者の運用予算に及ぼす影響を数理モデル化します：',
+        'ru': 'Симулятор шоков моделирует влияние скачков цен на сырую нефть ($\\Delta C$ в USD/баррель) и девальвации '
+              'валюты ($\\% \\Delta FX$) на бюджеты автопарков:',
+        'zh': '互动式宏观燃料冲击模拟器精准仿真了外生原油供给冲击 ($\\Delta C$，美元/桶) 与本币贬值幅度 ($\\% \\Delta FX$) 对企业车队及物流总运营预算的复合传导压力：'},
+    "meth_sec4_where": {       'ar': 'حيث $\\beta_{\\text{crude}} \\approx 0.72$ (معامل التمرير التجريبي قصير الأجل) و $\\beta_{\\text{FX}} '
+              '\\approx 0.85$ (مرونة أسعار الصرف للسلع المستوردة).',
+        'de': 'Wobei $\\beta_{\\text{crude}} \\approx 0.72$ (empirischer Weitergabekoeffizient) und '
+              '$\\beta_{\\text{FX}} \\approx 0.85$ (Währungselastizität).',
+        'en': 'Where $\\beta_{\\text{crude}} \\approx 0.72$ (empirical short-run pass-through coefficient) and '
+              '$\\beta_{\\text{FX}} \\approx 0.85$ (imported commodity currency elasticity).',
+        'es': 'Donde $\\beta_{\\text{crude}} \\approx 0.72$ (coeficiente empírico de transmisión a corto plazo) y '
+              '$\\beta_{\\text{FX}} \\approx 0.85$ (elasticidad cambiaria).',
+        'fr': 'Où $\\beta_{\\text{crude}} \\approx 0.72$ (coefficient de répercussion à court terme) et '
+              '$\\beta_{\\text{FX}} \\approx 0.85$ (élasticité de change).',
+        'hi': 'जहां $\\beta_{\\text{crude}} \\approx 0.72$ (अनुभवजन्य अल्पकालिक पास-थ्रू गुणांक) और '
+              '$\\beta_{\\text{FX}} \\approx 0.85$ (आयातित वस्तु मुद्रा लोच)।',
+        'ja': 'ここで $\\beta_{\\text{crude}} \\approx 0.72$（実証的短期価格転嫁係数）、$\\beta_{\\text{FX}} \\approx '
+              '0.85$（輸入コモディティ為替弾力性）。',
+        'ru': 'Где $\\beta_{\\text{crude}} \\approx 0.72$ (эмпирический коэффициент краткосрочного переноса) и '
+              '$\\beta_{\\text{FX}} \\approx 0.85$ (валютная эластичность).',
+        'zh': '其中 $\\beta_{\\text{crude}} \\approx 0.72$（实证短期原油价格转嫁系数），$\\beta_{\\text{FX}} \\approx '
+              '0.85$（进口大宗商品汇率传导弹性系数）。'},
+    "meth_sec5_desc": {       'ar': 'تخضع كافة تنبؤات نماذج تعلم الآلة والنماذج القياسية الاقتصادية (SARIMAX, XGBoost, Prophet) لاختبارات '
+              'رجعية خارج العينة عبر نافذة تحقق تمتد لـ 12 أسبوعاً باستخدام ثلاثة مقاييس خطأ معيارية:',
+        'de': 'Alle ML- und ökonometrischen Preisprognosen (SARIMAX, XGBoost, Prophet) werden über ein 12-wöchiges '
+              'Validierungsfenster anhand dreier Standard-Fehlermetriken getestet:',
+        'en': 'All machine learning and econometric price projections (SARIMAX, XGBoost, Prophet) undergo '
+              'out-of-sample backtesting across a 12-week holdout validation window using three standard error '
+              'metrics:',
+        'es': 'Todas las proyecciones de precios (SARIMAX, XGBoost, Prophet) se someten a backtesting en una ventana '
+              'de validación de 12 semanas con tres métricas de error estándar:',
+        'fr': "Toutes les prévisions de prix (SARIMAX, XGBoost, Prophet) font l'objet d'un backtest sur 12 semaines "
+              "avec trois métriques d'erreur standard:",
+        'hi': 'सभी मशीन लर्निंग और अर्थमितीय मूल्य पूर्वानुमान (SARIMAX, XGBoost, Prophet) तीन मानक त्रुटि मेट्रिक्स '
+              'का उपयोग करके 12-सप्ताह की होल्डआउट सत्यापन अवधि में आउट-ऑफ-सैंपल बैक-टेस्टिंग से गुजरते हैं:',
+        'ja': 'すべての機械学習および計量経済学的予測モデル（SARIMAX、XGBoost、Prophet）は、12週間のホールドアウト検証ウィンドウにおいて、3つの標準的誤差評価指標による標本外バックテストを実施しています：',
+        'ru': 'Все прогнозы цен машинного обучения и эконометрики (SARIMAX, XGBoost, Prophet) проходят ретроспективное '
+              'тестирование на 12-недельном окне валидации по трем метрикам:',
+        'zh': '所有机器学习与计量经济学预测模型（SARIMAX、XGBoost、Prophet）均在严格预留的 12 周样本外时间窗口内执行历史回测，并使用三项行业权威误差指标进行综合评定：'}
 }

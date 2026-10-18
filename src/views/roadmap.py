@@ -44,12 +44,12 @@ def render_roadmap_view(navigate_fn=None):
     """, unsafe_allow_html=True)
 
     status_items = [
-        ("Core Relational Engine", "SQLite / MySQL Star Schema", t("status_operational", cur_lang), "#10B981"),
-        ("Live Ingestion Connectors", "PPAC • EIA • EC • FX", t("status_active", cur_lang), "#10B981"),
-        ("Multi-Tier Cache Layer", "Sub-50ms TopoJSON & Query Warm", t("status_operational", cur_lang), "#10B981"),
-        ("Predictive ML Radar", "SARIMAX & XGBoost Engines", t("status_operational", cur_lang), "#10B981"),
-        ("AI Natural Language Engine", "Gemini 1.5 Pro / Flash Quota Gated", t("status_online", cur_lang), "#60A5FA"),
-        ("Automated Quality Auditor", "Zero Quarantine Violations", t("status_verified", cur_lang), "#10B981")
+        (t("rm_status_core", cur_lang), t("rm_status_core_sub", cur_lang), t("status_operational", cur_lang), "#10B981"),
+        (t("rm_status_conn", cur_lang), t("rm_status_conn_sub", cur_lang), t("status_active", cur_lang), "#10B981"),
+        (t("rm_status_cache", cur_lang), t("rm_status_cache_sub", cur_lang), t("status_operational", cur_lang), "#10B981"),
+        (t("rm_status_ml", cur_lang), t("rm_status_ml_sub", cur_lang), t("status_operational", cur_lang), "#10B981"),
+        (t("rm_status_ai", cur_lang), t("rm_status_ai_sub", cur_lang), t("status_online", cur_lang), "#60A5FA"),
+        (t("rm_status_audit", cur_lang), t("rm_status_audit_sub", cur_lang), t("status_verified", cur_lang), "#10B981")
     ]
 
     render_html('<div class="fuelpulse-suite-container">')

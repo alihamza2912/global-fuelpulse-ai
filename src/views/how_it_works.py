@@ -133,13 +133,13 @@ def render_how_it_works_view(navigate_fn=None):
     </div>
     """, unsafe_allow_html=True)
 
-    render_html("""
+    render_html(f"""
     <div style="background: rgba(14, 21, 38, 0.7); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 10px; padding: 20px; font-family: 'Inter', sans-serif; font-size: 0.88rem; line-height: 1.6; color: #94A3B8;">
         <p style="margin-top: 0;">
-            The central <code>PipelineOrchestrator</code> utilizes a non-blocking mutex lock (<code>threading.Lock()</code>). When a user clicks <b>⚡ Refresh Live Data</b> or an automated scheduler trigger fires, the pipeline verifies whether another sync process is already active. If active, concurrent duplicate executions are gracefully refused, preventing database write-lock contention and redundant API quota consumption.
+            {t('how_orch_p1', cur_lang)}
         </p>
         <p style="margin-bottom: 0;">
-            Every ingestion step records execution telemetry into <code>etl_run_log</code>: connector name, start timestamp, completion duration (milliseconds), row count fetched, row count committed, and error exceptions (if any). This telemetry is openly displayed in the <b>Data Trust Center</b> for full operational transparency.
+            {t('how_orch_p2', cur_lang)}
         </p>
     </div>
     """)
