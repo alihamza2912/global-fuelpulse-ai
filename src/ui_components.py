@@ -324,6 +324,61 @@ def render_two_tier_nav_html(current_lang: str, active_canonical: str) -> str:
     return f'<div class="fuelpulse-nav-shell">{t1}{t2}</div>'
 
 
+def render_two_tier_navigation(current_lang: str, active_canonical: str, navigate_fn=None) -> None:
+    """
+    Renders the structured two-tier navigation using reactive Streamlit buttons.
+    Clicking any tab routes immediately in-memory (<30ms) without full browser page reload.
+    """
+    from src.localization.i18n import get_clean_nav_label
+
+    tier_1_items = [
+        {"tab": "home", "icon": "🏠", "label": get_clean_nav_label("home", current_lang)},
+        {"tab": "dashboard", "icon": "⚡", "label": get_clean_nav_label("dashboard", current_lang), "badge": "Live"},
+        {"tab": "india", "icon": "🇮🇳", "label": get_clean_nav_label("india", current_lang), "badge": "MoPNG"},
+        {"tab": "about", "icon": "📖", "label": get_clean_nav_label("about", current_lang)},
+        {"tab": "how_it_works", "icon": "⚙️", "label": get_clean_nav_label("how_it_works", current_lang)},
+    ]
+
+    tier_2_items = [
+        {"tab": "features", "icon": "📋", "label": get_clean_nav_label("features", current_lang), "badge": "12 Mod"},
+        {"tab": "data_trust", "icon": "🔒", "label": get_clean_nav_label("data_trust", current_lang), "badge": "SLA"},
+        {"tab": "methodology", "icon": "📐", "label": get_clean_nav_label("methodology", current_lang)},
+        {"tab": "roadmap", "icon": "🗺️", "label": get_clean_nav_label("roadmap", current_lang), "badge": "2026"},
+        {"tab": "faq", "icon": "❓", "label": get_clean_nav_label("faq", current_lang), "badge": "Docs"},
+    ]
+
+    # Container with custom CSS wrapper class
+    st.markdown('<div class="fuelpulse-tnav-container">', unsafe_allow_html=True)
+    
+    # Tier 1 - CORE
+    st.markdown('<div style="font-size: 10px; font-weight: 800; color: #64748B; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 4px; margin-top: 2px;">CORE MODULES</div>', unsafe_allow_html=True)
+    t1_cols = st.columns(len(tier_1_items))
+    for col, it in zip(t1_cols, tier_1_items):
+        is_active = (it["tab"] == active_canonical)
+        badge_str = f" [{it['badge']}]" if it.get("badge") else ""
+        btn_label = f"{it['icon']} {it['label']}{badge_str}"
+        with col:
+            if st.button(btn_label, key=f"main_t1_nav_{it['tab']}", type="primary" if is_active else "secondary", use_container_width=True):
+                if navigate_fn:
+                    navigate_fn(it["tab"])
+
+    # Tier 2 - SPECS & DOCS
+    st.markdown('<div style="font-size: 10px; font-weight: 800; color: #64748B; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 4px; margin-top: 6px;">TECHNICAL DOSSIERS & DOCS</div>', unsafe_allow_html=True)
+    t2_cols = st.columns(len(tier_2_items))
+    for col, it in zip(t2_cols, tier_2_items):
+        is_active = (it["tab"] == active_canonical)
+        badge_str = f" [{it['badge']}]" if it.get("badge") else ""
+        btn_label = f"{it['icon']} {it['label']}{badge_str}"
+        with col:
+            if st.button(btn_label, key=f"main_t2_nav_{it['tab']}", type="primary" if is_active else "secondary", use_container_width=True):
+                if navigate_fn:
+                    navigate_fn(it["tab"])
+
+    st.markdown('</div>', unsafe_allow_html=True)
+    st.markdown('<div style="margin-bottom: 14px;"></div>', unsafe_allow_html=True)
+
+
+
 
 def get_animated_grid_css(container_class: str = "fuelpulse-hero-backdrop") -> str:
     """Generates layered, CSS-only animated grid backdrop styles matching animated-grid.tsx."""
@@ -424,6 +479,80 @@ def apply_theme():
     padding-top: 1.0rem !important;
   }}
 }}
+
+/* Hide default untranslated Streamlit Multipage Navigation in sidebar */
+[data-testid="stSidebarNav"] {{
+  display: none !important;
+}}
+
+/* Sidebar navigation buttons styling */
+div[data-testid="stSidebar"] div.stButton > button {{
+  border-radius: 8px !important;
+  text-align: left !important;
+  justify-content: flex-start !important;
+  padding: 6px 12px !important;
+  font-size: 13px !important;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+  margin-bottom: 2px !important;
+  height: 36px !important;
+  transition: all 0.15s ease-out !important;
+}}
+
+div[data-testid="stSidebar"] div.stButton > button[kind="primary"] {{
+  background: rgba(234, 179, 8, 0.15) !important;
+  color: #F5B942 !important;
+  border: 1px solid rgba(234, 179, 8, 0.45) !important;
+  font-weight: 700 !important;
+  box-shadow: 0 0 10px rgba(234, 179, 8, 0.12) !important;
+}}
+
+div[data-testid="stSidebar"] div.stButton > button[kind="secondary"] {{
+  background: rgba(255, 255, 255, 0.03) !important;
+  color: #CBD5E1 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  font-weight: 500 !important;
+}}
+
+div[data-testid="stSidebar"] div.stButton > button[kind="secondary"]:hover {{
+  background: rgba(255, 255, 255, 0.08) !important;
+  color: #FFFFFF !important;
+  border-color: rgba(255, 255, 255, 0.16) !important;
+}}
+
+/* Main Top Two-Tier Navigation button styling */
+div.fuelpulse-tnav-container div.stButton > button {{
+  height: 36px !important;
+  padding: 4px 8px !important;
+  border-radius: 6px !important;
+  font-family: 'Space Grotesk', -apple-system, sans-serif !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  transition: all 0.15s ease-in-out !important;
+}}
+
+div.fuelpulse-tnav-container div.stButton > button[kind="primary"] {{
+  background: rgba(234, 179, 8, 0.16) !important;
+  color: #F5B942 !important;
+  border: 1px solid rgba(234, 179, 8, 0.5) !important;
+  font-weight: 700 !important;
+  box-shadow: 0 0 12px rgba(234, 179, 8, 0.15) !important;
+}}
+
+div.fuelpulse-tnav-container div.stButton > button[kind="secondary"] {{
+  background: rgba(11, 17, 32, 0.8) !important;
+  color: #94A3B8 !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+}}
+
+div.fuelpulse-tnav-container div.stButton > button[kind="secondary"]:hover {{
+  background: rgba(255, 255, 255, 0.08) !important;
+  color: #F9FAFB !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
+}}
+
 
 /* Universal Pinned Floating Action Button (FAB) */
 div[class*="global_fuelpulse_fab"] button,

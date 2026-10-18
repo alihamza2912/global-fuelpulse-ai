@@ -52,6 +52,7 @@ try:
         render_universal_top_header,
         render_universal_ai_assistant,
         render_two_tier_nav_html,
+        render_two_tier_navigation,
         get_lucide_icon_svg,
         COLOR_AMBER,
         COLOR_WHITE,
@@ -71,6 +72,7 @@ except (ImportError, ModuleNotFoundError):
         render_universal_top_header,
         render_universal_ai_assistant,
         render_two_tier_nav_html,
+        render_two_tier_navigation,
         get_lucide_icon_svg,
         COLOR_AMBER,
         COLOR_WHITE,
@@ -296,55 +298,19 @@ TREE_NAV_ITEMS = [
     {"label": t("nav_faq", current_lang), "tab": "faq", "canonical": "❓ Docs & FAQ", "badge": "Docs"},
 ]
 
-active_idx = 0
-for idx, item in enumerate(TREE_NAV_ITEMS):
-    if item["canonical"] == st.session_state.active_nav:
-        active_idx = idx
-        break
-
-ROW_H = 34
-MARKER = 7
-RAIL_X = 10
-total_items = len(TREE_NAV_ITEMS)
-end_y = total_items * ROW_H - ROW_H // 2
-marker_y = active_idx * ROW_H + ROW_H // 2 - MARKER // 2
-
-items_html = []
-for idx, item in enumerate(TREE_NAV_ITEMS):
-    is_active = (idx == active_idx)
-    badge_html = f'<span style="display: inline-flex; height: 18px; align-items: center; border-radius: 6px; background: rgba(43, 127, 255, 0.14); padding: 0 6px; font-size: 11px; font-weight: 500; color: #60A5FA; line-height: 1;">{item["badge"]}</span>' if item.get("badge") else ''
-    active_style = 'background: rgba(255, 255, 255, 0.08); color: #FFFFFF; font-weight: 500;' if is_active else 'color: #A1A1AA; font-weight: 400;'
-    items_html.append(f"""
-        <li style="position: relative; list-style: none; margin: 0; padding: 0;">
-            <a href="?tab={item['tab']}" target="_self" style="display: flex; height: 32px; align-items: center; justify-content: space-between; border-radius: 8px; padding: 0 10px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 13px; text-decoration: none; transition: all 0.15s ease-out; {active_style}">
-                <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{item['label']}</span>
-                {badge_html}
-            </a>
-        </li>
-    """)
-
-tree_nav_html = f"""
-<div style="background: #09090b; border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 14px; padding: 12px 10px 14px 8px; margin-bottom: 16px; position: relative;">
-    <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 11px; font-weight: 600; color: #71717A; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; padding-left: 10px;">
-        {t('sidebar_tree_nav', current_lang)}
-    </div>
-    <ul style="position: relative; display: flex; flex-direction: column; gap: 2px; padding-left: 24px; margin: 0; padding-right: 0;">
-        <!-- Vertical Rail Track -->
-        <span aria-hidden="true" style="pointer-events: none; position: absolute; top: 0; bottom: 0; left: 0; width: 20px;">
-            <!-- Background Rail -->
-            <span style="position: absolute; top: 16px; left: {RAIL_X}px; width: 1px; height: {end_y - 16}px; background: #27272a;"></span>
-            <!-- Terminal Dot -->
-            <span style="position: absolute; left: {RAIL_X - 1.5}px; top: {end_y - 2}px; width: 4px; height: 4px; border-radius: 50%; background: #3f3f46;"></span>
-            <!-- Accent Rail (Pure White) -->
-            <span style="position: absolute; top: 16px; left: {RAIL_X}px; width: 1px; height: {active_idx * ROW_H}px; background: #ffffff;"></span>
-            <!-- Active Diamond Marker (Pure White 45deg) -->
-            <span style="position: absolute; left: {RAIL_X - MARKER / 2 + 0.5}px; top: {marker_y + 1}px; width: {MARKER}px; height: {MARKER}px; background: #ffffff; transform: rotate(45deg); border-radius: 1px; box-shadow: 0 0 6px rgba(255, 255, 255, 0.8);"></span>
-        </span>
-        {''.join(items_html)}
-    </ul>
+st.sidebar.markdown(f"""
+<div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 11px; font-weight: 700; color: #71717A; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; padding-left: 2px;">
+    {t('sidebar_tree_nav', current_lang)}
 </div>
-"""
-render_html(tree_nav_html, container=st.sidebar)
+""", unsafe_allow_html=True)
+
+for item in TREE_NAV_ITEMS:
+    is_active = (item["tab"] == st.session_state.active_canonical)
+    badge_str = f" [{item['badge']}]" if item.get("badge") else ""
+    btn_label = f"{item['label']}{badge_str}"
+    if st.sidebar.button(btn_label, key=f"sb_nav_btn_{item['tab']}", type="primary" if is_active else "secondary", use_container_width=True):
+        navigate_to(item["tab"])
+
 
 # Live Pipeline Refresh Controls & Timestamps
 st.sidebar.markdown(f"### ⚡ {t('sidebar_sync_title', current_lang)}")
@@ -403,7 +369,7 @@ render_universal_top_header(active_page_name=st.session_state.get("active_canoni
 # 6. Structured Two-Tier Product Navigation
 active_canonical = st.session_state.get("active_canonical", "home")
 st.session_state.active_nav = KEY_TO_NAV.get(active_canonical, "🏠 Overview")
-render_html(render_two_tier_nav_html(current_lang, active_canonical))
+render_two_tier_navigation(current_lang, active_canonical, navigate_to)
 
 
 # 7. Modular View Router

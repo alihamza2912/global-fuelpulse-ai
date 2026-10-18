@@ -37,9 +37,9 @@ def render_methodology_view(navigate_fn=None):
     """)
 
     # 1. Price Variation & Delta Calculations
-    st.markdown("""
+    st.markdown(f"""
     <div style="font-family: 'Space Grotesk', sans-serif; font-size: 1.25rem; font-weight: 800; color: #F9FAFB; margin-bottom: 8px;">
-        1. RETAIL FUEL PRICE DELTA & SPREAD DYNAMICS
+        {t('meth_sec1_title', cur_lang)}
     </div>
     """, unsafe_allow_html=True)
 
@@ -61,9 +61,9 @@ def render_methodology_view(navigate_fn=None):
     st.write("")
 
     # 2. Herfindahl-Hirschman Index (HHI) for Import Concentration
-    st.markdown("""
+    st.markdown(f"""
     <div style="font-family: 'Space Grotesk', sans-serif; font-size: 1.25rem; font-weight: 800; color: #F9FAFB; margin-bottom: 8px;">
-        2. HERFINDAHL-HIRSCHMAN SUPPLIER CONCENTRATION INDEX (HHI)
+        {t('meth_sec2_title', cur_lang)}
     </div>
     """, unsafe_allow_html=True)
 
@@ -90,9 +90,9 @@ def render_methodology_view(navigate_fn=None):
     st.write("")
 
     # 3. Energy Affordability Burden Index
-    st.markdown("""
+    st.markdown(f"""
     <div style="font-family: 'Space Grotesk', sans-serif; font-size: 1.25rem; font-weight: 800; color: #F9FAFB; margin-bottom: 8px;">
-        3. ENERGY AFFORDABILITY BURDEN INDEX
+        {t('meth_sec3_title', cur_lang)}
     </div>
     """, unsafe_allow_html=True)
 
@@ -141,9 +141,9 @@ def render_methodology_view(navigate_fn=None):
     st.write("")
 
     # 5. Forecast Error Evaluation Metrics
-    st.markdown("""
+    st.markdown(f"""
     <div style="font-family: 'Space Grotesk', sans-serif; font-size: 1.25rem; font-weight: 800; color: #F9FAFB; margin-bottom: 8px;">
-        5. STATISTICAL TIME-SERIES EVALUATION METRICS
+        {t('meth_sec4_title', cur_lang)}
     </div>
     """, unsafe_allow_html=True)
 

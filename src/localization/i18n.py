@@ -2313,6 +2313,19 @@ except Exception:
     except Exception:
         pass
 
+# Secondary views translations dictionary (Dashboard hero, Roadmap, Data Trust, FAQ)
+VIEWS_TRANSLATIONS: Dict[str, Dict[str, str]] = {}
+try:
+    from src.localization.translations_views import VIEWS_TRANSLATIONS as _VT
+    VIEWS_TRANSLATIONS = _VT
+except Exception:
+    try:
+        from translations_views import VIEWS_TRANSLATIONS as _VT
+        VIEWS_TRANSLATIONS = _VT
+    except Exception:
+        pass
+
+
 
 # ==============================================================================
 # 3. HELPER FUNCTIONS
@@ -2364,6 +2377,9 @@ def t(key: str, lang: Optional[str] = None, **kwargs) -> str:
     
     if key in TRANSLATIONS:
         lang_dict = TRANSLATIONS[key]
+        text = lang_dict.get(active_lang) or lang_dict.get("en") or key
+    elif key in VIEWS_TRANSLATIONS:
+        lang_dict = VIEWS_TRANSLATIONS[key]
         text = lang_dict.get(active_lang) or lang_dict.get("en") or key
     else:
         text = key

@@ -40,13 +40,13 @@ render_page_header(
 )
 
 tab_about, tab_arch, tab_feat, tab_trust, tab_meth, tab_road, tab_faq = st.tabs([
-    "📖 About Project",
-    "⚙️ Architecture",
-    "📋 Features",
-    "🔒 Data Trust",
-    "📐 Methodology",
-    "🗺️ Roadmap",
-    "❓ Docs & FAQ"
+    t("nav_about", current_lang),
+    t("nav_how_it_works", current_lang),
+    t("nav_features", current_lang),
+    t("nav_data_trust", current_lang),
+    t("nav_methodology", current_lang),
+    t("nav_roadmap", current_lang),
+    t("nav_faq", current_lang)
 ])
 
 with tab_about:

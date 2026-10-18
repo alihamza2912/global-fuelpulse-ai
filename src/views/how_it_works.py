@@ -38,9 +38,9 @@ def render_how_it_works_view(navigate_fn=None):
     """)
 
     # 1. The 6-Stage End-to-End Pipeline
-    st.markdown("""
+    st.markdown(f"""
     <div style="font-family: 'Space Grotesk', sans-serif; font-size: 1.25rem; font-weight: 800; color: #F9FAFB; margin-bottom: 12px;">
-        1. THE 6-STAGE DATA PIPELINE
+        {t('how_sec1_title', cur_lang)}
     </div>
     """, unsafe_allow_html=True)
 
@@ -75,9 +75,9 @@ def render_how_it_works_view(navigate_fn=None):
     st.write("")
 
     # 2. Production Technology Stack
-    st.markdown("""
+    st.markdown(f"""
     <div style="font-family: 'Space Grotesk', sans-serif; font-size: 1.25rem; font-weight: 800; color: #F9FAFB; margin-bottom: 12px;">
-        2. VERIFIED PRODUCTION TECHNOLOGY STACK
+        {t('how_sec2_title', cur_lang)}
     </div>
     """, unsafe_allow_html=True)
 
@@ -125,9 +125,9 @@ def render_how_it_works_view(navigate_fn=None):
     st.write("")
 
     # 3. Ingestion Orchestrator & Concurrency Safeguard
-    st.markdown("""
+    st.markdown(f"""
     <div style="font-family: 'Space Grotesk', sans-serif; font-size: 1.25rem; font-weight: 800; color: #F9FAFB; margin-bottom: 12px;">
-        3. PIPELINE ORCHESTRATION & THREAD SAFETY
+        {t('how_sec3_title', cur_lang)}
     </div>
     """, unsafe_allow_html=True)
 

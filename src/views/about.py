@@ -39,9 +39,9 @@ def render_about_view(navigate_fn=None):
     """)
 
     # 1. Mission and Core Purpose
-    st.markdown("""
+    st.markdown(f"""
     <div style="font-family: 'Space Grotesk', sans-serif; font-size: 1.25rem; font-weight: 800; color: #F9FAFB; margin-bottom: 12px;">
-        1. THE MISSION: DEMYSTIFYING THE ENERGY VALUE CHAIN
+        {t('about_sec1_title', cur_lang)}
     </div>
     """, unsafe_allow_html=True)
 
@@ -57,9 +57,9 @@ def render_about_view(navigate_fn=None):
     """)
 
     # 2. Geological Reality vs Sovereign Tax Regimes
-    st.markdown("""
+    st.markdown(f"""
     <div style="font-family: 'Space Grotesk', sans-serif; font-size: 1.25rem; font-weight: 800; color: #F9FAFB; margin-bottom: 12px;">
-        2. GEOLOGICAL DRIVERS VS. SOVEREIGN FISCAL POLICY
+        {t('about_sec2_title', cur_lang)}
     </div>
     """, unsafe_allow_html=True)
 
@@ -103,9 +103,9 @@ def render_about_view(navigate_fn=None):
     st.write("")
 
     # 3. The 5-Step Refined Product Pass-Through Chain
-    st.markdown("""
+    st.markdown(f"""
     <div style="font-family: 'Space Grotesk', sans-serif; font-size: 1.25rem; font-weight: 800; color: #F9FAFB; margin-bottom: 12px;">
-        3. THE 5-STAGE VALUE ADDED CHAIN (FROM WELLHEAD TO NOZZLE)
+        {t('about_sec3_title', cur_lang)}
     </div>
     """, unsafe_allow_html=True)
 
@@ -142,9 +142,9 @@ def render_about_view(navigate_fn=None):
     """)
 
     # 4. System Design Philosophy
-    st.markdown("""
+    st.markdown(f"""
     <div style="font-family: 'Space Grotesk', sans-serif; font-size: 1.25rem; font-weight: 800; color: #F9FAFB; margin-bottom: 12px;">
-        4. DESIGN PHILOSOPHY & PRINCIPLES
+        {t('about_sec4_title', cur_lang)}
     </div>
     """, unsafe_allow_html=True)
 

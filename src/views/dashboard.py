@@ -901,7 +901,7 @@ def render_dashboard_view(navigate_fn=None):
                             margin-bottom: 12px;
                             width: fit-content;
                         ">
-                            ENERGY ATLAS • 2024–2026
+                            {t('dash_atlas_eyebrow', cur_lang)}
                         </div>
                     </div>
                     <h1 style="
@@ -915,8 +915,7 @@ def render_dashboard_view(navigate_fn=None):
                         -webkit-background-clip: text;
                         -webkit-text-fill-color: transparent;
                     ">
-                        The world runs on energy.<br>
-                        <span>See where it flows.</span>
+                        {t('dash_hero_title', cur_lang)}
                     </h1>
                     <p style="
                         font-family: 'Inter', sans-serif;
@@ -925,7 +924,7 @@ def render_dashboard_view(navigate_fn=None):
                         line-height: 1.6;
                         margin-bottom: 24px;
                     ">
-                        Explore global oil production, petroleum trade, fuel prices, and India's fuel economics through reliable data and interactive analysis.
+                        {t('dash_hero_desc', cur_lang)}
                     </p>
                     <div style="display: flex; gap: 14px; flex-wrap: wrap;">
                         <a href="#ch-01" style="
@@ -945,7 +944,7 @@ def render_dashboard_view(navigate_fn=None):
                             transition: all 0.2s ease;
                         ">
                             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
-                            Explore Global Markets ↗
+                            {t('explore_global_markets', cur_lang)}
                         </a>
                         <a href="#ch-05" style="
                             display: inline-flex;
@@ -962,7 +961,7 @@ def render_dashboard_view(navigate_fn=None):
                             font-weight: 800;
                             text-decoration: none;
                             transition: all 0.2s ease;
-                        ">Understand India's Fuel Prices →</a>
+                        ">{t('understand_india_prices', cur_lang)}</a>
                     </div>
                 </div>
             </div>
@@ -984,8 +983,8 @@ def render_dashboard_view(navigate_fn=None):
                 margin-bottom: 12px;
             ">
                 <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <span style="font-family: 'Space Grotesk', sans-serif; font-size: 0.82rem; font-weight: 800; text-transform: uppercase; color: #F9FAFB;">TOP CRUDE PRODUCERS PREVIEW</span>
-                    <span style="background: rgba(245, 185, 66, 0.18); border: 1px solid rgba(245, 185, 66, 0.35); padding: 2px 8px; border-radius: 999px; font-size: 0.7rem; font-weight: 700; color: #F5B942;">2024–25 DATA</span>
+                    <span style="font-family: 'Space Grotesk', sans-serif; font-size: 0.82rem; font-weight: 800; text-transform: uppercase; color: #F9FAFB;">{t('top_crude_producers_preview', cur_lang)}</span>
+                    <span style="background: rgba(245, 185, 66, 0.18); border: 1px solid rgba(245, 185, 66, 0.35); padding: 2px 8px; border-radius: 999px; font-size: 0.7rem; font-weight: 700; color: #F5B942;">{t('data_badge_2024_25', cur_lang)}</span>
                 </div>
             </div>
             """
@@ -1003,7 +1002,7 @@ def render_dashboard_view(navigate_fn=None):
         f"""
         <div style="display: flex; align-items: center; gap: 8px; margin-top: 1.5rem; margin-bottom: 10px;">
             <span style="width: 10px; height: 10px; background: {COLOR_AMBER}; border: 1.5px solid {COLOR_INK}; display: inline-block;"></span>
-            <span style="font-family: 'Space Grotesk', sans-serif; font-size: 0.85rem; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase; color: {COLOR_INK};">MARKET TELEMETRY SNAPSHOT</span>
+            <span style="font-family: 'Space Grotesk', sans-serif; font-size: 0.85rem; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase; color: {COLOR_INK};">{t('market_telemetry_snapshot', cur_lang)}</span>
         </div>
         """
     )
@@ -1012,10 +1011,10 @@ def render_dashboard_view(navigate_fn=None):
     brent_display, delhi_diesel_display = get_cached_telemetry()
 
     render_signal_rail([
-        {"label": "BRENT CRUDE BENCHMARK", "value": brent_display, "note": "North Sea Sweet • Daily Index"},
-        {"label": "GLOBAL OIL PRODUCTION", "value": "82.1 mbpd", "note": "Tracked Field Extraction Rate"},
-        {"label": "SEABORNE TRADE FLOW", "value": "42.5 mbpd", "note": "UN Comtrade / EIA Movements"},
-        {"label": "INDIA DIESEL PUMP PRICE", "value": delhi_diesel_display, "note": "Delhi PPAC Metro Benchmark"}
+        {"label": t("brent_crude_benchmark", cur_lang), "value": brent_display, "note": t("brent_crude_note", cur_lang)},
+        {"label": t("global_oil_production", cur_lang), "value": "82.1 mbpd", "note": t("global_oil_note", cur_lang)},
+        {"label": t("seaborne_trade_flow", cur_lang), "value": "42.5 mbpd", "note": t("seaborne_trade_note", cur_lang)},
+        {"label": t("india_diesel_pump_price", cur_lang), "value": delhi_diesel_display, "note": t("delhi_ppac_note", cur_lang)}
     ])
 
 
@@ -1035,7 +1034,7 @@ def render_dashboard_view(navigate_fn=None):
     k1, k2, k3, k4 = st.columns(4)
     with k1:
         render_instrument_card(
-            label="Top Crude Producer",
+            label=t("kpi_top_producer", cur_lang),
             value="13.2 mbpd",
             accent="amber",
             delta="+2.1% YoY",
@@ -1045,7 +1044,7 @@ def render_dashboard_view(navigate_fn=None):
         )
     with k2:
         render_instrument_card(
-            label="Top Crude Exporter",
+            label=t("kpi_top_exporter", cur_lang),
             value="4.62 mbpd",
             accent="copper",
             delta="-6.1% YoY",
@@ -1055,7 +1054,7 @@ def render_dashboard_view(navigate_fn=None):
         )
     with k3:
         render_instrument_card(
-            label="Top Crude Importer",
+            label=t("kpi_top_importer", cur_lang),
             value="11.3 mbpd",
             accent="teal",
             delta="+3.2% YoY",
@@ -1065,8 +1064,8 @@ def render_dashboard_view(navigate_fn=None):
         )
     with k4:
         render_instrument_card(
-            label="India Import Reliance",
-            value="88.2%",
+            label=t("kpi_global_basket", cur_lang),
+            value=f"${brent_display.replace('$', '').replace('/bbl', '').strip()} /bbl",
             accent="red",
             subtext="Domestic Refinery Throughput",
             code_badge="IND"

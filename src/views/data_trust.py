@@ -54,49 +54,49 @@ def render_data_trust_view(navigate_fn=None):
         success_runs = len(telemetry_df[telemetry_df["status"] == "SUCCESS"]) if not telemetry_df.empty else 12
         pct = (success_runs / total_runs * 100.0) if total_runs > 0 else 100.0
         render_instrument_card(
-            label="Pipeline Health",
+            label=t("trust_kpi_health", cur_lang),
             value=f"{pct:.1f}%",
             accent="teal",
-            subtext=f"{success_runs} of {max(total_runs, 1)} runs OK",
+            subtext=t("trust_kpi_health_sub", cur_lang, success=success_runs, total=max(total_runs, 1)),
             code_badge="HEALTH"
         )
 
     with k2:
         total_recs = sum(table_counts.values()) if table_counts else 1413
         render_instrument_card(
-            label="Managed Records",
+            label=t("trust_kpi_records", cur_lang),
             value=f"{total_recs:,}",
             accent="amber",
-            subtext="Validated relational facts",
+            subtext=t("trust_kpi_records_sub", cur_lang),
             code_badge="ROW-COUNT"
         )
 
     with k3:
         fresh_cnt = len(fresh_df[fresh_df["freshness_status"] == "FRESH"]) if not fresh_df.empty else 5
         render_instrument_card(
-            label="Active Data Marts",
+            label=t("trust_kpi_marts", cur_lang),
             value=f"{fresh_cnt} / {len(fresh_df) if not fresh_df.empty else 7} Fresh",
             accent="teal",
-            subtext="Within source SLA cadence",
+            subtext=t("trust_kpi_marts_sub", cur_lang),
             code_badge="SLA"
         )
 
     with k4:
         rejected = int(telemetry_df["rows_rejected"].sum()) if not telemetry_df.empty else 0
         render_instrument_card(
-            label="Quarantined Records",
+            label=t("trust_kpi_quarantine", cur_lang),
             value=str(rejected),
             accent="teal" if rejected == 0 else "red",
-            subtext="Zero corrupted schema rows",
+            subtext=t("trust_kpi_quarantine_sub", cur_lang),
             code_badge="QUARANTINE"
         )
 
     st.write("")
 
     # 3. Source Registry & Freshness SLA Table
-    st.markdown("""
+    st.markdown(f"""
     <div style="font-family: 'Space Grotesk', sans-serif; font-size: 1.25rem; font-weight: 800; color: #F9FAFB; margin-bottom: 8px;">
-        1. REGISTERED DATA PROVIDERS & REFRESH CADENCE
+        {t('trust_sec1_title', cur_lang)}
     </div>
     """, unsafe_allow_html=True)
 
@@ -133,23 +133,23 @@ def render_data_trust_view(navigate_fn=None):
     st.write("")
 
     # 4. Observation Date vs Ingestion Timestamp Protocol
-    st.markdown("""
+    st.markdown(f"""
     <div style="font-family: 'Space Grotesk', sans-serif; font-size: 1.25rem; font-weight: 800; color: #F9FAFB; margin-bottom: 8px;">
-        2. OBSERVATION DATE VS. INGESTION RETRIEVAL PROTOCOL
+        {t('trust_sec2_title', cur_lang)}
     </div>
     """, unsafe_allow_html=True)
 
-    render_html("""
+    render_html(f"""
     <div style="background: rgba(14, 21, 38, 0.7); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 10px; padding: 20px; font-family: 'Inter', sans-serif; font-size: 0.88rem; line-height: 1.6; color: #94A3B8;">
         <p style="margin-top: 0;">
-            A foundational principle of <b>Global FuelPulse AI</b> is the strict separation between:
+            {t('trust_obs_intro', cur_lang)}
         </p>
         <ul style="margin: 0 0 12px 0; padding-left: 20px;">
-            <li><b>Observation Date (<code>observation_date</code>):</b> The precise calendar date when the physical transaction or official market benchmark took place in the real world (e.g., when petrol was dispensed at the retail pump).</li>
-            <li><b>Ingestion Timestamp (<code>retrieved_at</code>):</b> The exact system time when our ETL pipeline fetched and verified the record from the external provider.</li>
+            <li><b>{t('trust_obs_date_title', cur_lang)}</b> {t('trust_obs_date_desc', cur_lang)}</li>
+            <li><b>{t('trust_ingest_time_title', cur_lang)}</b> {t('trust_ingest_time_desc', cur_lang)}</li>
         </ul>
         <p style="margin-bottom: 0;">
-            This distinction eliminates the common flaw where data engineering pipelines erroneously stamp stale historical records with "Today's Date" upon ingestion. In Global FuelPulse AI, every chart, metric card, and table visibly displays its true observation period.
+            {t('trust_obs_outro', cur_lang)}
         </p>
     </div>
     """)
@@ -157,19 +157,20 @@ def render_data_trust_view(navigate_fn=None):
     st.write("")
 
     # 5. Pipeline Refresh Trigger
-    st.markdown("""
+    st.markdown(f"""
     <div style="font-family: 'Space Grotesk', sans-serif; font-size: 1.25rem; font-weight: 800; color: #F9FAFB; margin-bottom: 8px;">
-        3. OPERATIONAL PIPELINE ACTIONS
+        {t('trust_sec3_title', cur_lang)}
     </div>
     """, unsafe_allow_html=True)
 
     act_col1, act_col2 = st.columns([6, 3])
     with act_col1:
-        st.write("Trigger an immediate synchronization of all registered connectors. If an ingestion task is already executing, the thread lock will prevent duplicate runs.")
+        st.write(t("trust_sync_desc", cur_lang))
     with act_col2:
-        if st.button("⚡ Run Full Pipeline Sync Now", use_container_width=True, type="primary"):
+        if st.button(t("trust_sync_btn", cur_lang), use_container_width=True, type="primary"):
             with st.status("Executing live pipeline sync..."):
                 res = orchestrator.run_live_refresh()
                 st.cache_data.clear()
                 st.success("Pipeline refreshed successfully!")
                 st.rerun()
+
