@@ -44,12 +44,12 @@ def render_home_view(navigate_fn=None):
             </div>
 
             <!-- Gradient Heading -->
-            <h1 style="font-family: 'Space Grotesk', -apple-system, sans-serif; font-size: 3.4rem; font-weight: 800; letter-spacing: -0.04em; line-height: 1.1; margin: 0 0 14px 0; background: linear-gradient(180deg, #FFFFFF 25%, rgba(255, 255, 255, 0.9) 65%, #94A3B8 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+            <h1 class="fuelpulse-hero-title" style="font-family: 'Space Grotesk', -apple-system, sans-serif; font-size: 3.4rem; font-weight: 800; letter-spacing: -0.04em; line-height: 1.1; margin: 0 0 14px 0; background: linear-gradient(180deg, #FFFFFF 25%, rgba(255, 255, 255, 0.9) 65%, #94A3B8 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
                 {t('home_hero_title', cur_lang)}
             </h1>
 
             <!-- Subtitle Description -->
-            <p style="font-family: 'Inter', sans-serif; font-size: 1.12rem; color: #94A3B8; max-width: 640px; margin: 0 auto 20px auto; line-height: 1.6; font-weight: 400;">
+            <p class="fuelpulse-hero-desc" style="font-family: 'Inter', sans-serif; font-size: 1.12rem; color: #94A3B8; max-width: 640px; margin: 0 auto 20px auto; line-height: 1.6; font-weight: 400;">
                 {t('home_hero_subtitle', cur_lang)}
             </p>
 
@@ -114,7 +114,7 @@ def render_home_view(navigate_fn=None):
             </div>
 
             <!-- Inside Mockup: Live Infographic Strip -->
-            <div style="padding: 16px 20px 8px 20px; background: rgba(7, 10, 18, 0.6); border-bottom: 1px solid rgba(255, 255, 255, 0.08); display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px;">
+            <div class="fuelpulse-mockup-strip" style="padding: 16px 20px 8px 20px; background: rgba(7, 10, 18, 0.6); border-bottom: 1px solid rgba(255, 255, 255, 0.08); display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px;">
                 <div style="background: rgba(14, 21, 38, 0.8); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; padding: 12px 14px;">
                     <div style="font-family: 'Space Grotesk', sans-serif; font-size: 0.7rem; font-weight: 700; color: #94A3B8; text-transform: uppercase;">{t('home_brent_spot', cur_lang)}</div>
                     <div style="font-family: 'Space Grotesk', sans-serif; font-size: 1.35rem; font-weight: 800; color: #F5B942;">{brent_val}</div>
@@ -239,7 +239,7 @@ def render_home_view(navigate_fn=None):
 
     with grid1:
         render_html(f"""
-        <div style="background: rgba(14, 21, 38, 0.65); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; padding: 18px; margin-bottom: 14px; min-height: 170px;">
+        <div class="fuelpulse-product-card" style="background: rgba(14, 21, 38, 0.65); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; padding: 18px; margin-bottom: 14px; min-height: 170px;">
             <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
                 {get_lucide_icon_svg("chart-no-axes-combined", size=20, color="#F5B942")}
                 <span style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; color: #F9FAFB; font-size: 0.95rem;">{t('home_card_dash_title', cur_lang)}</span>
@@ -258,7 +258,7 @@ def render_home_view(navigate_fn=None):
 
     with grid2:
         render_html(f"""
-        <div style="background: rgba(14, 21, 38, 0.65); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; padding: 18px; margin-bottom: 14px; min-height: 170px;">
+        <div class="fuelpulse-product-card" style="background: rgba(14, 21, 38, 0.65); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; padding: 18px; margin-bottom: 14px; min-height: 170px;">
             <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
                 {get_lucide_icon_svg("map-pinned", size=20, color="#60A5FA")}
                 <span style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; color: #F9FAFB; font-size: 0.95rem;">{t('home_card_india_title', cur_lang)}</span>
@@ -277,7 +277,7 @@ def render_home_view(navigate_fn=None):
 
     with grid3:
         render_html(f"""
-        <div style="background: rgba(14, 21, 38, 0.65); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; padding: 18px; margin-bottom: 14px; min-height: 170px;">
+        <div class="fuelpulse-product-card" style="background: rgba(14, 21, 38, 0.65); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; padding: 18px; margin-bottom: 14px; min-height: 170px;">
             <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
                 {get_lucide_icon_svg("shield-check", size=20, color="#34D399")}
                 <span style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; color: #F9FAFB; font-size: 0.95rem;">{t('home_card_trust_title', cur_lang)}</span>

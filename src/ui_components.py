@@ -1534,6 +1534,270 @@ button[data-testid*="primaryActive"] * {{
   font-size: 15px !important;
   fill: #070A12 !important;
 }}
+
+/* ==============================================================================
+   19. COMPREHENSIVE MOBILE RESPONSIVE ENGINE (<= 768px & <= 480px, Desktop Untouched)
+   ============================================================================== */
+@media (max-width: 768px) {{
+  /* A. Mobile Container & Typography Scaling */
+  .block-container {{
+    padding-left: 10px !important;
+    padding-right: 10px !important;
+    padding-top: 2.2rem !important;
+    padding-bottom: 2rem !important;
+  }}
+
+  h1 {{ font-size: 22px !important; line-height: 1.2 !important; }}
+  h2 {{ font-size: 18px !important; line-height: 1.25 !important; }}
+  h3, h4 {{ font-size: 15px !important; line-height: 1.3 !important; }}
+  p, span, label {{ font-size: 13px !important; }}
+
+  /* B. Universal 2-Column Responsive Grid for Multi-Column Blocks */
+  [data-testid="stHorizontalBlock"] {{
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 8px !important;
+    width: 100% !important;
+  }}
+
+  [data-testid="stHorizontalBlock"] > [data-testid="column"],
+  [data-testid="stHorizontalBlock"] > [data-testid="stColumn"] {{
+    width: 100% !important;
+    min-width: 0 !important;
+    flex: unset !important;
+  }}
+
+  /* C. Hide Empty Centering / Spacer Columns on Mobile */
+  [data-testid="column"]:empty,
+  [data-testid="stColumn"]:empty {{
+    display: none !important;
+  }}
+
+  /* D. Odd Last Column Foundation Span (e.g. 3rd card or 5th AI query button) */
+  [data-testid="stHorizontalBlock"] > [data-testid="column"]:last-child:nth-child(odd):not(:first-child),
+  [data-testid="stHorizontalBlock"] > [data-testid="stColumn"]:last-child:nth-child(odd):not(:first-child) {{
+    grid-column: 1 / -1 !important;
+  }}
+
+  /* E. Charts, Dataframes, Tables, and Heavy Visuals Span Full Width */
+  [data-testid="stHorizontalBlock"] > [data-testid="column"]:has(.js-plotly-plot),
+  [data-testid="stHorizontalBlock"] > [data-testid="stColumn"]:has(.js-plotly-plot),
+  [data-testid="stHorizontalBlock"] > [data-testid="column"]:has([data-testid="stPlotlyChart"]),
+  [data-testid="stHorizontalBlock"] > [data-testid="stColumn"]:has([data-testid="stPlotlyChart"]),
+  [data-testid="stHorizontalBlock"] > [data-testid="column"]:has([data-testid="stDataFrame"]),
+  [data-testid="stHorizontalBlock"] > [data-testid="stColumn"]:has([data-testid="stDataFrame"]),
+  [data-testid="stHorizontalBlock"] > [data-testid="column"]:has(table),
+  [data-testid="stHorizontalBlock"] > [data-testid="stColumn"]:has(table),
+  [data-testid="stHorizontalBlock"] > [data-testid="column"]:has(iframe),
+  [data-testid="stHorizontalBlock"] > [data-testid="stColumn"]:has(iframe),
+  [data-testid="stHorizontalBlock"] > [data-testid="column"]:has(form),
+  [data-testid="stHorizontalBlock"] > [data-testid="stColumn"]:has(form),
+  [data-testid="stHorizontalBlock"] > [data-testid="column"]:has(.fuelpulse-hero-backdrop),
+  [data-testid="stHorizontalBlock"] > [data-testid="stColumn"]:has(.fuelpulse-hero-backdrop) {{
+    grid-column: 1 / -1 !important;
+  }}
+
+  /* F. Top Header Bar: Brand full width on Row 1, Language & News side-by-side on Row 2 */
+  [data-testid="stHorizontalBlock"]:has(.fuelpulse-header-bar) > [data-testid="column"]:first-child,
+  [data-testid="stHorizontalBlock"]:has(.fuelpulse-header-bar) > [data-testid="stColumn"]:first-child {{
+    grid-column: 1 / -1 !important;
+  }}
+
+  .fuelpulse-header-bar {{
+    padding: 8px 12px !important;
+    gap: 8px !important;
+    margin-bottom: 8px !important;
+  }}
+
+  /* G. Compact Metric & Instrument Cards */
+  .editorial-card, .instrument-card {{
+    min-height: 84px !important;
+    padding: 10px 12px !important;
+    margin-bottom: 6px !important;
+  }}
+
+  .instrument-tag {{
+    font-size: 10.5px !important;
+    margin-bottom: 4px !important;
+  }}
+
+  .instrument-val {{
+    font-size: 19px !important;
+    line-height: 1.15 !important;
+  }}
+
+  .instrument-sub {{
+    font-size: 10.5px !important;
+    margin-top: 4px !important;
+    gap: 4px !important;
+  }}
+
+  /* H. Global Signal Rail Grid Transformation */
+  .fuelpulse-signal-rail {{
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 8px !important;
+    padding: 8px 10px !important;
+    margin-bottom: 1rem !important;
+  }}
+
+  .fuelpulse-signal-item {{
+    min-width: 0 !important;
+    flex: unset !important;
+    border-right: none !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+    padding: 6px 8px !important;
+    background: rgba(255, 255, 255, 0.02) !important;
+    border-radius: 6px !important;
+  }}
+
+  .fuelpulse-signal-val {{
+    font-size: 18px !important;
+  }}
+
+  /* I. Mockup Live Benchmark Strip Grid */
+  .fuelpulse-mockup-strip {{
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 8px !important;
+    padding: 10px 12px 6px 12px !important;
+  }}
+
+  .fuelpulse-mockup-strip > div {{
+    padding: 8px 10px !important;
+  }}
+
+  /* J. Touch-Friendly Compact Secondary & Action Buttons */
+  div:not([data-testid*="Popover"]):not([data-baseweb="popover"]) > div.stButton > button[kind="secondary"],
+  div:not([data-testid*="Popover"]):not([data-baseweb="popover"]) > div.stButton > button[data-testid="stBaseButton-secondary"]:not([role="radio"]):not([role="checkbox"]):not([data-testid*="Active"]),
+  button[kind="secondary"]:not([data-testid="stBaseButton-primary"]):not([role="radio"]):not([role="checkbox"]) {{
+    height: 36px !important;
+    min-height: 36px !important;
+    font-size: 11px !important;
+    padding: 0 8px !important;
+    white-space: normal !important;
+    text-align: center !important;
+    line-height: 1.2 !important;
+  }}
+
+  div:not([data-testid*="Popover"]):not([data-baseweb="popover"]) > div.stButton > button[kind="primary"],
+  div:not([data-testid*="Popover"]):not([data-baseweb="popover"]) > div.stButton > button[data-testid="stBaseButton-primary"],
+  div.stDownloadButton > button,
+  div.stFormSubmitButton > button {{
+    height: 36px !important;
+    min-height: 36px !important;
+    font-size: 12px !important;
+    padding: 0 10px !important;
+  }}
+
+  /* K. Navigation Shell Scaling */
+  .fuelpulse-nav-shell {{
+    gap: 4px !important;
+    margin-bottom: 12px !important;
+  }}
+
+  .fuelpulse-nav-tier {{
+    padding: 2px 4px !important;
+  }}
+
+  .fuelpulse-nav-link {{
+    height: 28px !important;
+    padding: 0 7px !important;
+    font-size: 11px !important;
+    gap: 4px !important;
+  }}
+
+  .fuelpulse-nav-tier-label {{
+    font-size: 8px !important;
+    padding: 0 4px !important;
+  }}
+
+  /* L. Tubelight Navigation on Mobile */
+  .tubelight-nav-wrapper {{
+    top: 6px !important;
+    margin-bottom: 1rem !important;
+  }}
+
+  .tubelight-nav-container {{
+    padding: 4px 8px !important;
+    gap: 4px !important;
+  }}
+
+  .tubelight-nav-item {{
+    padding: 5px 10px !important;
+    font-size: 11px !important;
+  }}
+
+  .tubelight-title {{
+    padding: 4px 8px !important;
+    font-size: 10px !important;
+  }}
+
+  /* M. Chapter Header Banners */
+  .fuelpulse-chapter-header {{
+    margin-top: 2rem !important;
+    margin-bottom: 1rem !important;
+    padding-top: 1rem !important;
+  }}
+
+  .fuelpulse-chapter-header h2 {{
+    font-size: 18px !important;
+  }}
+
+  /* N. Popovers & Menus Max Viewport Fit */
+  div[data-baseweb="popover"] {{
+    max-width: 95vw !important;
+  }}
+
+  /* O. Hero Mockup & Typography */
+  .fuelpulse-hero-title {{
+    font-size: 2.1rem !important;
+    line-height: 1.15 !important;
+  }}
+
+  .fuelpulse-hero-desc {{
+    font-size: 0.92rem !important;
+    line-height: 1.45 !important;
+    margin-bottom: 14px !important;
+  }}
+
+  .fuelpulse-product-card {{
+    padding: 12px 14px !important;
+    min-height: auto !important;
+    margin-bottom: 8px !important;
+  }}
+}}
+
+@media (max-width: 480px) {{
+  .block-container {{
+    padding-left: 8px !important;
+    padding-right: 8px !important;
+    padding-top: 2.0rem !important;
+  }}
+
+  .fuelpulse-hero-title {{
+    font-size: 1.7rem !important;
+    line-height: 1.2 !important;
+  }}
+
+  .fuelpulse-header-bar {{
+    flex-wrap: wrap !important;
+    padding: 6px 8px !important;
+  }}
+
+  .fuelpulse-header-bar .fuelpulse-status-pill {{
+    font-size: 9.5px !important;
+    padding: 2px 6px !important;
+  }}
+
+  .instrument-val {{
+    font-size: 17px !important;
+  }}
+
+  .editorial-card, .instrument-card {{
+    min-height: 76px !important;
+    padding: 8px 10px !important;
+  }}
+}}
 </style>"""
     render_html(custom_css)
 
@@ -1582,17 +1846,17 @@ def render_command_strip(
 # 6. GLOBAL SIGNAL RAIL (HORIZONTAL EDITORIAL STRIP)
 # ==============================================================================
 def render_signal_rail(signals: List[Dict[str, str]]):
-    """Renders a modern dark glass horizontal strip."""
+    """Renders a modern dark glass horizontal strip with mobile grid support."""
     html_items = []
     for s in signals:
         html_items.append(
-            f"""<div style="flex: 1; min-width: 170px; padding: 10px 14px; border-right: 1px solid rgba(255, 255, 255, 0.1); display: flex; flex-direction: column;">
+            f"""<div class="fuelpulse-signal-item" style="flex: 1; min-width: 170px; padding: 10px 14px; border-right: 1px solid rgba(255, 255, 255, 0.1); display: flex; flex-direction: column;">
 <span style="font-family: 'Space Grotesk', sans-serif; font-size: 12px; font-weight: 700; color: #94A3B8; text-transform: uppercase; letter-spacing: 0.05em;">{s.get('label', '')}</span>
-<span style="font-family: 'Space Grotesk', sans-serif; font-size: 24px; font-weight: 800; color: #F9FAFB; margin-top: 3px;">{s.get('value', '')}</span>
+<span class="fuelpulse-signal-val" style="font-family: 'Space Grotesk', sans-serif; font-size: 24px; font-weight: 800; color: #F9FAFB; margin-top: 3px;">{s.get('value', '')}</span>
 <span style="font-family: 'Space Grotesk', sans-serif; font-size: 12px; color: #64748B; margin-top: 2px;">{s.get('note', '')}</span>
 </div>"""
         )
-    rail_html = f"""<div style="background: rgba(14, 21, 38, 0.75); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border: 1px solid rgba(255, 255, 255, 0.12); box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4); border-radius: 8px; padding: 6px 12px; margin-bottom: 1.5rem; display: flex; flex-wrap: wrap; align-items: center;">
+    rail_html = f"""<div class="fuelpulse-signal-rail" style="background: rgba(14, 21, 38, 0.75); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border: 1px solid rgba(255, 255, 255, 0.12); box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4); border-radius: 8px; padding: 6px 12px; margin-bottom: 1.5rem; display: flex; flex-wrap: wrap; align-items: center;">
 {''.join(html_items)}
 </div>"""
     render_html(rail_html)
@@ -1646,7 +1910,7 @@ def render_chapter_header(
     if action_page_url:
         action_html = f"""<a href="{action_page_url}" style="display: inline-flex; align-items: center; gap: 6px; background: #EAB308; color: #070A12; border: 1px solid #CA8A04; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25); padding: 6px 14px; border-radius: 6px; font-family: 'Space Grotesk', sans-serif; font-size: 13px; font-weight: 800; text-decoration: none; letter-spacing: 0.04em;"><span>{action_label}</span> ↗</a>"""
 
-    header_html = f"""<div id="{anchor_id}" style="margin-top: 3.5rem; margin-bottom: 1.5rem; padding-top: 1.5rem; border-top: 1px solid rgba(255, 255, 255, 0.12);">
+    header_html = f"""<div id="{anchor_id}" class="fuelpulse-chapter-header" style="margin-top: 3.5rem; margin-bottom: 1.5rem; padding-top: 1.5rem; border-top: 1px solid rgba(255, 255, 255, 0.12);">
 <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 14px;">
 <div>
 <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
