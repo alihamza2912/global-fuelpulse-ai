@@ -1,17 +1,17 @@
-# ⚡ Global FuelPulse AI — Global Fuel Price, Petroleum Trade, Maritime Intelligence & AI Analyst Platform (v3.0)
+# ⚡ Global FuelPulse AI — Global Fuel Price, Petroleum Trade, Maritime Intelligence & AI Analyst Platform (v3.3.2)
 
 [![GitHub Repository](https://img.shields.io/badge/GitHub-Repository-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/alihamza2912/global-fuelpulse-ai)
 [![Live App](https://img.shields.io/badge/Live_App-Streamlit_Cloud-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white)](https://global-fuelpulse-ai-jqsi5ngrigi4hm4gtmcghn.streamlit.app)
-[![Tests](https://img.shields.io/badge/Tests-73%20Passed%20(100%25)-brightgreen.svg)]()
-[![AI Analyst](https://img.shields.io/badge/AI_Analyst-Antigravity_Token_%7C_Free_3_Questions_24h-F5B942.svg)]()
+[![Tests](https://img.shields.io/badge/Tests-85%20Passed%20(100%25)-brightgreen.svg)]()
+[![AI Analyst](https://img.shields.io/badge/AI_Analyst-Real--Time_Web_Research_%7C_Personal_API_Keys-F5B942.svg)]()
+[![Deep Research](https://img.shields.io/badge/Deep_Research-Live_DuckDuckGo_%26_Wikipedia_Grounding-10B981.svg)]()
 [![Security Shield](https://img.shields.io/badge/Security_Shield-Enterprise_Anti--Abuse_Active-10B981.svg)]()
 [![Sovereign Tax](https://img.shields.io/badge/Sovereign_Tax-Saudi_15%25_VAT_%7C_India_MoPNG_Waterfall-3B82F6.svg)]()
-[![Localization](https://img.shields.io/badge/Localization-18%20Languages%20(HI%20%7C%20ES%20%7C%20FR%20%7C%20AR%20%7C%20DE%20%7C%20ZH%20%7C%20RU%20%7C%20JA%20%7C%20EN%20%2B9)-blueviolet.svg)]()
+[![Localization](https://img.shields.io/badge/Localization-Universal_Everywhere_%7C_18_Languages-blueviolet.svg)]()
 [![Live News](https://img.shields.io/badge/Live%20News-18%20Global%20Stories%20%7C%20Auto--Refreshing-EAB308?style=flat&logoColor=070A12)]()
 [![Python](https://img.shields.io/badge/Python-3.12%20%7C%203.13-blue.svg)](https://www.python.org/)
 [![Database](https://img.shields.io/badge/Database-MySQL%20%7C%20SQLite%20(Failover)-orange.svg)](https://www.mysql.com/)
 [![Streamlit](https://img.shields.io/badge/Streamlit-1.40+-FF4B4B.svg)](https://streamlit.io/)
-[![UI/UX](https://img.shields.io/badge/UI%2FUX-Precision_Header_%7C_Symmetrical_38px_Popovers-000000.svg)]()
 [![Power BI](https://img.shields.io/badge/Power%20BI-DirectQuery%20%26%20Import-F2C811.svg)](https://powerbi.microsoft.com/)
 
 > 🚀 **Live Production Deployment:**  
@@ -22,28 +22,35 @@
 > 
 > *Access real-time retail motor fuel intelligence, international trade matrices, live maritime chokepoints, MoPNG price waterfall breakdown, Holt-Winters price forecasting, and the grounded AI Energy Market Analyst directly in your browser on desktop or mobile.*
 
-**Global FuelPulse AI (v3.0)** is an enterprise-grade, unified energy market decision intelligence platform integrating **live retail motor fuel prices** (gasoline and diesel), **international petroleum trade flows** (crude oil and refined products), **foreign exchange parities**, **macroeconomic affordability indices**, **geopolitical maritime supply-chain monitoring**, **machine learning forecasting**, and an **AI Energy Market Analyst** with full continuous historical and real-time coverage up to **October 2026**.
+**Global FuelPulse AI (v3.3.2)** is an enterprise-grade, unified energy market decision intelligence platform integrating **live retail motor fuel prices** (gasoline and diesel), **international petroleum trade flows** (crude oil and refined products), **foreign exchange parities**, **macroeconomic affordability indices**, **geopolitical maritime supply-chain monitoring**, **machine learning forecasting**, and an **AI Energy Market Analyst** with full continuous historical and real-time coverage up to **October 2026**.
 
 ---
 
-## 🌟 What's New in Latest Release (v3.0)
+## 🌟 What's New in Latest Release (v3.3.2)
 
-- 🔑 **Antigravity Token Integration & Daily Quota Management (`src/ai/quota_manager.py`, `config/settings.py`):**
-  - **Standard Free Tier**: First **3 questions are 100% free** for every user every 24 hours. Features a rolling-window countdown timer displaying exact hours and minutes until quota resets.
-  - **Antigravity Token Bypass**: Connect an **Antigravity API Token** or custom **Google Gemini API Key** (`AIzaSy...`) to bypass daily limits and unlock unlimited, 24/7 instant intelligence queries.
-  - **1-Click Auto-Connect**: Click `⚡ Connect Token` with an empty box or use `⚡ Auto-Connect System Token` to instantly detect and connect the active Antigravity session token with zero manual copy-pasting.
-- 🛡️ **Enterprise Anti-Abuse Security Shield (`src/ai/nl_query_engine.py`):**
-  - Real-time defense against malicious SQL injection attacks, destructive commands (`DROP`, `ALTER`, `TRUNCATE`), prompt jailbreak exploits, and system prompt tampering.
-  - Detected malicious attempts trigger **instant, permanent session termination** (`is_blocked = True`), protecting database integrity and preventing infrastructure misuse.
-- 🇸🇦 **Sovereign Tax & Fuel Decomposition Engine (`src/analytics/global_tax_engine.py`):**
-  - **Saudi Arabia Grounding**: Precision tax resolution reflecting exact **15% ZATCA VAT**, **0% personal income tax on salaries**, and national subsidized fuel price caps (**SAR 2.18/L for Gasoline 91** and **SAR 1.15/L for Diesel**).
-  - **India MoPNG Waterfall**: Granular state-level tax breakdown across Indian states and cities (Prayagraj, Uttar Pradesh, Delhi, Mumbai, Bihar, Karnataka) detailing Base Price $\to$ Inland Freight $\to$ Central Excise ($\approx$ ₹19.90/L) $\to$ Dealer Commission $\to$ State VAT.
-  - Global coverage across European VAT tiers (Germany 19%, UK 20%) and US federal/state fuel excise taxes (California, Texas).
-- 🎨 **Master UI/UX Redesign & Precision Header Alignment:**
-  - Tightened top container padding to 16px desktop / 12px mobile, completely eliminating awkward blank space voids and header clipping.
-  - Symmetrical **Language** and **Live News** popovers with identical dimensions (38px height, ~190px width), 14px gaps, clean hover interactions, and elimination of ghost wrapper borders.
-- 🧪 **Expanded 73-Test Automated Suite (100% Pass Rate):**
-  - Full test suite expanded to **73 passing tests** across 11 test modules, including 17 automated unit tests in `tests/test_ai_quota.py` verifying rate limiting, quota resets, concurrency safety, security shielding, and token configuration.
+- 🌐 **Real-Time Deep Online Research Engine (`src/ai/deep_research_engine.py`):**
+  - **No More Generic Boilerplate**: Completely eliminated the static 3-producer fallback (`USA 13.20 mbpd, Russia 9.15 mbpd, Saudi Arabia 9.02 mbpd`).
+  - **Live Web Indexing**: Integrates DuckDuckGo search (`ddgs`) and the Wikipedia REST API to search the web in real time for **any arbitrary energy, price, supplier, or macroeconomic query**.
+  - **Grounded Structured Synthesis**: Extracts concrete figures (currency rates, extraction volumes, crack spreads, percentages), generates contextual **Mermaid flowcharts**, builds structured tabular records, and cites live sources with clickable URLs.
+- 🔑 **Personal & Account API Key Support (`src/ai/gemini_client.py`, `src/ui_components.py`):**
+  - **Interactive Drawer**: Added a dedicated `⚙️ Live Web Research & Account API Key Settings` expander in both the AI Assistant modal dialog and Page 9 AI Analyst.
+  - **Live Indicator**: Displays `🌐 Live Online Research: ACTIVE` confirming web indexing is live.
+  - **Custom LLM Tokens**: Any user can enter their personal Google Gemini API key (`AIzaSy...`) in the UI or `.env`. When active, live online research snippets are dynamically injected into Gemini's prompt for real-time grounded LLM generation.
+- 🌍 **Africa Refined Fuel Supply Intelligence (`src/ai/nl_query_engine.py`):**
+  - Dedicated intelligence explaining the African energy paradox (7.5 mbpd crude extracted vs. 75–80% refined fuel imported) and ranking top refined fuel suppliers to Africa:
+    - 🇪🇺 **European Union (ARA Hub)**: 32.0% (~750,000 bpd)
+    - 🇷🇺 **Russian Federation**: 25.5% (~600,000 bpd)
+    - 🇦🇪 **Middle East (UAE / Fujairah & Saudi)**: 20.0% (~470,000 bpd)
+    - 🇮🇳 **India (Reliance Jamnagar & Nayara)**: 12.0% (~280,000 bpd)
+    - 🇳🇬 **Dangote Mega-Refinery**: 10.5% (~250,000 bpd ramping up to 650,000 bpd)
+- ⚡ **Instant Reactive Quota Decrement & Zero-Reload Navigation:**
+  - Submitting an AI query immediately updates the dialog badge and top navbar counter (`3/3 ➔ 2/3 ➔ 1/3 ➔ 0/3`) without requiring full page refreshes.
+  - Switched portal view switching to in-memory WebSocket routing for instant (<30ms) rendering with zero white screen flashes.
+- 🎙️ **Clean "Voice Note" Branding & Universal Multi-Language UI Localization:**
+  - Completely purged all third-party branding in favor of clean `🎙️ Voice Note` (or `🎙️ वॉइस नोट` in Hindi).
+  - Expanded view localization dictionaries across all 9 primary languages (English, Hindi, Spanish, French, Arabic, German, Chinese, Russian, Japanese).
+- 🧪 **Expanded 85-Test Automated Suite (100% Pass Rate):**
+  - Test suite expanded to **85 passing tests** across 12 suites, including new unit tests in `tests/test_deep_research.py` verifying real-time web search, dynamic Mermaid diagrams, query routing, and personal API key handling.
 
 ---
 
@@ -167,10 +174,12 @@ global-fuelpulse-ai/
 │   ├── 9_AI_Analyst.py         # Full AI Market Analyst studio with Token drawer
 │   └── 11_Product_Guide.py     # Interactive product documentation portal
 ├── src/                        # Core Python application logic
-│   ├── ai/                     # Grounded AI Analyst, Quota Manager & Client
-│   │   ├── gemini_client.py    # Free-tier Gemini client & Antigravity token router
+│   ├── ai/                     # Grounded AI Analyst, Deep Research, & Client
+│   │   ├── deep_research_engine.py # Real-time DuckDuckGo & Wikipedia search extraction
+│   │   ├── gemini_client.py    # Free-tier Gemini client with search context grounding
 │   │   ├── nl_query_engine.py  # Query dispatcher, tax resolver & anti-abuse shield
-│   │   └── quota_manager.py    # Per-user 3-question rolling quota & token bypass
+│   │   ├── quota_manager.py    # Per-user 3-question rolling quota & token bypass
+│   │   └── cache_manager.py    # Sub-millisecond query response caching
 │   ├── analytics/              # Analytical calculation engines
 │   │   ├── global_tax_engine.py # Saudi 15% VAT, India MoPNG & global tax resolver
 │   │   ├── global_news_engine.py# 18-story real-time auto-refreshing news feed
@@ -179,7 +188,8 @@ global-fuelpulse-ai/
 │   ├── database/               # Relational ORM models, migrations, & failover handlers
 │   ├── ingestion/              # Multi-source API connectors, orchestrator, & scheduler
 │   ├── localization/           # Multi-language translation engine (18 world languages)
-│   │   └── i18n.py             # Dictionaries, formatters, & dynamic translation helper t()
+│   │   ├── i18n.py             # Dictionaries, formatters, & dynamic translation helper t()
+│   │   └── translations_views.py # Deep localization for views, roadmap, and AI assistant
 │   ├── ml/                     # Time-series forecasting, anomaly radar, & shock simulator
 │   ├── ui/                     # UI components, metric cards, charts, & custom styling
 │   └── views/                  # 10 modular portal view handlers
@@ -193,16 +203,17 @@ global-fuelpulse-ai/
 │       ├── india_center.py     # India MoPNG waterfall & OMC analytics view
 │       ├── methodology.py      # Statistical & algorithmic formulas view
 │       └── roadmap.py          # Release roadmap & milestone tracking view
-├── tests/                      # Automated test suite (73 passing tests, 100% pass rate)
-│   ├── test_ai_quota.py        # 17 tests: token budgets, 24h quota, Saudi tax, security
+├── tests/                      # Automated test suite (85 passing tests, 100% pass rate)
+│   ├── test_deep_research.py   # 4 tests: Real-time search, Mermaid diagrams, user API keys
+│   ├── test_ai_quota.py        # 21 tests: token budgets, 24h quota, Saudi tax, security
 │   ├── test_analytics.py       # 9 tests: Affordability, HHI, and spread calculation
 │   ├── test_app.py             # 2 tests: Streamlit app and AI Analyst page render
 │   ├── test_connectors.py      # 7 tests: Multi-source API connectors & validation
 │   ├── test_database.py        # 3 tests: SQLite/MySQL failover & read-only SQL security
-│   ├── test_i18n.py            # 8 tests: Multi-language dictionaries & deep localization
+│   ├── test_i18n.py            # 10 tests: Multi-language dictionaries & deep localization
 │   ├── test_master_story.py    # 3 tests: Production leaderboard & demand data
 │   ├── test_ml.py              # 3 tests: Time-series holdout MAE & anomaly radar
-│   ├── test_news_engine.py     # 9 tests: Live news feed, categories, & icons
+│   ├── test_news_engine.py     # 11 tests: Live news feed, categories, & icons
 │   ├── test_quality.py         # 3 tests: Freshness auditing & 2026 weekly gap validation
 │   └── test_views.py           # 9 tests: 10 modular views & navigation routing
 ├── powerbi/                    # Executive Business Intelligence assets
@@ -264,12 +275,12 @@ Open your browser at `http://localhost:8501`.
 
 ---
 
-## 🧪 Automated Testing Suite (73 Tests, 100% Passing)
+## 🧪 Automated Testing Suite (85 Tests, 100% Passing)
 
-The project includes **73 automated tests** across 11 comprehensive test suites guaranteeing end-to-end reliability across data pipelines, database layers, multi-language localization, live news engines, ML forecasting, and the AI Market Analyst:
+The project includes **85 automated tests** across 12 comprehensive test suites guaranteeing end-to-end reliability across data pipelines, database layers, multi-language localization, live news engines, ML forecasting, deep online research, and the AI Market Analyst:
 
 ```bash
-# Run complete test suite (all 73 tests)
+# Run complete test suite (all 85 tests)
 PYTHONPATH=. pytest -v
 
 # Run TypeScript type verification
@@ -277,11 +288,12 @@ npm run build
 ```
 
 ### Test Suite Breakdown:
-- **`tests/test_ai_quota.py` (17 tests):** Validates daily 3-question free limits, rolling 24h reset timers, Antigravity token bypass, minute rate-limiting, concurrent multi-user thread locking, anti-abuse security shield (prompt injection & SQL injection permanent termination), and grounded Saudi Arabia tax resolution.
+- **`tests/test_deep_research.py` (4 tests):** Validates real-time DuckDuckGo & Wikipedia search indexing, numerical figure extraction, dynamic Mermaid flowcharts, source citations with URLs, and personal API key context grounding.
+- **`tests/test_ai_quota.py` (21 tests):** Validates daily 3-question free limits, rolling 24h reset timers, personal API key token bypass, minute rate-limiting, concurrent multi-user thread locking, anti-abuse security shield (prompt injection & SQL injection permanent termination), immediate UI quota decrements, and grounded Saudi Arabia tax resolution.
 - **`tests/test_analytics.py` (9 tests):** Tests price differential calculations, HHI supplier concentration scoring, Affordability Burden Indices, global tax queries, and supply shock sensitivity equations.
 - **`tests/test_views.py` (9 tests):** Verifies all 10 modular views (`home`, `dashboard`, `india_center`, `about`, `how_it_works`, `features`, `data_trust`, `methodology`, `roadmap`, `faq`), the `Product Guide` page, and navigation routing without runtime exceptions.
-- **`tests/test_news_engine.py` (9 tests):** Verifies real-time 18-story news retrieval, cache TTL enforcement, manual feed refresh, category filtering (Hormuz, logistics, OPEC, refinery), and vector SVG globe icons.
-- **`tests/test_i18n.py` (8 tests):** Validates 18-language translation dictionaries, fallback behavior, Delhi price component translation, chokepoint labels, and deep callout box localization.
+- **`tests/test_news_engine.py` (11 tests):** Verifies real-time 18-story news retrieval, cache TTL enforcement, manual feed refresh, category filtering (Hormuz, logistics, OPEC, refinery), and vector SVG globe icons.
+- **`tests/test_i18n.py` (10 tests):** Validates 18-language translation dictionaries, fallback behavior, Delhi price component translation, chokepoint labels, and deep callout box localization across 9 primary languages.
 - **`tests/test_connectors.py` (7 tests):** Validates FRED EIA mirrors, Open ER FX rates, India PPAC scrapers, EC Oil Bulletin parsers, and background scheduler lifecycles.
 - **`tests/test_database.py` (3 tests):** Validates database health checks, ORM mappings, SQLite/MySQL failover mechanisms, and read-only parameterized SQL query security.
 - **`tests/test_ml.py` (3 tests):** Validates time-series forecasting, holdout MAE/RMSE calculations against naive persistence baselines, and `forecast_predictions` DB persistence.
