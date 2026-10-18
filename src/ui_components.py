@@ -1055,7 +1055,10 @@ div[data-testid="stPopoverButton"] {{
 }}
 
 div[data-testid="stPopover"] > button,
-div[data-testid="stPopoverButton"] > button {{
+div[data-testid="stPopoverButton"] > button,
+button[key*="top_ai_assistant_btn"],
+div[data-testid="stHorizontalBlock"]:has(.fuelpulse-header-bar) button,
+div[data-testid="stHorizontalBlock"]:has(.fuelpulse-header-bar) [data-testid="stPopover"] > button {{
   background: rgba(14, 21, 38, 0.90) !important;
   background-color: rgba(14, 21, 38, 0.90) !important;
   color: #F9FAFB !important;
@@ -1066,7 +1069,7 @@ div[data-testid="stPopoverButton"] > button {{
   min-height: 38px !important;
   max-height: 38px !important;
   line-height: 38px !important;
-  padding: 0 12px !important;
+  padding: 0 10px !important;
   font-family: 'Space Grotesk', -apple-system, sans-serif !important;
   font-size: 12px !important;
   font-weight: 700 !important;
@@ -1087,7 +1090,10 @@ div[data-testid="stPopover"] > button p,
 div[data-testid="stPopover"] > button span,
 div[data-testid="stPopoverButton"] > button *,
 div[data-testid="stPopoverButton"] > button p,
-div[data-testid="stPopoverButton"] > button span {{
+div[data-testid="stPopoverButton"] > button span,
+button[key*="top_ai_assistant_btn"] *,
+button[key*="top_ai_assistant_btn"] p,
+button[key*="top_ai_assistant_btn"] span {{
   color: #F9FAFB !important;
   -webkit-text-fill-color: #F9FAFB !important;
   font-size: 12px !important;
@@ -1098,18 +1104,36 @@ div[data-testid="stPopoverButton"] > button span {{
   padding: 0 !important;
 }}
 
+/* AI Assistant Header Button: Subtle golden border and glowing indicator matching popover form */
+button[key*="top_ai_assistant_btn"] {{
+  border: 1px solid rgba(245, 185, 66, 0.45) !important;
+  background: rgba(245, 185, 66, 0.08) !important;
+  color: #F5B942 !important;
+  -webkit-text-fill-color: #F5B942 !important;
+}}
+
+button[key*="top_ai_assistant_btn"] *,
+button[key*="top_ai_assistant_btn"] p,
+button[key*="top_ai_assistant_btn"] span {{
+  color: #F5B942 !important;
+  -webkit-text-fill-color: #F5B942 !important;
+}}
+
 div[data-testid="stPopover"] > button:hover,
-div[data-testid="stPopoverButton"] > button:hover {{
+div[data-testid="stPopoverButton"] > button:hover,
+button[key*="top_ai_assistant_btn"]:hover,
+div[data-testid="stHorizontalBlock"]:has(.fuelpulse-header-bar) button:hover {{
   background: rgba(245, 185, 66, 0.14) !important;
   background-color: rgba(245, 185, 66, 0.14) !important;
-  border-color: rgba(245, 185, 66, 0.5) !important;
+  border-color: rgba(245, 185, 66, 0.6) !important;
   color: #F5B942 !important;
   -webkit-text-fill-color: #F5B942 !important;
   transform: translateY(-1px) !important;
 }}
 
 div[data-testid="stPopover"] > button:hover *,
-div[data-testid="stPopoverButton"] > button:hover * {{
+div[data-testid="stPopoverButton"] > button:hover *,
+button[key*="top_ai_assistant_btn"]:hover * {{
   color: #F5B942 !important;
   -webkit-text-fill-color: #F5B942 !important;
 }}
@@ -1118,22 +1142,6 @@ div[data-testid="stPopover"] > button svg,
 div[data-testid="stPopoverButton"] > button svg {{
   fill: #F5B942 !important;
   color: #F5B942 !important;
-}}
-
-/* News Globe Icon on Header Button (20px compact display to prevent line-wrapping) */
-div[data-testid="column"]:nth-of-type(3) div[data-testid="stPopover"] > button p::before,
-div[data-testid="column"]:nth-of-type(3) div[data-testid="stPopoverButton"] > button p::before {{
-  content: "" !important;
-  display: inline-block !important;
-  width: 20px !important;
-  height: 20px !important;
-  margin-right: 6px !important;
-  vertical-align: middle !important;
-  background-image: url("{get_news_globe_icon_data_uri(20)}") !important;
-  background-repeat: no-repeat !important;
-  background-position: center !important;
-  background-size: contain !important;
-  flex-shrink: 0 !important;
 }}
 
 /* B. Popover Dropdown Container & Menu Items (Language selector & News Wire) */
@@ -1644,16 +1652,48 @@ button[data-testid*="primaryActive"] * {{
     grid-column: 1 / -1 !important;
   }}
 
-  /* F. Top Header Bar: Brand full width on Row 1, Language & News side-by-side on Row 2 */
+  /* F. Top Header Bar: 3-column mobile grid: Brand full width on Row 1, AI, Language & News side-by-side on Row 2 */
+  [data-testid="stHorizontalBlock"]:has(.fuelpulse-header-bar) {{
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 6px !important;
+    width: 100% !important;
+  }}
+
   [data-testid="stHorizontalBlock"]:has(.fuelpulse-header-bar) > [data-testid="column"]:first-child,
   [data-testid="stHorizontalBlock"]:has(.fuelpulse-header-bar) > [data-testid="stColumn"]:first-child {{
     grid-column: 1 / -1 !important;
   }}
 
+  [data-testid="stHorizontalBlock"]:has(.fuelpulse-header-bar) > [data-testid="column"]:not(:first-child),
+  [data-testid="stHorizontalBlock"]:has(.fuelpulse-header-bar) > [data-testid="stColumn"]:not(:first-child) {{
+    grid-column: span 1 !important;
+    width: 100% !important;
+    min-width: 0 !important;
+  }}
+
   .fuelpulse-header-bar {{
-    padding: 8px 12px !important;
+    padding: 8px 10px !important;
     gap: 8px !important;
-    margin-bottom: 8px !important;
+    margin-bottom: 6px !important;
+  }}
+
+  /* Compact button dimensions and font sizes on mobile to guarantee 1-line fit */
+  [data-testid="stHorizontalBlock"]:has(.fuelpulse-header-bar) button,
+  [data-testid="stHorizontalBlock"]:has(.fuelpulse-header-bar) [data-testid="stPopover"] > button,
+  button[key*="top_ai_assistant_btn"] {{
+    min-height: 35px !important;
+    max-height: 35px !important;
+    line-height: 35px !important;
+    padding: 0 4px !important;
+    font-size: 11px !important;
+    border-radius: 7px !important;
+  }}
+
+  [data-testid="stHorizontalBlock"]:has(.fuelpulse-header-bar) button *,
+  [data-testid="stHorizontalBlock"]:has(.fuelpulse-header-bar) [data-testid="stPopover"] > button *,
+  button[key*="top_ai_assistant_btn"] * {{
+    font-size: 11px !important;
   }}
 
   /* G. Compact Metric & Instrument Cards */
@@ -1844,6 +1884,27 @@ button[data-testid*="primaryActive"] * {{
     min-height: 76px !important;
     padding: 8px 10px !important;
   }}
+
+  [data-testid="stHorizontalBlock"]:has(.fuelpulse-header-bar) {{
+    gap: 4px !important;
+  }}
+
+  [data-testid="stHorizontalBlock"]:has(.fuelpulse-header-bar) button,
+  [data-testid="stHorizontalBlock"]:has(.fuelpulse-header-bar) [data-testid="stPopover"] > button,
+  button[key*="top_ai_assistant_btn"] {{
+    min-height: 32px !important;
+    max-height: 32px !important;
+    line-height: 32px !important;
+    padding: 0 2px !important;
+    font-size: 10px !important;
+    letter-spacing: -0.01em !important;
+  }}
+
+  [data-testid="stHorizontalBlock"]:has(.fuelpulse-header-bar) button *,
+  [data-testid="stHorizontalBlock"]:has(.fuelpulse-header-bar) [data-testid="stPopover"] > button *,
+  button[key*="top_ai_assistant_btn"] * {{
+    font-size: 10px !important;
+  }}
 }}
 </style>"""
     render_html(custom_css)
@@ -1882,7 +1943,7 @@ def render_universal_top_header(active_page_name: str = "Overview", key_prefix: 
     sess_status = session_protector.get_session_status(sess_id, has_custom_key=True, enforce_user_daily_limit=True)
     rem_q = sess_status.get("daily_questions_remaining", 3)
 
-    col_brand, col_ai, col_lang, col_news = st.columns([5.8, 1.6, 1.3, 1.3], gap="small", vertical_alignment="center")
+    col_brand, col_ai, col_lang, col_news = st.columns([6.1, 1.3, 1.3, 1.3], gap="small", vertical_alignment="center")
     with col_brand:
         render_html(render_app_header_brand_html(current_lang, engine_name, t('live_indicator', current_lang)))
 
@@ -1892,7 +1953,7 @@ def render_universal_top_header(active_page_name: str = "Overview", key_prefix: 
             ai_btn_label,
             key=f"{pfx}_top_ai_assistant_btn",
             use_container_width=True,
-            type="primary" if rem_q > 0 else "secondary",
+            type="secondary",
             help="Ask Antigravity AI Assistant (Text & WhatsApp Voice Note)"
         ):
             _show_ai_assistant_dialog(context_page=active_page_name)
@@ -1901,7 +1962,7 @@ def render_universal_top_header(active_page_name: str = "Overview", key_prefix: 
         all_langs = get_available_languages()
         cur_data = all_langs.get(current_lang, all_langs.get("en", {"flag": "🌐", "native": "English", "name": "English"}))
         cur_flag = cur_data.get("flag", "🌐")
-        lang_btn_label = f"🌐 Language ({cur_flag})"
+        lang_btn_label = f"🌐 Lang ({cur_flag})"
         with st.popover(lang_btn_label, use_container_width=True):
             st.markdown(f"#### 🌐 {t('select_language', current_lang)} ({len(all_langs)} World Languages)")
             st.caption("Select and activate your language across the entire platform:")
@@ -1922,7 +1983,7 @@ def render_universal_top_header(active_page_name: str = "Overview", key_prefix: 
 
     with col_news:
         alerts_count = GlobalNewsEngine.get_active_alerts_count()
-        news_btn_label = f"{t('live_news_button', current_lang)} ({alerts_count})"
+        news_btn_label = f"📰 News ({alerts_count})"
         with st.popover(news_btn_label, use_container_width=True):
             render_html(f"""
             <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid rgba(255, 255, 255, 0.12);">
