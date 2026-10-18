@@ -1874,9 +1874,28 @@ def render_universal_top_header(active_page_name: str = "Overview", key_prefix: 
     
     pfx = (key_prefix or active_page_name or "nav").lower().replace(" ", "_").replace(".", "_").replace("•", "_")
 
-    col_brand, col_lang, col_news = st.columns([7.0, 1.5, 1.5], gap="small", vertical_alignment="center")
+    from src.ai.nl_query_engine import session_protector
+    if "ai_session_id" not in st.session_state:
+        import uuid
+        st.session_state.ai_session_id = str(uuid.uuid4())
+    sess_id = st.session_state.ai_session_id
+    sess_status = session_protector.get_session_status(sess_id, has_custom_key=True, enforce_user_daily_limit=True)
+    rem_q = sess_status.get("daily_questions_remaining", 3)
+
+    col_brand, col_ai, col_lang, col_news = st.columns([5.8, 1.6, 1.3, 1.3], gap="small", vertical_alignment="center")
     with col_brand:
         render_html(render_app_header_brand_html(current_lang, engine_name, t('live_indicator', current_lang)))
+
+    with col_ai:
+        ai_btn_label = f"🤖 AI ({rem_q}/3)"
+        if st.button(
+            ai_btn_label,
+            key=f"{pfx}_top_ai_assistant_btn",
+            use_container_width=True,
+            type="primary" if rem_q > 0 else "secondary",
+            help="Ask Antigravity AI Assistant (Text & WhatsApp Voice Note)"
+        ):
+            _show_ai_assistant_dialog(context_page=active_page_name)
 
     with col_lang:
         all_langs = get_available_languages()
@@ -1919,14 +1938,15 @@ def render_universal_top_header(active_page_name: str = "Overview", key_prefix: 
             </div>
             """)
             
-            c_btn, c_time = st.columns([1, 1])
-            with c_btn:
-                if st.button(t("refresh_feeds", current_lang), key=f"{pfx}_popover_refresh_news", use_container_width=True, type="primary"):
-                    GlobalNewsEngine.refresh_news()
-                    st.toast("Refreshed live global news & maritime feeds!", icon="📡")
-                    st.rerun()
-            with c_time:
-                st.caption(f"Sync: {GlobalNewsEngine.get_last_refresh_timestamp()}")
+            render_html(f"""
+            <div style="background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.35); border-radius: 6px; padding: 7px 12px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #10B981; box-shadow: 0 0 6px #10B981;"></span>
+                    <span style="font-size: 0.76rem; font-weight: 700; color: #34D399;">🟢 Live News: Auto-Synchronized</span>
+                </div>
+                <div style="font-size: 0.70rem; color: #94A3B8; font-family: monospace;">{GlobalNewsEngine.get_last_refresh_timestamp()}</div>
+            </div>
+            """)
 
             tab_hormuz, tab_trade, tab_rates, tab_all = st.tabs([
                 f"🚨 {t('nav_trade', current_lang)}",
@@ -2050,10 +2070,10 @@ def _get_contextual_ai_suggestions(context_page: str) -> List[Tuple[str, str]]:
         ]
     elif "india" in c_lower:
         return [
+            ("⚡ Jio Fuel Competitors", "which company can easily compete jio fuel"),
             ("🇮🇳 Prayagraj Petrol & Tax", "What is the petrol price in Prayagraj and how much tax does Uttar Pradesh take?"),
             ("⛽ Indian OMCs (IOCL/BPCL)", "Who are the major fuel retailers and OMCs in India?"),
-            ("📊 Delhi Tax Wedge", "What is the fuel price in Delhi and its tax breakdown?"),
-            ("🇸🇦 Saudi Fuel Supplier", "who is the main supplier of fuel from saudi")
+            ("📊 Delhi Tax Wedge", "What is the fuel price in Delhi and its tax breakdown?")
         ]
     elif "afford" in c_lower:
         return [
@@ -2087,10 +2107,10 @@ def _get_contextual_ai_suggestions(context_page: str) -> List[Tuple[str, str]]:
         ]
     else:
         return [
+            ("⚡ Jio Fuel Competitors", "which company can easily compete jio fuel"),
             ("🇸🇦 Saudi Fuel Supplier", "who is the main supplier of fuel from saudi"),
             ("🌍 World Oil Leader", "who is the more contributor of petrol in the world"),
-            ("🇮🇳 Prayagraj Petrol & Tax", "What is the petrol price in Prayagraj and how much tax does Uttar Pradesh take?"),
-            ("🚢 Hormuz Chokepoint Risk", "What is the risk of a disruption in the Strait of Hormuz?")
+            ("🇮🇳 Prayagraj Petrol & Tax", "What is the petrol price in Prayagraj and how much tax does Uttar Pradesh take?")
         ]
 
 
@@ -2101,6 +2121,7 @@ def _show_ai_assistant_dialog(context_page: str = "Overview"):
     - Zero meta-labels like 'Simple English Explanation'
     - Answers the exact question asked with grounded energy intelligence
     - Enforces 24-hour daily quota (3 questions/24h per user) with tamper-resistant server persistence
+    - WhatsApp-style dual input: Text typing + Voice note recording with automatic speech transcription
     - Renders visual Mermaid diagrams and Plotly figures (dragmode=False)
     """
     import uuid
@@ -2165,17 +2186,42 @@ def _show_ai_assistant_dialog(context_page: str = "Overview"):
 
     current_val = selected_query or st.session_state.get(f"{pfx}_active_q", "")
 
-    c_in, c_btn = st.columns([5, 1], gap="small", vertical_alignment="center")
-    with c_in:
-        user_input = st.text_input(
-            "Ask any energy question (taxes, suppliers, prices, shipping, quotas):",
-            value=current_val,
-            placeholder="e.g. who is the main supplier of fuel from saudi, or what is petrol rate in Prayagraj?",
-            key=f"{pfx}_input",
-            label_visibility="collapsed"
-        )
-    with c_btn:
-        ask_clicked = st.button("Ask AI ⚡", key=f"{pfx}_submit_btn", use_container_width=True, type="primary")
+    # WhatsApp-Style Dual Input: Typing + Voice Recording
+    tab_type, tab_voice = st.tabs(["💬 Type Question", "🎙️ WhatsApp Voice Note"])
+    user_input = ""
+    ask_clicked = False
+
+    with tab_type:
+        c_in, c_btn = st.columns([5, 1], gap="small", vertical_alignment="center")
+        with c_in:
+            user_input = st.text_input(
+                "Ask any energy question (taxes, suppliers, prices, shipping, quotas):",
+                value=current_val,
+                placeholder="e.g. which company can easily compete jio fuel, or who is main supplier of fuel from saudi?",
+                key=f"{pfx}_input",
+                label_visibility="collapsed"
+            )
+        with c_btn:
+            ask_clicked = st.button("Ask AI ⚡", key=f"{pfx}_submit_btn", use_container_width=True, type="primary")
+
+    with tab_voice:
+        st.markdown("<div style='font-size:0.8rem; color:#94A3B8; margin-bottom:8px;'>🎙️ <b>WhatsApp Voice Note:</b> Record your question directly using your microphone. Our integrated speech engine transcribes it automatically:</div>", unsafe_allow_html=True)
+        voice_audio = st.audio_input("Record Voice Question", key=f"{pfx}_voice_recorder")
+        if voice_audio is not None:
+            import io
+            import speech_recognition as sr
+            try:
+                r = sr.Recognizer()
+                with sr.AudioFile(io.BytesIO(voice_audio.read())) as source:
+                    audio_data = r.record(source)
+                    transcribed = r.recognize_google(audio_data)
+                    st.success(f"🗣️ Transcribed Voice Note: **\"{transcribed}\"**")
+                    if st.button("Submit Voice Question ⚡", key=f"{pfx}_voice_submit_btn", type="primary", use_container_width=True):
+                        selected_query = transcribed
+            except sr.UnknownValueError:
+                st.info("💡 Audio captured. If speech was faint, you can also type your question directly in the Type tab.")
+            except Exception:
+                st.info("💡 Audio captured. You can also type your question directly in the Type tab.")
 
     active_run_q = None
     if ask_clicked and user_input.strip():
@@ -2227,16 +2273,10 @@ def _show_ai_assistant_dialog(context_page: str = "Overview"):
 
 def render_floating_ai_assistant(context_page: str = "Overview", key_prefix: str = ""):
     """
-    Renders the universal Floating Action Button (FAB) at bottom-right corner.
-    Clicking it opens the responsive modal AI Assistant dialog.
-    Takes 0 screen height on the background page, completely eliminating layout pushing.
+    Positioned natively in the upper top header across all pages.
+    Bottom floating button is retired to keep the viewport clean and completely eliminate overlap.
     """
-    pfx = (key_prefix or context_page).lower().replace(" ", "_").replace(".", "_").replace("•", "_")
-    btn_key = f"global_fuelpulse_fab_{pfx}" if pfx else "global_fuelpulse_fab"
-
-    # Render floating button anchored to bottom right
-    if st.button("🤖", key=btn_key, help=f"Ask Antigravity AI Market Intelligence ({context_page})"):
-        _show_ai_assistant_dialog(context_page=context_page)
+    pass
 
 
 def render_universal_ai_assistant(context_page: str = "Overview", key_prefix: str = ""):

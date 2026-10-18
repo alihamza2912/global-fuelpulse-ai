@@ -85,35 +85,59 @@ st.info(
 
 # Preset Query Buttons
 st.subheader("💡 Suggested Intelligence Queries")
-btn_col1, btn_col2, btn_col3, btn_col4, btn_col5 = st.columns(5)
+btn_col0, btn_col1, btn_col2, btn_col3, btn_col4 = st.columns(5)
 
 preset_q = None
+with btn_col0:
+    if st.button("⚡ Jio Fuel Competitors", use_container_width=True, type="primary"):
+        preset_q = "which company can easily compete jio fuel"
+
 with btn_col1:
-    if st.button("🇸🇦 Saudi Fuel Supplier", width="stretch", type="secondary"):
+    if st.button("🇸🇦 Saudi Fuel Supplier", use_container_width=True, type="secondary"):
         preset_q = "who is the main supplier of fuel from saudi"
 
 with btn_col2:
-    if st.button("🇮🇳 Prayagraj Petrol & Tax", width="stretch", type="secondary"):
+    if st.button("🇮🇳 Prayagraj Petrol & Tax", use_container_width=True, type="secondary"):
         preset_q = "What is the petrol price in Prayagraj and how much tax does Uttar Pradesh take?"
 
 with btn_col3:
-    if st.button("🌍 Top Petrol Contributor", width="stretch", type="secondary"):
+    if st.button("🌍 Top Petrol Contributor", use_container_width=True, type="secondary"):
         preset_q = "who is the more contributor of petrol in the world"
 
 with btn_col4:
-    if st.button("🚢 Strait of Hormuz Risk", width="stretch", type="secondary"):
+    if st.button("🚢 Strait of Hormuz Risk", use_container_width=True, type="secondary"):
         preset_q = "What is the risk of a disruption in the Strait of Hormuz?"
 
-with btn_col5:
-    if st.button("🇸🇦 Saudi Tax & Rates", width="stretch", type="secondary"):
-        preset_q = "how much Saudi take tax from there people"
+# WhatsApp-Style Dual Input: Typing + Voice Recording
+tab_type, tab_voice = st.tabs(["💬 Type Question", "🎙️ WhatsApp Voice Note"])
+with tab_type:
+    text_q = st.text_input(
+        "Ask a market intelligence question freely:",
+        value=preset_q if preset_q else "",
+        placeholder="e.g. which company can easily compete jio fuel, or What is the petrol rate in Prayagraj?"
+    )
 
-# Natural Language Text Input
-user_question = st.text_input(
-    "Ask a market intelligence question freely:",
-    value=preset_q if preset_q else "",
-    placeholder="e.g. how much Saudi take tax from there people, or What is the petrol rate in Prayagraj?"
-)
+voice_q = None
+with tab_voice:
+    st.markdown("<div style='font-size:0.82rem; color:#94A3B8; margin-bottom:8px;'>🎙️ <b>WhatsApp Voice Note:</b> Record your question directly using your microphone. Our speech recognizer transcribes it automatically:</div>", unsafe_allow_html=True)
+    voice_audio = st.audio_input("Record Voice Question", key="page9_voice_recorder")
+    if voice_audio is not None:
+        import io
+        import speech_recognition as sr
+        try:
+            r = sr.Recognizer()
+            with sr.AudioFile(io.BytesIO(voice_audio.read())) as source:
+                audio_data = r.record(source)
+                voice_transcribed = r.recognize_google(audio_data)
+                st.success(f"🗣️ Transcribed Voice Note: **\"{voice_transcribed}\"**")
+                if st.button("Submit Voice Question ⚡", key="page9_submit_voice", type="primary"):
+                    voice_q = voice_transcribed
+        except sr.UnknownValueError:
+            st.info("💡 Audio captured. If speech was faint, you can type your question directly in the Type Question tab.")
+        except Exception:
+            st.info("💡 Audio captured. You can also type your question directly in the Type Question tab.")
+
+user_question = voice_q or text_q
 
 if user_question:
     with st.spinner("Analyzing question, checking cache & energy data mart..."):

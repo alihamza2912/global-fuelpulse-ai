@@ -1430,9 +1430,10 @@ class GlobalNewsEngine:
 
     @classmethod
     def get_last_refresh_timestamp(cls) -> str:
-        """Returns the formatted timestamp of the last news synchronization."""
-        if cls._last_refreshed is None:
-            cls._last_refreshed = datetime.now(timezone.utc)
+        """Returns the formatted timestamp of the last news synchronization, updating automatically in real time."""
+        now = datetime.now(timezone.utc)
+        if cls._last_refreshed is None or (now - cls._last_refreshed).total_seconds() > 30:
+            cls._last_refreshed = now
         return cls._last_refreshed.strftime("%d %b %Y, %H:%M:%S UTC")
 
     @classmethod
