@@ -402,7 +402,7 @@ def apply_theme():
   max-width: 1360px !important;
   margin-left: auto !important;
   margin-right: auto !important;
-  padding-top: 1.0rem !important;
+  padding-top: 3.0rem !important;
   padding-bottom: 2.5rem !important;
   padding-left: 24px !important;
   padding-right: 24px !important;
@@ -413,7 +413,7 @@ def apply_theme():
   .block-container {{
     padding-left: 18px !important;
     padding-right: 18px !important;
-    padding-top: 0.85rem !important;
+    padding-top: 2.75rem !important;
   }}
 }}
 
@@ -421,7 +421,7 @@ def apply_theme():
   .block-container {{
     padding-left: 12px !important;
     padding-right: 12px !important;
-    padding-top: 0.75rem !important;
+    padding-top: 2.5rem !important;
   }}
 }}
 
@@ -935,11 +935,12 @@ div[data-testid="stDecoration"] {{
   display: none !important;
 }}
 header[data-testid="stHeader"] {{
-  height: 0 !important;
-  min-height: 0 !important;
-  max-height: 0 !important;
-  padding: 0 !important;
+  height: 2.875rem !important;
+  min-height: 2.875rem !important;
+  max-height: 2.875rem !important;
+  padding: 0 1rem !important;
   margin: 0 !important;
+  top: 0 !important;
   background: transparent !important;
   background-color: transparent !important;
   backdrop-filter: none !important;
@@ -947,6 +948,19 @@ header[data-testid="stHeader"] {{
   border-bottom: none !important;
   pointer-events: none !important;
   z-index: 999990 !important;
+}}
+header[data-testid="stHeader"] * {{
+  pointer-events: auto !important;
+}}
+header[data-testid="stHeader"] [data-testid="stToolbar"] {{
+  top: 0 !important;
+  right: 1rem !important;
+  height: 2.875rem !important;
+  display: flex !important;
+  align-items: center !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  overflow: visible !important;
 }}
 header[data-testid="stHeader"] button,
 header[data-testid="stHeader"] svg,
