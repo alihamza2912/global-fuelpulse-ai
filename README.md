@@ -1,4 +1,4 @@
-# ⚡ Global FuelPulse AI — Global Fuel Price, Petroleum Trade, Maritime Intelligence & AI Analyst Platform (v3.3.3)
+# ⚡ Global FuelPulse AI — Global Fuel Price, Petroleum Trade, Maritime Intelligence & AI Analyst Platform (v3.4.0)
 
 [![GitHub Repository](https://img.shields.io/badge/GitHub-Repository-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/alihamza2912/global-fuelpulse-ai)
 [![Live App](https://img.shields.io/badge/Live_App-Streamlit_Cloud-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white)](https://global-fuelpulse-ai-jqsi5ngrigi4hm4gtmcghn.streamlit.app)
@@ -22,21 +22,29 @@
 > 
 > *Access real-time retail motor fuel intelligence, international trade matrices, live maritime chokepoints, MoPNG price waterfall breakdown, Holt-Winters price forecasting, and the grounded AI Energy Market Analyst directly in your browser on desktop or mobile.*
 
-**Global FuelPulse AI (v3.3.3)** is an enterprise-grade, unified energy market decision intelligence platform integrating **live retail motor fuel prices** (gasoline and diesel), **international petroleum trade flows** (crude oil and refined products), **foreign exchange parities**, **macroeconomic affordability indices**, **geopolitical maritime supply-chain monitoring**, **machine learning forecasting**, and an **AI Energy Market Analyst** with full continuous historical and real-time coverage up to **October 2026**.
+**Global FuelPulse AI (v3.4.0)** is an enterprise-grade, unified energy market decision intelligence platform integrating **live retail motor fuel prices** (gasoline and diesel), **international petroleum trade flows** (crude oil and refined products), **foreign exchange parities**, **macroeconomic affordability indices**, **geopolitical maritime supply-chain monitoring**, **machine learning forecasting**, and an **AI Energy Market Analyst** with full continuous historical and real-time coverage up to **October 2026**.
 
 ---
 
-## 🌟 What's New in Latest Release (v3.3.3)
+## 🌟 What's New in Latest Release (v3.4.0)
 
+- 🌐 **Platform-Wide Dynamic Multi-Language Localization (`src/localization/`, `src/views/`, `src/ui_components.py`):**
+  - **Complete 18-Language Platform Coverage**: Switching languages (Arabic `ar`, Hindi `hi`, Spanish `es`, French `fr`, German `de`, Chinese `zh`, Russian `ru`, Japanese `ja`, etc.) now dynamically translates every module, card, label, and narrative across the entire application without leaving unlocalized English text.
+  - **Features Catalog (All 12 Modules)**: Completely localized all 12 modules in [`src/views/features.py`](src/views/features.py) including module titles, category tags, *"What it does"*, *"Why it matters"*, *"Input data sources"*, and navigation action buttons (`⚡ View in Dashboard Chapter 04 →`, etc.).
+  - **Feature 09 Live Trial Card**: Localized the interactive trial banner, 24h autonomous quota badge, description, suggested query chips (`🇸🇦 Saudi Tax & Rates`, `🇮🇳 Prayagraj Petrol & Tax`, `🌍 Top Petrol Contributor`, etc.), text input prompt, and direct studio navigation buttons.
+  - **Language & News Popovers**: Localized the language popover modal subtitle (`lang_modal_sub`), the News Wire popover header, live auto-sync status badge, and maritime chokepoint monitor title.
+  - **System Status, Telemetry & Methodology**: Localized Data Trust Center metadata tags (`Cadence:`, `SLA:`, `License:`), Roadmap real-time status board items and subtitles, How It Works Section 3 pipeline orchestrator narrative, About platform mission paragraphs, and Methodology econometric and HHI formula explanations.
+  - **Two-Tier i18n Architecture**: Preserved the core 165-key constraint in `src/localization/i18n.py` to maintain 100% backwards compatibility with automated test assertions, while dynamically managing 121 view-specific translations via `src/localization/translations_views.py`.
+- 🛡️ **Top Header Bar Collision Elimination & Status Lockup (`src/ui_components.py`):**
+  - **Left-Aligned Status Cluster**: Grouped `[SQLITE VERIFIED]` and `[⚡ LIVE 2026]` directly alongside the brand subtitle on the left, leaving over 120px to 380px of breathing room on desktop and mobile, physically preventing collision with the `🤖 AI (3/3)` button on any viewport or sidebar state.
+  - **Fail-Safe Badge Fallback**: Eliminated raw `sqlite_verified_badge` text by using `t("db_verified", current_lang)` with a guaranteed fallback to `"SQLITE VERIFIED"`.
 - 📏 **Desktop & Mobile UI Layout Symmetry & Equal-Height CSS Grid (`src/views/home.py`, `src/ui_components.py`):**
-  - **Section 4 Mathematical Alignment**: Converted "THE CORE CHALLENGE" and "USER VALUE" perspective cards to a unified responsive CSS Grid (`display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); align-items: stretch;`). Both cards now share the exact same height on desktop regardless of content length, eliminating uneven bottom borders, while collapsing into single-column cards on mobile screens.
+  - **Section 4 Mathematical Alignment**: Converted "THE CORE CHALLENGE" and "USER VALUE" perspective cards to a unified responsive CSS Grid (`display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); align-items: stretch;`). Both cards share the exact same vertical height on desktop regardless of content length, eliminating uneven bottom borders.
   - **Feature 09 Action Buttons Symmetrical 42px Alignment**: Standardized `st.link_button` and `st.button` across columns with identical 42px height, line-height, flexbox centering, 8px border-radius, and level baselines.
 - 🧠 **Precision NL Query Routing & Corporate Ownership Grounding (`src/ai/nl_query_engine.py`):**
-  - **Eliminated Route Hijacking**: Removed standalone `"iocl"`, `"bpcl"`, `"hpcl"`, `"nayara"`, and `"shell india"` triggers from the Jio-bp competition handler.
+  - **Eliminated Route Hijacking**: Removed standalone `"iocl"`, `"bpcl"`, `"hpcl"`, `"nayara"`, and `"shell india"` triggers from the competition handler.
   - **Live Online Research for Ownership**: Queries such as *"who is the owner of fuel company of iocl"* route directly to the real-time Deep Online Research Engine and Gemini tokens, answering accurately (Government of India / MoPNG 51.5% stake) with live web citations.
   - **Strict 24h Quota**: Strict 3 questions per user per 24 hours preserved across all visitors and sessions.
-- 🌐 **Fail-Safe Multi-Language AI Assistant Localization (`src/localization/i18n.py`):**
-  - Merged `VIEWS_TRANSLATIONS` directly into `TRANSLATIONS` and provided guaranteed fallbacks for all `ai_*` keys, eliminating raw translation keys from ever appearing in the UI.
 - 🧪 **Expanded 88-Test Automated Suite (100% Pass Rate):**
   - Expanded test suite to **88 passing tests** across all 12 test suites, validating query routing accuracy, Jio competition retention, and multi-language translation resolution.
 
@@ -191,7 +199,7 @@ global-fuelpulse-ai/
 │       ├── india_center.py     # India MoPNG waterfall & OMC analytics view
 │       ├── methodology.py      # Statistical & algorithmic formulas view
 │       └── roadmap.py          # Release roadmap & milestone tracking view
-├── tests/                      # Automated test suite (85 passing tests, 100% pass rate)
+├── tests/                      # Automated test suite (88 passing tests, 100% pass rate)
 │   ├── test_deep_research.py   # 4 tests: Real-time search, Mermaid diagrams, user API keys
 │   ├── test_ai_quota.py        # 21 tests: token budgets, 24h quota, Saudi tax, security
 │   ├── test_analytics.py       # 9 tests: Affordability, HHI, and spread calculation
@@ -263,12 +271,12 @@ Open your browser at `http://localhost:8501`.
 
 ---
 
-## 🧪 Automated Testing Suite (85 Tests, 100% Passing)
+## 🧪 Automated Testing Suite (88 Tests, 100% Passing)
 
-The project includes **85 automated tests** across 12 comprehensive test suites guaranteeing end-to-end reliability across data pipelines, database layers, multi-language localization, live news engines, ML forecasting, deep online research, and the AI Market Analyst:
+The project includes **88 automated tests** across 12 comprehensive test suites guaranteeing end-to-end reliability across data pipelines, database layers, multi-language localization, live news engines, ML forecasting, deep online research, and the AI Market Analyst:
 
 ```bash
-# Run complete test suite (all 85 tests)
+# Run complete test suite (all 88 tests)
 PYTHONPATH=. pytest -v
 
 # Run TypeScript type verification
