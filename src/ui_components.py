@@ -402,18 +402,18 @@ def apply_theme():
   max-width: 1360px !important;
   margin-left: auto !important;
   margin-right: auto !important;
-  padding-top: 1.25rem !important;
-  padding-bottom: 2.5rem !important;
-  padding-left: 24px !important;
-  padding-right: 24px !important;
+  padding-top: 0.85rem !important;
+  padding-bottom: 2.0rem !important;
+  padding-left: 20px !important;
+  padding-right: 20px !important;
   box-sizing: border-box !important;
 }}
 
 @media (max-width: 1024px) {{
   .block-container {{
-    padding-left: 18px !important;
-    padding-right: 18px !important;
-    padding-top: 1.15rem !important;
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+    padding-top: 0.75rem !important;
   }}
 }}
 
@@ -421,54 +421,140 @@ def apply_theme():
   .block-container {{
     padding-left: 12px !important;
     padding-right: 12px !important;
-    padding-top: 1.0rem !important;
+    padding-top: 0.5rem !important;
   }}
 }}
 
+/* Hide Streamlit default header bar completely to remove the top empty void */
+header[data-testid="stHeader"],
+.stAppHeader,
+div[data-testid="stToolbar"] {{
+  background: transparent !important;
+  height: 0px !important;
+  min-height: 0px !important;
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}}
+
+/* Hide Streamlit's default auto-generated pages list in sidebar */
+[data-testid="stSidebarNav"],
+nav[data-testid="stSidebarNav"],
+ul[data-testid="stSidebarNavItems"] {{
+  display: none !important;
+  visibility: hidden !important;
+  height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}}
+
+/* Compact and sleek sidebar container */
+[data-testid="stSidebar"] {{
+  min-width: 260px !important;
+  max-width: 290px !important;
+  background: #090e1a !important;
+  border-right: 1px solid rgba(255, 255, 255, 0.08) !important;
+}}
+
+/* Tighten default vertical block gap between elements to eliminate artificial spacing */
+div[data-testid="stVerticalBlock"] {{
+  gap: 0.65rem !important;
+}}
+
 /* Universal Pinned Floating Action Button (FAB) */
-div[class*="global_fuelpulse_fab"] button,
-div[data-testid*="global_fuelpulse_fab"] button {{
+.fuelpulse-fab-anchor {{
+  display: none !important;
+  height: 0 !important;
+  width: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}}
+
+div:has(> .fuelpulse-fab-anchor),
+div:has(> * > .fuelpulse-fab-anchor),
+div[data-testid="stVerticalBlock"]:has(.fuelpulse-fab-anchor),
+div[data-testid="stElementContainer"]:has(.fuelpulse-fab-anchor),
+div[data-testid="stElementContainer"]:has(.fuelpulse-fab-anchor) + div[data-testid="stElementContainer"] {{
   position: fixed !important;
   bottom: 24px !important;
   right: 24px !important;
   z-index: 999999 !important;
-  width: 58px !important;
-  height: 58px !important;
-  min-width: 58px !important;
-  max-width: 58px !important;
-  min-height: 58px !important;
-  max-height: 58px !important;
+  width: auto !important;
+  height: auto !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  pointer-events: auto !important;
+}}
+
+div:has(.fuelpulse-fab-anchor) button,
+div[data-testid="stVerticalBlock"]:has(.fuelpulse-fab-anchor) button,
+div[data-testid="stElementContainer"]:has(.fuelpulse-fab-anchor) + div[data-testid="stElementContainer"] button {{
+  position: fixed !important;
+  bottom: 24px !important;
+  right: 24px !important;
+  z-index: 999999 !important;
+  width: 60px !important;
+  height: 60px !important;
+  min-width: 60px !important;
+  max-width: 60px !important;
+  min-height: 60px !important;
+  max-height: 60px !important;
   border-radius: 50% !important;
   padding: 0 !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
   background: linear-gradient(135deg, #F5B942 0%, #D97706 100%) !important;
-  color: #0F172A !important;
-  border: 2px solid rgba(255, 255, 255, 0.75) !important;
-  box-shadow: 0 8px 24px rgba(245, 185, 66, 0.45), 0 4px 12px rgba(0, 0, 0, 0.6) !important;
-  font-size: 26px !important;
+  color: #070A12 !important;
+  border: 2.5px solid rgba(255, 255, 255, 0.9) !important;
+  box-shadow: 0 10px 28px rgba(245, 185, 66, 0.55), 0 4px 14px rgba(0, 0, 0, 0.7) !important;
+  font-size: 28px !important;
   line-height: 1 !important;
   cursor: pointer !important;
   transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s ease !important;
 }}
 
-div[class*="global_fuelpulse_fab"] button:hover,
-div[data-testid*="global_fuelpulse_fab"] button:hover {{
-  transform: scale(1.12) !important;
-  box-shadow: 0 12px 32px rgba(245, 185, 66, 0.65), 0 6px 16px rgba(0, 0, 0, 0.8) !important;
+div:has(.fuelpulse-fab-anchor) button p,
+div[data-testid="stVerticalBlock"]:has(.fuelpulse-fab-anchor) button p,
+div[data-testid="stElementContainer"]:has(.fuelpulse-fab-anchor) + div[data-testid="stElementContainer"] button p {{
+  font-size: 28px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  line-height: 1 !important;
 }}
 
-div[class*="global_fuelpulse_fab"] button:active,
-div[data-testid*="global_fuelpulse_fab"] button:active {{
+div:has(.fuelpulse-fab-anchor) button:hover,
+div[data-testid="stVerticalBlock"]:has(.fuelpulse-fab-anchor) button:hover,
+div[data-testid="stElementContainer"]:has(.fuelpulse-fab-anchor) + div[data-testid="stElementContainer"] button:hover {{
+  transform: scale(1.12) !important;
+  box-shadow: 0 14px 34px rgba(245, 185, 66, 0.75), 0 6px 18px rgba(0, 0, 0, 0.85) !important;
+}}
+
+div:has(.fuelpulse-fab-anchor) button:active,
+div[data-testid="stVerticalBlock"]:has(.fuelpulse-fab-anchor) button:active,
+div[data-testid="stElementContainer"]:has(.fuelpulse-fab-anchor) + div[data-testid="stElementContainer"] button:active {{
   transform: scale(0.94) !important;
 }}
 
 @media (max-width: 768px) {{
-  div[class*="global_fuelpulse_fab"] button,
-  div[data-testid*="global_fuelpulse_fab"] button {{
+  div:has(.fuelpulse-fab-anchor),
+  div:has(.fuelpulse-fab-anchor) button,
+  div[data-testid="stVerticalBlock"]:has(.fuelpulse-fab-anchor) button,
+  div[data-testid="stElementContainer"]:has(.fuelpulse-fab-anchor) + div[data-testid="stElementContainer"] button {{
     bottom: 18px !important;
     right: 18px !important;
+    width: 52px !important;
+    height: 52px !important;
+    min-width: 52px !important;
+    max-width: 52px !important;
+    min-height: 52px !important;
+    max-height: 52px !important;
+    font-size: 24px !important;
+  }}
+  div:has(.fuelpulse-fab-anchor) button p,
+  div[data-testid="stVerticalBlock"]:has(.fuelpulse-fab-anchor) button p,
+  div[data-testid="stElementContainer"]:has(.fuelpulse-fab-anchor) + div[data-testid="stElementContainer"] button p {{
+    font-size: 24px !important;
   }}
 }}
 
@@ -2027,6 +2113,11 @@ def render_universal_top_header(active_page_name: str = "Overview", key_prefix: 
                     </div>
                     """, unsafe_allow_html=True)
 
+    # Render Universal Floating Action Button (FAB) docked to bottom-right on all views
+    st.session_state["_fab_rendered_in_turn"] = False
+    render_floating_ai_assistant(context_page=active_page_name, key_prefix="hdr_fab")
+    st.session_state["_fab_rendered_in_turn"] = True
+
 
 # ==============================================================================
 # 5b. UNIVERSAL FLOATING AI ASSISTANT (FAB + DIALOG DRAWER)
@@ -2229,18 +2320,23 @@ def render_floating_ai_assistant(context_page: str = "Overview", key_prefix: str
     """
     Renders the universal Floating Action Button (FAB) at bottom-right corner.
     Clicking it opens the responsive modal AI Assistant dialog.
+    Guaranteed pinned to bottom: 24px, right: 24px via .fuelpulse-fab-anchor.
     Takes 0 screen height on the background page, completely eliminating layout pushing.
     """
     pfx = (key_prefix or context_page).lower().replace(" ", "_").replace(".", "_").replace("•", "_")
     btn_key = f"global_fuelpulse_fab_{pfx}" if pfx else "global_fuelpulse_fab"
 
-    # Render floating button anchored to bottom right
-    if st.button("🤖", key=btn_key, help=f"Ask Antigravity AI Market Intelligence ({context_page})"):
-        _show_ai_assistant_dialog(context_page=context_page)
+    fab_box = st.container()
+    with fab_box:
+        st.markdown('<div class="fuelpulse-fab-anchor" data-anchor="fab"></div>', unsafe_allow_html=True)
+        if st.button("🤖", key=btn_key, help=f"Ask Antigravity AI Market Intelligence ({context_page})"):
+            _show_ai_assistant_dialog(context_page=context_page)
 
 
 def render_universal_ai_assistant(context_page: str = "Overview", key_prefix: str = ""):
-    """Maintains backward compatibility across all views by rendering the universal floating FAB."""
+    """Maintains backward compatibility across all views by rendering the universal floating FAB if not already rendered."""
+    if st.session_state.get("_fab_rendered_in_turn", False):
+        return
     render_floating_ai_assistant(context_page=context_page, key_prefix=key_prefix)
 
 
