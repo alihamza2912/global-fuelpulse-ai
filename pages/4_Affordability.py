@@ -23,6 +23,7 @@ import pandas as pd
 import plotly.express as px
 from src.ui_components import (
     render_page_header,
+    render_universal_ai_assistant,
     render_instrument_card,
     render_csv_download,
     apply_theme,
@@ -31,17 +32,22 @@ from src.ui_components import (
     COLOR_INK,
     COLOR_AMBER
 )
+from src.localization.i18n import t, get_current_language
 from src.analytics.affordability import AffordabilityAnalytics
 from src.analytics.price_analytics import FuelPriceAnalytics
 
 apply_theme()
+current_lang = get_current_language()
 
 render_page_header(
-    title="FUEL PRICE EVALUATION & AFFORDABILITY",
-    subtitle="Macroeconomic Fuel Burden Relative to GDP per Capita & Daily Income Proxies",
+    title=t("sidebar_04_afford", current_lang),
+    subtitle=t("chapter_07_subtitle", current_lang),
     source_tag="World Bank • EIA • PPAC",
     observation_date="2024 Benchmark Data"
 )
+
+# Integrated Universal AI Assistant Dock
+render_universal_ai_assistant(context_page="Fuel Affordability", key_prefix="p4_afford")
 
 # Load Affordability Overview
 afford_df = AffordabilityAnalytics.get_affordability_overview(reporting_year=2024)

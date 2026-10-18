@@ -49,6 +49,8 @@ try:
         get_news_globe_icon_svg,
         get_fuel_client_logo_html,
         render_app_header_brand_html,
+        render_universal_top_header,
+        render_universal_ai_assistant,
         render_two_tier_nav_html,
         get_lucide_icon_svg,
         COLOR_AMBER,
@@ -66,6 +68,8 @@ except (ImportError, ModuleNotFoundError):
         get_news_globe_icon_svg,
         get_fuel_client_logo_html,
         render_app_header_brand_html,
+        render_universal_top_header,
+        render_universal_ai_assistant,
         render_two_tier_nav_html,
         get_lucide_icon_svg,
         COLOR_AMBER,
@@ -393,164 +397,8 @@ render_html(
 )
 
 
-# 5. Top Brand Header Strip with Upper-Right Live Intelligence Notification Center
-from src.analytics.global_news_engine import GlobalNewsEngine
-
-col_brand, col_lang, col_news = st.columns([7.0, 1.5, 1.5], gap="small", vertical_alignment="center")
-with col_brand:
-    health = db_manager.check_health()
-    engine_name = "MYSQL 8.4" if health["dialect"] == "mysql" else "SQLITE VERIFIED"
-    render_html(render_app_header_brand_html(current_lang, engine_name, t('live_indicator', current_lang)))
-
-with col_lang:
-    all_langs = get_available_languages()
-    cur_data = all_langs.get(current_lang, all_langs["en"])
-    cur_flag = cur_data.get("flag", "🌐")
-    lang_btn_label = f"🌐 Language ({cur_flag})"
-    with st.popover(lang_btn_label, use_container_width=True):
-        st.markdown(f"#### 🌐 {t('select_language', current_lang)} ({len(all_langs)} World Languages)")
-        st.caption("Scroll down to select and activate your language:")
-        
-        with st.container(height=340):
-            for code, data in all_langs.items():
-                is_selected = (code == current_lang)
-                active_mark = "✓ " if is_selected else ""
-                item_label = f"{active_mark}{data['flag']}  {data['native']}  ({data['name']})"
-                if st.button(
-                    item_label,
-                    key=f"lang_btn_{code}",
-                    use_container_width=True,
-                    type="primary" if is_selected else "secondary"
-                ):
-                    if code != current_lang:
-                        set_language(code)
-                        st.rerun()
-
-with col_news:
-    alerts_count = GlobalNewsEngine.get_active_alerts_count()
-    news_btn_label = f"{t('live_news_button', current_lang)} ({alerts_count})"
-    with st.popover(news_btn_label, use_container_width=True):
-        render_html(f"""
-        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid rgba(255, 255, 255, 0.12);">
-            {get_news_globe_icon_svg(size=36)}
-            <div>
-                <div style="font-family: 'Space Grotesk', -apple-system, sans-serif; font-size: 1.15rem; font-weight: 800; color: #F9FAFB; letter-spacing: -0.01em;">
-                    {t('brand_title', current_lang)} — Global Wire
-                </div>
-                <div style="font-size: 0.72rem; color: #94A3B8; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; margin-top: 2px;">
-                    Real-Time Maritime Intelligence & Energy Wire
-                </div>
-            </div>
-        </div>
-        """)
-        
-        c_btn, c_time = st.columns([1, 1])
-        with c_btn:
-            if st.button(t("refresh_feeds", current_lang), key="popover_refresh_news", use_container_width=True, type="primary"):
-                GlobalNewsEngine.refresh_news()
-                st.toast("Refreshed live global news & maritime feeds!", icon="📡")
-                st.rerun()
-        with c_time:
-            st.caption(f"Sync: {GlobalNewsEngine.get_last_refresh_timestamp()}")
-
-        tab_hormuz, tab_trade, tab_rates, tab_all = st.tabs([
-            f"🚨 {t('nav_trade', current_lang)}",
-            f"🚢 {t('chapter_03_title', current_lang)}",
-            f"⛽ {t('chapter_05_title', current_lang)}",
-            f"📰 {t('live_news_button', current_lang)}"
-        ])
-        
-        with tab_hormuz:
-            st.markdown("#### 🔴 Maritime Transit Risk Monitor")
-            for chk in GlobalNewsEngine.get_chokepoint_telemetry(current_lang):
-                st.markdown(f"""
-                <div style="background: rgba(14, 21, 38, 0.9); border: 1px solid rgba(255, 255, 255, 0.12); border-left: 4px solid {chk['status_color']}; border-radius: 6px; padding: 10px 12px; margin-bottom: 8px;">
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <b style="color: #F9FAFB; font-size: 0.9rem;">{chk['name']}</b>
-                        <span style="background: rgba(239, 68, 68, 0.2); color: {chk['status_color']}; font-size: 0.7rem; font-weight: 800; padding: 2px 6px; border-radius: 4px;">{chk['status']}</span>
-                    </div>
-                    <div style="font-size: 0.78rem; color: #94A3B8; margin-top: 4px;">Throughput: <b style="color: #F5B942;">{chk['throughput']}</b> ({chk['global_share']})</div>
-                    <div style="font-size: 0.74rem; color: #CBD5E1; margin-top: 4px;"><b>Risk:</b> {chk['key_risk']}</div>
-                    <div style="font-size: 0.72rem; color: #34D399; margin-top: 3px;"><b>Contingency:</b> {chk['contingency']}</div>
-                </div>
-                """, unsafe_allow_html=True)
-                
-        with tab_trade:
-            st.markdown("#### 🚢 Global Petroleum Import & Export")
-            for item in GlobalNewsEngine.get_live_news_feed(category="TRADE_FLOWS", lang=current_lang):
-                metrics_html = " ".join([f"<span style='background: rgba(59,130,246,0.18); color: #60A5FA; padding: 2px 6px; border-radius: 4px; font-size: 0.68rem;'><b>{k}:</b> {v}</span>" for k, v in item['metrics'].items()])
-                st.markdown(f"""
-                <div style="background: rgba(14, 21, 38, 0.9); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 6px; padding: 10px 12px; margin-bottom: 8px;">
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <b style="color: #F9FAFB; font-size: 0.85rem;">{item['headline']}</b>
-                    </div>
-                    <div style="font-size: 0.74rem; color: #94A3B8; margin: 4px 0;">{item['timestamp']} • Source: <i>{item['source']}</i></div>
-                    <p style="font-size: 0.78rem; color: #CBD5E1; line-height: 1.4; margin-bottom: 6px;">{item['summary']}</p>
-                    <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-                        {metrics_html}
-                    </div>
-                </div>
-                """, unsafe_allow_html=True)
-                
-        with tab_rates:
-            st.markdown("#### ⛽ Verified Live Retail Rates Today (17 Oct 2026)")
-            benchmarks = GlobalNewsEngine.get_live_delhi_and_metro_benchmarks()
-            d = benchmarks["delhi"]
-            st.markdown(f"""
-            <div style="background: rgba(234, 179, 8, 0.12); border: 1.5px solid #CA8A04; border-radius: 8px; padding: 12px; margin-bottom: 10px;">
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <span style="font-weight: 800; color: #EAB308; font-size: 0.92rem;">🇮🇳 DELHI (LIVE TODAY)</span>
-                    <span style="background: #EAB308; color: #070A12; font-weight: 800; font-size: 0.68rem; padding: 2px 6px; border-radius: 4px;">PPAC VERIFIED</span>
-                </div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px;">
-                    <div style="background: rgba(0,0,0,0.4); padding: 8px; border-radius: 6px;">
-                        <div style="font-size: 0.72rem; color: #94A3B8;">Petrol RSP</div>
-                        <div style="font-size: 1.25rem; font-weight: 800; color: #F9FAFB;">₹{d['petrol']:.2f}/L</div>
-                    </div>
-                    <div style="background: rgba(0,0,0,0.4); padding: 8px; border-radius: 6px;">
-                        <div style="font-size: 0.72rem; color: #94A3B8;">Diesel RSP</div>
-                        <div style="font-size: 1.25rem; font-weight: 800; color: #F9FAFB;">₹{d['diesel']:.2f}/L</div>
-                    </div>
-                </div>
-                <div style="font-size: 0.74rem; color: #CBD5E1; margin-top: 8px; line-height: 1.4;">
-                    • <b>Base Refinery Transfer:</b> ₹{d['base_petrol']:.2f}/L<br/>
-                    • <b>Central Excise:</b> ₹{d['central_tax']:.2f}/L<br/>
-                    • <b>Delhi State VAT (19.40%):</b> ₹{d['state_vat']:.2f}/L<br/>
-                    • <b>Combined Tax Wedge:</b> ₹40.40/L ({d['tax_share_pct']}% of pump price)
-                </div>
-            </div>
-            """, unsafe_allow_html=True)
-            
-            st.markdown("**Other Indian Metros & Global:**")
-            m = benchmarks["mumbai"]
-            c = benchmarks["kolkata"]
-            ch = benchmarks["chennai"]
-            st.markdown(f"""
-            <div style="font-size: 0.78rem; color: #94A3B8; line-height: 1.6;">
-                • <b>Mumbai:</b> Petrol ₹{m['petrol']:.2f}/L | Diesel ₹{m['diesel']:.2f}/L (Tax: {m['tax_share_pct']}%)<br/>
-                • <b>Kolkata:</b> Petrol ₹{c['petrol']:.2f}/L | Diesel ₹{c['diesel']:.2f}/L (Tax: {c['tax_share_pct']}%)<br/>
-                • <b>Chennai:</b> Petrol ₹{ch['petrol']:.2f}/L | Diesel ₹{ch['diesel']:.2f}/L (Tax: {ch['tax_share_pct']}%)<br/>
-                • <b>United States:</b> $3.24 / gal ($0.86/L)<br/>
-                • <b>Germany (EU):</b> €1.78 / L ($1.94/L)<br/>
-                • <b>United Kingdom:</b> £1.42 / L ($1.85/L)<br/>
-                • <b>UAE:</b> AED 3.03 / L ($0.82/L)
-            </div>
-            """, unsafe_allow_html=True)
-            
-        with tab_all:
-            st.markdown("#### 📰 Complete Real-Time Intelligence Chronology")
-            for item in GlobalNewsEngine.get_live_news_feed(lang=current_lang):
-                st.markdown(f"""
-                <div style="background: rgba(14, 21, 38, 0.9); border: 1px solid rgba(255, 255, 255, 0.12); border-left: 3px solid {item['impact_color']}; border-radius: 6px; padding: 10px 12px; margin-bottom: 8px;">
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <span style="font-size: 0.7rem; font-weight: 700; color: #F5B942;">{item['category_label']}</span>
-                        <span style="font-size: 0.65rem; background: rgba(255,255,255,0.08); color: {item['impact_color']}; padding: 1px 6px; border-radius: 4px; font-weight: 700;">{item['impact']}</span>
-                    </div>
-                    <b style="color: #F9FAFB; font-size: 0.84rem; display: block; margin: 4px 0;">{item['headline']}</b>
-                    <div style="font-size: 0.72rem; color: #94A3B8; margin-bottom: 4px;">{item['timestamp']} • <i>{item['source']}</i></div>
-                    <p style="font-size: 0.76rem; color: #CBD5E1; line-height: 1.4; margin-bottom: 6px;">{item['summary']}</p>
-                </div>
-                """, unsafe_allow_html=True)
+# 5. Top Brand Header Strip with Synchronized Multi-Language and Intelligence Center
+render_universal_top_header(active_page_name=st.session_state.get("active_canonical", "home"), key_prefix="app_root")
 
 # 6. Structured Two-Tier Product Navigation
 active_canonical = st.session_state.get("active_canonical", "home")

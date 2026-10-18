@@ -19,7 +19,8 @@ for d in [str(ROOT_DIR), str(SRC_DIR)]:
     sys.path.insert(0, d)
 
 import streamlit as st
-from src.ui_components import apply_theme, render_page_header
+from src.ui_components import apply_theme, render_page_header, render_universal_ai_assistant
+from src.localization.i18n import t, get_current_language
 from src.views.about import render_about_view
 from src.views.how_it_works import render_how_it_works_view
 from src.views.features import render_features_view
@@ -29,13 +30,17 @@ from src.views.roadmap import render_roadmap_view
 from src.views.faq import render_faq_view
 
 apply_theme()
+current_lang = get_current_language()
 
 render_page_header(
-    title="PRODUCT GUIDE & ENTERPRISE DOCUMENTATION",
+    title=t("sidebar_11_guide", current_lang),
     subtitle="System Architecture, Economic Mechanics, Methodology Formulas, and FAQ",
     source_tag="Global FuelPulse AI Technical Dossier",
     observation_date="Version 2.0 Production Release"
 )
+
+# Integrated Universal AI Assistant Dock
+render_universal_ai_assistant(context_page="Product Guide", key_prefix="p11_guide")
 
 tab_about, tab_arch, tab_feat, tab_trust, tab_meth, tab_road, tab_faq = st.tabs([
     "📖 About Project",

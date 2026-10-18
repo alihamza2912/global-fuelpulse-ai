@@ -177,6 +177,7 @@ def apply_clean_layout(
     layout_updates: Dict[str, Any] = {
         "paper_bgcolor": "rgba(0,0,0,0)",
         "plot_bgcolor": "rgba(0,0,0,0)",
+        "dragmode": False,
         "height": max(height, 450),
         "font": dict(
             family="'Space Grotesk', 'Inter', -apple-system, sans-serif",

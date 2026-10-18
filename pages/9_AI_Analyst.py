@@ -30,15 +30,17 @@ if ENV_FILE.exists():
     load_dotenv(dotenv_path=ENV_FILE, override=True)
 
 from src.ui_components import render_page_header, render_csv_download, apply_theme, render_html
+from src.localization.i18n import t, get_current_language
 from src.ai.nl_query_engine import AIEnergyMarketAnalyst, session_protector
 from src.ai.quota_manager import quota_manager
 from src.ai.gemini_client import gemini_client, sanitize_sensitive_text
 from config.settings import settings, set_user_api_key, is_user_custom_key_configured, get_system_antigravity_token
 
 apply_theme()
+current_lang = get_current_language()
 
 render_page_header(
-    title="AI ENERGY MARKET ANALYST",
+    title=t("sidebar_09_ai", current_lang),
     subtitle="Grounded Natural Language Intelligence • Strict 24h Quota & Enterprise Security Shield",
     source_tag="Safe Read-Only SQL & Antigravity / Gemini Intelligence",
     observation_date="Continuous Oct 2026 Grounding"
@@ -75,8 +77,8 @@ st.info(
     - **Status**: **{status_label}** ({status_detail}).
     - **Integrated Antigravity Tokens**: Automatically connected behind the scenes. Zero manual configuration required.
     - **24-Hour Allowance**: Anyone can ask **up to 3 questions in 24 hours**. After 3 questions, your quota resets automatically after 24 hours.
-    - **Simple English & Visual Diagrams**: Every answer includes a **Simple English Explanation** and a **Visual Diagram / Flowchart** for easy understanding.
-    - **Multi-Country Precision**: Accurately analyzes sovereign tax structures (e.g. Saudi Arabia 15% VAT & 0% income tax, India GST/VAT), OPEC quotas, crude contributors, and shipping corridors.
+    - **Clear Plain Language & Visual Flowcharts**: Every answer delivers intuitive analysis accompanied by visual diagrams and flowcharts for effortless comprehension.
+    - **Multi-Country Precision**: Accurately analyzes sovereign suppliers (e.g. Saudi Aramco, ADNOC), sovereign tax structures (Saudi Arabia 15% VAT & 0% income tax, India GST/VAT), OPEC quotas, crude contributors, and shipping corridors.
     - **Security & Integrity Shield**: Real-time protection against malicious queries or system tampering.
     """
 )
@@ -87,8 +89,8 @@ btn_col1, btn_col2, btn_col3, btn_col4, btn_col5 = st.columns(5)
 
 preset_q = None
 with btn_col1:
-    if st.button("🇸🇦 Saudi Tax & Rates", width="stretch", type="secondary"):
-        preset_q = "how much Saudi take tax from there people"
+    if st.button("🇸🇦 Saudi Fuel Supplier", width="stretch", type="secondary"):
+        preset_q = "who is the main supplier of fuel from saudi"
 
 with btn_col2:
     if st.button("🇮🇳 Prayagraj Petrol & Tax", width="stretch", type="secondary"):
@@ -103,8 +105,8 @@ with btn_col4:
         preset_q = "What is the risk of a disruption in the Strait of Hormuz?"
 
 with btn_col5:
-    if st.button("🚚 Fleet Fuel Shock", width="stretch", type="secondary"):
-        preset_q = "What would a 10% increase in fuel prices do to my fleet budget?"
+    if st.button("🇸🇦 Saudi Tax & Rates", width="stretch", type="secondary"):
+        preset_q = "how much Saudi take tax from there people"
 
 # Natural Language Text Input
 user_question = st.text_input(

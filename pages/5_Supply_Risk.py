@@ -24,6 +24,7 @@ import plotly.express as px
 import plotly.graph_objects as go
 from src.ui_components import (
     render_page_header,
+    render_universal_ai_assistant,
     render_instrument_card,
     render_csv_download,
     apply_theme,
@@ -34,16 +35,21 @@ from src.ui_components import (
     COLOR_WHITE,
     COLOR_CREAM
 )
+from src.localization.i18n import t, get_current_language
 from src.analytics.supply_risk import SupplyRiskMonitor, CHOKEPOINTS_REGISTRY
 
 apply_theme()
+current_lang = get_current_language()
 
 render_page_header(
-    title="GLOBAL FUEL SUPPLY RISK MONITOR",
-    subtitle="Import Vulnerability, Supplier Concentration Exposure, and Strategic Maritime Chokepoints",
+    title=t("sidebar_05_risk", current_lang),
+    subtitle=t("chapter_08_subtitle", current_lang),
     source_tag="EIA Movements • UN Comtrade • Global Chokepoints Registry",
     observation_date="Strategic 2024–2025 Intelligence"
 )
+
+# Integrated Universal AI Assistant Dock
+render_universal_ai_assistant(context_page="Supply Risk", key_prefix="p5_risk")
 
 # Load Dependence Leaderboard
 dep_df = SupplyRiskMonitor.get_import_dependence_leaderboard(period="2024")

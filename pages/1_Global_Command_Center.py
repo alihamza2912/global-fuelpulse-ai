@@ -24,6 +24,7 @@ import plotly.express as px
 import plotly.graph_objects as go
 from src.ui_components import (
     render_command_strip,
+    render_universal_ai_assistant,
     render_signal_rail,
     render_instrument_card,
     render_csv_download,
@@ -45,13 +46,15 @@ from src.ui_components import (
     COLOR_WHITE,
     COLOR_CREAM
 )
+from src.localization.i18n import t, get_current_language
 from src.analytics.price_analytics import FuelPriceAnalytics
 from src.analytics.trade_analytics import PetroleumTradeAnalytics
 from src.monitoring.quality_auditor import DataQualityAuditor
 
 apply_theme()
+current_lang = get_current_language()
 
-# 1. Top Enterprise Command Strip
+# 1. Top Enterprise Command Strip with Synchronized Universal Header
 render_command_strip(
     active_page="Global Command Center",
     region_tag="WORLDWIDE REPOSITORY",
@@ -59,8 +62,11 @@ render_command_strip(
     reporting_period="LATEST 2024–2025"
 )
 
+# 1b. Integrated Universal AI Assistant Dock
+render_universal_ai_assistant(context_page="Global Command Center", key_prefix="p1_cmd")
+
 # 2. Interactive Analytical Controls Filter Bar
-render_html('<div class="atlas-section-title">CONTROL TERMINAL & PARAMETERS</div>')
+render_html(f'<div class="atlas-section-title">{t("sidebar_01_command", current_lang)} — CONTROL TERMINAL & PARAMETERS</div>')
 ctrl_c1, ctrl_c2, ctrl_c3, ctrl_c4 = st.columns([3, 3, 4, 2])
 
 with ctrl_c1:

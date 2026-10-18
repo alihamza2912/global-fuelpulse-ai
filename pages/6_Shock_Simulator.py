@@ -24,6 +24,7 @@ import plotly.express as px
 import plotly.graph_objects as go
 from src.ui_components import (
     render_page_header,
+    render_universal_ai_assistant,
     render_instrument_card,
     render_csv_download,
     apply_theme,
@@ -32,17 +33,22 @@ from src.ui_components import (
     COLOR_INK,
     COLOR_AMBER
 )
+from src.localization.i18n import t, get_current_language
 from src.analytics.shock_simulator import SupplyShockSimulator
 from src.analytics.trade_analytics import PetroleumTradeAnalytics
 
 apply_theme()
+current_lang = get_current_language()
 
 render_page_header(
-    title="SUPPLY SHOCK SIMULATOR",
-    subtitle="Hypothetical Export Curtailment, Crude Benchmark Surges, and Fleet Cost Modeling",
+    title=t("sidebar_06_shock", current_lang),
+    subtitle=t("chapter_09_subtitle", current_lang),
     source_tag="Interactive Sensitivity Engine",
     observation_date="Simulation Sandbox"
 )
+
+# Integrated Universal AI Assistant Dock
+render_universal_ai_assistant(context_page="Supply Shock Simulator", key_prefix="p6_shock")
 
 # User Interactive Controls
 st.subheader("⚙️ Scenario Simulation Parameters")

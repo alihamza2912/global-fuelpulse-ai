@@ -25,6 +25,7 @@ import plotly.express as px
 import plotly.graph_objects as go
 from src.ui_components import (
     render_page_header,
+    render_universal_ai_assistant,
     render_instrument_card,
     render_csv_download,
     apply_theme,
@@ -34,18 +35,23 @@ from src.ui_components import (
     COLOR_AMBER,
     COLOR_WHITE
 )
+from src.localization.i18n import t, get_current_language
 from src.ml.forecasting import PriceForecaster
 from src.ml.anomaly_detection import AnomalyDetector
 from src.analytics.price_analytics import FuelPriceAnalytics
 
 apply_theme()
+current_lang = get_current_language()
 
 render_page_header(
-    title="FORECASTING & ANOMALY DETECTION",
-    subtitle="Predictive Retail Fuel Price Modeling, Train/Test Validation, and Statistical Outlier Monitoring",
+    title=t("sidebar_07_forecast", current_lang),
+    subtitle=t("chapter_10_subtitle", current_lang),
     source_tag="Statsmodels • Scikit-Learn • Rolling MAD / Z-Score",
     observation_date="Weekly Projections"
 )
+
+# Integrated Universal AI Assistant Dock
+render_universal_ai_assistant(context_page="Price Forecasting", key_prefix="p7_forecast")
 
 # Tabs: Forecasting & Anomaly Detection
 tab_fc, tab_anom = st.tabs(["📈 ML Fuel Price Forecasting", "🚨 Energy Market Anomaly Radar"])

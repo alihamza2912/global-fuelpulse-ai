@@ -1803,16 +1803,393 @@ button[data-testid*="primaryActive"] * {{
 
 
 # ==============================================================================
-# 5. COMPACT EDITORIAL TOP NAVIGATION
+# 5. UNIVERSAL TOP HEADER & SYNCHRONIZED MULTI-LANGUAGE NAVIGATION
+# ==============================================================================
+def render_universal_top_header(active_page_name: str = "Overview", key_prefix: str = ""):
+    """
+    Renders the universal, synchronized top application header across all views and drill-down pages:
+    - Vector Brand lockup with live database engine verification badge
+    - Universal Language Selector Popover (synchronizes app_language and URL query params site-wide)
+    - Live News Wire & Maritime Alert Center Popover
+    """
+    from src.localization.i18n import (
+        t,
+        get_current_language,
+        set_language,
+        get_available_languages,
+    )
+    from src.analytics.global_news_engine import GlobalNewsEngine
+
+    apply_theme()
+    current_lang = get_current_language()
+    health = db_manager.check_health()
+    engine_name = "MYSQL 8.4" if health["dialect"] == "mysql" else "SQLITE VERIFIED"
+    
+    pfx = (key_prefix or active_page_name or "nav").lower().replace(" ", "_").replace(".", "_").replace("•", "_")
+
+    col_brand, col_lang, col_news = st.columns([7.0, 1.5, 1.5], gap="small", vertical_alignment="center")
+    with col_brand:
+        render_html(render_app_header_brand_html(current_lang, engine_name, t('live_indicator', current_lang)))
+
+    with col_lang:
+        all_langs = get_available_languages()
+        cur_data = all_langs.get(current_lang, all_langs.get("en", {"flag": "🌐", "native": "English", "name": "English"}))
+        cur_flag = cur_data.get("flag", "🌐")
+        lang_btn_label = f"🌐 Language ({cur_flag})"
+        with st.popover(lang_btn_label, use_container_width=True):
+            st.markdown(f"#### 🌐 {t('select_language', current_lang)} ({len(all_langs)} World Languages)")
+            st.caption("Select and activate your language across the entire platform:")
+            with st.container(height=340):
+                for code, data in all_langs.items():
+                    is_selected = (code == current_lang)
+                    active_mark = "✓ " if is_selected else ""
+                    item_label = f"{active_mark}{data['flag']}  {data['native']}  ({data['name']})"
+                    if st.button(
+                        item_label,
+                        key=f"{pfx}_lang_btn_{code}",
+                        use_container_width=True,
+                        type="primary" if is_selected else "secondary"
+                    ):
+                        if code != current_lang:
+                            set_language(code)
+                            st.rerun()
+
+    with col_news:
+        alerts_count = GlobalNewsEngine.get_active_alerts_count()
+        news_btn_label = f"{t('live_news_button', current_lang)} ({alerts_count})"
+        with st.popover(news_btn_label, use_container_width=True):
+            render_html(f"""
+            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid rgba(255, 255, 255, 0.12);">
+                {get_news_globe_icon_svg(size=36)}
+                <div>
+                    <div style="font-family: 'Space Grotesk', -apple-system, sans-serif; font-size: 1.15rem; font-weight: 800; color: #F9FAFB; letter-spacing: -0.01em;">
+                        {t('brand_title', current_lang)} — Global Wire
+                    </div>
+                    <div style="font-size: 0.72rem; color: #94A3B8; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; margin-top: 2px;">
+                        Real-Time Maritime Intelligence & Energy Wire
+                    </div>
+                </div>
+            </div>
+            """)
+            
+            c_btn, c_time = st.columns([1, 1])
+            with c_btn:
+                if st.button(t("refresh_feeds", current_lang), key=f"{pfx}_popover_refresh_news", use_container_width=True, type="primary"):
+                    GlobalNewsEngine.refresh_news()
+                    st.toast("Refreshed live global news & maritime feeds!", icon="📡")
+                    st.rerun()
+            with c_time:
+                st.caption(f"Sync: {GlobalNewsEngine.get_last_refresh_timestamp()}")
+
+            tab_hormuz, tab_trade, tab_rates, tab_all = st.tabs([
+                f"🚨 {t('nav_trade', current_lang)}",
+                f"🚢 {t('chapter_03_title', current_lang)}",
+                f"⛽ {t('chapter_05_title', current_lang)}",
+                f"📰 {t('live_news_button', current_lang)}"
+            ])
+            
+            with tab_hormuz:
+                st.markdown("#### 🔴 Maritime Transit Risk Monitor")
+                for chk in GlobalNewsEngine.get_chokepoint_telemetry(current_lang):
+                    st.markdown(f"""
+                    <div style="background: rgba(14, 21, 38, 0.9); border: 1px solid rgba(255, 255, 255, 0.12); border-left: 4px solid {chk['status_color']}; border-radius: 6px; padding: 10px 12px; margin-bottom: 8px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <b style="color: #F9FAFB; font-size: 0.9rem;">{chk['name']}</b>
+                            <span style="background: rgba(239, 68, 68, 0.2); color: {chk['status_color']}; font-size: 0.7rem; font-weight: 800; padding: 2px 6px; border-radius: 4px;">{chk['status']}</span>
+                        </div>
+                        <div style="font-size: 0.78rem; color: #94A3B8; margin-top: 4px;">Throughput: <b style="color: #F5B942;">{chk['throughput']}</b> ({chk['global_share']})</div>
+                        <div style="font-size: 0.74rem; color: #CBD5E1; margin-top: 4px;"><b>Risk:</b> {chk['key_risk']}</div>
+                        <div style="font-size: 0.72rem; color: #34D399; margin-top: 3px;"><b>Contingency:</b> {chk['contingency']}</div>
+                    </div>
+                    """, unsafe_allow_html=True)
+                    
+            with tab_trade:
+                st.markdown("#### 🚢 Global Petroleum Import & Export")
+                for item in GlobalNewsEngine.get_live_news_feed(category="TRADE_FLOWS", lang=current_lang):
+                    metrics_html = " ".join([f"<span style='background: rgba(59,130,246,0.18); color: #60A5FA; padding: 2px 6px; border-radius: 4px; font-size: 0.68rem;'><b>{k}:</b> {v}</span>" for k, v in item['metrics'].items()])
+                    st.markdown(f"""
+                    <div style="background: rgba(14, 21, 38, 0.9); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 6px; padding: 10px 12px; margin-bottom: 8px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <b style="color: #F9FAFB; font-size: 0.85rem;">{item['headline']}</b>
+                        </div>
+                        <div style="font-size: 0.74rem; color: #94A3B8; margin: 4px 0;">{item['timestamp']} • Source: <i>{item['source']}</i></div>
+                        <p style="font-size: 0.78rem; color: #CBD5E1; line-height: 1.4; margin-bottom: 6px;">{item['summary']}</p>
+                        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                            {metrics_html}
+                        </div>
+                    </div>
+                    """, unsafe_allow_html=True)
+                    
+            with tab_rates:
+                st.markdown("#### ⛽ Verified Live Retail Rates Today (17 Oct 2026)")
+                benchmarks = GlobalNewsEngine.get_live_delhi_and_metro_benchmarks()
+                d = benchmarks["delhi"]
+                st.markdown(f"""
+                <div style="background: rgba(234, 179, 8, 0.12); border: 1.5px solid #CA8A04; border-radius: 8px; padding: 12px; margin-bottom: 10px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span style="font-weight: 800; color: #EAB308; font-size: 0.92rem;">🇮🇳 DELHI (LIVE TODAY)</span>
+                        <span style="background: #EAB308; color: #070A12; font-weight: 800; font-size: 0.68rem; padding: 2px 6px; border-radius: 4px;">PPAC VERIFIED</span>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px;">
+                        <div style="background: rgba(0,0,0,0.4); padding: 8px; border-radius: 6px;">
+                            <div style="font-size: 0.72rem; color: #94A3B8;">Petrol RSP</div>
+                            <div style="font-size: 1.25rem; font-weight: 800; color: #F9FAFB;">₹{d['petrol']:.2f}/L</div>
+                        </div>
+                        <div style="background: rgba(0,0,0,0.4); padding: 8px; border-radius: 6px;">
+                            <div style="font-size: 0.72rem; color: #94A3B8;">Diesel RSP</div>
+                            <div style="font-size: 1.25rem; font-weight: 800; color: #F9FAFB;">₹{d['diesel']:.2f}/L</div>
+                        </div>
+                    </div>
+                    <div style="font-size: 0.74rem; color: #CBD5E1; margin-top: 8px; line-height: 1.4;">
+                        • <b>Base Refinery Transfer:</b> ₹{d['base_petrol']:.2f}/L<br/>
+                        • <b>Central Excise:</b> ₹{d['central_tax']:.2f}/L<br/>
+                        • <b>Delhi State VAT (19.40%):</b> ₹{d['state_vat']:.2f}/L<br/>
+                        • <b>Combined Tax Wedge:</b> ₹40.40/L ({d['tax_share_pct']}% of pump price)
+                    </div>
+                </div>
+                """, unsafe_allow_html=True)
+                
+                st.markdown("**Other Indian Metros & Global:**")
+                m = benchmarks["mumbai"]
+                c = benchmarks["kolkata"]
+                ch = benchmarks["chennai"]
+                st.markdown(f"""
+                <div style="font-size: 0.78rem; color: #94A3B8; line-height: 1.6;">
+                    • <b>Mumbai:</b> Petrol ₹{m['petrol']:.2f}/L | Diesel ₹{m['diesel']:.2f}/L (Tax: {m['tax_share_pct']}%)<br/>
+                    • <b>Kolkata:</b> Petrol ₹{c['petrol']:.2f}/L | Diesel ₹{c['diesel']:.2f}/L (Tax: {c['tax_share_pct']}%)<br/>
+                    • <b>Chennai:</b> Petrol ₹{ch['petrol']:.2f}/L | Diesel ₹{ch['diesel']:.2f}/L (Tax: {ch['tax_share_pct']}%)<br/>
+                    • <b>United States:</b> $3.24 / gal ($0.86/L)<br/>
+                    • <b>Germany (EU):</b> €1.78 / L ($1.94/L)<br/>
+                    • <b>United Kingdom:</b> £1.42 / L ($1.85/L)<br/>
+                    • <b>UAE:</b> AED 3.03 / L ($0.82/L)
+                </div>
+                """, unsafe_allow_html=True)
+                
+            with tab_all:
+                st.markdown("#### 📰 Complete Real-Time Intelligence Chronology")
+                for item in GlobalNewsEngine.get_live_news_feed(lang=current_lang):
+                    st.markdown(f"""
+                    <div style="background: rgba(14, 21, 38, 0.9); border: 1px solid rgba(255, 255, 255, 0.12); border-left: 3px solid {item['impact_color']}; border-radius: 6px; padding: 10px 12px; margin-bottom: 8px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span style="font-size: 0.7rem; font-weight: 700; color: #F5B942;">{item['category_label']}</span>
+                            <span style="font-size: 0.65rem; background: rgba(255,255,255,0.08); color: {item['impact_color']}; padding: 1px 6px; border-radius: 4px; font-weight: 700;">{item['impact']}</span>
+                        </div>
+                        <b style="color: #F9FAFB; font-size: 0.84rem; display: block; margin: 4px 0;">{item['headline']}</b>
+                        <div style="font-size: 0.72rem; color: #94A3B8; margin-bottom: 4px;">{item['timestamp']} • <i>{item['source']}</i></div>
+                        <p style="font-size: 0.76rem; color: #CBD5E1; line-height: 1.4; margin-bottom: 6px;">{item['summary']}</p>
+                    </div>
+                    """, unsafe_allow_html=True)
+
+
+# ==============================================================================
+# 5b. UNIVERSAL AI ASSISTANT EMBEDDABLE COMPONENT
+# ==============================================================================
+def render_universal_ai_assistant(context_page: str = "Overview", key_prefix: str = ""):
+    """
+    Renders an integrated Antigravity AI Market Intelligence Assistant widget directly on any page.
+    - Zero meta-labels like 'Simple English Explanation'
+    - Answers the exact question asked with grounded energy intelligence
+    - Enforces 24-hour daily quota (3 questions/24h per user)
+    - Renders visual Mermaid diagrams and Plotly figures (dragmode=False)
+    """
+    import uuid
+    from src.ai.nl_query_engine import AIEnergyMarketAnalyst, session_protector
+    from src.localization.i18n import get_current_language
+
+    current_lang = get_current_language()
+    pfx = (key_prefix or context_page).lower().replace(" ", "_").replace(".", "_").replace("•", "_")
+
+    if "ai_session_id" not in st.session_state:
+        st.session_state.ai_session_id = str(uuid.uuid4())
+    sess_id = st.session_state.ai_session_id
+
+    sess_status = session_protector.get_session_status(sess_id, has_custom_key=True, enforce_user_daily_limit=True)
+    rem_q = sess_status.get("daily_questions_remaining", 3)
+    reset_str = sess_status.get("reset_time_str", "24 hours")
+    is_blocked = sess_status.get("is_blocked", False)
+    is_quota_finished = sess_status.get("is_daily_quota_finished", False)
+
+    if is_blocked:
+        status_text = "🚫 Access Blocked • Security Rule Violation"
+        status_color = "#EF4444"
+    elif is_quota_finished:
+        status_text = f"⏳ Daily Quota Reached (3/3 Used) • Resets in {reset_str}"
+        status_color = "#F5B942"
+    else:
+        status_text = f"🟢 Antigravity AI Active • {rem_q}/3 Questions Remaining Today (24h Window)"
+        status_color = "#34D399"
+
+    c_lower = context_page.lower()
+    if "command" in c_lower or "overview" in c_lower or "home" in c_lower:
+        suggested = [
+            ("🇸🇦 Saudi Fuel Supplier", "who is the main supplier of fuel from saudi"),
+            ("🌍 World Oil Leader", "who is the more contributor of petrol in the world"),
+            ("🚢 Hormuz Chokepoint", "What is the risk of a disruption in the Strait of Hormuz?"),
+            ("🇸🇦 Saudi Tax Rates", "how much Saudi take tax from there people")
+        ]
+    elif "trade" in c_lower:
+        suggested = [
+            ("🇸🇦 Saudi Fuel Supplier", "who is the main supplier of fuel from saudi"),
+            ("🇮🇳 India Import Sourcing", "what are India petroleum import sourcing partners"),
+            ("🇦🇪 Dubai & UAE Exports", "what are Dubai petroleum export destinations"),
+            ("🇷🇺 Russian Crude Flows", "what are Russia petroleum export destinations")
+        ]
+    elif "price" in c_lower:
+        suggested = [
+            ("🇮🇳 Prayagraj Petrol & Tax", "What is the petrol price in Prayagraj and how much tax does Uttar Pradesh take?"),
+            ("⛽ Delhi Pump Breakdown", "What is the fuel price in Delhi and its tax breakdown?"),
+            ("🌐 US vs Germany Comparison", "Compare petrol retail prices in USA and Germany"),
+            ("🇸🇦 Saudi Fuel Supplier", "who is the main supplier of fuel from saudi")
+        ]
+    elif "india" in c_lower:
+        suggested = [
+            ("🇮🇳 Prayagraj Petrol & Tax", "What is the petrol price in Prayagraj and how much tax does Uttar Pradesh take?"),
+            ("⛽ Indian OMCs (IOCL/BPCL)", "Who are the major fuel retailers and OMCs in India?"),
+            ("📊 Delhi Tax Wedge", "What is the fuel price in Delhi and its tax breakdown?"),
+            ("🇸🇦 Saudi Fuel Supplier", "who is the main supplier of fuel from saudi")
+        ]
+    elif "afford" in c_lower:
+        suggested = [
+            ("⚖️ Highest Fuel Burden", "Which country has the highest fuel burden as % of daily income?"),
+            ("🇮🇳 India vs Global Burden", "How affordable is petrol in India compared to Europe?"),
+            ("🇸🇦 Saudi Fuel Supplier", "who is the main supplier of fuel from saudi")
+        ]
+    elif "risk" in c_lower:
+        suggested = [
+            ("🚢 Hormuz Chokepoint Risk", "What is the risk of a disruption in the Strait of Hormuz?"),
+            ("🛡️ HHI Supply Concentration", "Which countries face the highest oil import concentration risk?"),
+            ("🇸🇦 Saudi Fuel Supplier", "who is the main supplier of fuel from saudi")
+        ]
+    elif "shock" in c_lower:
+        suggested = [
+            ("🚚 Fleet Fuel Shock (10%)", "What would a 10% increase in fuel prices do to my fleet budget?"),
+            ("⚡ Crude Surge +$20/bbl", "What happens to retail prices if crude spikes by $20/bbl?"),
+            ("🇸🇦 Saudi Fuel Supplier", "who is the main supplier of fuel from saudi")
+        ]
+    elif "forecast" in c_lower:
+        suggested = [
+            ("📈 60-Day Price Radar", "What is the 60-day price forecast for petrol in India?"),
+            ("🛢️ Brent Crude Trajectory", "What is the projected price trend for Brent crude?"),
+            ("🇸🇦 Saudi Fuel Supplier", "who is the main supplier of fuel from saudi")
+        ]
+    elif "trust" in c_lower:
+        suggested = [
+            ("🔒 PPAC & EIA Provenance", "Where does the fuel price data come from and how often is it updated?"),
+            ("🛡️ Hallucination Safeguard", "How does Antigravity AI verify relational database records?"),
+            ("🇸🇦 Saudi Fuel Supplier", "who is the main supplier of fuel from saudi")
+        ]
+    else:
+        suggested = [
+            ("🇸🇦 Saudi Fuel Supplier", "who is the main supplier of fuel from saudi"),
+            ("🌍 World Oil Leader", "who is the more contributor of petrol in the world"),
+            ("🇮🇳 Prayagraj Petrol & Tax", "What is the petrol price in Prayagraj and how much tax does Uttar Pradesh take?"),
+            ("🚢 Hormuz Chokepoint Risk", "What is the risk of a disruption in the Strait of Hormuz?")
+        ]
+
+    st.markdown(f"""
+    <div style="background: rgba(14, 21, 38, 0.88); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border: 1.5px solid rgba(245, 185, 66, 0.35); border-radius: 12px; padding: 18px 22px; margin: 18px 0 24px 0; box-shadow: 0 10px 30px rgba(0,0,0,0.4);">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.08); padding-bottom: 10px;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <span style="font-size: 24px;">🤖</span>
+                <div>
+                    <div style="font-family: 'Space Grotesk', sans-serif; font-size: 1.15rem; font-weight: 800; color: #F9FAFB; letter-spacing: -0.01em;">
+                        ANTIGRAVITY AI MARKET INTELLIGENCE ASSISTANT
+                    </div>
+                    <div style="font-size: 0.75rem; color: #94A3B8; font-weight: 600;">
+                        Context: <b style="color: #F5B942;">{context_page}</b> • Direct Grounded Energy Intelligence & Visual Flowcharts
+                    </div>
+                </div>
+            </div>
+            <div style="background: rgba(0,0,0,0.35); border: 1px solid rgba(255, 255, 255, 0.12); padding: 5px 12px; border-radius: 999px; font-family: 'Space Grotesk', sans-serif; font-size: 0.76rem; font-weight: 700; color: {status_color};">
+                {status_text}
+            </div>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    chip_cols = st.columns(len(suggested))
+    selected_query = None
+    for idx, (label, query_str) in enumerate(suggested):
+        with chip_cols[idx]:
+            if st.button(label, key=f"{pfx}_chip_{idx}", use_container_width=True, type="secondary"):
+                selected_query = query_str
+                st.session_state[f"{pfx}_active_q"] = query_str
+
+    current_val = selected_query or st.session_state.get(f"{pfx}_active_q", "")
+
+    c_in, c_btn = st.columns([5, 1], gap="small", vertical_alignment="center")
+    with c_in:
+        user_input = st.text_input(
+            "Ask any energy question (taxes, suppliers, prices, shipping, quotas):",
+            value=current_val,
+            placeholder="e.g. who is the main supplier of fuel from saudi, or what is petrol rate in Prayagraj?",
+            key=f"{pfx}_input",
+            label_visibility="collapsed"
+        )
+    with c_btn:
+        ask_clicked = st.button("Ask AI ⚡", key=f"{pfx}_submit_btn", use_container_width=True, type="primary")
+
+    active_run_q = None
+    if ask_clicked and user_input.strip():
+        active_run_q = user_input.strip()
+    elif selected_query:
+        active_run_q = selected_query
+
+    resp_key = f"{pfx}_resp_cache"
+    if active_run_q:
+        with st.spinner("Analyzing energy intelligence marts & running Antigravity AI..."):
+            ans = AIEnergyMarketAnalyst.answer_question(
+                question=active_run_q,
+                session_id=sess_id,
+                allow_free_autonomous=True,
+                enforce_user_daily_limit=True
+            )
+            st.session_state[resp_key] = ans
+
+    if resp_key in st.session_state and st.session_state[resp_key]:
+        resp = st.session_state[resp_key]
+        st.markdown("---")
+        if resp.get("is_security_blocked"):
+            render_html("""<div style="padding:6px 14px;background:rgba(239, 68, 68, 0.2);color:#EF4444;font-weight:700;font-size:12.5px;border:1.5px solid #EF4444;border-radius:4px;margin-bottom:8px;">🚫 Security Alert • Access Blocked</div>""")
+        elif "Daily Free Quota Finished" in resp.get("topic", "") or "Daily Quota Limit Reached" in resp.get("topic", ""):
+            render_html("""<div style="padding:6px 14px;background:rgba(245, 185, 66, 0.2);color:#F5B942;font-weight:700;font-size:12.5px;border:1.5px solid #F5B942;border-radius:4px;margin-bottom:8px;">⏳ Daily Quota Reached (3/3 Used) • Resets After 24 Hours</div>""")
+        else:
+            render_html("""<div style="padding:4px 12px;background:rgba(16, 185, 129, 0.2);color:#10B981;font-weight:700;font-size:12px;border:1px solid #10B981;border-radius:4px;display:inline-block;margin-bottom:8px;">🟢 Antigravity AI Engine Verified Response</div>""")
+
+        st.markdown(resp["answer_text"])
+
+        if resp.get("visualization_fig") is not None:
+            st.markdown("#### 📊 Grounded Scenario & Visual Intelligence Projection")
+            st.plotly_chart(resp["visualization_fig"], width="stretch", theme=None)
+
+        if resp.get("data_records"):
+            with st.expander("📑 Underlying Verified Relational Mart Records", expanded=False):
+                rec_df = pd.DataFrame(resp["data_records"])
+                st.dataframe(rec_df, width="stretch", hide_index=True)
+                render_csv_download(rec_df, f"ai_grounded_{pfx}.csv")
+
+        if resp.get("sources_cited"):
+            st.caption(f"Verified Provenance: {', '.join(resp['sources_cited'])}")
+
+
+# ==============================================================================
+# 5c. COMPACT EDITORIAL TOP NAVIGATION
 # ==============================================================================
 def render_command_strip(
     active_page: str = "Overview",
     region_tag: str = "GLOBAL",
     product_tag: str = "CRUDE & REFINED",
-    reporting_period: str = "2024–2025"
+    reporting_period: str = "2024–2025",
+    show_universal_header: bool = True
 ):
     """Renders the top navigation bar with brand, links, and status in dark glassmorphism."""
     apply_theme()
+    if show_universal_header:
+        render_universal_top_header(active_page_name=active_page, key_prefix=f"cs_{active_page}")
+
+    from src.localization.i18n import t, get_current_language
+    current_lang = get_current_language()
+
     health = db_manager.check_health()
     engine_name = "MYSQL 8.4" if health["dialect"] == "mysql" else "LOCAL CACHE"
     logo_svg = get_brand_logo_svg(width=290, height=48)
@@ -1820,19 +2197,17 @@ def render_command_strip(
     nav_html = f"""<div style="background: rgba(14, 21, 38, 0.85); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.12); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); border-radius: 10px; padding: 12px 20px; margin: -0.5rem 0 1.75rem 0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px;">
 <div style="display: flex; align-items: center; gap: 14px;">{logo_svg}</div>
 <div style="display: flex; align-items: center; gap: 8px; font-family: 'Space Grotesk', sans-serif; font-size: 13px; font-weight: 700; flex-wrap: wrap;">
-<a href="#ch-01" style="color: #F9FAFB; text-decoration: none; padding: 4px 8px; border-radius: 4px; transition: color 0.15s ease;">Overview</a>
+<a href="#ch-01" style="color: #F9FAFB; text-decoration: none; padding: 4px 8px; border-radius: 4px; transition: color 0.15s ease;">{t('nav_overview', current_lang)}</a>
 <span style="color: rgba(255, 255, 255, 0.2);">•</span>
-<a href="#ch-02" style="color: #F9FAFB; text-decoration: none; padding: 4px 8px; border-radius: 4px;">Production</a>
+<a href="#ch-02" style="color: #F9FAFB; text-decoration: none; padding: 4px 8px; border-radius: 4px;">{t('chapter_02_title', current_lang)[:12]}</a>
 <span style="color: rgba(255, 255, 255, 0.2);">•</span>
-<a href="#ch-03" style="color: #F9FAFB; text-decoration: none; padding: 4px 8px; border-radius: 4px;">Trade</a>
+<a href="#ch-03" style="color: #F9FAFB; text-decoration: none; padding: 4px 8px; border-radius: 4px;">{t('nav_trade', current_lang)}</a>
 <span style="color: rgba(255, 255, 255, 0.2);">•</span>
-<a href="#ch-04" style="color: #F9FAFB; text-decoration: none; padding: 4px 8px; border-radius: 4px;">Fuel Prices</a>
+<a href="#ch-04" style="color: #F9FAFB; text-decoration: none; padding: 4px 8px; border-radius: 4px;">{t('chapter_04_title', current_lang)[:14]}</a>
 <span style="color: rgba(255, 255, 255, 0.2);">•</span>
-<a href="#ch-05" style="color: #F9FAFB; text-decoration: none; padding: 4px 8px; border-radius: 4px;">India Fuel</a>
+<a href="#ch-05" style="color: #F9FAFB; text-decoration: none; padding: 4px 8px; border-radius: 4px;">{t('nav_india', current_lang)}</a>
 <span style="color: rgba(255, 255, 255, 0.2);">•</span>
-<a href="#ch-06" style="color: #F9FAFB; text-decoration: none; padding: 4px 8px; border-radius: 4px;">Companies</a>
-<span style="color: rgba(255, 255, 255, 0.2);">•</span>
-<a href="#ch-11" style="color: #F9FAFB; text-decoration: none; padding: 4px 8px; border-radius: 4px;">Data Trust</a>
+<a href="#ch-11" style="color: #F9FAFB; text-decoration: none; padding: 4px 8px; border-radius: 4px;">{t('nav_data_trust', current_lang)}</a>
 </div>
 <div style="display: flex; align-items: center; gap: 12px;">
 <span style="background: rgba(16, 185, 129, 0.18); color: #34D399; border: 1px solid rgba(16, 185, 129, 0.4); padding: 4px 12px; border-radius: 999px; font-family: 'Space Grotesk', sans-serif; font-size: 12px; font-weight: 700;">● {engine_name} VERIFIED</span>
@@ -2070,6 +2445,7 @@ def get_atlas_plotly_theme(height: int = 420, **overrides) -> Dict[str, Any]:
     theme = dict(
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
+        dragmode=False,
         font=dict(
             family="'Space Grotesk', 'Inter', -apple-system, sans-serif",
             color="#F9FAFB",
@@ -2113,9 +2489,17 @@ def apply_atlas_theme(fig, height: int = 460, **kwargs):
     return apply_clean_layout(fig, height=height, **kwargs)
 
 
-def render_page_header(title: str, subtitle: str, source_tag: str, observation_date: str):
-    """Renders a modern dark glass page banner for drill-down pages."""
+def render_page_header(
+    title: str,
+    subtitle: str,
+    source_tag: str,
+    observation_date: str,
+    show_universal_header: bool = True
+):
+    """Renders a modern dark glass page banner for drill-down pages with universal language and news header."""
     apply_theme()
+    if show_universal_header:
+        render_universal_top_header(active_page_name=title, key_prefix=f"hdr_{title}")
     header_html = f"""<div style="background: rgba(14, 21, 38, 0.8); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border: 1px solid rgba(255, 255, 255, 0.12); box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4); border-radius: 8px; padding: 22px 26px; margin-bottom: 24px;">
 <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 10px;">
 <div>

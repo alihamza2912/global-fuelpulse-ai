@@ -467,3 +467,53 @@ def test_enterprise_security_shield_blocks_and_terminates():
     assert "Security Violation" in res4["topic"]
     assert "Access Terminated" in res4["answer_text"]
 
+
+def test_saudi_supplier_query_accuracy_and_no_meta_headings():
+    """Verifies that 'who is the main supplier of fuel from saudi' routes to Saudi Aramco, not Tax Engine, and has no meta headings."""
+    from src.ai.nl_query_engine import question_cache
+    question_cache.clear()
+
+    q = "who is the main supplier of fuel from saudi"
+    res = AIEnergyMarketAnalyst.answer_question(
+        question=q,
+        session_id="test_supplier_accuracy_sess",
+        bypass_session_limits=True,
+        allow_free_autonomous=True
+    )
+
+    assert "Saudi Aramco" in res["topic"]
+    assert "Saudi Aramco" in res["answer_text"]
+    assert "Ras Tanura" in res["answer_text"] or "SASREF" in res["answer_text"]
+    # Verify no meta headings
+    assert "In simple English:" not in res["answer_text"]
+    assert "Simple English Explanation" not in res["answer_text"]
+    assert "In simple everyday English:" not in res["answer_text"]
+    # Verify Tax Engine didn't hijack it
+    assert "15% VAT" not in res["answer_text"]
+    assert "0% personal income tax" not in res["answer_text"]
+    # Verify visual flowchart and dragmode=False
+    assert "flowchart" in res["answer_text"]
+    fig = res.get("visualization_fig")
+    assert fig is not None
+    assert fig.layout.dragmode is False
+
+
+def test_site_wide_language_synchronization():
+    """Verifies that language state synchronizes across pages and translation keys resolve accurately."""
+    from src.localization.i18n import get_current_language, set_language, t
+
+    set_language("hi")
+    assert get_current_language() == "hi"
+    assert "ग्लोबल" in t("brand_title", "hi")
+    assert "कमांड सेंटर" in t("sidebar_01_command", "hi")
+    assert "ईंधन एक्सप्लोरर" in t("sidebar_02_explorer", "hi")
+
+    set_language("es")
+    assert get_current_language() == "es"
+    assert "Centro de Mando" in t("sidebar_01_command", "es")
+
+    set_language("en")
+    assert get_current_language() == "en"
+    assert "Command Center" in t("sidebar_01_command", "en")
+
+

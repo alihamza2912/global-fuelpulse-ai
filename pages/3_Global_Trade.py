@@ -24,6 +24,7 @@ import plotly.express as px
 import plotly.graph_objects as go
 from src.ui_components import (
     render_command_strip,
+    render_universal_ai_assistant,
     render_signal_rail,
     render_instrument_card,
     render_csv_download,
@@ -45,12 +46,14 @@ from src.ui_components import (
     COLOR_WHITE,
     COLOR_CREAM
 )
+from src.localization.i18n import t, get_current_language
 from src.analytics.trade_analytics import PetroleumTradeAnalytics
 from src.transformations.normalizers import normalize_country_iso3
 
 apply_theme()
+current_lang = get_current_language()
 
-# 1. Top Enterprise Command Strip
+# 1. Top Enterprise Command Strip with Synchronized Universal Header
 render_command_strip(
     active_page="Petroleum Logistics Intelligence",
     region_tag="MARITIME CORRIDORS & PORTS",
@@ -58,8 +61,11 @@ render_command_strip(
     reporting_period="2025–2026 LIVE CUSTOMS RADAR"
 )
 
+# 1b. Integrated Universal AI Assistant Dock
+render_universal_ai_assistant(context_page="Global Petroleum Trade", key_prefix="p3_trade")
+
 # 2. Controls & Parameter Bar
-render_html('<div class="atlas-section-title">LOGISTICS RADAR CONTROLS</div>')
+render_html(f'<div class="atlas-section-title">{t("sidebar_03_trade", current_lang)} — LOGISTICS RADAR CONTROLS</div>')
 tr_c1, tr_c2, tr_c3, tr_c4 = st.columns([3, 2, 3, 2])
 
 with tr_c1:

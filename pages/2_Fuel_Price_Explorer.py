@@ -24,6 +24,7 @@ import plotly.express as px
 import plotly.graph_objects as go
 from src.ui_components import (
     render_page_header,
+    render_universal_ai_assistant,
     render_instrument_card,
     render_csv_download,
     apply_theme,
@@ -33,18 +34,23 @@ from src.ui_components import (
     COLOR_AMBER,
     COLOR_WHITE
 )
+from src.localization.i18n import t, get_current_language
 from src.analytics.price_analytics import FuelPriceAnalytics
 from src.ingestion.orchestrator import orchestrator
 from config.settings import settings
 
 apply_theme()
+current_lang = get_current_language()
 
 render_page_header(
-    title="LIVE GLOBAL FUEL PRICE EXPLORER",
-    subtitle="Retail Gasoline & Diesel Price Benchmarking, Trends, and Currency Conversions",
+    title=t("sidebar_02_explorer", current_lang),
+    subtitle=t("chapter_04_subtitle", current_lang),
     source_tag="US EIA • India PPAC • EC Oil Bulletin • GlobalPetrolPrices",
     observation_date="Weekly & Daily Reporting Intervals"
 )
+
+# Integrated Universal AI Assistant
+render_universal_ai_assistant(context_page="Fuel Price Explorer", key_prefix="p2_price")
 
 # Interactive Filters
 f_col1, f_col2, f_col3, f_col4 = st.columns([2, 2, 2, 2])

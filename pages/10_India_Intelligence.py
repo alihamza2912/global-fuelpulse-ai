@@ -24,6 +24,7 @@ import plotly.express as px
 import plotly.graph_objects as go
 from src.ui_components import (
     render_page_header,
+    render_universal_ai_assistant,
     render_instrument_card,
     render_csv_download,
     apply_theme,
@@ -34,19 +35,24 @@ from src.ui_components import (
     COLOR_AMBER,
     COLOR_WHITE
 )
+from src.localization.i18n import t, get_current_language
 from src.database.connection import db_manager
 from src.analytics.global_tax_engine import GlobalTaxEngine
 from sqlalchemy import text
 
 
 apply_theme()
+current_lang = get_current_language()
 
 render_page_header(
-    title="INDIA ENERGY INTELLIGENCE",
-    subtitle="PPAC Official Metro Fuel Prices, Indian Crude Basket Benchmarks, and Fleet Cost Optimization",
+    title=t("sidebar_10_india", current_lang),
+    subtitle=t("chapter_05_subtitle", current_lang),
     source_tag="PPAC • MoPNG • data.gov.in",
     observation_date="Daily & Monthly Official Series"
 )
+
+# Integrated Universal AI Assistant Dock
+render_universal_ai_assistant(context_page="India Energy Intelligence", key_prefix="p10_india")
 
 # Fetch Metro Fuel Prices
 query = """

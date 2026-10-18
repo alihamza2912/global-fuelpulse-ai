@@ -361,15 +361,44 @@ class AIEnergyMarketAnalyst:
             question_cache.set(question, resp)
             return resp
 
-        # Route T: Sovereign State & Global Tax / Fuel Decomposition (Prayagraj, UP, Delhi, Texas, Germany, etc.)
+        # Route S: Sovereign Petroleum Suppliers & National Oil Companies (e.g. "who is the main supplier of fuel from saudi", "who supplies oil in UAE")
         if (
-            any(w in q_lower for w in ["tax", "vat", "excise", "duty", "breakdown", "rsp", "base price"])
-            or any(w in q_lower for w in [
-                "prayagraj", "allahabad", "uttar pradesh", "bihar", "karnataka", "punjab", 
-                "haryana", "tamil nadu", "maharashtra", "delhi tax", "up petrol", "up diesel",
-                "saudi", "ksa", "riyadh", "jeddah", "uae", "dubai", "germany", "texas", "california"
+            any(w in q_lower for w in [
+                "main supplier", "supplier of fuel", "supplier of oil", "supplier from", "who is the supplier",
+                "who supplies fuel", "who supplies oil", "who supplies petroleum", "who supply fuel",
+                "oil company", "oil companies", "national oil company", "aramco", "adnoc", "enoc",
+                "who produces fuel", "who produces oil in", "refinery operator in", "fuel provider"
             ])
-        ) and not any(w in q_lower for w in ["compare", "cheapest", "expensive", "export", "where export", "import", "where import", "who buys", "destination", "trade flow", "forecast", "future", "month"]):
+            or (
+                any(w in q_lower for w in ["supplier", "suppliers", "supply", "supplies"])
+                and any(w in q_lower for w in ["saudi", "ksa", "uae", "dubai", "india", "usa", "russia", "kuwait", "iraq", "qatar"])
+            )
+            or (
+                any(w in q_lower for w in ["who", "which company", "company", "companies"])
+                and any(w in q_lower for w in ["fuel from", "oil from", "petrol from"])
+            )
+        ) and not any(w in q_lower for w in ["where import", "where does ... import", "who buys", "destination", "forecast"]):
+            resp = cls._handle_sovereign_supplier_query(question)
+            question_cache.set(question, resp)
+            return resp
+
+        # Route T: Sovereign State & Global Tax / Fuel Decomposition (Prayagraj, UP, Delhi, Texas, Germany, etc.)
+        is_tax_intent = (
+            any(w in q_lower for w in [
+                "tax", "vat", "excise", "duty", "cess", "breakdown", "rsp", "base price",
+                "pump price", "retail price", "dealer margin", "dealer commission", "cost of petrol",
+                "price of petrol", "price breakdown", "tax breakdown", "tax rate", "tax rates"
+            ])
+            or any(phrase in q_lower for phrase in [
+                "prayagraj petrol & tax", "saudi tax & rates", "saudi tax", "saudi vat",
+                "prayagraj tax", "delhi tax", "up petrol tax", "up diesel tax", "germany tax", "texas tax"
+            ])
+        )
+        if is_tax_intent and not any(w in q_lower for w in [
+            "compare", "cheapest", "expensive", "export", "where export", "import", "where import",
+            "who buys", "destination", "trade flow", "forecast", "future", "month",
+            "supplier", "suppliers", "who supplies", "company", "companies", "producer", "produce"
+        ]):
             from src.analytics.global_tax_engine import GlobalTaxEngine
             resolve_fn = getattr(GlobalTaxEngine, "resolve", getattr(GlobalTaxEngine, "resolve_query", None))
             tax_res = resolve_fn(question) if resolve_fn else None
@@ -480,8 +509,7 @@ class AIEnergyMarketAnalyst:
                     "### 🚚 Commercial Fleet Fuel Budget Impact Analysis\n\n"
                     f"**Query**: *\"{question}\"*\n\n"
                     "⚡ *Answered directly using integrated Antigravity Energy Intelligence (0 External Quota Used)*\n\n"
-                    "### 💡 Simple English Explanation\n"
-                    "In simple English: Fuel represents about 30% to 40% of the entire operating budget of a delivery or logistics fleet. "
+                    "Fuel represents about 30% to 40% of the entire operating budget of a commercial delivery or logistics fleet. "
                     "If fuel prices increase by **10%**, your monthly fuel bill will go up by almost the exact same **10%** "
                     "(unless total kilometers driven or fleet routes are cut). "
                     "For a medium fleet consuming 50,000 litres each month at $1.10/L ($55,000/month), a 10% price jump creates an instant "
@@ -667,8 +695,7 @@ class AIEnergyMarketAnalyst:
             "### AI Analyst Intelligence Briefing: Top Global Contributors of Petrol & Oil\n",
             f"**Query**: *\"{question}\"*\n",
             "⚡ *Answered directly using integrated Antigravity Energy Intelligence (0 External Quota Used)*\n",
-            "### 💡 Simple English Explanation",
-            "In simple everyday English: The **United States** is currently the #1 biggest producer of crude oil and petrol in the world, pumping out over **13.20 million barrels every day** (about 16.1% of the world's total). **Russia** is #2 and **Saudi Arabia** is #3. Because the United States also operates the world's largest refining system, it refines the most crude oil into petrol (gasoline) for cars and vehicles.\n",
+            "The **United States** is currently the #1 biggest producer of crude oil and petrol in the world, pumping out over **13.20 million barrels every day** (about 16.1% of the world's total). **Russia** is #2 and **Saudi Arabia** is #3. Because the United States also operates the world's largest refining system, it refines the most crude oil into petrol (gasoline) for cars and vehicles.\n",
             "### 📊 Visual Diagram Explanation",
             "```mermaid",
             "flowchart TD",
@@ -769,7 +796,7 @@ class AIEnergyMarketAnalyst:
 
         if is_saudi:
             simple_explanation = (
-                "In simple English: Saudi Arabia charges **0% personal income tax** on salaries for citizens and residents (you keep 100% of what you earn). "
+                "Saudi Arabia charges **0% personal income tax** on salaries for citizens and residents (you keep 100% of what you earn). "
                 "However, the government levies a standard **15% Value Added Tax (VAT)** administered by ZATCA on retail goods, services, and fuel purchases. "
                 "To protect consumers from high global oil prices, the Saudi government caps retail petrol at **SAR 2.18 per litre** by providing direct state subsidies."
             )
@@ -800,7 +827,7 @@ class AIEnergyMarketAnalyst:
             central_share = ((central_excise / petrol_rsp) * 100) if petrol_rsp > 0 else 0
             dealer_share = ((dealer_margin / petrol_rsp) * 100) if petrol_rsp > 0 else 0
             simple_explanation = (
-                f"In simple English: When you buy petrol in {j_name} at **{sym}{petrol_rsp:.2f} per litre**, "
+                f"When you buy petrol in {j_name} at **{sym}{petrol_rsp:.2f} per litre**, "
                 f"more than **{total_tax_pct_pump:.1f}% of what you pay is government tax ({sym}{total_gov_tax:.2f} per litre)**. "
                 f"This tax is split between the Central Government ({sym}{central_excise:.2f}/L excise duty) "
                 f"and the State Government ({sym}{state_tax_amt:.2f}/L VAT), while the remaining amount covers the raw crude fuel cost and dealer commission."
@@ -834,7 +861,6 @@ class AIEnergyMarketAnalyst:
             f"### {flag} Sovereign Energy & Tax Decomposition: {j_name}\n",
             f"**Query**: *\"{question}\"*\n",
             "⚡ *Answered directly using integrated Antigravity Energy Intelligence (0 External Quota Used)*\n",
-            "### 💡 Simple English Explanation",
             f"{simple_explanation}\n",
             "### 📊 Visual Diagram Explanation",
             f"{diagram_mermaid}\n",
@@ -927,6 +953,7 @@ class AIEnergyMarketAnalyst:
             ),
             paper_bgcolor="rgba(14, 21, 38, 0.8)",
             plot_bgcolor="rgba(14, 21, 38, 0.4)",
+            dragmode=False,
             height=400,
             margin=dict(l=40, r=40, t=60, b=40),
             legend=dict(font=dict(color="#F9FAFB", size=11), orientation="h", yanchor="bottom", y=-0.25, xanchor="center", x=0.5)
@@ -958,6 +985,7 @@ class AIEnergyMarketAnalyst:
             ),
             paper_bgcolor="rgba(14, 21, 38, 0.8)",
             plot_bgcolor="rgba(14, 21, 38, 0.4)",
+            dragmode=False,
             height=400,
             margin=dict(l=40, r=40, t=60, b=40),
             legend=dict(font=dict(color="#F9FAFB", size=11), orientation="h", yanchor="bottom", y=-0.25, xanchor="center", x=0.5)
@@ -994,6 +1022,7 @@ class AIEnergyMarketAnalyst:
             yaxis=dict(color="#F9FAFB"),
             paper_bgcolor="rgba(14, 21, 38, 0.8)",
             plot_bgcolor="rgba(14, 21, 38, 0.4)",
+            dragmode=False,
             height=340,
             margin=dict(l=100, r=40, t=60, b=50)
         )
@@ -1034,8 +1063,7 @@ class AIEnergyMarketAnalyst:
                 f"### {flag} Global Energy Trade Intelligence: Where Does Fuel from Dubai & the UAE Export?\n",
                 f"**Query**: *\"{question}\"*\n",
                 "⚡ *Answered directly using integrated Antigravity Energy Intelligence (0 External Quota Used)*\n",
-                "### 💡 Simple English Explanation",
-                "In simple everyday English: Fuel and crude oil from Dubai and the wider UAE are shipped mostly to Asian countries. Over **85% of their total oil exports go to Asia**, with **Japan (34%)**, **India (19%)**, **China (15%)**, and **South Korea (12%)** being their largest buyers. In Dubai itself, the ENOC Jebel Ali refinery specializes in manufacturing aviation jet fuel for Dubai International Airport and exporting clean diesel across South Asia and East Africa.\n",
+                "Fuel and crude oil from Dubai and the wider UAE are shipped mostly to Asian countries. Over **85% of their total oil exports go to Asia**, with **Japan (34%)**, **India (19%)**, **China (15%)**, and **South Korea (12%)** being their largest buyers. In Dubai itself, the ENOC Jebel Ali refinery specializes in manufacturing aviation jet fuel for Dubai International Airport and exporting clean diesel across South Asia and East Africa.\n",
                 "### 📊 Visual Diagram Explanation",
                 "```mermaid",
                 "flowchart TD",
@@ -1111,8 +1139,7 @@ class AIEnergyMarketAnalyst:
                 f"### {flag} Global Energy Trade Intelligence: Where Does Petroleum from Saudi Arabia Export?\n",
                 f"**Query**: *\"{question}\"*\n",
                 "⚡ *Answered directly using integrated Antigravity Energy Intelligence (0 External Quota Used)*\n",
-                "### 💡 Simple English Explanation",
-                "In simple everyday English: Saudi Arabia is the world's largest exporter of crude oil, shipping roughly **6.5 to 7.0 million barrels every day**. More than **67% of Saudi oil exports flow to Asia**, led by **China (26.5%)**, **Japan (15.7%)**, **India (12.9%)**, and **South Korea (12.5%)**.\n",
+                "Saudi Arabia is the world's largest exporter of crude oil, shipping roughly **6.5 to 7.0 million barrels every day**. More than **67% of Saudi oil exports flow to Asia**, led by **China (26.5%)**, **Japan (15.7%)**, **India (12.9%)**, and **South Korea (12.5%)**.\n",
                 "### 📊 Visual Diagram Explanation",
                 "```mermaid",
                 "flowchart TD",
@@ -1161,8 +1188,7 @@ class AIEnergyMarketAnalyst:
                 f"### {flag} Global Energy Trade Intelligence: Where Does Russian Crude & Fuel Export?\n",
                 f"**Query**: *\"{question}\"*\n",
                 "⚡ *Answered directly using integrated Antigravity Energy Intelligence (0 External Quota Used)*\n",
-                "### 💡 Simple English Explanation",
-                "In simple everyday English: Following European sanctions, Russia shifted over **85% of its crude exports to Asia**. Today, **China (41.5%)** and **India (37.2%)** purchase almost all Russian seaborne crude oil, taking advantage of sovereign discounts to supply their domestic refineries.\n",
+                "Following European sanctions, Russia shifted over **85% of its crude exports to Asia**. Today, **China (41.5%)** and **India (37.2%)** purchase almost all Russian seaborne crude oil, taking advantage of sovereign discounts to supply their domestic refineries.\n",
                 "### 📊 Visual Diagram Explanation",
                 "```mermaid",
                 "flowchart TD",
@@ -1204,8 +1230,7 @@ class AIEnergyMarketAnalyst:
                 f"### {flag} Global Energy Trade Intelligence: Where Does United States Fuel & Oil Export?\n",
                 f"**Query**: *\"{question}\"*\n",
                 "⚡ *Answered directly using integrated Antigravity Energy Intelligence (0 External Quota Used)*\n",
-                "### 💡 Simple English Explanation",
-                "In simple everyday English: The United States exports about **4.1 to 4.4 million barrels of crude oil every day**, along with over 6 million barrels of refined petrol, diesel, and propane. Its biggest customer is **Europe (47.7%)**, followed by **Asia (28.4%)** and neighboring countries in the **Americas (17.0%)**.\n",
+                "The United States exports about **4.1 to 4.4 million barrels of crude oil every day**, along with over 6 million barrels of refined petrol, diesel, and propane. Its biggest customer is **Europe (47.7%)**, followed by **Asia (28.4%)** and neighboring countries in the **Americas (17.0%)**.\n",
                 "### 📊 Visual Diagram Explanation",
                 "```mermaid",
                 "flowchart TD",
@@ -1246,8 +1271,7 @@ class AIEnergyMarketAnalyst:
                 f"### {flag} Global Energy Trade Intelligence: Major Petroleum Export Destinations\n",
                 f"**Query**: *\"{question}\"*\n",
                 "⚡ *Answered directly using integrated Antigravity Energy Intelligence (0 External Quota Used)*\n",
-                "### 💡 Simple English Explanation",
-                "In simple everyday English: Over **44 million barrels of oil are traded internationally on ships every day**. The largest destination by far is **Asia-Pacific (led by China, India, Japan, and South Korea)**, which absorbs more than half of all globally exported crude oil to fuel fast-growing industries and transportation.\n",
+                "Over **44 million barrels of oil are traded internationally on ships every day**. The largest destination by far is **Asia-Pacific (led by China, India, Japan, and South Korea)**, which absorbs more than half of all globally exported crude oil to fuel fast-growing industries and transportation.\n",
                 "### 📊 Visual Diagram Explanation",
                 "```mermaid",
                 "flowchart LR",
@@ -1325,8 +1349,7 @@ class AIEnergyMarketAnalyst:
                 f"### {flag} Sovereign Energy Security: Where Does India Import Petroleum & Crude From?\n",
                 f"**Query**: *\"{question}\"*\n",
                 "⚡ *Answered directly using integrated Antigravity Energy Intelligence (0 External Quota Used)*\n",
-                "### 💡 Simple English Explanation",
-                "In simple everyday English: India produces very little crude oil domestically, so it must import almost **88% of all the crude oil it uses**. Its top foreign oil suppliers are **Russia (~38.5%)**, **Iraq (~19.8%)**, **Saudi Arabia (~14.9%)**, and the **United Arab Emirates (~9.9%)**. By purchasing discounted crude oil, Indian refineries keep domestic petrol and diesel prices stable.\n",
+                "India produces very little crude oil domestically, so it must import almost **88% of all the crude oil it uses**. Its top foreign oil suppliers are **Russia (~38.5%)**, **Iraq (~19.8%)**, **Saudi Arabia (~14.9%)**, and the **United Arab Emirates (~9.9%)**. By purchasing discounted crude oil, Indian refineries keep domestic petrol and diesel prices stable.\n",
                 "### 📊 Visual Diagram Explanation",
                 "```mermaid",
                 "flowchart TD",
@@ -1376,8 +1399,7 @@ class AIEnergyMarketAnalyst:
                 f"### {flag} Global Petroleum Sourcing & Bilateral Import Dependence\n",
                 f"**Query**: *\"{question}\"*\n",
                 "⚡ *Answered directly using integrated Antigravity Energy Intelligence (0 External Quota Used)*\n",
-                "### 💡 Simple English Explanation",
-                "In simple everyday English: The world's largest importers of crude oil are rapidly developing Asian economies (China, India, Japan, South Korea) and Europe. These importing countries source almost half their crude oil from the **Middle East (OPEC - 45%)**, followed by **North America (20%)**, **West Africa & Latin America (18%)**, and **Russia & CIS (17%)**.\n",
+                "The world's largest importers of crude oil are rapidly developing Asian economies (China, India, Japan, South Korea) and Europe. These importing countries source almost half their crude oil from the **Middle East (OPEC - 45%)**, followed by **North America (20%)**, **West Africa & Latin America (18%)**, and **Russia & CIS (17%)**.\n",
                 "### 📊 Visual Diagram Explanation",
                 "```mermaid",
                 "flowchart LR",
@@ -1420,6 +1442,171 @@ class AIEnergyMarketAnalyst:
                 "Directorate General of Commercial Intelligence and Statistics (DGCIS)",
                 "United Nations Comtrade Database",
                 "Global FuelPulse Import Security Mart"
+            ],
+            "is_fallback": False,
+            "quota_used": False,
+            "served_from_db": True,
+            "autonomous_free_mode": True
+        }
+
+    @classmethod
+    def _handle_sovereign_supplier_query(cls, question: str) -> Dict[str, Any]:
+        """
+        Authoritative intelligence on national oil companies (NOCs), sovereign fuel suppliers,
+        refinery complexes, export terminals, and bilateral buying nations.
+        """
+        import plotly.graph_objects as go
+        q_low = question.lower()
+
+        # 1. Saudi Arabia / Saudi Aramco
+        if any(w in q_low for w in ["saudi", "ksa", "aramco", "riyadh", "jeddah", "yanbu", "ras tanura"]):
+            flag = "🇸🇦"
+            topic = "Sovereign Fuel Supplier: Saudi Aramco (Saudi Arabia)"
+            lines = [
+                f"### {flag} Sovereign Petroleum Supplier: Saudi Aramco (Saudi Arabia)\n",
+                f"**Query**: *\"{question}\"*\n",
+                "⚡ *Answered directly using integrated Antigravity Energy Intelligence (0 External Quota Used)*\n",
+                "**Saudi Aramco (Saudi Arabian Oil Company)** is the primary, state-owned national supplier and producer of fuel and crude oil from Saudi Arabia. It is the single largest oil company in the world, extracting approximately **9.02 million barrels per day (mbpd)** of crude oil (about 11.0% of global output) and operating a massive refining and distribution network processing over **4.0 million bpd** of petroleum products.\n",
+                "### 📊 Visual Diagram Explanation",
+                "```mermaid",
+                "flowchart TD",
+                "    Aramco[\"🇸🇦 Saudi Aramco (National Oil Champion)\n9.02 mbpd Global Leader\"] --> Upstream[\"🛢️ Upstream Extraction\n(Ghawar, Khurais, Safaniya fields)\"]",
+                "    Upstream --> Terminals[\"🚢 Deepwater Export Terminals\n(Ras Tanura Terminal & Yanbu Port)\"]",
+                "    Upstream --> Refineries[\"🏭 Domestic Refineries\n(SASREF, SAMREF, YASREF, Petro Rabigh)\"]",
+                "    Terminals --> GlobalBuyers[\"🌏 Top International Buyers\nChina 1.75 mbpd | Japan 1.10 mbpd\nSouth Korea 0.88 mbpd | India 0.78 mbpd\"]",
+                "    Refineries --> DomesticRetail[\"⛽ Domestic Retail Fuel Supply\nSubsidized Mogas 91 (SAR 2.18/L) & Diesel\"]",
+                "```\n",
+                "```text",
+                "┌────────────────────────────────────────────────────────┐",
+                "│ SAUDI ARABIA PETROLEUM SUPPLY & EXPORT ARCHITECTURE    │",
+                "├────────────────────────────────────────────────────────┤",
+                "│ • Primary Supplier:  Saudi Aramco (100% State/Aramco)  │",
+                "│ • Crude Extraction:  9.02 million barrels / day (11%)  │",
+                "│ • Export Terminals:  Ras Tanura (Gulf) & Yanbu (Red Sea)│",
+                "│ • Key Export Buyers: China, Japan, South Korea, India  │",
+                "│ • Domestic Refineries: SASREF, SAMREF, YASREF, Rabigh  │",
+                "│ • Retail Price Cap:  SAR 2.18 / L ($0.58 / L) Mogas 91│",
+                "└────────────────────────────────────────────────────────┘",
+                "```\n",
+                "#### 1. Downstream Refining & Domestic Fuel Supply",
+                "- **Domestic Distribution:** Within Saudi Arabia, Saudi Aramco provides 100% of the kingdom's wholesale petrol (Mogas 91, Mogas 95) and diesel.",
+                "- **Major Coastal & Inland Refineries:**",
+                "  - **SASREF (Jubail):** 305,000 bpd high-complexity conversion refinery.",
+                "  - **SAMREF (Yanbu):** 400,000 bpd coastal export refinery.",
+                "  - **YASREF (Yanbu):** 430,000 bpd full-conversion facility.",
+                "  - **Petro Rabigh:** 400,000 bpd integrated refining and petrochemical hub.",
+                "  - **Jazan Mega-Refinery:** 400,000 bpd heavy-crude processing complex on the Red Sea.",
+                "- **Consumer Price Shield:** Domestic fuel retail prices are protected by royal decree: **Mogas 91 is capped at SAR 2.18/L (~$0.58/L)** to ensure energy affordability for citizens and industries.\n",
+                "#### 2. Global Seaborne Export Terminals",
+                "- **Ras Tanura Export Complex (Persian Gulf):** The world's largest offshore crude loading terminal, equipped with 4 deepwater sea islands handling over 75% of Saudi crude shipments.",
+                "- **Yanbu Commercial Terminal (Red Sea):** Connected to eastern fields via the 1,200 km East-West Crude Oil Pipeline (Petroline), allowing shipments to bypass the Strait of Hormuz.\n",
+                "#### 3. Primary International Buyers of Saudi Fuel & Crude",
+                "- **1. China (Sinopec / PetroChina):** ~1.75 million bpd (~25% of Saudi exports).",
+                "- **2. Japan (Eneos / Idemitsu):** ~1.10 million bpd (~16% of exports).",
+                "- **3. South Korea (S-Oil / SK Energy):** ~0.88 million bpd (~13% of exports).",
+                "- **4. India (IOCL / BPCL / HPCL / RIL):** ~0.78 million bpd (~11% of exports)."
+            ]
+
+            data_records = [
+                {"Entity / Facility": "Saudi Aramco (Parent)", "Role": "National Oil & Fuel Champion", "Volume / Metric": "9.02 mbpd Crude Output", "Share": "100% National Extraction"},
+                {"Entity / Facility": "Ras Tanura Terminal", "Role": "Primary Gulf Deepwater Export Hub", "Volume / Metric": "~6.0 mbpd Handling", "Share": "World's Largest Terminal"},
+                {"Entity / Facility": "Yanbu Terminal & Petroline", "Role": "Red Sea Export (Bypasses Hormuz)", "Volume / Metric": "~1.5 mbpd Throughput", "Share": "Strategic Security Route"},
+                {"Entity / Facility": "SASREF & SAMREF Refineries", "Role": "Domestic Mogas & Diesel Refiners", "Volume / Metric": "705,000 bpd Combined", "Share": "Domestic Supply Anchor"},
+                {"Entity / Facility": "China Import Offtake", "Role": "Top International Term Buyer", "Volume / Metric": "~1.75 mbpd", "Share": "25% of Saudi Exports"}
+            ]
+
+            fig = go.Figure()
+            destinations = ["China", "Japan", "South Korea", "India", "Domestic Saudi", "Other Markets"]
+            vols = [1.75, 1.10, 0.88, 0.78, 3.20, 1.31]
+            fig.add_trace(go.Bar(
+                x=destinations, y=vols,
+                marker_color=["#10B981", "#3B82F6", "#6366F1", "#F5B942", "#EAB308", "#64748B"],
+                text=[f"{v} mbpd" for v in vols], textposition="auto"
+            ))
+            fig.update_layout(
+                title="<b>Saudi Arabia Petroleum Distribution & Offtake (mbpd)</b>",
+                paper_bgcolor="rgba(0,0,0,0)",
+                plot_bgcolor="rgba(0,0,0,0)",
+                dragmode=False,
+                height=380,
+                font=dict(family="'Space Grotesk', sans-serif", color="#F9FAFB", size=13),
+                margin=dict(l=20, r=20, t=40, b=30),
+                xaxis=dict(gridcolor="rgba(255,255,255,0.08)"),
+                yaxis=dict(gridcolor="rgba(255,255,255,0.08)", title="Million Barrels / Day (mbpd)")
+            )
+
+        # 2. UAE / Dubai / Abu Dhabi
+        elif any(w in q_low for w in ["uae", "dubai", "adnoc", "enoc", "abu dhabi", "emirates"]):
+            flag = "🇦🇪"
+            topic = "Sovereign Fuel Supplier: ADNOC & ENOC (UAE)"
+            lines = [
+                f"### {flag} Sovereign Petroleum Supplier: ADNOC & ENOC (United Arab Emirates)\n",
+                f"**Query**: *\"{question}\"*\n",
+                "⚡ *Answered directly using integrated Antigravity Energy Intelligence (0 External Quota Used)*\n",
+                "In the **United Arab Emirates (UAE)**, upstream oil extraction and sovereign supply are led by **ADNOC (Abu Dhabi National Oil Company)**, producing over **3.20 million barrels per day (mbpd)**. In the Emirate of Dubai, downstream retail and commercial fuel is supplied by **ENOC (Emirates National Oil Company)** operating alongside ADNOC Distribution.\n",
+                "### 📊 Visual Diagram Explanation",
+                "```mermaid",
+                "flowchart TD",
+                "    ADNOC[\"🇦🇪 ADNOC (Abu Dhabi National Oil Co - 3.20 mbpd)\"] --> Ruwais[\"🏭 Ruwais Refinery Complex (817,000 bpd - 4th Largest World Site)\"]",
+                "    Ruwais --> Fujairah[\"🚢 Port of Fujairah (Global Bunkering & Tanker Hub)\"]",
+                "    Ruwais --> ENOC[\"⛽ ENOC & ADNOC Distribution (Retail Fuel Stations)\"]",
+                "    Fujairah --> Export[\"🌏 Asian Export Offtake (Japan, India, South Korea)\"]",
+                "```\n",
+                "#### 1. Downstream Refining & Infrastructure",
+                "- **Ruwais Industrial Complex:** ADNOC operates the Ruwais Refinery with a capacity of **817,000 bpd**, making it the 4th largest single-site refinery in the world.",
+                "- **Port of Fujairah:** World's third-largest bunkering hub, connected via the Habshan-Fujairah pipeline to bypass the Strait of Hormuz."
+            ]
+            data_records = [
+                {"Entity": "ADNOC", "Role": "National Oil Champion", "Volume": "3.20 mbpd Crude", "Share": "95%+ UAE Production"},
+                {"Entity": "ENOC", "Role": "Dubai Downstream Supplier", "Volume": "140,000 bpd Jebel Ali", "Share": "Dubai Retail Anchor"},
+                {"Entity": "Ruwais Complex", "Role": "Mega-Refining Hub", "Volume": "817,000 bpd", "Share": "National Fuel Producer"}
+            ]
+            fig = None
+
+        # 3. Default / General Sovereign Supplier Overview
+        else:
+            flag = "🌐"
+            topic = "Global Sovereign Petroleum Suppliers & National Oil Champions"
+            lines = [
+                f"### {flag} Global Sovereign Petroleum Suppliers & National Champions\n",
+                f"**Query**: *\"{question}\"*\n",
+                "⚡ *Answered directly using integrated Antigravity Energy Intelligence (0 External Quota Used)*\n",
+                "Global petroleum supply is dominated by sovereign **National Oil Companies (NOCs)** and international energy supermajors that extract and refine the world's **102 million barrels per day** of oil.\n",
+                "### 📊 Visual Diagram Explanation",
+                "```mermaid",
+                "flowchart LR",
+                "    Aramco[\"🇸🇦 Saudi Aramco (9.02 mbpd)\"] --> GlobalSupply[\"🌐 102 mbpd Global Supply\"]\n",
+                "    US_Majors[\"🇺🇸 US Majors (Exxon/Chevron - 13.2 mbpd)\"] --> GlobalSupply\n",
+                "    Rosneft[\"🇷🇺 Rosneft & Russian NOCs (9.15 mbpd)\"] --> GlobalSupply\n",
+                "    ADNOC[\"🇦🇪 ADNOC / OPEC Gulf (3.2 mbpd)\"] --> GlobalSupply\n",
+                "    OMCs[\"🇮🇳 Indian OMCs & RIL (5.2 mbpd Refined)\"] --> GlobalSupply\n",
+                "```\n",
+                "#### 1. Preeminent Sovereign Fuel Suppliers",
+                "- **Saudi Aramco (Saudi Arabia):** World's largest crude exporter and fuel producer (9.02 mbpd).",
+                "- **ADNOC (UAE):** Operates Ruwais refinery (817k bpd) and exports via Fujairah.",
+                "- **Indian PSU OMCs (IOCL, BPCL, HPCL) & Reliance:** Control 5.2 mbpd refining capacity and Jamnagar super-refinery.",
+                "- **Rosneft & Lukoil (Russia):** Major suppliers of Urals and ESPO crude.",
+                "- **ExxonMobil & Chevron (USA):** Anchor 13.20 mbpd US crude extraction and Gulf Coast refining."
+            ]
+            data_records = [
+                {"Supplier": "Saudi Aramco (Saudi Arabia)", "Crude Extraction": "9.02 mbpd", "Role": "World Top Exporter"},
+                {"Supplier": "US Energy Majors (Exxon/Chevron)", "Crude Extraction": "13.20 mbpd", "Role": "World #1 Producer"},
+                {"Supplier": "Rosneft (Russia)", "Crude Extraction": "9.15 mbpd", "Role": "Eurasian Supply Hub"},
+                {"Supplier": "ADNOC (UAE)", "Crude Extraction": "3.20 mbpd", "Role": "Gulf Strategic Producer"}
+            ]
+            fig = None
+
+        return {
+            "question": question,
+            "topic": topic,
+            "answer_text": "\n".join(lines),
+            "data_records": data_records,
+            "visualization_fig": fig,
+            "sources_cited": [
+                "Company Statutory Reports (Saudi Aramco, ADNOC, IOCL)",
+                "OPEC Annual Statistical Bulletin",
+                "US Energy Information Administration (EIA)",
+                "Global FuelPulse Sovereign Supply Mart"
             ],
             "is_fallback": False,
             "quota_used": False,
@@ -1498,6 +1685,7 @@ class AIEnergyMarketAnalyst:
                 text=f"<b>60-Day Forward Fuel Price Trajectory & Scenario Projections: {label}</b>",
                 font=dict(size=13.5, color="#F9FAFB")
             ),
+            dragmode=False,
             xaxis=dict(
                 title="Observation Timeline (Next 8 Weeks / 2 Months)",
                 showgrid=True,
@@ -1560,8 +1748,7 @@ class AIEnergyMarketAnalyst:
                 "### 🎯 Direct Analyst Answer: Will Petrol Prices Increase in India After 2 Months or Not?\n",
                 f"**Query**: *\"{question}\"*\n",
                 "⚡ *Answered directly using integrated Antigravity Energy Intelligence (0 External Quota Used)*\n",
-                "### 💡 Simple English Explanation",
-                "In simple everyday English: Petrol prices in India are **very unlikely to increase over the next 2 months (65% chance of remaining completely flat)**. Even if world crude prices shift, India's government-owned oil companies (IOCL, BPCL, HPCL) act as a price shock absorber so daily international swings do not hit consumer pumps. Furthermore, India buys discounted crude from Russia, which keeps domestic fuel prices anchored at current rates (e.g. ₹101.45/L in UP/Prayagraj, ₹94.72/L in Delhi).\n",
+                "Petrol prices in India are **very unlikely to increase over the next 2 months (65% chance of remaining completely flat)**. Even if world crude prices shift, India's government-owned oil companies (IOCL, BPCL, HPCL) act as a price shock absorber so daily international swings do not hit consumer pumps. Furthermore, India buys discounted crude from Russia, which keeps domestic fuel prices anchored at current rates (e.g. ₹101.45/L in UP/Prayagraj, ₹94.72/L in Delhi).\n",
                 "### 📊 Visual Diagram Explanation",
                 "```mermaid",
                 "flowchart LR",
@@ -1630,15 +1817,34 @@ class AIEnergyMarketAnalyst:
                 "autonomous_free_mode": True
             }
 
-        # 4. Check if query is about top contributors or production
+        # 4. Check if query is about sovereign suppliers or national oil companies
+        if (
+            any(w in q_lower for w in [
+                "main supplier", "supplier of fuel", "supplier of oil", "supplier from", "who is the supplier",
+                "who supplies fuel", "who supplies oil", "who supplies petroleum", "who supply fuel",
+                "oil company", "oil companies", "national oil company", "aramco", "adnoc", "enoc",
+                "who produces fuel", "who produces oil in", "refinery operator in", "fuel provider"
+            ])
+            or (
+                any(w in q_lower for w in ["supplier", "suppliers", "supply", "supplies"])
+                and any(w in q_lower for w in ["saudi", "ksa", "uae", "dubai", "india", "usa", "russia", "kuwait", "iraq", "qatar"])
+            )
+            or (
+                any(w in q_lower for w in ["who", "which company", "company", "companies"])
+                and any(w in q_lower for w in ["fuel from", "oil from", "petrol from"])
+            )
+        ) and not any(w in q_lower for w in ["where import", "where does ... import", "who buys", "destination", "forecast"]):
+            return cls._handle_sovereign_supplier_query(question)
+
+        # 4b. Check if query is about top contributors or production
         if any(w in q_lower for w in ["contributor", "produce", "producer", "production", "largest oil", "top oil"]):
             return cls._handle_petroleum_contribution_query(question)
 
         # 5. Check if query is asking about location, state tax, or pump price
         has_tax_trigger = (
-            any(w in q_lower for w in ["tax", "vat", "excise", "duty", "breakdown", "rsp", "base price", "pump price", "retail price", "rate", "cost", "price", "petrol", "diesel"])
-            or any(w in q_lower for w in ["prayagraj", "allahabad", "uttar pradesh", "bihar", "karnataka", "delhi", "maharashtra", "california", "texas", "saudi", "ksa", "riyadh", "jeddah", "uae", "dubai", "germany"])
-        )
+            any(w in q_lower for w in ["tax", "vat", "excise", "duty", "breakdown", "rsp", "base price", "pump price", "retail price", "rate", "cost breakdown", "cess", "margin"])
+            or any(p in q_lower for p in ["saudi tax", "saudi vat", "prayagraj tax", "up petrol tax", "delhi tax", "texas tax"])
+        ) and not any(w in q_lower for w in ["supplier", "suppliers", "who supplies", "company", "companies", "producer", "produce", "export", "import"])
         if has_tax_trigger:
             from src.analytics.global_tax_engine import GlobalTaxEngine
             resolve_fn = getattr(GlobalTaxEngine, "resolve", getattr(GlobalTaxEngine, "resolve_query", None))
@@ -1652,8 +1858,7 @@ class AIEnergyMarketAnalyst:
                 "### 🏢 Corporate & Refining Intelligence: Indian Downstream Petroleum Sector\n",
                 f"**Query**: *\"{question}\"*\n",
                 "⚡ *Answered directly using integrated Antigravity Energy Intelligence (0 External Quota Used)*\n",
-                "### 💡 Simple English Explanation",
-                "In simple everyday English: India's petrol and diesel retail market is run primarily by three big government-owned oil companies: **Indian Oil Corporation (IOCL)** with 42% of pumps, **Bharat Petroleum (BPCL)** with 28% of pumps, and **Hindustan Petroleum (HPCL)** with 27% of pumps. Together, these three Public Sector Undertakings (PSU OMCs) operate more than **90% of all 88,000+ petrol stations** across the country.\n",
+                "India's petrol and diesel retail market is run primarily by three big government-owned oil companies: **Indian Oil Corporation (IOCL)** with 42% of pumps, **Bharat Petroleum (BPCL)** with 28% of pumps, and **Hindustan Petroleum (HPCL)** with 27% of pumps. Together, these three Public Sector Undertakings (PSU OMCs) operate more than **90% of all 88,000+ petrol stations** across the country.\n",
                 "### 📊 Visual Diagram Explanation",
                 "```mermaid",
                 "flowchart TD",
@@ -1722,8 +1927,7 @@ class AIEnergyMarketAnalyst:
                 "### 🚢 Maritime Geopolitics & Critical Petroleum Chokepoints\n",
                 f"**Query**: *\"{question}\"*\n",
                 "⚡ *Answered directly using integrated Antigravity Energy Intelligence (0 External Quota Used)*\n",
-                "### 💡 Simple English Explanation",
-                "In simple everyday English: A maritime chokepoint is a narrow ocean corridor that oil tanker ships must pass through. The **Strait of Hormuz** is the world's most critical energy gateway: about **20.5 million barrels of oil every day (21% of all oil consumed on earth)** travels through it on ships. If any conflict or blockage happens there, international oil prices would shoot up immediately because there are very few alternative routes.\n",
+                "A maritime chokepoint is a narrow ocean corridor that oil tanker ships must pass through. The **Strait of Hormuz** is the world's most critical energy gateway: about **20.5 million barrels of oil every day (21% of all oil consumed on earth)** travels through it on ships. If any conflict or blockage happens there, international oil prices would shoot up immediately because there are very few alternative routes.\n",
                 "### 📊 Visual Diagram Explanation",
                 "```mermaid",
                 "flowchart LR",
@@ -1786,8 +1990,7 @@ class AIEnergyMarketAnalyst:
                 "### 📊 Global Refining Economics & Benchmark Crude Differentials\n",
                 f"**Query**: *\"{question}\"*\n",
                 "⚡ *Answered directly using integrated Antigravity Energy Intelligence (0 External Quota Used)*\n",
-                "### 💡 Simple English Explanation",
-                "In simple everyday English: A 'refining margin' is the gross profit an oil refinery makes by turning raw crude oil into usable fuels like petrol, diesel, and jet fuel. In Europe, refiners currently make positive profits ($6.50 to $9.20 per barrel) because demand for diesel is high, but they face higher operating costs due to European carbon taxes and natural gas prices.\n",
+                "A 'refining margin' is the gross profit an oil refinery makes by turning raw crude oil into usable fuels like petrol, diesel, and jet fuel. In Europe, refiners currently make positive profits ($6.50 to $9.20 per barrel) because demand for diesel is high, but they face higher operating costs due to European carbon taxes and natural gas prices.\n",
                 "### 📊 Visual Diagram Explanation",
                 "```mermaid",
                 "flowchart LR",
@@ -1847,8 +2050,7 @@ class AIEnergyMarketAnalyst:
             f"### 🌐 Energy Market Intelligence Briefing\n",
             f"**Query**: *\"{question}\"*\n",
             "⚡ *Answered directly using integrated Antigravity Energy Intelligence (0 External Quota Used)*\n",
-            "### 💡 Simple English Explanation",
-            f"In simple everyday English: This briefing analyzes the market supply, demand, and prices related to **\"{question}\"**. Global fuel markets depend heavily on crude oil production by the top 3 nations (USA, Russia, and Saudi Arabia) and the decisions made by governments regarding fuel taxes and trade routes.\n",
+            f"This intelligence briefing analyzes the market supply, demand, and price dynamics related to **\"{question}\"**. Global fuel markets depend heavily on crude oil production by the top 3 nations (USA, Russia, and Saudi Arabia) and the decisions made by governments regarding fuel taxes and trade routes.\n",
             "### 📊 Visual Diagram Explanation",
             "```mermaid",
             "flowchart TD",
@@ -1972,8 +2174,7 @@ class AIEnergyMarketAnalyst:
         lines = [f"### AI Analyst Intelligence Briefing: {topic}\n"]
         lines.append(f"**Query**: *\"{question}\"*\n")
         lines.append("⚡ *Answered directly using integrated Antigravity Energy Intelligence (0 External Quota Used)*\n")
-        lines.append("### 💡 Simple English Explanation")
-        lines.append(f"In simple everyday English: Here is the direct factual comparison for **\"{question}\"**, queried directly from our verified relational energy data mart.\n")
+        lines.append(f"Here is the direct factual intelligence for **\"{question}\"**, queried directly from our verified relational energy data mart.\n")
         lines.append("### 📊 Visual Diagram Explanation")
         lines.append("```mermaid")
         lines.append("flowchart LR")

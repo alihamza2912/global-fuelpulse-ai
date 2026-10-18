@@ -23,6 +23,7 @@ import pandas as pd
 import plotly.express as px
 from src.ui_components import (
     render_page_header,
+    render_universal_ai_assistant,
     render_instrument_card,
     render_csv_download,
     apply_theme,
@@ -31,18 +32,23 @@ from src.ui_components import (
     COLOR_INK,
     COLOR_AMBER
 )
+from src.localization.i18n import t, get_current_language
 from src.monitoring.quality_auditor import DataQualityAuditor
 from src.ingestion.orchestrator import orchestrator
 from config.settings import settings
 
 apply_theme()
+current_lang = get_current_language()
 
 render_page_header(
-    title="DATA TRUST CENTER & QUALITY MONITOR",
-    subtitle="End-to-End Pipeline Telemetry, Ingestion Provenance, and Observation Freshness Auditing",
+    title=t("sidebar_08_trust", current_lang),
+    subtitle=t("chapter_11_subtitle", current_lang),
     source_tag="Automated ETL Telemetry Mart",
     observation_date="Continuous Data Assurance"
 )
+
+# Integrated Universal AI Assistant Dock
+render_universal_ai_assistant(context_page="Data Trust & Quality", key_prefix="p8_trust")
 
 # Interactive Trigger
 trig_c1, trig_c2 = st.columns([6, 2])
