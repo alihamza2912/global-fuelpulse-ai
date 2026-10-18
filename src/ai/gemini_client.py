@@ -133,7 +133,10 @@ class GeminiFreeTierClient:
         default_system = (
             "You are Global FuelPulse AI, an expert energy market analyst and economist. "
             "Provide concise, objective, human-friendly, and grounded energy intelligence. "
-            "Use bullet points and clear numbers. Do not fabricate speculative prices."
+            "Always structure your response with:\n"
+            "1. '### 💡 Simple English Explanation' - explain in plain, simple, everyday English so that anyone can easily understand.\n"
+            "2. '### 📊 Visual Diagram Explanation' - provide a clear Mermaid flowchart diagram (using ```mermaid ... ```) and a visual box/ASCII diagram illustrating the process, supply chain, tax flow, or market movement.\n"
+            "3. '### 🔍 Key Facts & Intelligence' - detail the figures, economics, and context with clear bullet points. Do not fabricate speculative prices."
         )
         sys_text = system_instruction or default_system
         if context_data:

@@ -95,7 +95,8 @@ class SessionAbuseProtector:
         question: str,
         bypass: bool = False,
         enforce_daily_free_limit: bool = False,
-        has_custom_key: bool = False
+        has_custom_key: bool = False,
+        enforce_user_daily_limit: bool = False
     ) -> Tuple[bool, Optional[str], Optional[str]]:
         """
         Validates per-user session constraints:
@@ -103,7 +104,7 @@ class SessionAbuseProtector:
         2. Illegal activity detection (terminates access if detected).
         3. Message length limit (max 500 chars).
         4. Cooldown (minimum 3s between requests).
-        5. Daily free quota (max 3 questions per 24 hours if no Antigravity key attached).
+        5. Daily quota (max 3 questions per 24 hours per visitor session).
         6. Frequency limit (max 15 questions per hour).
         Returns (is_valid, error_topic, error_message).
         """
@@ -173,8 +174,8 @@ class SessionAbuseProtector:
                     f"Please wait at least {int(cooldown_sec)} seconds between questions."
                 )
 
-            # 5. Daily Free Quota Check (Strict 3 questions per 24 hours for free users)
-            if enforce_daily_free_limit and not has_custom_key:
+            # 5. Daily Free Quota Check (Strict 3 questions per 24 hours per user)
+            if (enforce_daily_free_limit and not has_custom_key) or enforce_user_daily_limit:
                 max_daily_free = settings.api.daily_free_questions_limit
                 daily_active = [ts for ts in sdata.get("daily_timestamps", []) if (now - ts) < 86400.0]
                 sdata["daily_timestamps"] = daily_active
@@ -189,11 +190,8 @@ class SessionAbuseProtector:
                         False,
                         "⏳ Daily Free Quota Finished (3/3 Used)",
                         f"⏳ **Daily Free Quota Finished ({max_daily_free}/{max_daily_free} Questions Used)**\n\n"
-                        f"You have used your free daily allowance of **{max_daily_free} questions**. "
-                        f"Your 24-hour quota will reset in **{time_remaining_str}**.\n\n"
-                        "🔑 **Want to ask unlimited questions right now?**\n"
-                        "Attach your **Antigravity Token / Gemini API Key** in the configuration panel above to unlock "
-                        "**unlimited, instant AI market intelligence**.\n\n"
+                        f"You have used your daily allowance of **{max_daily_free} questions in 24 hours** powered by the integrated **Antigravity Token**.\n"
+                        f"Your 24-hour quota will reset in **{time_remaining_str}**. Please check back after 24 hours to ask more questions!\n\n"
                         "*Meanwhile, you can still explore all interactive charts, simulations, and trade flow monitors across the platform.*"
                     )
 
@@ -216,7 +214,7 @@ class SessionAbuseProtector:
             sdata["daily_timestamps"].append(now)
             return True, None, None
 
-    def get_session_status(self, session_id: str, has_custom_key: bool = False) -> Dict[str, Any]:
+    def get_session_status(self, session_id: str, has_custom_key: bool = False, enforce_user_daily_limit: bool = False) -> Dict[str, Any]:
         """Returns the current user session quota and security status."""
         with self._lock:
             sdata = self._sessions.get(session_id, {})
@@ -225,14 +223,24 @@ class SessionAbuseProtector:
             daily_active = [ts for ts in sdata.get("daily_timestamps", []) if (now - ts) < 86400.0]
             used = len(daily_active)
             max_free = settings.api.daily_free_questions_limit
-            remaining = 0 if is_blocked else (9999 if has_custom_key else max(0, max_free - used))
+            
+            if is_blocked:
+                remaining = 0
+            elif enforce_user_daily_limit:
+                remaining = max(0, max_free - used)
+            elif has_custom_key:
+                remaining = 9999
+            else:
+                remaining = max(0, max_free - used)
+
             reset_sec = 0.0
-            if daily_active and not has_custom_key:
+            if daily_active and (enforce_user_daily_limit or not has_custom_key):
                 earliest_call = min(daily_active)
                 reset_sec = max(0.0, 86400.0 - (now - earliest_call))
             hours = int(reset_sec // 3600)
             mins = int((reset_sec % 3600) // 60)
             reset_str = f"{hours}h {mins}m" if hours > 0 else f"{mins}m"
+            is_quota_finished = (used >= max_free) if (enforce_user_daily_limit or not has_custom_key) else False
             return {
                 "session_id": session_id,
                 "is_blocked": is_blocked,
@@ -240,7 +248,7 @@ class SessionAbuseProtector:
                 "daily_questions_used": used,
                 "daily_questions_remaining": remaining,
                 "daily_free_limit": max_free,
-                "is_daily_quota_finished": (used >= max_free and not has_custom_key),
+                "is_daily_quota_finished": is_quota_finished,
                 "reset_seconds_remaining": reset_sec,
                 "reset_time_str": reset_str
             }
@@ -274,11 +282,12 @@ class AIEnergyMarketAnalyst:
         question: str,
         session_id: str = "default_session",
         bypass_session_limits: bool = False,
-        allow_free_autonomous: bool = False
+        allow_free_autonomous: bool = False,
+        enforce_user_daily_limit: bool = False
     ) -> Dict[str, Any]:
         """
         Processes natural language energy market questions through an optimized pipeline:
-        1. Session validation (length, cooldown, hourly limit).
+        1. Session validation (length, cooldown, hourly limit, 24h daily quota).
         2. Query cache check (eliminates redundant calls).
         3. Direct database template routing for price/tax/production/trade questions (0 quota used).
         4. Free autonomous AI generation or Gemini Free-Tier invocation with full quota protection.
@@ -295,7 +304,7 @@ class AIEnergyMarketAnalyst:
 
         # Determine if Antigravity Token or custom Gemini API key is configured
         has_custom_key = gemini_client.is_key_configured() or bool(settings.api.gemini_api_key)
-        enforce_daily = (not has_custom_key) and (not bypass_session_limits)
+        enforce_daily = ((not has_custom_key) or enforce_user_daily_limit) and (not bypass_session_limits)
 
         # 1. Per-User Session & Enterprise Security Validation
         valid, err_topic, err_msg = session_protector.validate_and_record(
@@ -303,7 +312,8 @@ class AIEnergyMarketAnalyst:
             question=question,
             bypass=bypass_session_limits,
             enforce_daily_free_limit=enforce_daily,
-            has_custom_key=has_custom_key
+            has_custom_key=has_custom_key,
+            enforce_user_daily_limit=enforce_user_daily_limit
         )
         if not valid:
             return {
@@ -467,13 +477,36 @@ class AIEnergyMarketAnalyst:
                 "question": question,
                 "topic": "Fleet Fuel Budget Sensitivity",
                 "answer_text": (
-                    "**Fleet Budget Impact Analysis:**\n\n"
+                    "### 🚚 Commercial Fleet Fuel Budget Impact Analysis\n\n"
+                    f"**Query**: *\"{question}\"*\n\n"
+                    "⚡ *Answered directly using integrated Antigravity Energy Intelligence (0 External Quota Used)*\n\n"
+                    "### 💡 Simple English Explanation\n"
+                    "In simple English: Fuel represents about 30% to 40% of the entire operating budget of a delivery or logistics fleet. "
+                    "If fuel prices increase by **10%**, your monthly fuel bill will go up by almost the exact same **10%** "
+                    "(unless total kilometers driven or fleet routes are cut). "
+                    "For a medium fleet consuming 50,000 litres each month at $1.10/L ($55,000/month), a 10% price jump creates an instant "
+                    "**+$5,500 monthly deficit** (**+$66,000 extra per year**).\n\n"
+                    "### 📊 Visual Diagram Explanation\n"
+                    "```mermaid\n"
+                    "flowchart LR\n"
+                    "    FuelPrice[\"⛽ Retail Fuel Price (+10%)\"] --> MonthlyCost[\"📊 Monthly Bill: $55,000 ➔ $60,500 (+10%)\"]\n"
+                    "    MonthlyCost --> AnnualDeficit[\"📈 Annual Deficit: +$66,000/yr\"]\n"
+                    "```\n\n"
+                    "```text\n"
+                    "┌────────────────────────────────────────────────────────┐\n"
+                    "│ FLEET FUEL BUDGET SENSITIVITY CALCULATION              │\n"
+                    "├────────────────────────────────────────────────────────┤\n"
+                    "│ • Baseline Fuel Rate:    $1.10 / L ($55,000 / month)   │\n"
+                    "│ • +10% Fuel Shock Rate:  $1.21 / L ($60,500 / month)   │\n"
+                    "│ • Incremental Deficit:   +$5,500 / month (+$66,000 / yr)│\n"
+                    "└────────────────────────────────────────────────────────┘\n"
+                    "```\n\n"
+                    "#### 1. Mathematical Fleet Sensitivity Breakdown\n"
                     "- A **10% increase in retail diesel/petrol prices** directly translates into an approximate **8.5% to 10% increase in total commercial logistics fuel expenditures** (assuming constant vehicle routing).\n"
                     "- For a medium delivery fleet consuming **50,000 litres/month** at a baseline of **$1.10/litre** ($55,000/month):\n"
                     "  - New fuel price: **$1.21/litre**\n"
                     "  - New monthly fuel budget: **$60,500/month**\n"
                     "  - Direct budget deficit: **+$5,500/month (+$66,000 annualized)**.\n\n"
-                    "⚡ *Answered directly from verified energy database (0 AI quota used)*\n\n"
                     "*Recommendation: Deploy the interactive Supply Shock Simulator on Page 6 to customize your specific fleet mileage and fuel economy.*"
                 ),
                 "data_records": [],
@@ -633,7 +666,31 @@ class AIEnergyMarketAnalyst:
         lines = [
             "### AI Analyst Intelligence Briefing: Top Global Contributors of Petrol & Oil\n",
             f"**Query**: *\"{question}\"*\n",
-            "⚡ *Answered directly from verified energy database (0 AI quota used)*\n",
+            "⚡ *Answered directly using integrated Antigravity Energy Intelligence (0 External Quota Used)*\n",
+            "### 💡 Simple English Explanation",
+            "In simple everyday English: The **United States** is currently the #1 biggest producer of crude oil and petrol in the world, pumping out over **13.20 million barrels every day** (about 16.1% of the world's total). **Russia** is #2 and **Saudi Arabia** is #3. Because the United States also operates the world's largest refining system, it refines the most crude oil into petrol (gasoline) for cars and vehicles.\n",
+            "### 📊 Visual Diagram Explanation",
+            "```mermaid",
+            "flowchart TD",
+            "    US[\"🇺🇸 United States (13.20 mbpd - 16.1%)\"] --> Refine[\"🏭 World's Largest Refining System (18.2 mbpd)\"]",
+            "    RU[\"🇷🇺 Russia (9.15 mbpd - 11.2%)\"] --> Global[\"🌐 Global Petroleum Supply\"]",
+            "    SA[\"🇸🇦 Saudi Arabia (9.02 mbpd - 11.0%)\"] --> Global",
+            "    CA[\"🇨🇦 Canada (4.50 mbpd - 5.5%)\"] --> Global",
+            "    IQ[\"🇮🇶 Iraq (4.30 mbpd - 5.2%)\"] --> Global",
+            "    Refine --> Petrol[\"⛽ Top Finished Motor Petrol Output (8.9 mbpd)\"]",
+            "    Global --> Petrol",
+            "```\n",
+            "```text",
+            "┌────────────────────────────────────────────────────────┐",
+            "│ TOP GLOBAL PETROLEUM CONTRIBUTORS (2024)               │",
+            "├────────────────────────────────────────────────────────┤",
+            "│ 1. 🇺🇸 United States ████████████████  13.20 mbpd (16.1%)│",
+            "│ 2. 🇷🇺 Russia        ███████████        9.15 mbpd (11.2%)│",
+            "│ 3. 🇸🇦 Saudi Arabia  ███████████        9.02 mbpd (11.0%)│",
+            "│ 4. 🇨🇦 Canada        ██████             4.50 mbpd (5.5%) │",
+            "│ 5. 🇮🇶 Iraq          █████              4.30 mbpd (5.2%) │",
+            "└────────────────────────────────────────────────────────┘",
+            "```\n",
             "#### 1. Primary Producer & Contributor Analysis (Crude Oil & Refined Motor Fuel)",
             "- **Leading Global Contributor:** The **United States** is the single largest producer of crude petroleum in the world (**13.20 million barrels per day / 16.1% share of global extraction** in 2024), followed by the **Russian Federation (9.15 mbpd, 11.2%)** and **Saudi Arabia (9.02 mbpd, 11.0%)**.",
             "- **Motor Gasoline (Petrol) Output:** In petroleum refining, *petrol* (finished motor gasoline) is a secondary refined product produced from crude oil. The **United States** also operates the world's largest refining system (~18.2 mbpd throughput capacity) producing approximately **8.9 million barrels per day of finished motor gasoline**, making it the top contributor of petrol globally. China ranks second globally with ~18.5 mbpd of refining throughput capacity.\n",
@@ -707,10 +764,81 @@ class AIEnergyMarketAnalyst:
         statutory_authority = tax_res.get("statutory_authority", "State Revenue / Petroleum Department")
         statutory_note = tax_res.get("statutory_note", "")
 
+        is_global = tax_res.get("matched_type") == "Global Jurisdiction"
+        is_saudi = "saudi" in j_name.lower() or "saudi" in question.lower() or "ksa" in question.lower()
+
+        if is_saudi:
+            simple_explanation = (
+                "In simple English: Saudi Arabia charges **0% personal income tax** on salaries for citizens and residents (you keep 100% of what you earn). "
+                "However, the government levies a standard **15% Value Added Tax (VAT)** administered by ZATCA on retail goods, services, and fuel purchases. "
+                "To protect consumers from high global oil prices, the Saudi government caps retail petrol at **SAR 2.18 per litre** by providing direct state subsidies."
+            )
+            diagram_mermaid = (
+                "```mermaid\n"
+                "flowchart TD\n"
+                "    Citizen[\"👤 Citizen / Resident Earnings\"] --> Income[\"💵 Salary (0% Zero Income Tax)\"]\n"
+                "    Income --> TakeHome[\"👛 100% Take-Home Retained\"]\n"
+                "    \n"
+                "    Pump[\"⛽ Retail Petrol Cap (SAR 2.18/L)\"] --> VAT[\"🏛️ 15% VAT to ZATCA\"]\n"
+                "    Subsidy[\"🇸🇦 Royal Decree Subsidy Shield\"] --> Pump\n"
+                "```"
+            )
+            diagram_ascii = (
+                "```text\n"
+                "┌────────────────────────────────────────────────────────┐\n"
+                "│ SAUDI ARABIA FISCAL TAX ARCHITECTURE                   │\n"
+                "├────────────────────────────────────────────────────────┤\n"
+                "│ • Personal Salary Income Tax: 0.0% [Zero Tax]          │\n"
+                "│ • Retail Value Added Tax:     15.0% [Standard VAT]     │\n"
+                "│ • Octane 91 Petrol Cap:       SAR 2.18 / L [Protected] │\n"
+                "│ • Regulatory Authority:       ZATCA & Royal Decree     │\n"
+                "└────────────────────────────────────────────────────────┘\n"
+                "```"
+            )
+        else:
+            base_share = ((base_price / petrol_rsp) * 100) if petrol_rsp > 0 else 0
+            central_share = ((central_excise / petrol_rsp) * 100) if petrol_rsp > 0 else 0
+            dealer_share = ((dealer_margin / petrol_rsp) * 100) if petrol_rsp > 0 else 0
+            simple_explanation = (
+                f"In simple English: When you buy petrol in {j_name} at **{sym}{petrol_rsp:.2f} per litre**, "
+                f"more than **{total_tax_pct_pump:.1f}% of what you pay is government tax ({sym}{total_gov_tax:.2f} per litre)**. "
+                f"This tax is split between the Central Government ({sym}{central_excise:.2f}/L excise duty) "
+                f"and the State Government ({sym}{state_tax_amt:.2f}/L VAT), while the remaining amount covers the raw crude fuel cost and dealer commission."
+            )
+            diagram_mermaid = (
+                "```mermaid\n"
+                "flowchart TD\n"
+                f"    Base[\"🛢️ Base Refinery Cost: {sym}{base_price:.2f}/L\"] --> Total[\"⛽ Final Pump Price: {sym}{petrol_rsp:.2f}/L\"]\n"
+                f"    Central[\"🏛️ Central Excise Tax: {sym}{central_excise:.2f}/L\"] --> Total\n"
+                f"    State[\"🏢 State VAT Tax: {sym}{state_tax_amt:.2f}/L\"] --> Total\n"
+                f"    Dealer[\"🏪 Dealer Commission: {sym}{dealer_margin:.2f}/L\"] --> Total\n"
+                "```"
+            )
+            diagram_ascii = (
+                "```text\n"
+                "┌────────────────────────────────────────────────────────┐\n"
+                f"│ FUEL PRICE BREAKDOWN: {j_name.upper():<31} │\n"
+                "├────────────────────────────────────────────────────────┤\n"
+                f"│ • Base Refinery Cost:   {sym}{base_price:>6.2f} / L ({base_share:>4.1f}%)        │\n"
+                f"│ • Central Excise Duty:  {sym}{central_excise:>6.2f} / L ({central_share:>4.1f}%)        │\n"
+                f"│ • State Government VAT: {sym}{state_tax_amt:>6.2f} / L ({state_tax_pct_pump:>4.1f}%)        │\n"
+                f"│ • Dealer Commission:    {sym}{dealer_margin:>6.2f} / L ({dealer_share:>4.1f}%)        │\n"
+                "├────────────────────────────────────────────────────────┤\n"
+                f"│ = Total Retail Price:   {sym}{petrol_rsp:>6.2f} / L (100.0%)       │\n"
+                f"│ ★ Total Sovereign Tax:  {sym}{total_gov_tax:>6.2f} / L ({total_tax_pct_pump:>4.1f}% of pump) │\n"
+                "└────────────────────────────────────────────────────────┘\n"
+                "```"
+            )
+
         lines = [
             f"### {flag} Sovereign Energy & Tax Decomposition: {j_name}\n",
             f"**Query**: *\"{question}\"*\n",
-            "⚡ *Answered directly from verified Sovereign Tax & Pricing Engine (100% Free Autonomous Mode • 0 AI Quota Used)*\n",
+            "⚡ *Answered directly using integrated Antigravity Energy Intelligence (0 External Quota Used)*\n",
+            "### 💡 Simple English Explanation",
+            f"{simple_explanation}\n",
+            "### 📊 Visual Diagram Explanation",
+            f"{diagram_mermaid}\n",
+            f"{diagram_ascii}\n",
             "#### 1. Official Retail Selling Price (RSP) Benchmark",
             f"- **Petrol (Motor Spirit / Gasoline)**: **{sym}{petrol_rsp:.2f} / Litre** (${petrol_usd:.2f} USD/L)",
             f"- **Diesel (High Speed Diesel / Gasoil)**: **{sym}{diesel_rsp:.2f} / Litre** (${diesel_usd:.2f} USD/L)\n",
@@ -726,9 +854,6 @@ class AIEnergyMarketAnalyst:
             f"- **Regulatory Body**: {statutory_authority}",
             f"- **Statutory Directive**: {statutory_note}\n"
         ]
-
-        is_global = tax_res.get("matched_type") == "Global Jurisdiction"
-        is_saudi = "saudi" in j_name.lower() or "saudi" in question.lower() or "ksa" in question.lower()
 
         if is_saudi:
             lines.extend([
@@ -908,7 +1033,31 @@ class AIEnergyMarketAnalyst:
             lines = [
                 f"### {flag} Global Energy Trade Intelligence: Where Does Fuel from Dubai & the UAE Export?\n",
                 f"**Query**: *\"{question}\"*\n",
-                "⚡ *Answered directly from verified UN Comtrade, IEA Trade Mart & Relational Energy Database (0 AI Quota Used)*\n",
+                "⚡ *Answered directly using integrated Antigravity Energy Intelligence (0 External Quota Used)*\n",
+                "### 💡 Simple English Explanation",
+                "In simple everyday English: Fuel and crude oil from Dubai and the wider UAE are shipped mostly to Asian countries. Over **85% of their total oil exports go to Asia**, with **Japan (34%)**, **India (19%)**, **China (15%)**, and **South Korea (12%)** being their largest buyers. In Dubai itself, the ENOC Jebel Ali refinery specializes in manufacturing aviation jet fuel for Dubai International Airport and exporting clean diesel across South Asia and East Africa.\n",
+                "### 📊 Visual Diagram Explanation",
+                "```mermaid",
+                "flowchart TD",
+                "    UAE[\"🇦🇪 Dubai & UAE Petroleum Exports\"] --> Asia[\"🌏 Asia-Pacific Refiners (85%+ Total)\"]",
+                "    Asia --> JP[\"🇯🇵 Japan (34.3% - 1.09 mbpd)\"]",
+                "    Asia --> IN[\"🇮🇳 India (19.2% - 0.61 mbpd)\"]",
+                "    Asia --> CN[\"🇨🇳 China (14.5% - 0.46 mbpd)\"]",
+                "    Asia --> KR[\"🇰🇷 South Korea (12.3% - 0.39 mbpd)\"]",
+                "    UAE --> Bunkering[\"⛽ Fujairah Marine Bunkering (3rd Largest in World)\"]",
+                "    UAE --> Africa[\"🌍 East & South Africa (Jet Fuel / Diesel)\"]",
+                "```\n",
+                "```text",
+                "┌────────────────────────────────────────────────────────┐",
+                "│ DUBAI & UAE PETROLEUM EXPORT DESTINATIONS              │",
+                "├────────────────────────────────────────────────────────┤",
+                "│ 1. 🇯🇵 Japan       ████████████████ 34.3% (1.09 mbpd)   │",
+                "│ 2. 🇮🇳 India       █████████        19.2% (0.61 mbpd)   │",
+                "│ 3. 🇨🇳 China       ███████          14.5% (0.46 mbpd)   │",
+                "│ 4. 🇰🇷 South Korea ██████           12.3% (0.39 mbpd)   │",
+                "│ 5. 🇸🇬 Singapore   ███               7.2% (0.23 mbpd)   │",
+                "└────────────────────────────────────────────────────────┘",
+                "```\n",
                 "#### 📌 1. Direct Answer & Executive Summary",
                 "> **EXACT EXPORT DESTINATIONS:** Fuel and crude oil originating from **Dubai and the wider United Arab Emirates** export overwhelmingly to **Asia-Pacific refiners (over 85% of total volume)** — led by **Japan (34.3%)**, **India (19.2%)**, **China (14.5%)**, and **South Korea (12.3%)**, with refined transport fuels also serving **Singapore/ASEAN (7.2%)** and **East & Southern Africa (5.7%)**.",
                 f"> **Total Export Scale:** UAE seaborne exports total approximately **{total_slate_desc}**.\n",
@@ -961,7 +1110,31 @@ class AIEnergyMarketAnalyst:
             lines = [
                 f"### {flag} Global Energy Trade Intelligence: Where Does Petroleum from Saudi Arabia Export?\n",
                 f"**Query**: *\"{question}\"*\n",
-                "⚡ *Answered directly from verified UN Comtrade & IEA Trade Mart (0 AI Quota Used)*\n",
+                "⚡ *Answered directly using integrated Antigravity Energy Intelligence (0 External Quota Used)*\n",
+                "### 💡 Simple English Explanation",
+                "In simple everyday English: Saudi Arabia is the world's largest exporter of crude oil, shipping roughly **6.5 to 7.0 million barrels every day**. More than **67% of Saudi oil exports flow to Asia**, led by **China (26.5%)**, **Japan (15.7%)**, **India (12.9%)**, and **South Korea (12.5%)**.\n",
+                "### 📊 Visual Diagram Explanation",
+                "```mermaid",
+                "flowchart TD",
+                "    KSA[\"🇸🇦 Saudi Arabia Crude Oil Exports (~6.5 mbpd)\"] --> Asia[\"🌏 Asia-Pacific Refiners (67%+)\"]",
+                "    Asia --> CN[\"🇨🇳 China (26.5% - 1.72 mbpd)\"]",
+                "    Asia --> JP[\"🇯🇵 Japan (15.7% - 1.02 mbpd)\"]",
+                "    Asia --> IN[\"🇮🇳 India (12.9% - 0.84 mbpd)\"]",
+                "    Asia --> KR[\"🇰🇷 South Korea (12.5% - 0.81 mbpd)\"]",
+                "    KSA --> EU[\"🇪🇺 Europe (10.0% - 0.65 mbpd via Yanbu)\"]",
+                "    KSA --> US[\"🇺🇸 United States (5.8% - Motiva Refinery)\"]",
+                "```\n",
+                "```text",
+                "┌────────────────────────────────────────────────────────┐",
+                "│ SAUDI ARABIA CRUDE EXPORT DESTINATIONS                 │",
+                "├────────────────────────────────────────────────────────┤",
+                "│ 1. 🇨🇳 China       ████████████████ 26.5% (1.72 mbpd)   │",
+                "│ 2. 🇯🇵 Japan       █████████        15.7% (1.02 mbpd)   │",
+                "│ 3. 🇮🇳 India       ████████         12.9% (0.84 mbpd)   │",
+                "│ 4. 🇰🇷 South Korea ███████          12.5% (0.81 mbpd)   │",
+                "│ 5. 🇪🇺 Europe      ██████           10.0% (0.65 mbpd)   │",
+                "└────────────────────────────────────────────────────────┘",
+                "```\n",
                 "#### 📌 1. Direct Answer & Executive Summary",
                 "> **EXACT EXPORT DESTINATIONS:** Saudi Arabia is the world's largest seaborne crude oil exporter (~6.50 mbpd total exports). Over **67% of Saudi crude flows to Asia**, led by **China (26.5%)**, **Japan (15.7%)**, **India (12.9%)**, and **South Korea (12.5%)**.",
                 "> **Core Export Terminals:** **Ras Tanura** on the Persian Gulf (world's largest offshore oil facility) and **Yanbu** on the Red Sea (connected via the 5.0 mbpd East-West Petroline pipeline to bypass the Strait of Hormuz).\n",
@@ -987,7 +1160,28 @@ class AIEnergyMarketAnalyst:
             lines = [
                 f"### {flag} Global Energy Trade Intelligence: Where Does Russian Crude & Fuel Export?\n",
                 f"**Query**: *\"{question}\"*\n",
-                "⚡ *Answered directly from verified UN Comtrade & Maritime Tanker Telematics (0 AI Quota Used)*\n",
+                "⚡ *Answered directly using integrated Antigravity Energy Intelligence (0 External Quota Used)*\n",
+                "### 💡 Simple English Explanation",
+                "In simple everyday English: Following European sanctions, Russia shifted over **85% of its crude exports to Asia**. Today, **China (41.5%)** and **India (37.2%)** purchase almost all Russian seaborne crude oil, taking advantage of sovereign discounts to supply their domestic refineries.\n",
+                "### 📊 Visual Diagram Explanation",
+                "```mermaid",
+                "flowchart TD",
+                "    RU[\"🇷🇺 Russian Crude Exports (~4.7 mbpd)\"] --> Asia[\"🌏 Asian Refiners (85%+ Pivot)\"]",
+                "    Asia --> CN[\"🇨🇳 China (41.5% - 1.95 mbpd via ESPO / Kozmino)\"]",
+                "    Asia --> IN[\"🇮🇳 India (37.2% - 1.75 mbpd Discounted Urals)\"]",
+                "    RU --> TR[\"🇹🇷 Turkey (8.9% - 0.42 mbpd)\"]",
+                "    RU --> Other[\"🌐 Blending Hubs & Non-Sanctioned Markets (12.4%)\"]",
+                "```\n",
+                "```text",
+                "┌────────────────────────────────────────────────────────┐",
+                "│ RUSSIAN CRUDE EXPORT DESTINATIONS (2024)               │",
+                "├────────────────────────────────────────────────────────┤",
+                "│ 1. 🇨🇳 China       ████████████████ 41.5% (1.95 mbpd)   │",
+                "│ 2. 🇮🇳 India       ██████████████   37.2% (1.75 mbpd)   │",
+                "│ 3. 🇹🇷 Turkey      ███               8.9% (0.42 mbpd)   │",
+                "│ 4. 🇦🇪 Blending Hub ██               6.6% (0.31 mbpd)   │",
+                "└────────────────────────────────────────────────────────┘",
+                "```\n",
                 "#### 📌 1. Direct Answer & Executive Summary",
                 "> **EXACT EXPORT DESTINATIONS:** Following European Union sanctions and seaborne embargoes, Russia has permanently pivoted over **85% of its crude exports to Asia**, with **China (41.5%)** and **India (37.2%)** absorbing almost 4.0 million barrels per day.",
                 "> **Strategic Export Terminals:** **Primorsk & Ust-Luga** (Baltic Sea), **Novorossiysk** (Black Sea), and **Kozmino** (Pacific Ocean terminal for ESPO blend).\n",
@@ -1009,7 +1203,27 @@ class AIEnergyMarketAnalyst:
             lines = [
                 f"### {flag} Global Energy Trade Intelligence: Where Does United States Fuel & Oil Export?\n",
                 f"**Query**: *\"{question}\"*\n",
-                "⚡ *Answered directly from verified US EIA & UN Comtrade Datasets (0 AI Quota Used)*\n",
+                "⚡ *Answered directly using integrated Antigravity Energy Intelligence (0 External Quota Used)*\n",
+                "### 💡 Simple English Explanation",
+                "In simple everyday English: The United States exports about **4.1 to 4.4 million barrels of crude oil every day**, along with over 6 million barrels of refined petrol, diesel, and propane. Its biggest customer is **Europe (47.7%)**, followed by **Asia (28.4%)** and neighboring countries in the **Americas (17.0%)**.\n",
+                "### 📊 Visual Diagram Explanation",
+                "```mermaid",
+                "flowchart TD",
+                "    US[\"🇺🇸 United States Oil & Fuel Exports (~10.4 mbpd Total)\"] --> EU[\"🇪🇺 Europe (47.7% - WTI Midland & LNG)\"]",
+                "    US --> Asia[\"🌏 Asia-Pacific (28.4% - Korea, Japan, China, India)\"]",
+                "    US --> Americas[\"🌎 Americas (17.0% - Mexico, Canada, Brazil)\"]",
+                "    US --> Global[\"🌐 Other Global Markets (6.9%)\"]",
+                "```\n",
+                "```text",
+                "┌────────────────────────────────────────────────────────┐",
+                "│ UNITED STATES PETROLEUM EXPORT DESTINATIONS            │",
+                "├────────────────────────────────────────────────────────┤",
+                "│ 1. 🇪🇺 Europe       ████████████████ 47.7% (2.10 mbpd)   │",
+                "│ 2. 🌏 Asia-Pacific █████████        28.4% (1.25 mbpd)   │",
+                "│ 3. 🌎 Americas     ██████           17.0% (0.75 mbpd)   │",
+                "│ 4. 🌐 Other        ██                6.9% (0.30 mbpd)   │",
+                "└────────────────────────────────────────────────────────┘",
+                "```\n",
                 "#### 📌 1. Direct Answer & Executive Summary",
                 "> **EXACT EXPORT DESTINATIONS:** The United States exports ~**4.1 to 4.4 million barrels per day of crude oil** (primarily WTI Midland) plus over **6.0 mbpd of refined products, NGLs, and LPG**. Europe is the largest regional recipient (**47.7%**), followed by Asia (**28.4%**) and the Americas (**17.0%**).",
                 "> **Key Outlets:** **Port of Corpus Christi** (leading crude export hub), **Houston Ship Channel**, and **LOOP (Louisiana Offshore Oil Port)**."
@@ -1031,7 +1245,27 @@ class AIEnergyMarketAnalyst:
             lines = [
                 f"### {flag} Global Energy Trade Intelligence: Major Petroleum Export Destinations\n",
                 f"**Query**: *\"{question}\"*\n",
-                "⚡ *Answered directly from verified UN Comtrade & IEA Database (0 AI Quota Used)*\n",
+                "⚡ *Answered directly using integrated Antigravity Energy Intelligence (0 External Quota Used)*\n",
+                "### 💡 Simple English Explanation",
+                "In simple everyday English: Over **44 million barrels of oil are traded internationally on ships every day**. The largest destination by far is **Asia-Pacific (led by China, India, Japan, and South Korea)**, which absorbs more than half of all globally exported crude oil to fuel fast-growing industries and transportation.\n",
+                "### 📊 Visual Diagram Explanation",
+                "```mermaid",
+                "flowchart LR",
+                "    Exporters[\"🌍 Global Exporters (Middle East, US, Russia, Canada)\"] --> Asian[\"🌏 Asia-Pacific Refineries (50%+ Total Trade)\"]",
+                "    Exporters --> Europe[\"🇪🇺 European Markets (21%)\"]",
+                "    Exporters --> Others[\"🌐 Rest of the World (29%)\"]",
+                "```\n",
+                "```text",
+                "┌────────────────────────────────────────────────────────┐",
+                "│ GLOBAL PETROLEUM SEABORNE IMPORT FLOWS                 │",
+                "├────────────────────────────────────────────────────────┤",
+                "│ 1. 🇨🇳 China        ████████████████ 25.0% (11.2 mbpd)   │",
+                "│ 2. 🇪🇺 Europe-27    █████████████    21.0% (9.4 mbpd)    │",
+                "│ 3. 🇮🇳 India        ███████          10.5% (4.7 mbpd)    │",
+                "│ 4. 🇯🇵 Japan        ████              6.3% (2.8 mbpd)    │",
+                "│ 5. 🇰🇷 South Korea  ████              6.0% (2.7 mbpd)    │",
+                "└────────────────────────────────────────────────────────┘",
+                "```\n",
                 "#### 📌 1. Direct Answer & Executive Summary",
                 "> **GLOBAL SEABORNE TRADE FLOWS:** Approximately **44.8 million barrels per day** of crude oil and refined petroleum trade internationally across maritime tanker routes. Asia-Pacific (China, India, Japan, South Korea) absorbs over **50% of all globally exported crude**."
             ]
@@ -1090,7 +1324,31 @@ class AIEnergyMarketAnalyst:
             lines = [
                 f"### {flag} Sovereign Energy Security: Where Does India Import Petroleum & Crude From?\n",
                 f"**Query**: *\"{question}\"*\n",
-                "⚡ *Answered directly from verified PPAC, Directorate General of Commercial Intelligence & Statistics (DGCIS) & UN Comtrade*\n",
+                "⚡ *Answered directly using integrated Antigravity Energy Intelligence (0 External Quota Used)*\n",
+                "### 💡 Simple English Explanation",
+                "In simple everyday English: India produces very little crude oil domestically, so it must import almost **88% of all the crude oil it uses**. Its top foreign oil suppliers are **Russia (~38.5%)**, **Iraq (~19.8%)**, **Saudi Arabia (~14.9%)**, and the **United Arab Emirates (~9.9%)**. By purchasing discounted crude oil, Indian refineries keep domestic petrol and diesel prices stable.\n",
+                "### 📊 Visual Diagram Explanation",
+                "```mermaid",
+                "flowchart TD",
+                "    Suppliers[\"🌍 Global Oil Suppliers to India (~4.6 mbpd)\"] --> IndiaRefiners[\"🏭 Indian Coastal Refineries (IOCL, BPCL, HPCL, RIL)\"]",
+                "    Suppliers --> RU[\"🇷🇺 Russia (38.5% - 1.75 mbpd Discounted Urals)\"]",
+                "    Suppliers --> IQ[\"🇮🇶 Iraq (19.8% - 0.90 mbpd Basra Medium)\"]",
+                "    Suppliers --> SA[\"🇸🇦 Saudi Arabia (14.9% - 0.68 mbpd Term Aramco)\"]",
+                "    Suppliers --> UAE[\"🇦🇪 UAE (9.9% - 0.45 mbpd Murban & LPG)\"]",
+                "    Suppliers --> US[\"🇺🇸 United States (4.8% - 0.22 mbpd WTI)\"]",
+                "    IndiaRefiners --> Pump[\"⛽ Domestic Retail Petrol & Diesel Pumps\"]\n",
+                "```\n",
+                "```text",
+                "┌────────────────────────────────────────────────────────┐",
+                "│ INDIA CRUDE OIL IMPORT BASKET (4.6 MBPD)               │",
+                "├────────────────────────────────────────────────────────┤",
+                "│ 1. 🇷🇺 Russia       ████████████████ 38.5% (1.75 mbpd)   │",
+                "│ 2. 🇮🇶 Iraq         ████████         19.8% (0.90 mbpd)   │",
+                "│ 3. 🇸🇦 Saudi Arabia ██████           14.9% (0.68 mbpd)   │",
+                "│ 4. 🇦🇪 UAE          ████              9.9% (0.45 mbpd)   │",
+                "│ 5. 🇺🇸 USA          ██                4.8% (0.22 mbpd)   │",
+                "└────────────────────────────────────────────────────────┘",
+                "```\n",
                 "#### 📌 1. Direct Answer & Executive Summary",
                 "> **CRUDE IMPORT RELIANCE:** India imports approximately **87.8% of its domestic crude oil consumption**, requiring ~**4.55 to 4.75 million barrels per day (mbpd)** of foreign seaborne crude to feed its 256 MMTPA domestic refining system.",
                 "> **Top Sourcing Partners:** **Russia is India's #1 crude supplier (~38.5% share)**, followed by **Iraq (19.8%)**, **Saudi Arabia (14.9%)**, and the **UAE (9.9%)**.\n",
@@ -1117,7 +1375,27 @@ class AIEnergyMarketAnalyst:
             lines = [
                 f"### {flag} Global Petroleum Sourcing & Bilateral Import Dependence\n",
                 f"**Query**: *\"{question}\"*\n",
-                "⚡ *Answered directly from verified IEA & UN Comtrade Datasets*\n",
+                "⚡ *Answered directly using integrated Antigravity Energy Intelligence (0 External Quota Used)*\n",
+                "### 💡 Simple English Explanation",
+                "In simple everyday English: The world's largest importers of crude oil are rapidly developing Asian economies (China, India, Japan, South Korea) and Europe. These importing countries source almost half their crude oil from the **Middle East (OPEC - 45%)**, followed by **North America (20%)**, **West Africa & Latin America (18%)**, and **Russia & CIS (17%)**.\n",
+                "### 📊 Visual Diagram Explanation",
+                "```mermaid",
+                "flowchart LR",
+                "    ME[\"🇸🇦 Middle East / OPEC (45%)\"] --> Importers[\"🌏 Asian & European Importers\"]\n",
+                "    NA[\"🇺🇸 North America (20%)\"] --> Importers\n",
+                "    RU[\"🇷🇺 Russia & CIS (17%)\"] --> Importers\n",
+                "    AF[\"🌍 West Africa & LatAm (18%)\"] --> Importers\n",
+                "```\n",
+                "```text",
+                "┌────────────────────────────────────────────────────────┐",
+                "│ GLOBAL PETROLEUM SOURCING BASKET                       │",
+                "├────────────────────────────────────────────────────────┤",
+                "│ 1. Middle East (OPEC)      ████████████████ 45.0%      │",
+                "│ 2. North America (US/CA)   ███████          20.0%      │",
+                "│ 3. West Africa & LatAm     ██████           18.0%      │",
+                "│ 4. Russia & CIS            ██████           17.0%      │",
+                "└────────────────────────────────────────────────────────┘",
+                "```\n",
                 "#### 📌 1. Direct Answer & Executive Summary",
                 "> **GLOBAL IMPORT BASKET:** Developing Asian economies represent the largest growth engine for international crude imports, accounting for over **60% of seaborne crude trade**."
             ]
@@ -1281,7 +1559,25 @@ class AIEnergyMarketAnalyst:
             lines = [
                 "### 🎯 Direct Analyst Answer: Will Petrol Prices Increase in India After 2 Months or Not?\n",
                 f"**Query**: *\"{question}\"*\n",
-                "⚡ *Generated by Autonomous Free AI Intelligence Engine (100% Free • Zero API Key Required)*\n",
+                "⚡ *Answered directly using integrated Antigravity Energy Intelligence (0 External Quota Used)*\n",
+                "### 💡 Simple English Explanation",
+                "In simple everyday English: Petrol prices in India are **very unlikely to increase over the next 2 months (65% chance of remaining completely flat)**. Even if world crude prices shift, India's government-owned oil companies (IOCL, BPCL, HPCL) act as a price shock absorber so daily international swings do not hit consumer pumps. Furthermore, India buys discounted crude from Russia, which keeps domestic fuel prices anchored at current rates (e.g. ₹101.45/L in UP/Prayagraj, ₹94.72/L in Delhi).\n",
+                "### 📊 Visual Diagram Explanation",
+                "```mermaid",
+                "flowchart LR",
+                "    Crude[\"🛢️ Global Crude ($75-$84/bbl)\"] --> OMCs[\"🏢 Indian OMCs Margin Buffer\"]",
+                "    Russia[\"🇷🇺 Discounted Crude (35% Slate)\"] --> OMCs",
+                "    OMCs --> Stable[\"⛽ Stable Retail Pump (65% Probability Flat)\"]",
+                "```\n",
+                "```text",
+                "┌────────────────────────────────────────────────────────┐",
+                "│ 60-DAY PROJECTION SCENARIOS: PETROL IN INDIA           │",
+                "├────────────────────────────────────────────────────────┤",
+                "│ 1. 🟢 Base Freeze (65% Likely):   ₹0.00 (Flat ₹101.45) │",
+                "│ 2. 🔵 Relief Cut  (20% Possible): -₹1.50 to -₹2.00 / L │",
+                "│ 3. 🔴 Geopol Hike (15% Unlikely): +₹2.00 to +₹3.50 / L │",
+                "└────────────────────────────────────────────────────────┘",
+                "```\n",
                 "#### 📌 1. The Definitive Verdict",
                 "> **DIRECT ANSWER:** **NO MAJOR PRICE INCREASE EXPECTED.**",
                 "> Over the next **2 months (60-day timeline)**, retail petrol prices in India are overwhelmingly projected to remain **STABLE and UNCHANGED (65% probability)**, staying flat within a narrow band of **±₹0.50 to ±₹1.50 / Litre** at current benchmark rates (e.g. **₹101.45/L in Prayagraj & UP, ₹94.72/L in Delhi, ₹103.44/L in Mumbai**).\n",
@@ -1355,7 +1651,28 @@ class AIEnergyMarketAnalyst:
             lines = [
                 "### 🏢 Corporate & Refining Intelligence: Indian Downstream Petroleum Sector\n",
                 f"**Query**: *\"{question}\"*\n",
-                "⚡ *Generated by Autonomous Free AI Intelligence Engine (100% Free • Zero API Key Required)*\n",
+                "⚡ *Answered directly using integrated Antigravity Energy Intelligence (0 External Quota Used)*\n",
+                "### 💡 Simple English Explanation",
+                "In simple everyday English: India's petrol and diesel retail market is run primarily by three big government-owned oil companies: **Indian Oil Corporation (IOCL)** with 42% of pumps, **Bharat Petroleum (BPCL)** with 28% of pumps, and **Hindustan Petroleum (HPCL)** with 27% of pumps. Together, these three Public Sector Undertakings (PSU OMCs) operate more than **90% of all 88,000+ petrol stations** across the country.\n",
+                "### 📊 Visual Diagram Explanation",
+                "```mermaid",
+                "flowchart TD",
+                "    MoPNG[\"🏛️ Ministry of Petroleum & Natural Gas (Govt of India)\"] --> OMCs[\"Three State PSU Oil Champions (90%+ Retail Share)\"]",
+                "    OMCs --> IOCL[\"⛽ Indian Oil (IOCL - 42.2% Retail | 80.6 MMTPA)\"]",
+                "    OMCs --> BPCL[\"⛽ Bharat Petroleum (BPCL - 27.8% Retail | 35.3 MMTPA)\"]",
+                "    OMCs --> HPCL[\"⛽ Hindustan Petroleum (HPCL - 27.0% Retail | 23.2 MMTPA)\"]",
+                "    MoPNG --> Private[\"Private Refining & Export Hubs (RIL Jamnagar & Nayara)\"]",
+                "```\n",
+                "```text",
+                "┌────────────────────────────────────────────────────────┐",
+                "│ INDIAN FUEL RETAIL MARKET SHARE (88,000+ PUMPS)        │",
+                "├────────────────────────────────────────────────────────┤",
+                "│ 1. ⛽ IOCL (Indian Oil)       ████████████████  42.2%  │",
+                "│ 2. ⛽ BPCL (Bharat Petroleum) ███████████        27.8%  │",
+                "│ 3. ⛽ HPCL (Hindustan Petro)  ██████████         27.0%  │",
+                "│ 4. 🏢 Private (RIL, Nayara)   ██                  3.0%  │",
+                "└────────────────────────────────────────────────────────┘",
+                "```\n",
                 "#### 1. Indian PSU Oil Marketing Companies (OMCs) Overview",
                 "- India's downstream retail fuel market is overwhelmingly anchored by three state-owned **Public Sector Undertakings (PSU OMCs)**, which collectively operate over **90% of the nation's 88,000+ retail fuel stations** under the administrative oversight of the Ministry of Petroleum and Natural Gas (MoPNG).",
                 "- **Indian Oil Corporation Limited (IOCL):**",
@@ -1404,7 +1721,26 @@ class AIEnergyMarketAnalyst:
             lines = [
                 "### 🚢 Maritime Geopolitics & Critical Petroleum Chokepoints\n",
                 f"**Query**: *\"{question}\"*\n",
-                "⚡ *Generated by Autonomous Free AI Intelligence Engine (100% Free • Zero API Key Required)*\n",
+                "⚡ *Answered directly using integrated Antigravity Energy Intelligence (0 External Quota Used)*\n",
+                "### 💡 Simple English Explanation",
+                "In simple everyday English: A maritime chokepoint is a narrow ocean corridor that oil tanker ships must pass through. The **Strait of Hormuz** is the world's most critical energy gateway: about **20.5 million barrels of oil every day (21% of all oil consumed on earth)** travels through it on ships. If any conflict or blockage happens there, international oil prices would shoot up immediately because there are very few alternative routes.\n",
+                "### 📊 Visual Diagram Explanation",
+                "```mermaid",
+                "flowchart LR",
+                "    Gulf[\"🇸🇦 Saudi / 🇮🇶 Iraq / 🇦🇪 UAE / 🇰🇼 Kuwait / 🇶🇦 Qatar\"] --> Hormuz[\"🚢 Strait of Hormuz (20.5 mbpd - 21% Global Oil)\"]",
+                "    Hormuz --> Indian[\"🌊 Indian Ocean & Malacca Corridor\"]",
+                "    Indian --> Asia[\"🌏 Asia-Pacific Refiners (China, India, Japan, Korea)\"]",
+                "```\n",
+                "```text",
+                "┌────────────────────────────────────────────────────────┐",
+                "│ CRITICAL GLOBAL MARITIME OIL CHOKEPOINTS               │",
+                "├────────────────────────────────────────────────────────┤",
+                "│ 1. Strait of Hormuz:     ████████████████ 20.5 mbpd    │",
+                "│ 2. Strait of Malacca:    ████████████     16.2 mbpd    │",
+                "│ 3. Bab el-Mandeb / Suez: ██████            7.5 mbpd    │",
+                "│ 4. Turkish Straits:      ██                3.1 mbpd    │",
+                "└────────────────────────────────────────────────────────┘",
+                "```\n",
                 "#### 1. Strategic Global Petroleum Arteries",
                 "- **Strait of Hormuz (The World's Preeminent Energy Valve):**",
                 "  - **Seaborne Flow:** **20.5 to 21.0 million barrels per day (mbpd)** of crude, condensates, and refined fuels — representing approximately **21% of total global petroleum consumption**.",
@@ -1449,7 +1785,26 @@ class AIEnergyMarketAnalyst:
             lines = [
                 "### 📊 Global Refining Economics & Benchmark Crude Differentials\n",
                 f"**Query**: *\"{question}\"*\n",
-                "⚡ *Generated by Autonomous Free AI Intelligence Engine (100% Free • Zero API Key Required)*\n",
+                "⚡ *Answered directly using integrated Antigravity Energy Intelligence (0 External Quota Used)*\n",
+                "### 💡 Simple English Explanation",
+                "In simple everyday English: A 'refining margin' is the gross profit an oil refinery makes by turning raw crude oil into usable fuels like petrol, diesel, and jet fuel. In Europe, refiners currently make positive profits ($6.50 to $9.20 per barrel) because demand for diesel is high, but they face higher operating costs due to European carbon taxes and natural gas prices.\n",
+                "### 📊 Visual Diagram Explanation",
+                "```mermaid",
+                "flowchart LR",
+                "    Crude[\"🛢️ Crude Oil (Brent / WTI / Dubai)\"] --> Refinery[\"🏭 Refining Process & Crack Spread\"]",
+                "    Refinery --> Diesel[\"🚛 Road Diesel & Jet A-1 Fuel\"]",
+                "    Refinery --> Petrol[\"🚗 Motor Petrol / Gasoline\"]",
+                "    Refinery --> Margin[\"💰 European GRM Margin ($6.50-$9.20/bbl)\"]",
+                "```\n",
+                "```text",
+                "┌────────────────────────────────────────────────────────┐",
+                "│ EUROPEAN REFINING ECONOMICS (ROTTERDAM COMPLEX)        │",
+                "├────────────────────────────────────────────────────────┤",
+                "│ • Indicative Gross Refining Margin: $6.50 - $9.20 / bbl│",
+                "│ • Diesel Crack Premium over Brent:  $18.0 - $26.0 / bbl│",
+                "│ • EU ETS Carbon Compliance Cost:    $1.80 - $2.40 / bbl│",
+                "└────────────────────────────────────────────────────────┘",
+                "```\n",
                 "#### 1. European Refining Margin Outlook & Structural Realities",
                 "- **Crude Slates & Feedstock Substitution:** Following the 2023 EU embargo on seaborne Russian crude oil, European refiners have permanently retooled from sour Urals crude to lighter, sweeter grades including **US WTI Midland**, **North Sea Brent blends**, and **West African crudes (Bonny Light, Forcados)**.",
                 "- **Diesel & Middle Distillate Premium:** Europe remains chronically structurally short of road diesel and aviation kerosene. Middle distillate crack spreads remain elevated relative to historical averages ($18-$26/bbl above Brent), underpinning positive European Gross Refining Margins (GRMs) of **$6.50 to $9.20 per barrel**.",
@@ -1491,7 +1846,26 @@ class AIEnergyMarketAnalyst:
         lines = [
             f"### 🌐 Energy Market Intelligence Briefing\n",
             f"**Query**: *\"{question}\"*\n",
-            "⚡ *Generated by Autonomous Free AI Intelligence Engine (100% Free • Zero API Key Required)*\n",
+            "⚡ *Answered directly using integrated Antigravity Energy Intelligence (0 External Quota Used)*\n",
+            "### 💡 Simple English Explanation",
+            f"In simple everyday English: This briefing analyzes the market supply, demand, and prices related to **\"{question}\"**. Global fuel markets depend heavily on crude oil production by the top 3 nations (USA, Russia, and Saudi Arabia) and the decisions made by governments regarding fuel taxes and trade routes.\n",
+            "### 📊 Visual Diagram Explanation",
+            "```mermaid",
+            "flowchart TD",
+            "    Extract[\"🛢️ Upstream Crude Extraction (USA, Russia, Saudi Arabia)\"] --> Transport[\"🚢 International Maritime & Pipeline Trade\"]",
+            "    Transport --> Refine[\"🏭 Downstream Refining (Petrol & Diesel)\"]",
+            "    Refine --> Taxes[\"🏛️ Sovereign Taxes & Regulatory Policies\"]",
+            "    Taxes --> Pump[\"⛽ Retail Consumer Fuel Station\"]",
+            "```\n",
+            "```text",
+            "┌────────────────────────────────────────────────────────┐",
+            "│ GLOBAL ENERGY VALUE CHAIN OVERVIEW                     │",
+            "├────────────────────────────────────────────────────────┤",
+            "│ [1] Crude Extraction ──► [2] Maritime Transit          │",
+            "│ ──► [3] Refining (Petrol/Diesel) ──► [4] Sovereign Tax │",
+            "│ ──► [5] Retail Pump Distribution                       │",
+            "└────────────────────────────────────────────────────────┘",
+            "```\n",
             "#### 1. Executive Summary & Market Context",
             f"- This analysis examines the core economic and market fundamentals surrounding **\"{question}\"**, grounded in our verified global energy relational database.",
             "- Global petroleum markets operate in a multi-polar regime characterized by sustained non-OPEC+ supply expansion (led by the United States, Brazil, and Guyana), disciplined quota governance by OPEC+, and complex trade route reconfiguration following sanctions and geopolitical frictions in Eastern Europe and the Middle East.\n",
@@ -1597,7 +1971,15 @@ class AIEnergyMarketAnalyst:
 
         lines = [f"### AI Analyst Intelligence Briefing: {topic}\n"]
         lines.append(f"**Query**: *\"{question}\"*\n")
-        lines.append("⚡ *Answered directly from verified energy database (0 AI quota used)*\n")
+        lines.append("⚡ *Answered directly using integrated Antigravity Energy Intelligence (0 External Quota Used)*\n")
+        lines.append("### 💡 Simple English Explanation")
+        lines.append(f"In simple everyday English: Here is the direct factual comparison for **\"{question}\"**, queried directly from our verified relational energy data mart.\n")
+        lines.append("### 📊 Visual Diagram Explanation")
+        lines.append("```mermaid")
+        lines.append("flowchart LR")
+        lines.append('    DB["💾 Verified Relational Database"] --> Engine["⚡ Antigravity Analytics"]')
+        lines.append(f'    Engine --> Results["📊 Grounded Intelligence: {topic}"]')
+        lines.append("```\n")
         lines.append("Based on verified database records queried from our relational energy data mart:\n")
 
         for idx, row in enumerate(records[:5], 1):

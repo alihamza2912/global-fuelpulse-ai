@@ -327,16 +327,14 @@ def render_home_view(navigate_fn=None):
     from src.ai.gemini_client import gemini_client
 
     has_custom_key = is_user_custom_key_configured() or gemini_client.is_key_configured()
-    sess_status = session_protector.get_session_status(sess_id, has_custom_key=has_custom_key)
+    sess_status = session_protector.get_session_status(sess_id, has_custom_key=has_custom_key, enforce_user_daily_limit=True)
 
     if sess_status.get("is_blocked"):
         status_badge_html = '<div style="display:inline-block;padding:5px 12px;background:rgba(239, 68, 68, 0.2);color:#EF4444;font-weight:700;font-size:12px;border:1px solid #EF4444;border-radius:4px;margin-bottom:12px;">🚫 Security Violation: Session Terminated</div>'
-    elif has_custom_key:
-        status_badge_html = '<div style="display:inline-block;padding:5px 12px;background:rgba(16, 185, 129, 0.2);color:#10B981;font-weight:700;font-size:12px;border:1px solid #10B981;border-radius:4px;margin-bottom:12px;">🟢 Antigravity Token Active • Unlimited Queries</div>'
     elif sess_status.get("is_daily_quota_finished"):
-        status_badge_html = f'<div style="display:inline-block;padding:5px 12px;background:rgba(245, 185, 66, 0.2);color:#F5B942;font-weight:700;font-size:12px;border:1px solid #F5B942;border-radius:4px;margin-bottom:12px;">⏳ Daily Free Quota Finished (3/3 Used) • Resets in {sess_status["reset_time_str"]}</div>'
+        status_badge_html = f'<div style="display:inline-block;padding:5px 12px;background:rgba(245, 185, 66, 0.2);color:#F5B942;font-weight:700;font-size:12px;border:1px solid #F5B942;border-radius:4px;margin-bottom:12px;">⏳ Daily Quota Reached (3/3 Used) • Resets in {sess_status["reset_time_str"]}</div>'
     else:
-        status_badge_html = f'<div style="display:inline-block;padding:5px 12px;background:rgba(16, 185, 129, 0.2);color:#10B981;font-weight:700;font-size:12px;border:1px solid #10B981;border-radius:4px;margin-bottom:12px;">🟢 Free Tier: {sess_status["daily_questions_remaining"]} / 3 Free Questions Remaining Today (24h Quota)</div>'
+        status_badge_html = f'<div style="display:inline-block;padding:5px 12px;background:rgba(16, 185, 129, 0.2);color:#10B981;font-weight:700;font-size:12px;border:1px solid #10B981;border-radius:4px;margin-bottom:12px;">🟢 Antigravity AI Active • {sess_status["daily_questions_remaining"]} / 3 Questions Remaining Today (24h Quota)</div>'
     render_html(status_badge_html)
 
     home_c1, home_c2, home_c3, home_c4, home_c5 = st.columns(5)
@@ -368,14 +366,15 @@ def render_home_view(navigate_fn=None):
             home_resp = AIEnergyMarketAnalyst.answer_question(
                 home_ai_input,
                 session_id=sess_id,
-                allow_free_autonomous=True
+                allow_free_autonomous=True,
+                enforce_user_daily_limit=True
             )
             if home_resp.get("is_security_blocked") or "Security Violation" in home_resp.get("topic", ""):
                 render_html("""<div style="display:inline-block;padding:7px 14px;background:rgba(239, 68, 68, 0.2);color:#EF4444;font-weight:700;font-size:12.5px;border:1.5px solid #EF4444;margin-bottom:8px;border-radius:4px;">🚫 Enterprise Security Alert: Malicious activity detected. Session terminated.</div>""")
-            elif "Daily Free Quota Finished" in home_resp.get("topic", ""):
-                render_html("""<div style="display:inline-block;padding:7px 14px;background:rgba(245, 185, 66, 0.2);color:#F5B942;font-weight:700;font-size:12.5px;border:1.5px solid #F5B942;margin-bottom:8px;border-radius:4px;">⏳ Daily Free Quota Finished (3/3 Used) • Connect Antigravity Key on Page 9 for unlimited access</div>""")
+            elif "Daily Free Quota Finished" in home_resp.get("topic", "") or "Daily Quota Limit Reached" in home_resp.get("topic", ""):
+                render_html(f"""<div style="display:inline-block;padding:7px 14px;background:rgba(245, 185, 66, 0.2);color:#F5B942;font-weight:700;font-size:12.5px;border:1.5px solid #F5B942;margin-bottom:8px;border-radius:4px;">⏳ Daily Quota Reached (3/3 Questions Used) • Resets in {sess_status["reset_time_str"]}</div>""")
             elif home_resp.get("autonomous_free_mode"):
-                render_html("""<div style="display:inline-block;padding:5px 12px;background:rgba(16, 185, 129, 0.2);color:#10B981;font-weight:700;font-size:12px;border:1.5px solid #10B981;margin-bottom:8px;border-radius:4px;">🟢 100% Free Autonomous AI Engine (0 Quota • Zero API Key Required)</div>""")
+                render_html("""<div style="display:inline-block;padding:5px 12px;background:rgba(16, 185, 129, 0.2);color:#10B981;font-weight:700;font-size:12px;border:1.5px solid #10B981;margin-bottom:8px;border-radius:4px;">🟢 Antigravity AI Engine (3 Questions / 24h Quota)</div>""")
             st.markdown(home_resp["answer_text"])
             if home_resp.get("visualization_fig") is not None:
                 st.plotly_chart(home_resp["visualization_fig"], width="stretch", theme=None)

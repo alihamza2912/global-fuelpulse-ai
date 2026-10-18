@@ -50,83 +50,34 @@ if "ai_session_id" not in st.session_state:
 
 sess_id = st.session_state.ai_session_id
 has_custom_key = is_user_custom_key_configured() or gemini_client.is_key_configured()
-sess_status = session_protector.get_session_status(sess_id, has_custom_key=has_custom_key)
-
-# 🔑 Antigravity Token / API Key Integration Drawer
-with st.expander("🔑 Antigravity Token / Gemini API Key Configuration", expanded=(not has_custom_key and sess_status.get("is_daily_quota_finished", False))):
-    col_k1, col_k2 = st.columns([3, 1.2])
-    with col_k1:
-        current_key = settings.api.gemini_api_key
-        masked_preview = sanitize_sensitive_text(f"key={current_key}") if current_key else "None configured"
-        if has_custom_key:
-            st.success(f"🟢 **Antigravity Token Active**: `{masked_preview.replace('key=', '')}` (Enterprise Access • Unlimited Queries Unlocked)")
-        else:
-            st.info("Standard Free Tier: **First 3 questions are 100% free per user for 24 hours**. Connect your Antigravity Token or Gemini API Key to unlock unlimited instant queries.")
-        
-        sys_token_hint = get_system_antigravity_token()
-        new_key_input = st.text_input(
-            "Enter Antigravity API Token or Gemini API Key:",
-            type="password",
-            placeholder=f"e.g. {sys_token_hint} or AIzaSy...",
-            key="input_antigravity_token"
-        )
-        persist_chk = st.checkbox("Persist token to local .env configuration", value=True, key="persist_token_env")
-
-    with col_k2:
-        st.write("")
-        st.write("")
-        if st.button("⚡ Connect Token", width="stretch", type="primary", key="btn_connect_token"):
-            token_to_connect = new_key_input.strip() if (new_key_input and new_key_input.strip()) else get_system_antigravity_token()
-            set_user_api_key(token_to_connect, persist_to_env=persist_chk)
-            st.session_state["antigravity_token"] = token_to_connect
-            st.session_state["user_api_key"] = token_to_connect
-            st.success("✅ Antigravity Token connected! Unlimited queries enabled.")
-            st.rerun()
-
-        if has_custom_key:
-            if st.button("Disconnect Token", width="stretch", type="secondary", key="btn_disconnect_token"):
-                set_user_api_key("", persist_to_env=True)
-                st.session_state.pop("antigravity_token", None)
-                st.session_state.pop("user_api_key", None)
-                st.info("Token disconnected. Reverted to standard 3-question daily free tier.")
-                st.rerun()
-        else:
-            if st.button("⚡ Auto-Connect System Token", width="stretch", type="secondary", key="btn_auto_connect"):
-                token_to_connect = get_system_antigravity_token()
-                set_user_api_key(token_to_connect, persist_to_env=True)
-                st.session_state["antigravity_token"] = token_to_connect
-                st.session_state["user_api_key"] = token_to_connect
-                st.success("✅ Antigravity Token auto-connected! Unlimited queries enabled.")
-                st.rerun()
+sess_status = session_protector.get_session_status(sess_id, has_custom_key=has_custom_key, enforce_user_daily_limit=True)
 
 # Determine live status badge
 if sess_status.get("is_blocked"):
     status_label = "🚫 Security Alert: Access Terminated"
     status_icon = "🔴"
     status_detail = "Session permanently blocked due to illegal/malicious activity detection"
-elif has_custom_key:
-    status_label = "Antigravity Token Connected"
-    status_icon = "🟢"
-    status_detail = "Enterprise Access Active • Unlimited 24/7 Intelligence Queries"
-elif sess_status["is_daily_quota_finished"]:
-    status_label = "Daily Free Quota Finished (3/3 Used)"
+elif sess_status.get("is_daily_quota_finished"):
+    status_label = "Daily Quota Reached (3/3 Used)"
     status_icon = "⏳"
-    status_detail = f"Daily quota resets in {sess_status['reset_time_str']} (after 24 hours) • Connect Antigravity Token for unlimited"
+    status_detail = f"Resets in {sess_status['reset_time_str']} (after 24 hours) • 3 questions allowed per 24 hours"
 else:
-    status_label = "Free Tier Active"
+    status_label = "Antigravity AI Connected"
     status_icon = "🟢"
-    status_detail = f"Questions remaining today: {sess_status['daily_questions_remaining']} / {sess_status['daily_free_limit']} (Resets in 24 hours)"
+    status_detail = f"Questions remaining today: {sess_status['daily_questions_remaining']} / 3 (Resets in 24 hours)"
 
 render_html(f"""<div style="display:inline-flex;align-items:center;gap:10px;padding:9px 18px;background:rgba(14, 21, 38, 0.85);backdrop-filter:blur(12px);color:#F9FAFB;font-weight:700;font-size:13px;border:1px solid rgba(255, 255, 255, 0.14);box-shadow:0 4px 14px rgba(0, 0, 0, 0.35);margin-bottom:16px;border-radius:6px;"><span>{status_icon} <strong style="color:#F5B942;">{status_label}</strong></span><span style="color:rgba(255, 255, 255, 0.2);font-weight:400;">•</span><span style="font-weight:500;font-size:12.5px;color:#94A3B8;">{status_detail}</span></div>""")
 
 # Assistant Info Banner
 st.info(
     f"""
-    🛡️ **Enterprise AI Energy Market Analyst & Abuse Shield:**
+    🛡️ **Enterprise AI Energy Market Analyst (Powered by Antigravity AI):**
     - **Status**: **{status_label}** ({status_detail}).
-    - **Free Tier Policy**: The first **3 questions are 100% free** for every user every 24 hours. After that, attach your **Antigravity Token** to continue asking questions without waiting 24 hours.
+    - **Integrated Antigravity Tokens**: Automatically connected behind the scenes. Zero manual configuration required.
+    - **24-Hour Allowance**: Anyone can ask **up to 3 questions in 24 hours**. After 3 questions, your quota resets automatically after 24 hours.
+    - **Simple English & Visual Diagrams**: Every answer includes a **Simple English Explanation** and a **Visual Diagram / Flowchart** for easy understanding.
     - **Multi-Country Precision**: Accurately analyzes sovereign tax structures (e.g. Saudi Arabia 15% VAT & 0% income tax, India GST/VAT), OPEC quotas, crude contributors, and shipping corridors.
-    - **Security & Integrity Shield**: Real-time detection against prompt injections, SQL tampering, or malicious activity. Unauthorized actions trigger instant permanent session termination.
+    - **Security & Integrity Shield**: Real-time protection against malicious queries or system tampering.
     """
 )
 
@@ -167,7 +118,8 @@ if user_question:
         response = AIEnergyMarketAnalyst.answer_question(
             question=user_question,
             session_id=sess_id,
-            allow_free_autonomous=True
+            allow_free_autonomous=True,
+            enforce_user_daily_limit=True
         )
 
     st.markdown("---")
@@ -175,10 +127,10 @@ if user_question:
     # Render quota/source badges
     if response.get("is_security_blocked") or "Security Violation" in response.get("topic", ""):
         render_html("""<div style="display:inline-block;padding:7px 14px;background:rgba(239, 68, 68, 0.2);color:#EF4444;font-weight:700;font-size:12.5px;border:1.5px solid #EF4444;margin-bottom:10px;border-radius:4px;">🚫 Enterprise Security Alert • Session Terminated</div>""")
-    elif "Daily Free Quota Finished" in response.get("topic", ""):
-        render_html("""<div style="display:inline-block;padding:7px 14px;background:rgba(245, 185, 66, 0.2);color:#F5B942;font-weight:700;font-size:12.5px;border:1.5px solid #F5B942;margin-bottom:10px;border-radius:4px;">⏳ Daily Free Quota Finished (3/3 Questions Used) • Connect Antigravity Key</div>""")
+    elif "Daily Free Quota Finished" in response.get("topic", "") or "Daily Quota Limit Reached" in response.get("topic", ""):
+        render_html("""<div style="display:inline-block;padding:7px 14px;background:rgba(245, 185, 66, 0.2);color:#F5B942;font-weight:700;font-size:12.5px;border:1.5px solid #F5B942;margin-bottom:10px;border-radius:4px;">⏳ Daily Quota Reached (3/3 Questions Used) • Resets After 24 Hours</div>""")
     elif response.get("autonomous_free_mode"):
-        render_html("""<div style="display:inline-block;padding:5px 12px;background:rgba(16, 185, 129, 0.2);color:#10B981;font-weight:700;font-size:12px;border:1.5px solid #10B981;margin-bottom:10px;border-radius:4px;">🟢 100% Free Autonomous AI Engine (0 Quota • Zero API Key Required)</div>""")
+        render_html("""<div style="display:inline-block;padding:5px 12px;background:rgba(16, 185, 129, 0.2);color:#10B981;font-weight:700;font-size:12px;border:1.5px solid #10B981;margin-bottom:10px;border-radius:4px;">🟢 Antigravity AI Engine (3 Questions / 24h Quota)</div>""")
     elif response.get("served_from_db"):
         render_html("""<div style="display:inline-block;padding:4px 10px;background:#FFF3CD;color:#111111;font-weight:700;font-size:12px;border:1.5px solid #111111;margin-bottom:10px;border-radius:3px;">⚡ Direct Database Answer (0 AI quota used)</div>""")
     elif response.get("served_from_cache"):
