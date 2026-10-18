@@ -20,4 +20,3 @@ gatherUsageStats = false
 [client]
 toolbarMode = "minimal"
 showErrorDetails = true
-showSidebarNavigation = false

@@ -144,6 +144,8 @@ if not c_data.empty:
 else:
     st.info("Select a country with available records to view metrics.")
 
+st.write("")
+
 # Historical Trend Chart & Multi-Country Comparison
 trend_col, comp_col = st.columns([7, 5])
 
@@ -213,6 +215,8 @@ with comp_col:
         )
         st.plotly_chart(fig_comp, width="stretch", theme=None)
 
+st.write("")
+
 # Price Distribution Across All Reporting Economies
 st.subheader(f"📊 Global Retail Price Distribution ({fuel_type.replace('_', ' ').title()})")
 dist_col1, dist_col2 = st.columns([7, 5])
@@ -244,6 +248,8 @@ with dist_col2:
         - **Retail vs. Crude Distinction:** Retail fuel prices incorporate crude procurement, refining margins, distribution, dealer commissions, and excise taxes, differing substantially from spot crude benchmarks ($/barrel).
         """
     )
+
+st.write("")
 
 # Searchable Data Table
 st.subheader("📑 Global Retail Fuel Price Records")

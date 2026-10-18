@@ -116,6 +116,8 @@ def render_india_center_view(navigate_fn=None):
             code_badge="DEPENDENCE"
         )
 
+    st.write("")
+
     # 3. Metro City Comparison (Petrol & Diesel)
     st.markdown(f"""
     <div style="font-family: 'Space Grotesk', sans-serif; font-size: 1.25rem; font-weight: 800; color: #F9FAFB; margin-bottom: 8px;">
@@ -202,6 +204,8 @@ def render_india_center_view(navigate_fn=None):
             </div>
         </div>
         """)
+
+    st.write("")
 
     # 4. Interactive Price Build-Up Waterfall
     st.markdown(f"""
@@ -321,6 +325,8 @@ def render_india_center_view(navigate_fn=None):
         </div>
         """)
 
+    st.write("")
+
     # 5. Oil Marketing Company (OMC) Market Footprint
     st.markdown(f"""
     <div style="font-family: 'Space Grotesk', sans-serif; font-size: 1.25rem; font-weight: 800; color: #F9FAFB; margin-bottom: 8px;">
@@ -381,6 +387,8 @@ def render_india_center_view(navigate_fn=None):
             </div>
         </div>
         """)
+
+    st.write("")
 
     # 6. Honest Scope & Coverage Limitations
     render_html("""

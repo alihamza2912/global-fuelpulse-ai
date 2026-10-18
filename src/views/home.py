@@ -30,26 +30,26 @@ def render_home_view(navigate_fn=None):
 
     # 1. Hero Section with Glow, Gradient Text & Eyebrow Badge
     render_html(f"""
-    <div style="position: relative; overflow: hidden; padding: 4px 0 2px 0; text-align: center;">
+    <div style="position: relative; overflow: hidden; padding: 20px 0 10px 0; text-align: center;">
         
         <!-- Ambient Background Radial Glow -->
-        <div style="position: absolute; top: -80px; left: 50%; transform: translateX(-50%); width: 750px; height: 260px; background: radial-gradient(ellipse at center, rgba(245, 185, 66, 0.20) 0%, rgba(96, 165, 250, 0.12) 50%, transparent 75%); filter: blur(70px); pointer-events: none; z-index: 0;"></div>
+        <div style="position: absolute; top: -100px; left: 50%; transform: translateX(-50%); width: 850px; height: 320px; background: radial-gradient(ellipse at center, rgba(245, 185, 66, 0.22) 0%, rgba(96, 165, 250, 0.14) 50%, transparent 75%); filter: blur(80px); pointer-events: none; z-index: 0;"></div>
 
         <div style="position: relative; z-index: 2; max-width: 950px; margin: 0 auto;">
             
             <!-- Category Eyebrow Pill -->
-            <div style="display: inline-flex; align-items: center; gap: 8px; background: rgba(245, 185, 66, 0.12); border: 1px solid rgba(245, 185, 66, 0.35); padding: 4px 12px; border-radius: 9999px; font-family: 'Space Grotesk', sans-serif; font-size: 0.72rem; font-weight: 800; color: #F5B942; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 6px; box-shadow: 0 0 14px rgba(245, 185, 66, 0.18);">
-                <span style="width: 7px; height: 7px; border-radius: 50%; background: #10B981; display: inline-block;"></span>
+            <div style="display: inline-flex; align-items: center; gap: 8px; background: rgba(245, 185, 66, 0.12); border: 1px solid rgba(245, 185, 66, 0.35); padding: 5px 14px; border-radius: 9999px; font-family: 'Space Grotesk', sans-serif; font-size: 0.74rem; font-weight: 800; color: #F5B942; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 12px; box-shadow: 0 0 16px rgba(245, 185, 66, 0.2);">
+                <span style="width: 8px; height: 8px; border-radius: 50%; background: #10B981; display: inline-block;"></span>
                 {t('home_eyebrow', cur_lang)}
             </div>
 
             <!-- Gradient Heading -->
-            <h1 class="fuelpulse-hero-title" style="font-family: 'Space Grotesk', -apple-system, sans-serif; font-size: 2.7rem; font-weight: 800; letter-spacing: -0.04em; line-height: 1.1; margin: 0 0 6px 0; background: linear-gradient(180deg, #FFFFFF 25%, rgba(255, 255, 255, 0.9) 65%, #94A3B8 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+            <h1 class="fuelpulse-hero-title" style="font-family: 'Space Grotesk', -apple-system, sans-serif; font-size: 3.4rem; font-weight: 800; letter-spacing: -0.04em; line-height: 1.1; margin: 0 0 14px 0; background: linear-gradient(180deg, #FFFFFF 25%, rgba(255, 255, 255, 0.9) 65%, #94A3B8 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
                 {t('home_hero_title', cur_lang)}
             </h1>
 
             <!-- Subtitle Description -->
-            <p class="fuelpulse-hero-desc" style="font-family: 'Inter', sans-serif; font-size: 1.05rem; color: #94A3B8; max-width: 640px; margin: 0 auto 10px auto; line-height: 1.55; font-weight: 400;">
+            <p class="fuelpulse-hero-desc" style="font-family: 'Inter', sans-serif; font-size: 1.12rem; color: #94A3B8; max-width: 640px; margin: 0 auto 20px auto; line-height: 1.6; font-weight: 400;">
                 {t('home_hero_subtitle', cur_lang)}
             </p>
 
@@ -74,6 +74,7 @@ def render_home_view(navigate_fn=None):
                 st.session_state.active_nav = "🇮🇳 India Fuel Center"
                 st.rerun()
 
+    st.write("")
 
     # Fetch live headline benchmarks from database with current benchmarks
     brent_val = "$84.20 / bbl"
@@ -96,7 +97,7 @@ def render_home_view(navigate_fn=None):
 
     # 3. The Interactive Browser Mockup Container
     render_html(f"""
-    <div style="position: relative; max-width: 1100px; margin: 6px auto 14px auto; z-index: 10;">
+    <div style="position: relative; max-width: 1100px; margin: 8px auto 28px auto; z-index: 10;">
         <div style="background: rgba(14, 21, 38, 0.95); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.16); box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7), 0 0 40px rgba(245, 185, 66, 0.15); border-radius: 12px; overflow: hidden;">
             
             <!-- MacOS Window Header -->
@@ -176,6 +177,8 @@ def render_home_view(navigate_fn=None):
     )
     st.plotly_chart(fig_mockup, use_container_width=True, key="fig_home_mockup_chart")
 
+    st.write("")
+
     # 4. Problem Solved & Executive Perspective
     col_problem, col_who = st.columns([1, 1], gap="large")
 
@@ -223,9 +226,11 @@ def render_home_view(navigate_fn=None):
         </div>
         """)
 
+    st.write("")
+
     # 5. Modular Product Navigation Grid
     st.markdown(f"""
-    <div style="font-family: 'Space Grotesk', sans-serif; font-size: 1.15rem; font-weight: 800; color: #F9FAFB; margin: 10px 0 10px 0;">
+    <div style="font-family: 'Space Grotesk', sans-serif; font-size: 1.15rem; font-weight: 800; color: #F9FAFB; margin: 18px 0 12px 0;">
         {t('home_suite_title', cur_lang)}
     </div>
     """, unsafe_allow_html=True)

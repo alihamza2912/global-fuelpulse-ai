@@ -64,7 +64,7 @@ render_command_strip(
 
 # 2. Interactive Analytical Controls Filter Bar
 render_html(f'<div class="atlas-section-title">{t("sidebar_01_command", current_lang)} — CONTROL TERMINAL & PARAMETERS</div>')
-ctrl_c1, ctrl_c2, ctrl_c3, ctrl_c4 = st.columns([3, 3, 4, 2], vertical_alignment="bottom")
+ctrl_c1, ctrl_c2, ctrl_c3, ctrl_c4 = st.columns([3, 3, 4, 2])
 
 with ctrl_c1:
     selected_fuel = st.selectbox(
@@ -87,6 +87,8 @@ with ctrl_c3:
     country_filter = None if selected_country == "Global Focus (All)" else selected_country
 
 with ctrl_c4:
+    st.write("")
+    st.write("")
     if st.button("⚡ RE-QUERY", type="primary", width="stretch", help="Re-queries active data store for latest observations"):
         st.cache_data.clear()
         st.rerun()
@@ -123,6 +125,8 @@ render_signal_rail([
         "note": f"{top_imp.iloc[0]['total_import_quantity']:,.0f} bpd" if not top_imp.empty else "11.3M bpd"
     }
 ])
+
+st.write("")
 
 # 4. Asymmetric Analytical Composition: World Map Anchor (Left) & Instrument Rail (Right)
 map_col, inst_col = st.columns([8, 4])
@@ -207,6 +211,7 @@ with inst_col:
                 subtext=f"{chg.get('current_price_local', 0.0):.2f} {chg.get('currency', 'USD')}/L",
                 code_badge=iso3
             )
+            st.write("")
             render_instrument_card(
                 label="PRIOR PERIOD OBSERVATION",
                 value=f"${chg['previous_price_usd']:.4f} / L" if chg['has_previous'] else "NO PRIOR RECORD",
@@ -214,6 +219,7 @@ with inst_col:
                 subtext=f"Observed: {chg.get('previous_date', 'N/A')}",
                 code_badge="LAG-1"
             )
+            st.write("")
             render_instrument_card(
                 label="ABSOLUTE VARIANCE",
                 value=f"{chg['absolute_change_usd']:+.4f} USD",
@@ -230,6 +236,7 @@ with inst_col:
             subtext="Active reporting jurisdictions",
             code_badge="COV"
         )
+        st.write("")
         render_instrument_card(
             label="SOVEREIGN SPREAD (MAX - MIN)",
             value=f"${(summary['max_price_usd'] - summary['min_price_usd']):.4f} / L",
@@ -237,6 +244,7 @@ with inst_col:
             subtext="Global retail price disparity",
             code_badge="SPREAD"
         )
+        st.write("")
         render_instrument_card(
             label="ANNUAL CRUDE TRADE MONITORED",
             value=f"${(top_exp['total_export_value_usd'].sum() if not top_exp.empty else 5.15e10) / 1e9:.1f}B USD",
@@ -244,6 +252,8 @@ with inst_col:
             subtext="Customs commodity valuation",
             code_badge="VALUE"
         )
+
+st.write("")
 
 # 5. Market Movement Panel (Large Instrument Chart)
 render_html('<div class="atlas-section-title">MARKET MOVEMENT INSTRUMENT — PRICE DISPERSION & COUNTRY RANKINGS</div>')
@@ -291,6 +301,8 @@ with chart_col_dist:
             bargap=0.1
         )
         st.plotly_chart(fig_hist, width="stretch", theme=None)
+
+st.write("")
 
 # 6. Detailed Sovereign Energy Observation Table
 render_html('<div class="atlas-section-title">VERIFIED OBSERVATION AUDIT TRAIL & PROVENANCE</div>')
