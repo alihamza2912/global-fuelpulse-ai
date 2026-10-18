@@ -1418,6 +1418,28 @@ VIEWS_TRANSLATIONS = {
         "zh": "ℹ️ 已重置回内置的 Antigravity 全球能源智能引擎。",
         "ru": "ℹ️ Возврат к встроенному движку энергетического анализа Antigravity.",
         "ja": "ℹ️ 標準の Antigravity エネルギー市場インテリジェンスエンジンに戻りました。"
+    },
+    "home_btn_f9_studio": {
+        "en": "🤖 Launch Dedicated AI Analyst Studio (/AI_Analyst) →",
+        "hi": "🤖 समर्पित एआई विश्लेषक स्टूडियो खोलें (/AI_Analyst) →",
+        "es": "🤖 Abrir Estudio Dedicado de AI Analyst (/AI_Analyst) →",
+        "fr": "🤖 Ouvrir le Studio Dédié AI Analyst (/AI_Analyst) →",
+        "ar": "🤖 فتح استوديو محلل الذكاء الاصطناعي (/AI_Analyst) →",
+        "de": "🤖 Eigenes AI Analyst Studio öffnen (/AI_Analyst) →",
+        "zh": "🤖 启动专属 AI 能源分析师工作室 (/AI_Analyst) →",
+        "ru": "🤖 Открыть специализированную студию AI Analyst (/AI_Analyst) →",
+        "ja": "🤖 専用 AI アナリスト スタジオを開く (/AI_Analyst) →"
+    },
+    "home_btn_f9_dash": {
+        "en": "📊 Explore Dashboard Chapter 09 →",
+        "hi": "📊 डैशबोर्ड अध्याय 09 का अन्वेषण करें →",
+        "es": "📊 Explorar Capítulo 09 del Panel →",
+        "fr": "📊 Explorer le Chapitre 09 du Tableau de Bord →",
+        "ar": "📊 استكشاف الفصل 09 من لوحة التحكم →",
+        "de": "📊 Dashboard Kapitel 09 erkunden →",
+        "zh": "📊 探索仪表板第 09 章 →",
+        "ru": "📊 Исследовать главу 09 дашборда →",
+        "ja": "📊 ダッシュボード第09章を探索 →"
     }
 }
 

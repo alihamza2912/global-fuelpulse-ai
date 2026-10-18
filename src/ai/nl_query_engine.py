@@ -440,7 +440,7 @@ class AIEnergyMarketAnalyst:
             any(w in q_lower for w in [
                 "main supplier", "supplier of fuel", "supplier of oil", "supplier from", "who is the supplier",
                 "who supplies fuel", "who supplies oil", "who supplies petroleum", "who supply fuel",
-                "oil company", "oil companies", "national oil company", "aramco", "adnoc", "enoc",
+                "national oil company", "aramco", "adnoc", "enoc",
                 "who produces fuel", "who produces oil in", "refinery operator in", "fuel provider"
             ])
             or (
@@ -451,7 +451,7 @@ class AIEnergyMarketAnalyst:
                 any(w in q_lower for w in ["who", "which company", "company", "companies"])
                 and any(w in q_lower for w in ["fuel from", "oil from", "petrol from"])
             )
-        ) and not any(w in q_lower for w in ["where import", "where does ... import", "who buys", "destination", "forecast"]):
+        ) and not any(w in q_lower for w in ["where import", "where does ... import", "who buys", "destination", "forecast", "owner", "ownership", "who owns", "who founded", "founder", "ceo", "chairman"]):
             resp = cls._handle_sovereign_supplier_query(question)
             question_cache.set(question, resp)
             return resp
@@ -460,21 +460,31 @@ class AIEnergyMarketAnalyst:
         if (
             (any(w in q_lower for w in ["india", "indian", "reliance", "iocl", "ongc"]) and any(w in q_lower for w in ["saudi", "aramco", "sabic", "ksa"]))
             and any(w in q_lower for w in ["beat", "compete", "rival", "vs", "versus", "better", "win", "overtake", "challenge", "compare", "stronger", "bigger", "ahead", "easily beat"])
+            and not any(w in q_lower for w in ["owner", "ownership", "who owns", "who founded", "founder", "ceo", "chairman"])
         ):
             resp = cls._handle_india_vs_saudi_company_query(question)
             question_cache.set(question, resp)
             return resp
 
         # Route JIO_COMP: Fuel Retail Competitors & Jio-bp (e.g. "which company can easily compete jio fuel")
-        if (
-            any(w in q_lower for w in [
-                "jio", "jio fuel", "jio-bp", "reliance fuel", "compete jio", "compete with jio",
-                "nayara", "iocl", "bpcl", "hpcl", "shell india", "private fuel", "fuel competitor",
-                "fuel competitors", "compete fuel", "compete with reliance", "competing fuel",
-                "compete easily", "competes easily", "competitor of jio"
+        is_jio_comp = (
+            any(phrase in q_lower for phrase in [
+                "compete jio", "compete with jio", "compete reliance", "compete with reliance",
+                "competitor of jio", "competitors of jio", "jio competitor", "jio competitors",
+                "jio fuel competitor", "jio fuel competitors", "compete jio fuel", "competes easily jio",
+                "competitor of jio-bp", "rival of jio"
             ])
-            or (any(w in q_lower for w in ["compete", "competitor", "competitors", "rival", "rivals", "challenge"]) and any(w in q_lower for w in ["fuel", "petrol", "diesel", "pump", "retailer", "jio", "reliance", "omc", "omcs", "pumps"]))
-        ):
+            or (
+                any(w in q_lower for w in ["jio", "jio-bp", "jio fuel", "reliance fuel"])
+                and any(w in q_lower for w in ["compete", "competitor", "competitors", "rival", "rivals", "challenge", "beat", "market share", "vs", "versus"])
+            )
+            or (
+                any(w in q_lower for w in ["compete", "competitor", "competitors", "rival", "rivals", "challenge", "beat"])
+                and any(w in q_lower for w in ["fuel", "petrol", "diesel", "pump", "retailer", "omc", "omcs", "pumps"])
+                and any(w in q_lower for w in ["jio", "reliance", "nayara", "iocl", "bpcl", "hpcl"])
+            )
+        ) and not any(w in q_lower for w in ["owner", "ownership", "who owns", "who founded", "founder", "ceo", "chairman", "headquarters"])
+        if is_jio_comp:
             resp = cls._handle_jio_fuel_and_company_competition_query(question)
             question_cache.set(question, resp)
             return resp
@@ -2247,19 +2257,29 @@ class AIEnergyMarketAnalyst:
         if (
             (any(w in q_lower for w in ["india", "indian", "reliance", "iocl", "ongc"]) and any(w in q_lower for w in ["saudi", "aramco", "sabic", "ksa"]))
             and any(w in q_lower for w in ["beat", "compete", "rival", "vs", "versus", "better", "win", "overtake", "challenge", "compare", "stronger", "bigger", "ahead", "easily beat"])
+            and not any(w in q_lower for w in ["owner", "ownership", "who owns", "who founded", "founder", "ceo", "chairman"])
         ):
             return cls._handle_india_vs_saudi_company_query(question)
 
         # Fuel Retail Competitors & Jio-bp (e.g. "which company can easily compete jio fuel")
-        if (
-            any(w in q_lower for w in [
-                "jio", "jio fuel", "jio-bp", "reliance fuel", "compete jio", "compete with jio",
-                "nayara", "iocl", "bpcl", "hpcl", "shell india", "private fuel", "fuel competitor",
-                "fuel competitors", "compete fuel", "compete with reliance", "competing fuel",
-                "compete easily", "competes easily", "competitor of jio"
+        is_jio_comp = (
+            any(phrase in q_lower for phrase in [
+                "compete jio", "compete with jio", "compete reliance", "compete with reliance",
+                "competitor of jio", "competitors of jio", "jio competitor", "jio competitors",
+                "jio fuel competitor", "jio fuel competitors", "compete jio fuel", "competes easily jio",
+                "competitor of jio-bp", "rival of jio"
             ])
-            or (any(w in q_lower for w in ["compete", "competitor", "competitors", "rival", "rivals", "challenge"]) and any(w in q_lower for w in ["fuel", "petrol", "diesel", "pump", "retailer", "jio", "reliance", "omc", "omcs", "pumps"]))
-        ):
+            or (
+                any(w in q_lower for w in ["jio", "jio-bp", "jio fuel", "reliance fuel"])
+                and any(w in q_lower for w in ["compete", "competitor", "competitors", "rival", "rivals", "challenge", "beat", "market share", "vs", "versus"])
+            )
+            or (
+                any(w in q_lower for w in ["compete", "competitor", "competitors", "rival", "rivals", "challenge", "beat"])
+                and any(w in q_lower for w in ["fuel", "petrol", "diesel", "pump", "retailer", "omc", "omcs", "pumps"])
+                and any(w in q_lower for w in ["jio", "reliance", "nayara", "iocl", "bpcl", "hpcl"])
+            )
+        ) and not any(w in q_lower for w in ["owner", "ownership", "who owns", "who founded", "founder", "ceo", "chairman", "headquarters"])
+        if is_jio_comp:
             return cls._handle_jio_fuel_and_company_competition_query(question)
 
         # 1. Petroleum Export Destinations & Trade Flows (e.g. "fuel from dubai where export", "where does UAE export oil to")
@@ -2396,7 +2416,10 @@ class AIEnergyMarketAnalyst:
                 return cls._format_tax_engine_response(question, tax_res)
 
         # 6. Check if query is about Indian PSU OMCs or Oil Companies
-        if any(w in q_lower for w in ["iocl", "indian oil", "bpcl", "bharat petroleum", "hpcl", "hindustan petroleum", "reliance", "nayara", "ongc", "omc", "refiner", "oil company", "oil companies"]):
+        if (
+            any(w in q_lower for w in ["iocl", "indian oil", "bpcl", "bharat petroleum", "hpcl", "hindustan petroleum", "reliance", "nayara", "ongc", "omc", "refiner", "oil company", "oil companies"])
+            and not any(w in q_lower for w in ["owner", "ownership", "who owns", "who founded", "founder", "ceo", "chairman", "headquarters"])
+        ):
             lines = [
                 "### 🏢 Corporate & Refining Intelligence: Indian Downstream Petroleum Sector\n",
                 f"**Query**: *\"{question}\"*\n",

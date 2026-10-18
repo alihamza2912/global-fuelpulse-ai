@@ -68,3 +68,62 @@ def test_custom_user_api_key_retrieval():
         assert retrieved_key == "AIzaSyTestUserCustomKey12345"
     finally:
         st.session_state.pop("user_api_key", None)
+
+
+def test_iocl_ownership_query_does_not_hijack_to_jio_competition():
+    """Verifies that 'who is the owner of fuel company of iocl' routes to live intelligence, not Jio-bp competition."""
+    from src.ai.nl_query_engine import question_cache
+    question_cache.clear()
+
+    mock_search = [
+        {
+            "title": "Indian Oil Corporation - Wikipedia",
+            "snippet": "Indian Oil Corporation Limited (IOCL) is an Indian multinational oil and gas public sector undertaking under the ownership of Ministry of Petroleum and Natural Gas, Government of India.",
+            "url": "https://en.wikipedia.org/wiki/Indian_Oil_Corporation",
+            "source": "Web Search (Live)"
+        }
+    ]
+    with patch.object(DeepOnlineResearchEngine, "search_web", return_value=mock_search):
+        ans = AIEnergyMarketAnalyst.answer_question(
+            question="who is the owner of fuel company of iocl",
+            session_id="test_iocl_owner_session",
+            bypass_session_limits=True,
+            allow_free_autonomous=True
+        )
+        assert ans["is_fallback"] is False
+        assert "Who Can Easily Compete with Jio-bp" not in ans["answer_text"]
+        assert "Government of India" in ans["answer_text"] or "Indian Oil" in ans["answer_text"]
+
+
+def test_jio_competition_query_retains_routing():
+    """Verifies that explicit competition queries for Jio fuel still route correctly."""
+    from src.ai.nl_query_engine import question_cache
+    question_cache.clear()
+
+    ans = AIEnergyMarketAnalyst.answer_question(
+        question="which company can easily compete jio fuel",
+        session_id="test_jio_competition_session",
+        bypass_session_limits=True,
+        allow_free_autonomous=True
+    )
+    assert ans["is_fallback"] is False
+    assert "Jio-bp" in ans["answer_text"]
+    assert "Competitive Market Intelligence" in ans["answer_text"]
+
+
+def test_ai_modal_translation_fallbacks_never_return_raw_keys():
+    """Verifies that all ai_* and home_btn_f9_* keys resolve cleanly and never return raw string keys."""
+    from src.localization.i18n import t
+
+    test_keys = [
+        "ai_card_title", "ai_context_prefix", "ai_context_suffix",
+        "ai_status_active", "ai_status_quota_reached", "ai_status_blocked",
+        "ai_suggested_queries", "ai_tab_type", "ai_tab_voice",
+        "ai_input_placeholder", "ai_btn_ask", "ai_engine_verified",
+        "home_btn_f9_studio", "home_btn_f9_dash"
+    ]
+    for key in test_keys:
+        for lang in ["en", "hi", "es", "fr"]:
+            res = t(key, lang, rem_q=3, reset_str="24 hours")
+            assert res != key, f"Translation key '{key}' returned raw string in language '{lang}'"
+            assert len(res) > 0

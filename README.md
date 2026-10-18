@@ -1,8 +1,8 @@
-# ⚡ Global FuelPulse AI — Global Fuel Price, Petroleum Trade, Maritime Intelligence & AI Analyst Platform (v3.3.2)
+# ⚡ Global FuelPulse AI — Global Fuel Price, Petroleum Trade, Maritime Intelligence & AI Analyst Platform (v3.3.3)
 
 [![GitHub Repository](https://img.shields.io/badge/GitHub-Repository-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/alihamza2912/global-fuelpulse-ai)
 [![Live App](https://img.shields.io/badge/Live_App-Streamlit_Cloud-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white)](https://global-fuelpulse-ai-jqsi5ngrigi4hm4gtmcghn.streamlit.app)
-[![Tests](https://img.shields.io/badge/Tests-85%20Passed%20(100%25)-brightgreen.svg)]()
+[![Tests](https://img.shields.io/badge/Tests-88%20Passed%20(100%25)-brightgreen.svg)]()
 [![AI Analyst](https://img.shields.io/badge/AI_Analyst-Real--Time_Web_Research_%7C_Personal_API_Keys-F5B942.svg)]()
 [![Deep Research](https://img.shields.io/badge/Deep_Research-Live_DuckDuckGo_%26_Wikipedia_Grounding-10B981.svg)]()
 [![Security Shield](https://img.shields.io/badge/Security_Shield-Enterprise_Anti--Abuse_Active-10B981.svg)]()
@@ -22,35 +22,23 @@
 > 
 > *Access real-time retail motor fuel intelligence, international trade matrices, live maritime chokepoints, MoPNG price waterfall breakdown, Holt-Winters price forecasting, and the grounded AI Energy Market Analyst directly in your browser on desktop or mobile.*
 
-**Global FuelPulse AI (v3.3.2)** is an enterprise-grade, unified energy market decision intelligence platform integrating **live retail motor fuel prices** (gasoline and diesel), **international petroleum trade flows** (crude oil and refined products), **foreign exchange parities**, **macroeconomic affordability indices**, **geopolitical maritime supply-chain monitoring**, **machine learning forecasting**, and an **AI Energy Market Analyst** with full continuous historical and real-time coverage up to **October 2026**.
+**Global FuelPulse AI (v3.3.3)** is an enterprise-grade, unified energy market decision intelligence platform integrating **live retail motor fuel prices** (gasoline and diesel), **international petroleum trade flows** (crude oil and refined products), **foreign exchange parities**, **macroeconomic affordability indices**, **geopolitical maritime supply-chain monitoring**, **machine learning forecasting**, and an **AI Energy Market Analyst** with full continuous historical and real-time coverage up to **October 2026**.
 
 ---
 
-## 🌟 What's New in Latest Release (v3.3.2)
+## 🌟 What's New in Latest Release (v3.3.3)
 
-- 🌐 **Real-Time Deep Online Research Engine (`src/ai/deep_research_engine.py`):**
-  - **No More Generic Boilerplate**: Completely eliminated the static 3-producer fallback (`USA 13.20 mbpd, Russia 9.15 mbpd, Saudi Arabia 9.02 mbpd`).
-  - **Live Web Indexing**: Integrates DuckDuckGo search (`ddgs`) and the Wikipedia REST API to search the web in real time for **any arbitrary energy, price, supplier, or macroeconomic query**.
-  - **Grounded Structured Synthesis**: Extracts concrete figures (currency rates, extraction volumes, crack spreads, percentages), generates contextual **Mermaid flowcharts**, builds structured tabular records, and cites live sources with clickable URLs.
-- 🔑 **Personal & Account API Key Support (`src/ai/gemini_client.py`, `src/ui_components.py`):**
-  - **Interactive Drawer**: Added a dedicated `⚙️ Live Web Research & Account API Key Settings` expander in both the AI Assistant modal dialog and Page 9 AI Analyst.
-  - **Live Indicator**: Displays `🌐 Live Online Research: ACTIVE` confirming web indexing is live.
-  - **Custom LLM Tokens**: Any user can enter their personal Google Gemini API key (`AIzaSy...`) in the UI or `.env`. When active, live online research snippets are dynamically injected into Gemini's prompt for real-time grounded LLM generation.
-- 🌍 **Africa Refined Fuel Supply Intelligence (`src/ai/nl_query_engine.py`):**
-  - Dedicated intelligence explaining the African energy paradox (7.5 mbpd crude extracted vs. 75–80% refined fuel imported) and ranking top refined fuel suppliers to Africa:
-    - 🇪🇺 **European Union (ARA Hub)**: 32.0% (~750,000 bpd)
-    - 🇷🇺 **Russian Federation**: 25.5% (~600,000 bpd)
-    - 🇦🇪 **Middle East (UAE / Fujairah & Saudi)**: 20.0% (~470,000 bpd)
-    - 🇮🇳 **India (Reliance Jamnagar & Nayara)**: 12.0% (~280,000 bpd)
-    - 🇳🇬 **Dangote Mega-Refinery**: 10.5% (~250,000 bpd ramping up to 650,000 bpd)
-- ⚡ **Instant Reactive Quota Decrement & Zero-Reload Navigation:**
-  - Submitting an AI query immediately updates the dialog badge and top navbar counter (`3/3 ➔ 2/3 ➔ 1/3 ➔ 0/3`) without requiring full page refreshes.
-  - Switched portal view switching to in-memory WebSocket routing for instant (<30ms) rendering with zero white screen flashes.
-- 🎙️ **Clean "Voice Note" Branding & Universal Multi-Language UI Localization:**
-  - Completely purged all third-party branding in favor of clean `🎙️ Voice Note` (or `🎙️ वॉइस नोट` in Hindi).
-  - Expanded view localization dictionaries across all 9 primary languages (English, Hindi, Spanish, French, Arabic, German, Chinese, Russian, Japanese).
-- 🧪 **Expanded 85-Test Automated Suite (100% Pass Rate):**
-  - Test suite expanded to **85 passing tests** across 12 suites, including new unit tests in `tests/test_deep_research.py` verifying real-time web search, dynamic Mermaid diagrams, query routing, and personal API key handling.
+- 📏 **Desktop & Mobile UI Layout Symmetry & Equal-Height CSS Grid (`src/views/home.py`, `src/ui_components.py`):**
+  - **Section 4 Mathematical Alignment**: Converted "THE CORE CHALLENGE" and "USER VALUE" perspective cards to a unified responsive CSS Grid (`display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); align-items: stretch;`). Both cards now share the exact same height on desktop regardless of content length, eliminating uneven bottom borders, while collapsing into single-column cards on mobile screens.
+  - **Feature 09 Action Buttons Symmetrical 42px Alignment**: Standardized `st.link_button` and `st.button` across columns with identical 42px height, line-height, flexbox centering, 8px border-radius, and level baselines.
+- 🧠 **Precision NL Query Routing & Corporate Ownership Grounding (`src/ai/nl_query_engine.py`):**
+  - **Eliminated Route Hijacking**: Removed standalone `"iocl"`, `"bpcl"`, `"hpcl"`, `"nayara"`, and `"shell india"` triggers from the Jio-bp competition handler.
+  - **Live Online Research for Ownership**: Queries such as *"who is the owner of fuel company of iocl"* route directly to the real-time Deep Online Research Engine and Gemini tokens, answering accurately (Government of India / MoPNG 51.5% stake) with live web citations.
+  - **Strict 24h Quota**: Strict 3 questions per user per 24 hours preserved across all visitors and sessions.
+- 🌐 **Fail-Safe Multi-Language AI Assistant Localization (`src/localization/i18n.py`):**
+  - Merged `VIEWS_TRANSLATIONS` directly into `TRANSLATIONS` and provided guaranteed fallbacks for all `ai_*` keys, eliminating raw translation keys from ever appearing in the UI.
+- 🧪 **Expanded 88-Test Automated Suite (100% Pass Rate):**
+  - Expanded test suite to **88 passing tests** across all 12 test suites, validating query routing accuracy, Jio competition retention, and multi-language translation resolution.
 
 ---
 

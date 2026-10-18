@@ -2313,7 +2313,17 @@ except Exception:
     except Exception:
         pass
 
-# Secondary views translations dictionary (Dashboard hero, Roadmap, Data Trust, FAQ)
+# Secondary views translations dictionary (Dashboard hero, Roadmap, Data Trust, FAQ, AI dialog)
+import sys
+from pathlib import Path
+
+_loc_dir = str(Path(__file__).resolve().parent)
+_root_dir = str(Path(__file__).resolve().parent.parent.parent)
+if _loc_dir not in sys.path:
+    sys.path.insert(0, _loc_dir)
+if _root_dir not in sys.path:
+    sys.path.insert(0, _root_dir)
+
 VIEWS_TRANSLATIONS: Dict[str, Dict[str, str]] = {}
 try:
     from src.localization.translations_views import VIEWS_TRANSLATIONS as _VT

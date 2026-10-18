@@ -587,52 +587,57 @@ div.fuelpulse-tnav-container div.stButton > button[kind="secondary"]:hover {{
     font-weight: 700 !important;
   }}
 
-  div.fuelpulse-f9-actions div[data-testid="stHorizontalBlock"] {{
-    display: flex !important;
-    align-items: center !important;
-    gap: 14px !important;
-  }}
-  div.fuelpulse-f9-actions div[data-testid="column"] {{
-    flex: 1 1 0 !important;
-  }}
-  div.fuelpulse-f9-actions a div,
-  div.fuelpulse-f9-actions div.stButton > button {{
+  /* Synchronized Dual Action Buttons (st.link_button + st.button) */
+  div[data-testid="column"] div.stButton > button,
+  div[data-testid="column"] div.stLinkButton > a {{
     height: 42px !important;
     min-height: 42px !important;
+    max-height: 42px !important;
     line-height: 42px !important;
-    font-size: 13px !important;
+    font-size: 13.5px !important;
     font-weight: 700 !important;
     border-radius: 8px !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
     text-align: center !important;
+    text-decoration: none !important;
+    box-sizing: border-box !important;
+    margin: 0 !important;
+    padding: 0 16px !important;
   }}
 
-  div.fuelpulse-hero-actions div[data-testid="stHorizontalBlock"] {{
-    display: flex !important;
-    gap: 14px !important;
-  }}
-  div.fuelpulse-hero-actions div[data-testid="column"] {{
-    flex: 1 1 0 !important;
-  }}
-  div.fuelpulse-hero-actions div.stButton > button {{
-    height: 44px !important;
-    min-height: 44px !important;
-    font-size: 14px !important;
-    font-weight: 700 !important;
+  div[data-testid="column"] div.stLinkButton > a[kind="primary"],
+  div[data-testid="column"] div.stButton > button[kind="primary"] {{
+    background: linear-gradient(135deg, #F5B942 0%, #D97706 100%) !important;
+    color: #070A12 !important;
+    border: 1px solid rgba(245, 185, 66, 0.5) !important;
+    box-shadow: 0 4px 12px rgba(245, 185, 66, 0.25) !important;
   }}
 
-  div.fuelpulse-perspective-container div[data-testid="stHorizontalBlock"] {{
-    display: flex !important;
+  div[data-testid="column"] div.stLinkButton > a[kind="secondary"],
+  div[data-testid="column"] div.stButton > button[kind="secondary"] {{
+    background: rgba(14, 21, 38, 0.8) !important;
+    color: #F9FAFB !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  }}
+
+  /* Equal-Height Perspective Grid */
+  div.fuelpulse-perspective-grid {{
+    display: grid !important;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)) !important;
+    gap: 20px !important;
     align-items: stretch !important;
-    gap: 18px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
   }}
-  div.fuelpulse-perspective-container div[data-testid="column"] {{
-    flex: 1 1 0 !important;
-  }}
-  div.fuelpulse-perspective-container div[data-testid="column"] > div {{
+  div.fuelpulse-perspective-grid > div {{
     height: 100% !important;
+    min-height: 100% !important;
+    box-sizing: border-box !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: flex-start !important;
   }}
 }}
 
@@ -1920,6 +1925,10 @@ button[data-testid*="primaryActive"] * {{
   }}
 
   /* D4. Problem & Perspective: stack at 100% width on mobile */
+  div.fuelpulse-perspective-grid {{
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }}
   div.fuelpulse-perspective-container [data-testid="stHorizontalBlock"] {{
     display: flex !important;
     flex-direction: column !important;

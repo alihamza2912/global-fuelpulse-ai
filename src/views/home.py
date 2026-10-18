@@ -182,12 +182,9 @@ def render_home_view(navigate_fn=None):
     st.write("")
 
     # 4. Problem Solved & Executive Perspective
-    render_html('<div class="fuelpulse-perspective-container">')
-    col_problem, col_who = st.columns([1, 1], gap="large")
-
-    with col_problem:
-        render_html(f"""
-        <div style="background: rgba(14, 21, 38, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 10px; padding: 22px; height: 100%;">
+    render_html(f"""
+    <div class="fuelpulse-perspective-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; align-items: stretch; width: 100%; box-sizing: border-box;">
+        <div style="background: rgba(14, 21, 38, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 10px; padding: 22px; display: flex; flex-direction: column; justify-content: flex-start; height: 100%; box-sizing: border-box;">
             <div style="font-family: 'Space Grotesk', sans-serif; font-size: 0.8rem; font-weight: 800; color: #F5B942; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 6px;">
                 {t('home_challenge_eyebrow', cur_lang)}
             </div>
@@ -201,11 +198,7 @@ def render_home_view(navigate_fn=None):
                 {t('home_challenge_p2', cur_lang)}
             </p>
         </div>
-        """)
-
-    with col_who:
-        render_html(f"""
-        <div style="background: rgba(14, 21, 38, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 10px; padding: 22px; height: 100%;">
+        <div style="background: rgba(14, 21, 38, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 10px; padding: 22px; display: flex; flex-direction: column; justify-content: flex-start; height: 100%; box-sizing: border-box;">
             <div style="font-family: 'Space Grotesk', sans-serif; font-size: 0.8rem; font-weight: 800; color: #60A5FA; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 6px;">
                 {t('home_value_eyebrow', cur_lang)}
             </div>
@@ -227,8 +220,8 @@ def render_home_view(navigate_fn=None):
                 </div>
             </div>
         </div>
-        """)
-    render_html('</div>')
+    </div>
+    """)
 
     st.write("")
 
@@ -321,24 +314,21 @@ def render_home_view(navigate_fn=None):
     </div>
     """)
 
-    render_html('<div class="fuelpulse-f9-actions">')
     col_h_studio, col_h_dash = st.columns([1, 1], gap="medium")
     with col_h_studio:
-        render_html("""
-        <a href="/AI_Analyst" target="_self" style="text-decoration: none; display: block;">
-            <div style="background: linear-gradient(135deg, #F5B942 0%, #D97706 100%); color: #070A12; font-family: 'Space Grotesk', sans-serif; font-size: 13px; font-weight: 800; height: 42px; line-height: 42px; text-align: center; border-radius: 8px; box-shadow: 0 4px 12px rgba(245, 185, 66, 0.3); cursor: pointer; transition: all 0.15s ease;">
-                🤖 Launch Dedicated AI Analyst Studio (/AI_Analyst) →
-            </div>
-        </a>
-        """)
+        st.link_button(
+            t('home_btn_f9_studio', cur_lang),
+            url="/AI_Analyst",
+            use_container_width=True,
+            type="primary"
+        )
     with col_h_dash:
-        if st.button("📊 Explore Dashboard Chapter 09 →", key="home_btn_ai_dash", use_container_width=True, type="secondary"):
+        if st.button(t('home_btn_f9_dash', cur_lang), key="home_btn_ai_dash", use_container_width=True, type="secondary"):
             if navigate_fn:
                 navigate_fn("Live Intelligence Dashboard")
             else:
                 st.session_state.active_nav = "⚡ Intelligence Dashboard"
                 st.rerun()
-    render_html('</div>')
 
     # 6. Honest Scope & Coverage Disclosure
     render_html(f"""
