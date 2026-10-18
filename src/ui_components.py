@@ -245,36 +245,39 @@ def render_app_header_brand_html(current_lang: str, engine_name: str, live_text:
     """Renders the balanced, unified top application header bar with Lucide vector icons."""
     from src.localization.i18n import t
     brand_sub = t('brand_subtitle', current_lang)
-    db_icon = get_lucide_icon_svg("database", size=13, color="#34D399")
-    act_icon = get_lucide_icon_svg("activity", size=13, color="#F5B942")
-    logo_svg = get_logo_mark_svg(size=38)
+    db_icon = get_lucide_icon_svg("database", size=11, color="#34D399")
+    act_icon = get_lucide_icon_svg("activity", size=11, color="#F5B942")
+    logo_svg = get_logo_mark_svg(size=36)
     return f"""
     <div class="fuelpulse-header-bar">
-        <div style="display: flex; align-items: center; gap: 12px; flex-shrink: 0;">
+        <div class="fuelpulse-header-brand-wrap">
             {logo_svg}
-            <div>
-                <div style="display: flex; align-items: center; gap: 8px; line-height: 1.25;">
-                    <span style="font-family: 'Space Grotesk', -apple-system, sans-serif; font-size: 1.22rem; font-weight: 800; letter-spacing: -0.01em; color: #FFFFFF; text-transform: uppercase; white-space: nowrap;">
+            <div class="fuelpulse-header-brand-text">
+                <div class="fuelpulse-header-title-row">
+                    <span class="fuelpulse-brand-title">
                         GLOBAL FUELPULSE
                     </span>
-                    <span style="background: #EAB308; color: #070A12; font-family: 'Space Grotesk', sans-serif; font-size: 0.72rem; font-weight: 900; padding: 2px 7px; border-radius: 4px; letter-spacing: 0.05em; display: inline-block;">
+                    <span class="fuelpulse-brand-ai-badge">
                         AI
                     </span>
                 </div>
-                <div style="font-family: 'Space Grotesk', -apple-system, sans-serif; font-size: 0.65rem; font-weight: 700; color: #94A3B8; letter-spacing: 0.12em; text-transform: uppercase; margin-top: 3px; white-space: nowrap;">
-                    {brand_sub}
+                <div class="fuelpulse-header-sub-row">
+                    <span class="fuelpulse-brand-sub">
+                        {brand_sub}
+                    </span>
+                    <span class="fuelpulse-brand-dot">•</span>
+                    <div class="fuelpulse-header-status-cluster">
+                        <span class="fuelpulse-status-pill fuelpulse-status-emerald">
+                            {db_icon}
+                            <span>{engine_name}</span>
+                        </span>
+                        <span class="fuelpulse-status-pill fuelpulse-status-amber">
+                            {act_icon}
+                            <span>{live_text}</span>
+                        </span>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div style="display: flex; align-items: center; gap: 8px; flex-shrink: 0;">
-            <span class="fuelpulse-status-pill fuelpulse-status-emerald">
-                {db_icon}
-                <span>{engine_name}</span>
-            </span>
-            <span class="fuelpulse-status-pill fuelpulse-status-amber">
-                {act_icon}
-                <span>{live_text}</span>
-            </span>
         </div>
     </div>
     """
@@ -693,33 +696,109 @@ div[data-testid*="global_fuelpulse_fab"] button:active {{
 .fuelpulse-header-bar {{
   display: flex !important;
   align-items: center !important;
-  justify-content: space-between !important;
+  justify-content: flex-start !important;
   background: rgba(14, 21, 38, 0.90) !important;
   backdrop-filter: blur(16px) !important;
   -webkit-backdrop-filter: blur(16px) !important;
   border: 1px solid rgba(255, 255, 255, 0.12) !important;
   border-radius: 10px !important;
-  padding: 8px 16px !important;
+  padding: 6px 14px !important;
   margin-top: 0 !important;
   margin-bottom: 12px !important;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4) !important;
-  gap: 14px !important;
+  gap: 12px !important;
   flex-wrap: nowrap !important;
   overflow: visible !important;
   box-sizing: border-box !important;
+  width: 100% !important;
+  min-height: 48px !important;
+}}
+
+.fuelpulse-header-brand-wrap {{
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  flex-shrink: 0 !important;
+}}
+
+.fuelpulse-header-brand-text {{
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+}}
+
+.fuelpulse-header-title-row {{
+  display: flex !important;
+  align-items: center !important;
+  gap: 7px !important;
+  line-height: 1.2 !important;
+}}
+
+.fuelpulse-brand-title {{
+  font-family: 'Space Grotesk', -apple-system, sans-serif !important;
+  font-size: 1.16rem !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.01em !important;
+  color: #FFFFFF !important;
+  text-transform: uppercase !important;
+  white-space: nowrap !important;
+}}
+
+.fuelpulse-brand-ai-badge {{
+  background: #EAB308 !important;
+  color: #070A12 !important;
+  font-family: 'Space Grotesk', sans-serif !important;
+  font-size: 0.68rem !important;
+  font-weight: 900 !important;
+  padding: 2px 6px !important;
+  border-radius: 4px !important;
+  letter-spacing: 0.05em !important;
+  display: inline-block !important;
+  line-height: 1 !important;
+}}
+
+.fuelpulse-header-sub-row {{
+  display: flex !important;
+  align-items: center !important;
+  gap: 7px !important;
+  margin-top: 2px !important;
+  flex-wrap: wrap !important;
+}}
+
+.fuelpulse-brand-sub {{
+  font-family: 'Space Grotesk', -apple-system, sans-serif !important;
+  font-size: 0.63rem !important;
+  font-weight: 700 !important;
+  color: #94A3B8 !important;
+  letter-spacing: 0.10em !important;
+  text-transform: uppercase !important;
+  white-space: nowrap !important;
+}}
+
+.fuelpulse-brand-dot {{
+  color: rgba(255, 255, 255, 0.25) !important;
+  font-size: 9px !important;
+  line-height: 1 !important;
+}}
+
+.fuelpulse-header-status-cluster {{
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
 }}
 
 .fuelpulse-status-pill {{
   display: inline-flex !important;
   align-items: center !important;
-  gap: 6px !important;
-  padding: 3px 9px !important;
+  gap: 5px !important;
+  padding: 2px 7px !important;
   border-radius: 999px !important;
   font-family: 'Space Grotesk', sans-serif !important;
-  font-size: 11px !important;
+  font-size: 10px !important;
   font-weight: 700 !important;
   letter-spacing: 0.04em !important;
-  line-height: 1 !important;
+  line-height: 1.2 !important;
+  white-space: nowrap !important;
 }}
 
 .fuelpulse-status-emerald {{
@@ -2045,9 +2124,24 @@ button[data-testid*="primaryActive"] * {{
   }}
 
   .fuelpulse-header-bar {{
-    padding: 8px 10px !important;
+    padding: 6px 10px !important;
     gap: 8px !important;
     margin-bottom: 6px !important;
+    flex-wrap: wrap !important;
+  }}
+
+  .fuelpulse-header-sub-row {{
+    flex-wrap: wrap !important;
+    gap: 5px !important;
+  }}
+
+  .fuelpulse-brand-title {{
+    font-size: 1.05rem !important;
+  }}
+
+  .fuelpulse-status-pill {{
+    font-size: 9.5px !important;
+    padding: 2px 6px !important;
   }}
 
   /* Compact button dimensions and font sizes on mobile to guarantee 1-line fit */
@@ -2248,9 +2342,17 @@ button[data-testid*="primaryActive"] * {{
     padding: 6px 8px !important;
   }}
 
+  .fuelpulse-brand-title {{
+    font-size: 0.95rem !important;
+  }}
+
+  .fuelpulse-header-sub-row {{
+    gap: 4px !important;
+  }}
+
   .fuelpulse-header-bar .fuelpulse-status-pill {{
-    font-size: 9.5px !important;
-    padding: 2px 6px !important;
+    font-size: 9px !important;
+    padding: 2px 5px !important;
   }}
 
   .instrument-val {{
@@ -2307,8 +2409,18 @@ def render_universal_top_header(active_page_name: str = "Overview", key_prefix: 
 
     apply_theme()
     current_lang = get_current_language()
-    health = db_manager.check_health()
-    engine_name = "MYSQL 8.4" if health["dialect"] == "mysql" else t("sqlite_verified_badge", current_lang)
+    try:
+        health = db_manager.check_health() if hasattr(db_manager, "check_health") else {"dialect": "sqlite"}
+    except Exception:
+        health = {"dialect": "sqlite"}
+
+    if health.get("dialect") == "mysql":
+        engine_name = "MYSQL 8.4"
+    else:
+        raw_badge = t("db_verified", current_lang)
+        if not raw_badge or raw_badge == "db_verified":
+            raw_badge = t("sqlite_verified_badge", current_lang)
+        engine_name = raw_badge if (raw_badge and raw_badge not in ("sqlite_verified_badge", "db_verified")) else "SQLITE VERIFIED"
     
     pfx = (key_prefix or active_page_name or "nav").lower().replace(" ", "_").replace(".", "_").replace("•", "_")
 
@@ -2320,7 +2432,7 @@ def render_universal_top_header(active_page_name: str = "Overview", key_prefix: 
     sess_status = session_protector.get_session_status(sess_id, has_custom_key=True, enforce_user_daily_limit=True)
     rem_q = st.session_state.get("top_ai_quota_rem", sess_status.get("daily_questions_remaining", 3))
 
-    col_brand, col_ai, col_lang, col_news = st.columns([6.1, 1.3, 1.3, 1.3], gap="small", vertical_alignment="center")
+    col_brand, col_ai, col_lang, col_news = st.columns([5.5, 1.5, 1.5, 1.5], gap="small", vertical_alignment="center")
     with col_brand:
         render_html(render_app_header_brand_html(current_lang, engine_name, t('live_indicator', current_lang)))
 
