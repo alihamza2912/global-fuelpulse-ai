@@ -1106,7 +1106,221 @@ VIEWS_TRANSLATIONS = {
         "zh": "4. 计量时间序列预测算法与残差评估指标",
         "ru": "4. ПРОГНОЗИРОВАНИЕ ВРЕМЕННЫХ РЯДОВ И МЕТРИКИ ОШИБОК",
         "ja": "4. 時系列予測手法と評価指標"
+    },
+
+    # ==========================================================================
+    # AI ASSISTANT DIALOG & UNIVERSAL HEADER LOCALIZATION
+    # ==========================================================================
+    "ai_dialog_title": {
+        "en": "Antigravity AI — Energy Market Intelligence",
+        "hi": "एंटीग्रेविटी एआई — ऊर्जा बाजार बुद्धिमत्ता",
+        "es": "Antigravity AI — Inteligencia de Mercados Energéticos",
+        "fr": "Antigravity AI — Intelligence des Marchés de l'Énergie",
+        "ar": "Antigravity AI — استخبارات أسواق الطاقة",
+        "de": "Antigravity AI — Energiemarkt-Analytik",
+        "zh": "Antigravity AI — 全球能源市场智能分析",
+        "ru": "Antigravity AI — Аналитика энергетических рынков",
+        "ja": "Antigravity AI — エネルギー市場インテリジェンス"
+    },
+    "ai_card_title": {
+        "en": "GLOBAL FUELPULSE AI INTELLIGENCE",
+        "hi": "ग्लोबल फ्यूलपल्स एआई इंटेलिजेंस",
+        "es": "INTELIGENCIA GLOBAL FUELPULSE AI",
+        "fr": "INTELLIGENCE ÉNERGÉTIQUE GLOBAL FUELPULSE AI",
+        "ar": "استخبارات الطاقة GLOBAL FUELPULSE AI",
+        "de": "GLOBAL FUELPULSE AI INTELLIGENZ",
+        "zh": "GLOBAL FUELPULSE AI 核心能源智能分析",
+        "ru": "ИНТЕЛЛЕКТУАЛЬНЫЙ АНАЛИЗ GLOBAL FUELPULSE AI",
+        "ja": "GLOBAL FUELPULSE AI 市場知性"
+    },
+    "ai_context_prefix": {
+        "en": "Context:",
+        "hi": "संदर्भ:",
+        "es": "Contexto:",
+        "fr": "Contexte :",
+        "ar": "السياق:",
+        "de": "Kontext:",
+        "zh": "上下文情境:",
+        "ru": "Контекст:",
+        "ja": "コンテキスト:"
+    },
+    "ai_context_suffix": {
+        "en": "Direct Grounded Analysis & Visual Projections",
+        "hi": "सत्यापित प्रत्यक्ष विश्लेषण एवं दृश्य अनुमान",
+        "es": "Análisis Directo Fundamentado y Proyecciones Visuales",
+        "fr": "Analyse Directe Fondée et Projections Visuelles",
+        "ar": "تحليل مباشر معتمد وإسقاطات مرئية",
+        "de": "Direkte fundierte Analyse & visuelle Projektionen",
+        "zh": "实证数据驱动的深度分析与可视化预测",
+        "ru": "Прямой обоснованный анализ и визуальные проекции",
+        "ja": "実証データに基づく直接分析と視覚的予測"
+    },
+    "ai_status_active": {
+        "en": "🟢 Antigravity AI Active • {rem_q}/3 Questions Today (24h Quota)",
+        "hi": "🟢 एंटीग्रेविटी एआई सक्रिय • आज {rem_q}/3 प्रश्न शेष (24 घंटे कोटा)",
+        "es": "🟢 Antigravity AI Activo • {rem_q}/3 Preguntas Hoy (Cuota 24h)",
+        "fr": "🟢 Antigravity AI Actif • {rem_q}/3 Questions Aujourd'hui (Quota 24h)",
+        "ar": "🟢 الذكاء الاصطناعي نشط • تبقى {rem_q}/3 أسئلة اليوم (حصة 24 ساعة)",
+        "de": "🟢 Antigravity AI Aktiv • {rem_q}/3 Fragen heute (24-Std-Kontingent)",
+        "zh": "🟢 Antigravity AI 已连接 • 今日剩余 {rem_q}/3 次提问 (24小时配额)",
+        "ru": "🟢 Antigravity AI Активен • Осталось {rem_q}/3 вопросов сегодня (квота 24ч)",
+        "ja": "🟢 Antigravity AI 稼働中 • 本日の残り質問数: {rem_q}/3 (24時間枠)"
+    },
+    "ai_status_quota_reached": {
+        "en": "⏳ Daily Quota Reached (3/3 Used) • Resets in {reset_str}",
+        "hi": "⏳ दैनिक कोटा समाप्त (3/3 उपयोग) • {reset_str} में रीसेट",
+        "es": "⏳ Cuota Diaria Agotada (3/3 Usadas) • Se reinicia en {reset_str}",
+        "fr": "⏳ Quota Quotidien Atteint (3/3 Utilisé) • Réinitialisation dans {reset_str}",
+        "ar": "⏳ نفدت الحصة اليومية (3/3 مستخدمة) • التجديد خلال {reset_str}",
+        "de": "⏳ Tageskontingent erreicht (3/3 verbraucht) • Zurücksetzung in {reset_str}",
+        "zh": "⏳ 今日免费配额已用完 (3/3) • 将于 {reset_str} 后重置",
+        "ru": "⏳ Дневная квота исчерпана (3/3) • Сброс через {reset_str}",
+        "ja": "⏳ 本日のクォータ終了 (3/3使用) • {reset_str} 後にリセット"
+    },
+    "ai_status_blocked": {
+        "en": "🚫 Access Blocked • Security Violation",
+        "hi": "🚫 सुरक्षा उल्लंघन • पहुंच अवरुद्ध",
+        "es": "🚫 Acceso Bloqueado • Violación de Seguridad",
+        "fr": "🚫 Accès Bloqué • Violation de Sécurité",
+        "ar": "🚫 تم حظر الوصول • انتهاك أمني",
+        "de": "🚫 Zugriff gesperrt • Sicherheitsverstoß",
+        "zh": "🚫 访问已终止 • 安全策略违规",
+        "ru": "🚫 Доступ заблокирован • Нарушение безопасности",
+        "ja": "🚫 アクセス遮断 • セキュリティ違反"
+    },
+    "ai_suggested_queries": {
+        "en": "💡 Suggested Intelligence Queries:",
+        "hi": "💡 सुझाई गई ऊर्जा खुफिया पूछताछ:",
+        "es": "💡 Consultas Estratégicas Sugeridas:",
+        "fr": "💡 Suggestions de Recherches Énergétiques :",
+        "ar": "💡 استفسارات ذكاء مقترحة:",
+        "de": "💡 Empfohlene Markt-Abfragen:",
+        "zh": "💡 推荐探索的典型能源议题:",
+        "ru": "💡 Рекомендуемые аналитические запросы:",
+        "ja": "💡 推奨インテリジェンス・クエリ:"
+    },
+    "ai_tab_type": {
+        "en": "💬 Type Question",
+        "hi": "💬 प्रश्न लिखें",
+        "es": "💬 Escribir Pregunta",
+        "fr": "💬 Poser par Écrit",
+        "ar": "💬 كتابة سؤال",
+        "de": "💬 Frage eingeben",
+        "zh": "💬 文本输入提问",
+        "ru": "💬 Ввести вопрос",
+        "ja": "💬 質問を入力"
+    },
+    "ai_tab_voice": {
+        "en": "🎙️ Voice Note",
+        "hi": "🎙️ वॉइस नोट",
+        "es": "🎙️ Nota de Voz",
+        "fr": "🎙️ Note Vocale",
+        "ar": "🎙️ تسجيل صوتي",
+        "de": "🎙️ Sprachnotiz",
+        "zh": "🎙️ 语音输入",
+        "ru": "🎙️ Голосовая заметка",
+        "ja": "🎙️ ボイスメモ"
+    },
+    "ai_input_placeholder": {
+        "en": "Ask any energy question (taxes, suppliers, prices, shipping, quotas): (Press Enter to search)",
+        "hi": "ऊर्जा संबंधी प्रश्न पूछें (कर, आपूर्तिकर्ता, कीमतें, शिपिंग, कोटा): (खोजने के लिए Enter दबाएं)",
+        "es": "Haga una pregunta sobre energía (impuestos, proveedores, precios, cuotas): (Presione Enter)",
+        "fr": "Posez une question énergétique (taxes, fournisseurs, cours, quotas) : (Entrée pour chercher)",
+        "ar": "اطرح أي سؤال عن الطاقة (الضرائب، الموردين، الأسعار، الشحن): (اضغط Enter للبحث)",
+        "de": "Stellen Sie eine Energiefrage (Steuern, Lieferanten, Preise, Quoten): (Eingabetaste drücken)",
+        "zh": "输入任何能源市场问题 (税负、供货商、油价、航运、配额等): (按 Enter 立即查询)",
+        "ru": "Задайте вопрос по энергетике (налоги, поставщики, цены, квоты): (Нажмите Enter)",
+        "ja": "エネルギー市場に関する質問を入力 (税金、供給元、価格、海上輸送、割当量): (Enterで検索)"
+    },
+    "ai_btn_ask": {
+        "en": "Ask AI ⚡",
+        "hi": "एआई से पूछें ⚡",
+        "es": "Preguntar ⚡",
+        "fr": "Demander à l'IA ⚡",
+        "ar": "اسأل الذكاء الاصطناعي ⚡",
+        "de": "KI fragen ⚡",
+        "zh": "启动智能分析 ⚡",
+        "ru": "Спросить ИИ ⚡",
+        "ja": "AIに質問 ⚡"
+    },
+    "ai_voice_subtext": {
+        "en": "🎙️ <b>Voice Note:</b> Record your question directly using your microphone. Our integrated speech engine transcribes it automatically:",
+        "hi": "🎙️ <b>वॉइस नोट:</b> अपने माइक्रोफ़ोन से सीधे अपना प्रश्न रिकॉर्ड करें। हमारा वाक् इंजन इसे स्वतः ट्रांसक्राइब करता है:",
+        "es": "🎙️ <b>Nota de Voz:</b> Grabe su pregunta directamente con su micrófono. El motor de voz la transcribirá automáticamente:",
+        "fr": "🎙️ <b>Note Vocale :</b> Enregistrez votre question avec votre microphone. Notre moteur la transcrit automatiquement :",
+        "ar": "🎙️ <b>تسجيل صوتي:</b> سجّل سؤالك مباشرة عبر الميكروفون وسيقوم محركنا بتحويله إلى نص تلقائياً:",
+        "de": "🎙️ <b>Sprachnotiz:</b> Nehmen Sie Ihre Frage per Mikrofon auf. Unsere Spracherkennung wandelt sie automatisch in Text um:",
+        "zh": "🎙️ <b>语音输入:</b> 通过麦克风直接录制问题，语音识别引擎将为您自动转写并解析:",
+        "ru": "🎙️ <b>Голосовая заметка:</b> Запишите вопрос через микрофон. Наша система автоматически преобразует его в текст:",
+        "ja": "🎙️ <b>ボイスメモ:</b> マイクを使って質問を録音してください。音声認識エンジンが自動で文字起こしを行います:"
+    },
+    "ai_record_voice_label": {
+        "en": "Record Voice Question",
+        "hi": "वॉइस प्रश्न रिकॉर्ड करें",
+        "es": "Grabar Pregunta de Voz",
+        "fr": "Enregistrer la Question Vocale",
+        "ar": "تسجيل سؤال صوتي",
+        "de": "Sprachfrage aufnehmen",
+        "zh": "录制语音问题",
+        "ru": "Записать голосовой вопрос",
+        "ja": "音声の質問を録音"
+    },
+    "ai_btn_submit_voice": {
+        "en": "Submit Voice Question ⚡",
+        "hi": "वॉइस प्रश्न सबमिट करें ⚡",
+        "es": "Enviar Pregunta de Voz ⚡",
+        "fr": "Envoyer la Question Vocale ⚡",
+        "ar": "إرسال السؤال الصوتي ⚡",
+        "de": "Sprachfrage senden ⚡",
+        "zh": "提交语音查询 ⚡",
+        "ru": "Отправить голосовой вопрос ⚡",
+        "ja": "音声質問を送信 ⚡"
+    },
+    "ai_engine_verified": {
+        "en": "🟢 Antigravity AI Engine Verified Response",
+        "hi": "🟢 एंटीग्रेविटी एआई इंजन द्वारा सत्यापित उत्तर",
+        "es": "🟢 Respuesta Verificada por Antigravity AI Engine",
+        "fr": "🟢 Réponse Vérifiée par le Moteur Antigravity AI",
+        "ar": "🟢 إجابة معتمدة ومحققة من محرك Antigravity AI",
+        "de": "🟢 Verifizierte Antwort der Antigravity AI Engine",
+        "zh": "🟢 Antigravity AI 核心实证引擎验证答复",
+        "ru": "🟢 Проверенный ответ движка Antigravity AI",
+        "ja": "🟢 Antigravity AI 検証済みインテリジェンス"
+    },
+    "ai_visual_header": {
+        "en": "📊 Grounded Scenario & Visual Intelligence Projection",
+        "hi": "📊 वास्तविक परिदृश्य एवं विज़ुअल इंटेलिजेंस प्रोजेक्शन",
+        "es": "📊 Escenario Fundamentado y Proyección Visual Inteligente",
+        "fr": "📊 Scénario Établi et Projection Visuelle Intelligente",
+        "ar": "📊 سيناريو موثق وإسقاط بصري تحليلي",
+        "de": "📊 Fundiertes Szenario & visuelle Intelligenz-Projektion",
+        "zh": "📊 实证场景建模与动态可视化推演",
+        "ru": "📊 Обоснованный сценарий и визуальная проекция",
+        "ja": "📊 実証シナリオと視覚的インテリジェンス予測"
+    },
+    "ai_records_expander": {
+        "en": "📑 Underlying Verified Relational Mart Records",
+        "hi": "📑 अंतर्निहित सत्यापित रिलेशनल मार्ट रिकॉर्ड्स",
+        "es": "📑 Registros Relacionales Verificados del Data Mart",
+        "fr": "📑 Données Relationnelles Vérifiées du Data Mart",
+        "ar": "📑 سجلات البيانات العلائقية المعتمدة",
+        "de": "📑 Zugrundeliegende verifizierte Data-Mart-Datensätze",
+        "zh": "📑 底层经审计的关联网市数据集明细",
+        "ru": "📑 Проверенные записи реляционной витрины данных",
+        "ja": "📑 基盤となる検証済みリレーショナル・マート詳細"
+    },
+    "sqlite_verified_badge": {
+        "en": "SQLITE VERIFIED",
+        "hi": "सत्यापित SQLITE",
+        "es": "SQLITE VERIFICADO",
+        "fr": "SQLITE VÉRIFIÉ",
+        "ar": "موثق بواسطة SQLITE",
+        "de": "SQLITE VERIFIZIERT",
+        "zh": "SQLITE 离线安全认证",
+        "ru": "ПРОВЕРЕНО SQLITE",
+        "ja": "SQLITE 検証済み"
     }
 }
+
 
 

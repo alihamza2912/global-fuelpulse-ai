@@ -54,21 +54,26 @@ sess_id = st.session_state.ai_session_id
 has_custom_key = is_user_custom_key_configured() or gemini_client.is_key_configured()
 sess_status = session_protector.get_session_status(sess_id, has_custom_key=has_custom_key, enforce_user_daily_limit=True)
 
-# Determine live status badge
-if sess_status.get("is_blocked"):
-    status_label = "🚫 Security Alert: Access Terminated"
-    status_icon = "🔴"
-    status_detail = "Session permanently blocked due to illegal/malicious activity detection"
-elif sess_status.get("is_daily_quota_finished"):
-    status_label = "Daily Quota Reached (3/3 Used)"
-    status_icon = "⏳"
-    status_detail = f"Resets in {sess_status['reset_time_str']} (after 24 hours) • 3 questions allowed per 24 hours"
-else:
-    status_label = "Antigravity AI Connected"
-    status_icon = "🟢"
-    status_detail = f"Questions remaining today: {sess_status['daily_questions_remaining']} / 3 (Resets in 24 hours)"
+def _render_page9_badge(st_data):
+    if st_data.get("is_blocked"):
+        status_label = "🚫 Security Alert: Access Terminated"
+        status_icon = "🔴"
+        status_detail = "Session permanently blocked due to illegal/malicious activity detection"
+    elif st_data.get("is_daily_quota_finished"):
+        status_label = "Daily Quota Reached (3/3 Used)"
+        status_icon = "⏳"
+        status_detail = f"Resets in {st_data['reset_time_str']} (after 24 hours) • 3 questions allowed per 24 hours"
+    else:
+        status_label = "Antigravity AI Connected"
+        status_icon = "🟢"
+        status_detail = f"Questions remaining today: {st_data['daily_questions_remaining']} / 3 (Resets in 24 hours)"
 
-render_html(f"""<div style="display:inline-flex;align-items:center;gap:10px;padding:9px 18px;background:rgba(14, 21, 38, 0.85);backdrop-filter:blur(12px);color:#F9FAFB;font-weight:700;font-size:13px;border:1px solid rgba(255, 255, 255, 0.14);box-shadow:0 4px 14px rgba(0, 0, 0, 0.35);margin-bottom:16px;border-radius:6px;"><span>{status_icon} <strong style="color:#F5B942;">{status_label}</strong></span><span style="color:rgba(255, 255, 255, 0.2);font-weight:400;">•</span><span style="font-weight:500;font-size:12.5px;color:#94A3B8;">{status_detail}</span></div>""")
+    return f"""<div style="display:inline-flex;align-items:center;gap:10px;padding:9px 18px;background:rgba(14, 21, 38, 0.85);backdrop-filter:blur(12px);color:#F9FAFB;font-weight:700;font-size:13px;border:1px solid rgba(255, 255, 255, 0.14);box-shadow:0 4px 14px rgba(0, 0, 0, 0.35);margin-bottom:16px;border-radius:6px;"><span>{status_icon} <strong style="color:#F5B942;">{status_label}</strong></span><span style="color:rgba(255, 255, 255, 0.2);font-weight:400;">•</span><span style="font-weight:500;font-size:12.5px;color:#94A3B8;">{status_detail}</span></div>"""
+
+page9_badge_slot = st.empty()
+page9_badge_slot.markdown(_render_page9_badge(sess_status), unsafe_allow_html=True)
+status_label = "Daily Quota Reached (3/3 Used)" if sess_status.get("is_daily_quota_finished") else "Antigravity AI Connected"
+status_detail = f"Questions remaining today: {sess_status['daily_questions_remaining']} / 3"
 
 # Assistant Info Banner
 st.info(
@@ -160,6 +165,9 @@ if active_q:
             enforce_user_daily_limit=True
         )
         st.session_state["page9_last_resp"] = response
+        new_status = session_protector.get_session_status(sess_id, has_custom_key=has_custom_key, enforce_user_daily_limit=True)
+        st.session_state["top_ai_quota_rem"] = new_status.get("daily_questions_remaining", 0)
+        page9_badge_slot.markdown(_render_page9_badge(new_status), unsafe_allow_html=True)
 
 if "page9_last_resp" in st.session_state and st.session_state["page9_last_resp"]:
     response = st.session_state["page9_last_resp"]

@@ -2060,7 +2060,7 @@ def render_universal_top_header(active_page_name: str = "Overview", key_prefix: 
     apply_theme()
     current_lang = get_current_language()
     health = db_manager.check_health()
-    engine_name = "MYSQL 8.4" if health["dialect"] == "mysql" else "SQLITE VERIFIED"
+    engine_name = "MYSQL 8.4" if health["dialect"] == "mysql" else t("sqlite_verified_badge", current_lang)
     
     pfx = (key_prefix or active_page_name or "nav").lower().replace(" ", "_").replace(".", "_").replace("•", "_")
 
@@ -2070,14 +2070,14 @@ def render_universal_top_header(active_page_name: str = "Overview", key_prefix: 
         st.session_state.ai_session_id = str(uuid.uuid4())
     sess_id = st.session_state.ai_session_id
     sess_status = session_protector.get_session_status(sess_id, has_custom_key=True, enforce_user_daily_limit=True)
-    rem_q = sess_status.get("daily_questions_remaining", 3)
+    rem_q = st.session_state.get("top_ai_quota_rem", sess_status.get("daily_questions_remaining", 3))
 
     col_brand, col_ai, col_lang, col_news = st.columns([6.1, 1.3, 1.3, 1.3], gap="small", vertical_alignment="center")
     with col_brand:
         render_html(render_app_header_brand_html(current_lang, engine_name, t('live_indicator', current_lang)))
 
     with col_ai:
-        ai_btn_label = f"🤖 AI ({rem_q}/3)"
+        ai_btn_label = f"🤖 AI ({rem_q}/3)" if current_lang != "hi" else f"🤖 एआई ({rem_q}/3)"
         if st.button(
             ai_btn_label,
             key=f"{pfx}_top_ai_assistant_btn",
@@ -2091,7 +2091,7 @@ def render_universal_top_header(active_page_name: str = "Overview", key_prefix: 
         all_langs = get_available_languages()
         cur_data = all_langs.get(current_lang, all_langs.get("en", {"flag": "🌐", "native": "English", "name": "English"}))
         cur_flag = cur_data.get("flag", "🌐")
-        lang_btn_label = f"🌐 Lang ({cur_flag})"
+        lang_btn_label = f"🌐 Lang ({cur_flag})" if current_lang != "hi" else f"🌐 भाषा ({cur_flag})"
         with st.popover(lang_btn_label, use_container_width=True):
             st.markdown(f"#### 🌐 {t('select_language', current_lang)} ({len(all_langs)} World Languages)")
             st.caption("Select and activate your language across the entire platform:")
@@ -2311,12 +2311,15 @@ def _show_ai_assistant_dialog(context_page: str = "Overview"):
     - Zero meta-labels like 'Simple English Explanation'
     - Answers the exact question asked with grounded energy intelligence
     - Enforces 24-hour daily quota (3 questions/24h per user) with tamper-resistant server persistence
-    - WhatsApp-style dual input: Text typing + Voice note recording with automatic speech transcription
+    - Direct Plain Language: Zero meta-labels like 'Simple English Explanation'
+    - Answers the exact question asked with grounded energy intelligence
+    - Enforces 24-hour daily quota (3 questions/24h per user) with tamper-resistant server persistence
+    - Dual input: Text typing + Voice note recording with automatic speech transcription
     - Renders visual Mermaid diagrams and Plotly figures (dragmode=False)
     """
     import uuid
     from src.ai.nl_query_engine import AIEnergyMarketAnalyst, session_protector
-    from src.localization.i18n import get_current_language
+    from src.localization.i18n import t, get_current_language
 
     current_lang = get_current_language()
     pfx = ("dlg_" + context_page).lower().replace(" ", "_").replace(".", "_").replace("•", "_")
@@ -2331,41 +2334,49 @@ def _show_ai_assistant_dialog(context_page: str = "Overview"):
     is_blocked = sess_status.get("is_blocked", False)
     is_quota_finished = sess_status.get("is_daily_quota_finished", False)
 
-    if is_blocked:
-        status_text = "🚫 Access Blocked • Security Violation"
-        status_color = "#EF4444"
-    elif is_quota_finished:
-        status_text = f"⏳ Daily Quota Reached (3/3 Used) • Resets in {reset_str}"
-        status_color = "#F5B942"
-    else:
-        status_text = f"🟢 Antigravity AI Active • {rem_q}/3 Questions Today (24h Quota)"
-        status_color = "#34D399"
+    def _render_header_card_html(remaining: int, blocked: bool, finished: bool, rst_time: str) -> str:
+        if blocked:
+            status_text = t("ai_status_blocked", current_lang)
+            status_color = "#EF4444"
+        elif finished or remaining <= 0:
+            status_text = t("ai_status_quota_reached", current_lang, reset_str=rst_time)
+            status_color = "#F5B942"
+        else:
+            status_text = t("ai_status_active", current_lang, rem_q=remaining)
+            status_color = "#34D399"
 
-    # Dialog Header Card
-    st.markdown(f"""
-    <div style="background: rgba(14, 21, 38, 0.95); backdrop-filter: blur(16px); border: 1.5px solid rgba(245, 185, 66, 0.35); border-radius: 12px; padding: 14px 18px; margin-bottom: 14px;">
-        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
-            <div style="display: flex; align-items: center; gap: 8px;">
-                <span style="font-size: 24px;">⚡</span>
-                <div>
-                    <div style="font-family: 'Space Grotesk', sans-serif; font-size: 1.05rem; font-weight: 800; color: #F9FAFB;">
-                        GLOBAL FUELPULSE AI INTELLIGENCE
-                    </div>
-                    <div style="font-size: 0.74rem; color: #94A3B8; font-weight: 600;">
-                        Context: <b style="color: #F5B942;">{context_page}</b> • Direct Grounded Analysis & Visual Projections
+        card_title = t("ai_card_title", current_lang)
+        ctx_prefix = t("ai_context_prefix", current_lang)
+        ctx_suffix = t("ai_context_suffix", current_lang)
+
+        return f"""
+        <div style="background: rgba(14, 21, 38, 0.95); backdrop-filter: blur(16px); border: 1.5px solid rgba(245, 185, 66, 0.35); border-radius: 12px; padding: 14px 18px; margin-bottom: 14px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <span style="font-size: 24px;">⚡</span>
+                    <div>
+                        <div style="font-family: 'Space Grotesk', sans-serif; font-size: 1.05rem; font-weight: 800; color: #F9FAFB;">
+                            {card_title}
+                        </div>
+                        <div style="font-size: 0.74rem; color: #94A3B8; font-weight: 600;">
+                            {ctx_prefix} <b style="color: #F5B942;">{context_page}</b> • {ctx_suffix}
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div style="background: rgba(0,0,0,0.4); border: 1px solid rgba(255, 255, 255, 0.12); padding: 4px 10px; border-radius: 999px; font-family: 'Space Grotesk', sans-serif; font-size: 0.72rem; font-weight: 700; color: {status_color};">
-                {status_text}
+                <div style="background: rgba(0,0,0,0.4); border: 1px solid rgba(255, 255, 255, 0.12); padding: 4px 10px; border-radius: 999px; font-family: 'Space Grotesk', sans-serif; font-size: 0.72rem; font-weight: 700; color: {status_color};">
+                    {status_text}
+                </div>
             </div>
         </div>
-    </div>
-    """, unsafe_allow_html=True)
+        """
+
+    # Reactive Header Card Slot (allows instantaneous quota decrement display)
+    header_slot = st.empty()
+    header_slot.markdown(_render_header_card_html(rem_q, is_blocked, is_quota_finished, reset_str), unsafe_allow_html=True)
 
     # Contextual Suggested Chips
     suggested = _get_contextual_ai_suggestions(context_page)
-    st.markdown("<div style='font-family: \"Space Grotesk\", sans-serif; font-size: 0.78rem; font-weight: 700; color: #CBD5E1; margin-bottom: 6px;'>💡 Suggested Intelligence Queries:</div>", unsafe_allow_html=True)
+    st.markdown(f"<div style='font-family: \"Space Grotesk\", sans-serif; font-size: 0.78rem; font-weight: 700; color: #CBD5E1; margin-bottom: 6px;'>{t('ai_suggested_queries', current_lang)}</div>", unsafe_allow_html=True)
     chip_cols = st.columns(len(suggested))
     selected_query = None
     for idx, (label, query_str) in enumerate(suggested):
@@ -2377,7 +2388,7 @@ def _show_ai_assistant_dialog(context_page: str = "Overview"):
     current_val = selected_query or st.session_state.get(f"{pfx}_active_q", "")
 
     # Dual Input: Typing (with Enter to Submit) + Voice Note Recording
-    tab_type, tab_voice = st.tabs(["💬 Type Question", "🎙️ Voice Note"])
+    tab_type, tab_voice = st.tabs([t("ai_tab_type", current_lang), t("ai_tab_voice", current_lang)])
     user_input = ""
     ask_clicked = False
 
@@ -2388,16 +2399,16 @@ def _show_ai_assistant_dialog(context_page: str = "Overview"):
                 user_input = st.text_input(
                     "Ask any energy question (taxes, suppliers, prices, shipping, quotas):",
                     value=current_val,
-                    placeholder="e.g. which India company can easily beat Saudi company? (Press Enter to search)",
+                    placeholder=t("ai_input_placeholder", current_lang),
                     key=f"{pfx}_input",
                     label_visibility="collapsed"
                 )
             with c_btn:
-                ask_clicked = st.form_submit_button("Ask AI ⚡", use_container_width=True, type="primary")
+                ask_clicked = st.form_submit_button(t("ai_btn_ask", current_lang), use_container_width=True, type="primary")
 
     with tab_voice:
-        st.markdown("<div style='font-size:0.8rem; color:#94A3B8; margin-bottom:8px;'>🎙️ <b>Voice Note:</b> Record your question directly using your microphone. Our integrated speech engine transcribes it automatically:</div>", unsafe_allow_html=True)
-        voice_audio = st.audio_input("Record Voice Question", key=f"{pfx}_voice_recorder")
+        st.markdown(f"<div style='font-size:0.8rem; color:#94A3B8; margin-bottom:8px;'>{t('ai_voice_subtext', current_lang)}</div>", unsafe_allow_html=True)
+        voice_audio = st.audio_input(t("ai_record_voice_label", current_lang), key=f"{pfx}_voice_recorder")
         if voice_audio is not None:
             import io
             import speech_recognition as sr
@@ -2407,7 +2418,7 @@ def _show_ai_assistant_dialog(context_page: str = "Overview"):
                     audio_data = r.record(source)
                     transcribed = r.recognize_google(audio_data)
                     st.success(f"🗣️ Transcribed Voice Note: **\"{transcribed}\"**")
-                    if st.button("Submit Voice Question ⚡", key=f"{pfx}_voice_submit_btn", type="primary", use_container_width=True):
+                    if st.button(t("ai_btn_submit_voice", current_lang), key=f"{pfx}_voice_submit_btn", type="primary", use_container_width=True):
                         selected_query = transcribed
             except sr.UnknownValueError:
                 st.info("💡 Audio captured. If speech was faint, you can also type your question directly in the Type tab.")
@@ -2430,6 +2441,18 @@ def _show_ai_assistant_dialog(context_page: str = "Overview"):
                 enforce_user_daily_limit=True
             )
             st.session_state[resp_key] = ans
+            st.session_state[f"{pfx}_active_q"] = ""
+            
+            # Immediately re-read session quota from disk/memory and update reactive header slot
+            new_status = session_protector.get_session_status(sess_id, has_custom_key=True, enforce_user_daily_limit=True)
+            new_rem = new_status.get("daily_questions_remaining", 0)
+            st.session_state["top_ai_quota_rem"] = new_rem
+            header_slot.markdown(_render_header_card_html(
+                new_rem,
+                new_status.get("is_blocked", False),
+                new_status.get("is_daily_quota_finished", False),
+                new_status.get("reset_time_str", "24 hours")
+            ), unsafe_allow_html=True)
 
     if resp_key in st.session_state and st.session_state[resp_key]:
         resp = st.session_state[resp_key]
@@ -2439,7 +2462,8 @@ def _show_ai_assistant_dialog(context_page: str = "Overview"):
         elif "Daily Free Quota Finished" in resp.get("topic", "") or "Daily Quota Limit Reached" in resp.get("topic", ""):
             render_html(f"""<div style="padding:6px 14px;background:rgba(245, 185, 66, 0.2);color:#F5B942;font-weight:700;font-size:12.5px;border:1.5px solid #F5B942;border-radius:4px;margin-bottom:8px;">⏳ Daily Quota Reached (3/3 Used) • Resets in {sess_status["reset_time_str"]}</div>""")
         else:
-            render_html("""<div style="padding:4px 12px;background:rgba(16, 185, 129, 0.2);color:#10B981;font-weight:700;font-size:12px;border:1px solid #10B981;border-radius:4px;display:inline-block;margin-bottom:8px;">🟢 Antigravity AI Engine Verified Response</div>""")
+            ver_text = t("ai_engine_verified", current_lang)
+            render_html(f"""<div style="padding:4px 12px;background:rgba(16, 185, 129, 0.2);color:#10B981;font-weight:700;font-size:12px;border:1px solid #10B981;border-radius:4px;display:inline-block;margin-bottom:8px;">{ver_text}</div>""")
 
         st.markdown(resp["answer_text"])
 
@@ -2449,11 +2473,11 @@ def _show_ai_assistant_dialog(context_page: str = "Overview"):
                 fig.update_layout(dragmode=False)
             except Exception:
                 pass
-            st.markdown("#### 📊 Grounded Scenario & Visual Intelligence Projection")
+            st.markdown(f"#### {t('ai_visual_header', current_lang)}")
             st.plotly_chart(fig, width="stretch", theme=None, config={"scrollZoom": False, "displayModeBar": True})
 
         if resp.get("data_records"):
-            with st.expander("📑 Underlying Verified Relational Mart Records", expanded=False):
+            with st.expander(t("ai_records_expander", current_lang), expanded=False):
                 rec_df = pd.DataFrame(resp["data_records"])
                 st.dataframe(rec_df, width="stretch", hide_index=True)
                 render_csv_download(rec_df, f"ai_grounded_{pfx}.csv")
