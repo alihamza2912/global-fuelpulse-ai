@@ -309,7 +309,7 @@ def render_two_tier_nav_html(current_lang: str, active_canonical: str) -> str:
             icon_svg = get_lucide_icon_svg(it["icon"], size=15, color=icon_color)
             badge_html = f'<span class="fuelpulse-nav-badge">{it["badge"]}</span>' if it.get("badge") else ''
             links.append(
-                f'<a href="?tab={it["tab"]}" target="_self" class="fuelpulse-nav-link{active_cls}">'
+                f'<a href="?tab={it["tab"]}&lang={current_lang}" target="_self" class="fuelpulse-nav-link{active_cls}">'
                 f'{icon_svg}<span>{it["label"]}</span>{badge_html}</a>'
             )
         return (

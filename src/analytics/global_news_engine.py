@@ -34,7 +34,16 @@ class GlobalNewsEngine:
                 "de": "Sicherheitswarnung Straße von Hormus: Tankertransite bei 20,8 mbpd unter Marine-Überwachung",
                 "zh": "霍尔木兹海峡战备预警：多国海军常态化巡航下油轮日流通量达 20.8 百万桶",
                 "ru": "Тревога безопасности в Ормузском проливе: Поток танкеров оценивается в 20,8 млн б/с",
-                "ja": "ホルムズ海峡警備警戒: 海軍哨戒体制下でタンカー通過量は日量2080万バレルを維持"
+                "ja": "ホルムズ海峡警備警戒: 海軍哨戒体制下でタンカー通過量は日量2080万バレルを維持",
+                "pt": "Alerta de Segurança no Estreito de Ormuz: Fluxos de Petroleiros Avaliados em 20,8 mbpd",
+                "it": "Allarme Sicurezza nello Stretto di Hormuz: Flussi di Petroliere a 20,8 mbpd",
+                "ko": "호르무즈 해협 안보 경보: 해군 순찰 속 유조선 통항량 일일 2,080만 배럴 유지",
+                "tr": "Hürmüz Boğazı Güvenlik Uyarısı: Tanker Geçişleri 20,8 mbpd Olarak Kaydedildi",
+                "nl": "Veiligheidswaarschuwing Straat van Hormuz: Tankerverkeer op 20,8 mbpd",
+                "id": "Peringatan Keamanan Selat Hormuz: Arus Tanker Diperkirakan 20,8 mbpd",
+                "ur": "آبنائے ہرمز سیکیورٹی الرٹ: بحری گشت کے دوران ٹینکرز کا بہاؤ 20.8 mbpd ریکارڈ",
+                "bn": "হরমুজ প্রণালী নিরাপত্তা সতর্কতা: নৌ টহলের মধ্যে ট্যাঙ্কার প্রবাহ ২০.৮ mbpd",
+                "ta": "ஹார்முஸ் நீரிணை பாதுகாப்பு எச்சரிக்கை: கடற்படை ரோந்துக்கிடையே டேங்கர் போக்குவரத்து 20.8 mbpd"
             },
             "impact": "CRITICAL",
             "impact_color": "#EF4444",
@@ -66,7 +75,16 @@ class GlobalNewsEngine:
                 "de": "Tankerumleitungen am Bab el-Mandeb: 68 % des Rohöls nach Europa nutzen Kap der Guten Hoffnung",
                 "zh": "曼德海峡与红海避险绕航：68% 的欧洲方向原油货运坚持选择好望角远程海运走廊",
                 "ru": "Обход Баб-эль-Мандеба: 68% сырой нефти в Европу идет через мыс Доброй Надежды",
-                "ja": "バブ・エル・マンデブ迂回継続: 欧州向け原油の68%が依然として喜望峰ルートを選択航行"
+                "ja": "バブ・エル・マンデブ迂回継続: 欧州向け原油の68%が依然として喜望峰ルートを選択航行",
+                "pt": "Desvios no Bab el-Mandeb: 68% do Petróleo para a Europa Continua pelo Cabo da Boa Esperança",
+                "it": "Deviazioni a Bab el-Mandeb: Il 68% del Greggio verso l'Europa Segue la Rotta del Capo",
+                "ko": "밥엘만데브 유조선 우회: 유럽행 원유의 68%가 여전히 희망봉 항로 이용",
+                "tr": "Bab el-Mandeb Tanker Yönlendirmeleri: Avrupa'ya Giden Petrolün %68'i Ümit Burnu Yolunda",
+                "nl": "Bab el-Mandeb Omleidingen: 68% van Olie naar Europa Blijft Kaaproute Volgen",
+                "id": "Pengalihan Tanker Bab el-Mandeb: 68% Minyak Mentah ke Eropa Lewat Tanjung Harapan",
+                "ur": "باب المندب ٹینکر کا راستہ: یورپ جانے والے 68% تیل کا راس امید کا راستہ برقرار",
+                "bn": "বাব আল-মান্দেব ট্যাঙ্কার ডাইভারশন: ইউরোপগামী অপরিশোধিত তেলের ৬৮% উত্তমাশা অন্তরীপ রুটে",
+                "ta": "பாப் எல்-மந்தேப் டேங்கர் திசைதிருப்பல்: ஐரோப்பாவிற்கான 68% கச்சா எண்ணெய் நன்னம்பிக்கை முனை வழியில்"
             },
             "impact": "HIGH",
             "impact_color": "#F59E0B",
@@ -97,7 +115,16 @@ class GlobalNewsEngine:
                 "de": "Kraftstoffpreise in Delhi kalibriert: Benzin ₹102,12/L, Diesel ₹95,20/L bei Steuerunterschieden",
                 "zh": "德里今日终端油价公布：汽油每升 102.12 卢比，柴油每升 95.20 卢比，邦级税差显著",
                 "ru": "Цены на топливо в Дели откалиброваны: Бензин ₹102,12/л, дизель ₹95,20/л",
-                "ja": "デリーの最新燃料価格改定: ガソリン 102.12ルピー/L、ディーゼル 95.20ルピー/L"
+                "ja": "デリーの最新燃料価格改定: ガソリン 102.12ルピー/L、ディーゼル 95.20ルピー/L",
+                "pt": "Preços de Combustíveis em Déli Hoje: Gasolina ₹102,12/L, Diesel ₹95,20/L",
+                "it": "Prezzi dei Carburanti a Delhi Oggi: Benzina ₹102,12/L, Gasolio ₹95,20/L",
+                "ko": "델리 연료 가격 고시: 휘발유 ₹102.12/L, 디젤 ₹95.20/L 유지",
+                "tr": "Bugün Delhi Akaryakıt Fiyatları: Benzin ₹102,12/L, Dizel ₹95,20/L",
+                "nl": "Brandstofprijzen Delhi Vandaag: Benzine ₹102,12/L, Diesel ₹95,20/L",
+                "id": "Harga Bahan Bakar Delhi Hari Ini: Bensin ₹102,12/L, Solar ₹95,20/L",
+                "ur": "دہلی میں ایندھن کی قیمتیں: پٹرول ₹102.12/L، ڈیزل ₹95.20/L",
+                "bn": "দিল্লিতে আজ জ্বালানির দাম: পেট্রোল ₹১০২.১২/লি, ডিজেল ₹৯৫.২০/লি",
+                "ta": "தில்லி எரிபொருள் விலைகள்: பெட்ரோல் ₹102.12/L, டீசல் ₹95.20/L"
             },
             "impact": "HIGH",
             "impact_color": "#10B981",
@@ -128,7 +155,16 @@ class GlobalNewsEngine:
                 "de": "VAE-Exportmatrix: Hafen von Fujairah vertieft bilaterale Versorgung indischer Raffinerien",
                 "zh": "阿联酋原油出口全景阵列：富查伊拉港深化对印度西海岸核心炼油集群实物直供",
                 "ru": "Экспортная матрица ОАЭ: Порт Фуджейра наращивает поставки на индийские НПЗ",
-                "ja": "UAE石油輸出マトリクス: フジャイラ港からインド製油所への二国間供給が一段と深化"
+                "ja": "UAE石油輸出マトリクス: フジャイラ港からインド製油所への二国間供給が一段と深化",
+                "pt": "Matriz de Exportação dos EAU: Porto de Fujairah Aprofunda Suprimento para Refinarias Indianas",
+                "it": "Matrice di Esportazione EAU: Il Porto di Fujairah Rafforza le Forniture all'India",
+                "ko": "UAE 석유 수출 매트릭스: 후자이라 항구, 인도 정유소에 대한 직접 공급 심화",
+                "tr": "BAE Petrol İhracat Matrisi: Fujairah Limanı Hint Rafinerilerine Tedariki Artırdı",
+                "nl": "VAE Petroleumexport: Fujairah-haven Verdiept Levering aan Indiase Raffinaderijen",
+                "id": "Matriks Ekspor UEA: Pelabuhan Fujairah Perkuat Pasokan ke Kilang India",
+                "ur": "متحدہ عرب امارات پٹرولیم برآمدات: فجیرہ بندرگاہ نے بھارتی ریفائنریوں کو سپلائی بڑھائی",
+                "bn": "সংযুক্ত আরব আমিরাত রপ্তানি ম্যাট্রিক্স: ফুজাইরাহ বন্দর ভারতীয় শোধনাগারে সরবরাহ বৃদ্ধি করেছে",
+                "ta": "யுஏஇ பெட்ரோலிய ஏற்றுமதி: புஜைரா துறைமுகம் இந்திய சுத்திகரிப்பு ஆலைகளுக்கான விநியோகத்தை விரிவுபடுத்துகிறது"
             },
             "impact": "STRATEGIC",
             "impact_color": "#3B82F6",
@@ -159,7 +195,16 @@ class GlobalNewsEngine:
                 "de": "Indiens Rohölbezug: Russisches Urals mit 3,50 $ Rabatt bei 88,2 % Importabhängigkeit",
                 "zh": "印度原油外采结构演变：俄罗斯乌拉尔原油以 3.50 美元折价到岸，国家对外依存度触及 88.2%",
                 "ru": "Импорт нефти в Индию: Российская Urals идет с дисконтом $3,50 при зависимости от импорта 88,2%",
-                "ja": "インドの原油調達動向: ロシア産ウラルが3.50ドル割引で納入、輸入依存度は88.2%に到達"
+                "ja": "インドの原油調達動向: ロシア産ウラルが3.50ドル割引で納入、輸入依存度は88.2%に到達",
+                "pt": "Fornecimento de Petróleo da Índia: Urals Russo Entregue com Desconto de $3,50/bbl",
+                "it": "Fornitura di Greggio dell'India: Gli Urals Russi Consegnati a Sconto di 3,50 $/barile",
+                "ko": "인도 원유 도입원: 러시아산 유랄유가 브렌트 대비 $3.50 할인 가격에 인도 서부 해안 도착",
+                "tr": "Hindistan Petrol Tedariki: Rus Urals Petrolü Brent'e Göre 3,50 Dolar İndirimle Teslim Ediliyor",
+                "nl": "Indiase Ruwe Olie Inkoop: Russische Urals Geleverd met $3,50/vat Korting",
+                "id": "Pengadaan Minyak Mentah India: Urals Rusia Dikirim dengan Diskon $3,50/bbl",
+                "ur": "بھارت کی خام تیل کی خریداری: روسی یورالز برینٹ سے $3.50 فی بیرل رعایت پر پہنچا",
+                "bn": "ভারতের অপরিশোধিত তেল সোর্সিং: রাশিয়ান উরাল ব্রেন্টের চেয়ে $৩.৫০ ডিসকাউন্টে সরবরাহ",
+                "ta": "இந்திய கச்சா எண்ணெய் கொள்முதல்: ரஷ்ய யூரல்ஸ் பிரெண்ட்டை விட $3.50 தள்ளுபடியில் விநியோகம்"
             },
             "impact": "STRATEGIC",
             "impact_color": "#3B82F6",
@@ -190,7 +235,16 @@ class GlobalNewsEngine:
                 "de": "Globaler Zapfsäulen-Vergleich: USA im Schnitt bei 3,24 $/gal; Steuern treiben Deutschland auf 1,78 €/L",
                 "zh": "全球主要经济体零售加油站基准对比：美国均价 3.24 美元/加仑，欧洲重税推高德国至 1.78 欧元/升",
                 "ru": "Мировое сравнение цен на АЗС: В США в среднем $3,24/галлон, налоги в Германии поднимают цену до €1,78/л",
-                "ja": "世界の小売ガソリンスタンド価格比較: 米国平均 3.24ドル/gal、環境税負担のドイツは 1.78ユーロ/L"
+                "ja": "世界の小売ガソリンスタンド価格比較: 米国平均 3.24ドル/gal、環境税負担のドイツは 1.78ユーロ/L",
+                "pt": "Comparação Global de Preços na Bomba: EUA com Média de $3,24/gal vs. Europa em $1,94/L",
+                "it": "Confronto Globale dei Prezzi alla Pompa: USA a 3,24 $/gal vs. Europa a 1,94 $/L",
+                "ko": "글로벌 소매 주유소 가격 비교: 미국 갤런당 $3.24 대 유럽 리터당 $1.94",
+                "tr": "Küresel Perakende Pompa Karşılaştırması: ABD 3,24 $/gal vs. Avrupa 1,94 $/L",
+                "nl": "Wereldwijde Pompprijsvergelijking: VS Gemiddeld $3,24/gal vs. Europa $1,94/L",
+                "id": "Perbandingan Pompa Ritel Global: AS Rata-rata $3,24/gal vs. Eropa $1,94/L",
+                "ur": "عالمی پمپ قیمتوں کا موازنہ: امریکہ میں $3.24 فی گیلن بمقابلہ یورپ میں $1.94 فی لیٹر",
+                "bn": "বিশ্বব্যাপী খুচরা পাম্প বেঞ্চমার্ক তুলনা: মার্কিন গড় $৩.২৪/গ্যালন বনাম ইউরোপ $১.৯৪/লিটার",
+                "ta": "உலகளாவிய சில்லறை பங்க் விலை ஒப்பீடு: அமெரிக்கா $3.24/gal vs ஐரோப்பா $1.94/L"
             },
             "impact": "MARKET_UPDATE",
             "impact_color": "#10B981",
@@ -221,7 +275,16 @@ class GlobalNewsEngine:
                 "de": "OPEC+ bekräftigt freiwillige Förderkürzungen um 2,2 mbpd bis Jahresende",
                 "zh": "OPEC+ 联合部长级监督委员会重申执行日均 2.2 百万桶自愿减产配额直至年末",
                 "ru": "ОПЕК+ подтверждает добровольные ограничения добычи на 2,2 млн б/с до конца года",
-                "ja": "OPEC+ 閣僚監視委員会: 日量220万バレルの自主減産枠を年末まで堅持と再確認"
+                "ja": "OPEC+ 閣僚監視委員会: 日量220万バレルの自主減産枠を年末まで堅持と再確認",
+                "pt": "OPEP+ Reafirma Cortes Voluntários de Produção de 2,2 mbpd para Estabilizar Preços",
+                "it": "OPEC+ Conferma Tagli Volontari alla Produzione per 2,2 mbpd per Stabilizzare i Prezzi",
+                "ko": "OPEC+ 장관급 회의: 유가 안정을 위해 일일 220만 배럴 자발적 감산 조치 지속 확인",
+                "tr": "OPEC+ Fiyatları Dengelemek İçin 2,2 mbpd Gönüllü Üretim Kısıtlamasını Yeniden Teyit Etti",
+                "nl": "OPEC+ Bevestigt Vrijwillige Productiebeperkingen van 2,2 mbpd om Prijzen te Stabiliseren",
+                "id": "OPEC+ Tegaskan Pemotongan Produksi Sukarela 2,2 mbpd untuk Menstabilkan Harga",
+                "ur": "اوپیک پلس کا قیمتوں کو مستحکم رکھنے کے لیے 2.2 mbpd رضاکارانہ پیداواری کٹوتی جاری رکھنے کا اعادہ",
+                "bn": "মূল্য স্থিতিশীল রাখতে ওপেক+ ২.২ mbpd স্বেচ্ছাসেবী উৎপাদন হ্রাস পুনর্ব্যক্ত করেছে",
+                "ta": "விலைகளை நிலைப்படுத்த OPEC+ 2.2 mbpd தன்னார்வ உற்பத்தி குறைப்பை மீண்டும் உறுதிப்படுத்துகிறது"
             },
             "impact": "STRATEGIC",
             "impact_color": "#8B5CF6",
@@ -252,7 +315,16 @@ class GlobalNewsEngine:
                 "de": "US-Permian-Becken mit Förderrekord von 13,3 mbpd; Exporte übertreffen 4,4 mbpd",
                 "zh": "美二叠纪盆地非常规页岩原油日开采量升至 13.3 百万桶历史极值；墨西哥湾外运出口突破 4.4 mbpd",
                 "ru": "Пермский бассейн США установил новый рекорд добычи в 13,3 млн б/с; экспорт превысил 4,4 млн б/с",
-                "ja": "米パーミアン盆地の原油採掘が日量1330万バレルの新高値更新、湾岸海上輸出は440万バレル超"
+                "ja": "米パーミアン盆地の原油採掘が日量1330万バレルの新高値更新、湾岸海上輸出は440万バレル超",
+                "pt": "Bacia Permiana dos EUA Atinge Recorde de 13,3 mbpd; Exportações do Golfo Mantêm 4,1 mbpd",
+                "it": "Bacino Permiano USA Record a 13,3 mbpd; Esportazioni del Golfo a 4,1 mbpd",
+                "ko": "미국 퍼미안 분지 산유량 1,330만 bpd 사상 최고치 경신; 멕시코만 원유 수출 410만 bpd 지속",
+                "tr": "ABD Permian Havzası 13,3 mbpd ile Yeni Rekor Kırdı; Körfez İhracatı 4,1 mbpd Seviyesinde",
+                "nl": "Amerikaans Permian Basin Bereikt Record van 13,3 mbpd; Golfexport Blijft 4,1 mbpd",
+                "id": "Cekungan Permian AS Cetak Rekor Ekstraksi Baru di 13,3 mbpd; Ekspor Teluk 4,1 mbpd",
+                "ur": "امریکی پرمیئن بیسن نے 13.3 mbpd پیداوار کا نیا ریکارڈ قائم کیا؛ خلیجی برآمدات 4.1 mbpd",
+                "bn": "ইউএস পারমিয়ান বেসিন ১৩.৩ mbpd উৎপাদনের নতুন রেকর্ড গড়েছে; উপসাগরীয় রপ্তানি ৪.১ mbpd",
+                "ta": "அமெரிக்க பெர்மியன் பேசின் 13.3 mbpd புதிய உற்பத்தி சாதனை படைத்தது; வளைகுடா ஏற்றுமதி 4.1 mbpd"
             },
             "impact": "HIGH",
             "impact_color": "#3B82F6",
@@ -283,7 +355,16 @@ class GlobalNewsEngine:
                 "de": "AIS-Dichte in der Straße von Malakka auf Höchststand: 16,5 mbpd für ostasiatische Raffinerien",
                 "zh": "马六甲海峡 AIS 航迹密度触顶：日均 16.5 百万桶油流支撑东亚主要炼油重镇满负荷运转",
                 "ru": "Плотность AIS в Малаккском проливе на пике: Поток 16,5 млн б/с идет на НПЗ Восточной Азии",
-                "ja": "マラッカ海峡AIS船舶密度がピークに達する: 日量1650万バレルの石油流動が東アジア製油ハブへ直行"
+                "ja": "マラッカ海峡AIS船舶密度がピークに達する: 日量1650万バレルの石油流動が東アジア製油ハブへ直行",
+                "pt": "Densidade AIS no Estreito de Malaca Atinge Pico: 16,5 mbpd Rumo ao Leste da Ásia",
+                "it": "Picco di Densità AIS nello Stretto di Malacca: 16,5 mbpd verso l'Asia Orientale",
+                "ko": "말라카 해협 AIS 밀집도 최고조: 동아시아 핵심 허브로 향하는 석유 흐름 1,650만 bpd 기록",
+                "tr": "Malakka Boğazı AIS Yoğunluğu Zirvede: Doğu Asya'ya 16,5 mbpd Petrol Akışı",
+                "nl": "Straat van Malakka AIS-dichtheid Piek: 16,5 mbpd Oliestroom naar Oost-Azië",
+                "id": "Kepadatan AIS Selat Malaka Memuncak: Arus Minyak Bumi 16,5 mbpd ke Asia Timur",
+                "ur": "آبنائے ملاکا AIS کثافت عروج پر: مشرقی ایشیا کی طرف 16.5 mbpd پٹرولیم ترسیل",
+                "bn": "মালাক্কা প্রণালীতে এআইএস ঘনত্ব শীর্ষে: পূর্ব এশিয়ায় ১৬.৫ mbpd পেট্রোলিয়াম প্রবাহ",
+                "ta": "மலாக்கா நீரிணை AIS அடர்த்தி உச்சம்: கிழக்கு ஆசியாவிற்கு 16.5 mbpd பெட்ரோலியம் பாய்கிறது"
             },
             "impact": "CRITICAL",
             "impact_color": "#EF4444",
@@ -314,7 +395,16 @@ class GlobalNewsEngine:
                 "de": "Sinopec und PetroChina beschleunigen strategischen Erdölreserve-Aufbau in Zhoushan",
                 "zh": "中石化与中石油扩大舟山国家石油储备地下洞库补库注资，远洋原油到港吞吐量攀升",
                 "ru": "Sinopec и PetroChina ускоряют пополнение стратегических запасов нефти в Чжоушане",
-                "ja": "中国シノペック・ペトロチャイナが舟山地下空洞の国家石油備蓄（SPR）補充を加速"
+                "ja": "中国シノペック・ペトロチャイナが舟山地下空洞の国家石油備蓄（SPR）補充を加速",
+                "pt": "China Sinopec e PetroChina Aceleram Armazenamento Estratégico em Cavernas de Petróleo",
+                "it": "China Sinopec e PetroChina Accelerano lo Stoccaggio Strategico in Caverne",
+                "ko": "중국 시노펙 및 페트로차이나, 연안 지하 암반 동굴 전략비축유(SPR) 수용량 확충 가속화",
+                "tr": "Çin Sinopec ve PetroChina Stratejik Petrol Rezervi Depolamasını Hızlandırdı",
+                "nl": "China Sinopec & PetroChina Versnellen Strategische Voorraadopslag in Ondergrondse Cavernes",
+                "id": "Sinopec & PetroChina Percepat Pengisian Cadangan Minyak Strategis (SPR)",
+                "ur": "چین کی سائنوپیک اور پیٹرو چائنا نے اسٹریٹجک پیٹرولیم ذخائر کی گنجائش میں اضافہ تیز کر دیا",
+                "bn": "চীনের সিনোপেক এবং পেট্রোচায়না ভূগর্ভস্থ কৌশলগত পেট্রোলিয়াম মজুদ বৃদ্ধি ত্বরান্বিত করেছে",
+                "ta": "சீனாவின் சினோபெக் மற்றும் பெட்ரோசைனா உத்திசார் பெட்ரோலிய இருப்பு சேமிப்பை துரிதப்படுத்துகின்றன"
             },
             "impact": "STRATEGIC",
             "impact_color": "#3B82F6",
@@ -345,7 +435,16 @@ class GlobalNewsEngine:
                 "de": "Lateinamerikanischer Offshore-Boom: Guyana und Brasilien erreichen zusammen 4,1 mbpd",
                 "zh": "拉美深海盐下油田产能爆发：圭亚那斯塔布鲁克与巴西桑托斯盆地联合日产量突破 4.1 百万桶",
                 "ru": "Офшорный бум в Латинской Америке: Добыча в Гайане и Бразилии достигла 4,1 млн б/с",
-                "ja": "中南米海洋油田ブーム: ガイアナ・スタブロック鉱区とブラジル・サントス盆地の合計産出が日量410万バレルに到達"
+                "ja": "中南米海洋油田ブーム: ガイアナ・スタブロック鉱区とブラジル・サントス盆地の合計産出が日量410万バレルに到達",
+                "pt": "Boom Offshore Latino-Americano: Guyana Stabroek e Pré-Sal do Brasil Atingem 4,8 mbpd",
+                "it": "Boom Offshore Latinoamericano: Guyana Stabroek e Pre-Sal Brasile a 4,8 mbpd",
+                "ko": "중남미 해상 유전 붐: 가이아나 스타브룩 및 브라질 산토스 분지 프리솔 생산량 480만 bpd 돌파",
+                "tr": "Latin Amerika Offshore Patlaması: Guyana Stabroek ve Brezilya Öncesi Tuz 4,8 mbpd Seviyesinde",
+                "nl": "Latijns-Amerikaanse Offshore Boom: Guyana Stabroek & Brazilië Santos Bereiken 4,8 mbpd",
+                "id": "Ledakan Lepas Pantai Amerika Latin: Guyana Stabroek & Santos Brasil Capai 4,8 mbpd",
+                "ur": "لاطینی امریکی سمندری پیداوار میں اضافہ: گیانا اور برازیل کی مجموعی پیداوار 4.8 mbpd",
+                "bn": "ল্যাটিন আমেরিকান অফশোর উত্থান: গায়ানা এবং ব্রাজিল অফশোর নিষ্কাশন ৪.৮ mbpd ছুঁয়েছে",
+                "ta": "லத்தீன் அமெரிக்க கடல்சார் எழுச்சி: கயானா ஸ்டாப்ரோக் & பிரேசில் உற்பத்தி 4.8 mbpd ஐ எட்டியது"
             },
             "impact": "HIGH",
             "impact_color": "#10B981",
@@ -376,7 +475,16 @@ class GlobalNewsEngine:
                 "de": "Europäische Diesel-Crack-Spreads erholen sich auf 24,50 $/bbl wegen Rhein-Pegelständen",
                 "zh": "欧洲西北部超低硫柴油裂解价差反弹至 24.50 美元/桶，受莱茵河内河吃水航运限载扰动",
                 "ru": "Маржа переработки дизеля в Европе отскочила до $24,50/барр. из-за ограничений на Рейне",
-                "ja": "ライン川の水位低下・輸送制約に伴い、欧州ディーゼル精製クラックスプレッドが24.50ドル/bblに急反発"
+                "ja": "ライン川の水位低下・輸送制約に伴い、欧州ディーゼル精製クラックスプレッドが24.50ドル/bblに急反発",
+                "pt": "Cracks de Refino de Diesel na Europa Recuperam para $24,50/bbl com Desvios pelo Mar Vermelho",
+                "it": "Crack Spread Diesel Europei Risalgono a 24,50 $/barile per Deviazioni nel Mar Rosso",
+                "ko": "유럽 디젤 정제 크랙 스프레드, 홍해 우회 및 지중해 정기보수로 배럴당 $24.50로 반등",
+                "tr": "Kızıldeniz Yönlendirmeleri Arasında Avrupa Dizel Rafineri Çatlaması 24,50 $/bbl'ye Yükseldi",
+                "nl": "Europese Dieselcrackspreads Herstellen tot $24,50/vat door Rode Zee-omleidingen",
+                "id": "Crack Spread Solar Eropa Rebound ke $24,50/bbl di Tengah Pengalihan Laut Merah",
+                "ur": "بحیرہ احمر کے چکر کے باعث یورپی ڈیزل ریفائننگ مارجن دوبارہ $24.50 فی بیرل پر پہنچ گیا",
+                "bn": "লোহিত সাগর ডাইভারশনের মধ্যে ইউরোপীয় ডিজেল শোধন মার্জিন $২৪.৫০/ব্যারেলে পৌঁছেছে",
+                "ta": "செங்கடல் திசைதிருப்பல்களால் ஐரோப்பிய டீசல் சுத்திகரிப்பு லாபம் $24.50/bbl ஆக உயர்ந்தது"
             },
             "impact": "HIGH",
             "impact_color": "#F59E0B",
@@ -407,7 +515,16 @@ class GlobalNewsEngine:
                 "de": "Indian Oil baut Petrochemie-Integration in Panipat & Paradip zum Margenschutz aus",
                 "zh": "印度国家石油公司（IOCL）加速推进帕尼帕特与帕拉迪普炼化一体化下游石化深加工扩建",
                 "ru": "Indian Oil расширяет нефтехимическую интеграцию в Панипате и Парадипе для защиты маржи",
-                "ja": "インディアン・オイル（IOCL）がパニパットとパラディープの石化一体化を拡充、精製マージン変動に備え"
+                "ja": "インディアン・オイル（IOCL）がパニパットとパラディープの石化一体化を拡充、精製マージン変動に備え",
+                "pt": "Indian Oil Corporation Expande Integração Petroquímica em Panipat e Paradip",
+                "it": "Indian Oil Corporation Espande l'Integrazione Petrolchimica a Panipat e Paradip",
+                "ko": "인도국영석유공사(IOCL), 파니팟 및 파라딥 정유소 석유화학 수율 극대화 시설 완공",
+                "tr": "Indian Oil Corporation Panipat ve Paradip Petrokimya Entegrasyonunu Genişletti",
+                "nl": "Indian Oil Corporation Breidt Petrochemische Integratie in Panipat & Paradip Uit",
+                "id": "Indian Oil Corporation Perluas Integrasi Petrokimia di Panipat & Paradip",
+                "ur": "انڈین آئل کارپوریشن نے پانی پت اور پارادیپ میں پیٹرو کیمیکل انضمام کو وسعت دی",
+                "bn": "ইন্ডিয়ান অয়েল কর্পোরেশন পানিপথ ও পারাদ্বীপে পেট্রোকেমিক্যাল ইন্টিগ্রেশন সম্প্রসারিত করেছে",
+                "ta": "இந்தியன் ஆயில் கார்ப்பரேஷன் பானிபட் & பாராதீப் பெட்ரோகெமிக்கல் ஒருங்கிணைப்பை விரிவுபடுத்துகிறது"
             },
             "impact": "MARKET_UPDATE",
             "impact_color": "#10B981",
@@ -438,7 +555,16 @@ class GlobalNewsEngine:
                 "de": "US-Energieministerium vergibt Verträge über 4,2 Millionen Barrel zur SPR-Auffüllung",
                 "zh": "美国能源部正式授标 420 万桶战略石油储备（SPR）回购合约，均价锁定在每桶 77.80 美元以下",
                 "ru": "Минэнерго США заключило контракты на закупку 4,2 млн баррелей для пополнения SPR",
-                "ja": "米エネルギー省が戦略石油備蓄（SPR）向けに420万バレルの現物買い付け契約を発注完了"
+                "ja": "米エネルギー省が戦略石油備蓄（SPR）向けに420万バレルの現物買い付け契約を発注完了",
+                "pt": "Departamento de Energia dos EUA Adjudica Contratos para 4,2 Milhões de Barris de Reabastecimento",
+                "it": "Dipartimento dell'Energia USA Assegna Contratti per 4,2 Milioni di Barili di Ricarica SPR",
+                "ko": "미 에너지부, 텍사스 브라이언 마운드 전략비축유 충원용 원유 420만 배럴 구매 계약 체결",
+                "tr": "ABD Enerji Bakanlığı 4,2 Milyon Varil SPR Yenileme Sözleşmesi İmzaladı",
+                "nl": "Amerikaans Ministerie van Energie Verleent Contracten voor 4,2 Miljoen Vat Aanvulling",
+                "id": "Departemen Energi AS Berikan Kontrak Pengisian Kembali 4,2 Juta Barel SPR",
+                "ur": "امریکی محکمہ توانائی نے اسٹریٹجک ذخائر بھرنے کے لیے 4.2 ملین بیرل کے معاہدے کیے",
+                "bn": "মার্কিন জ্বালানি বিভাগ ৪.২ মিলিয়ন ব্যারেল এসপিআর পুনঃপূরণের চুক্তি করেছে",
+                "ta": "அமெரிக்க எரிசக்தித் துறை 4.2 மில்லியன் பீப்பாய்கள் SPR நிரப்புதல் ஒப்பந்தங்களை வழங்கியது"
             },
             "impact": "MARKET_UPDATE",
             "impact_color": "#8B5CF6",
@@ -469,7 +595,16 @@ class GlobalNewsEngine:
                 "de": "CPC-Schwarzmeer-Terminal verlädt 1,35 mbpd kasachisches Tengiz-Rohöl",
                 "zh": "里海管道财团（CPC）新罗西斯克黑海离岸单点系泊终端稳定装船 1.35 mbpd 哈萨克斯坦田吉兹原油",
                 "ru": "Терминал КТК в Черном море отгрузил 1,35 млн б/с казахстанской нефти Тенгиз",
-                "ja": "カスピ海パイプライン（CPC）黒海ターミナルでカザフスタン産テンギス原油を日量135万バレル安定船積み"
+                "ja": "カスピ海パイプライン（CPC）黒海ターミナルでカザフスタン産テンギス原油を日量135万バレル安定船積み",
+                "pt": "Terminal do Mar Negro da CPC Carrega 1,42 mbpd de Petróleo do Cazaquistão",
+                "it": "Il Terminale CPC sul Mar Nero Carica 1,42 mbpd di Greggio Kazako",
+                "ko": "카스피 파이프라인 컨소시엄(CPC) 흑해 노보로시스크 터미널, 카자흐스탄 원유 142만 bpd 선적",
+                "tr": "Hazar Boru Hattı Konsorsiyumu (CPC) Karadeniz Terminali 1,42 mbpd Kazak Petrolü Yükledi",
+                "nl": "Kaspische Pijpleidingconsortium (CPC) Zwarte Zee Terminal Laadt 1,42 mbpd",
+                "id": "Terminal Laut Hitam CPC Muat 1,42 mbpd Minyak Mentah Kazakhstan",
+                "ur": "بحیرہ اسود پر CPC ٹرمینل نے 1.42 mbpd قازقستان کا خام تیل جہازوں پر لوڈ کیا",
+                "bn": "সিপিসি ব্ল্যাক সি টার্মিনাল ১.৪২ mbpd কাজাখ অপরিশোধিত তেল লোড করেছে",
+                "ta": "காஸ்பியன் பைப்லைன் கூட்டமைப்பு (CPC) கருங்கடல் முனையம் 1.42 mbpd கச்சா எண்ணெயை ஏற்றியது"
             },
             "impact": "STRATEGIC",
             "impact_color": "#3B82F6",
@@ -500,7 +635,16 @@ class GlobalNewsEngine:
                 "de": "Kerosin-Crack-Spreads schließen bei 21,80 $/bbl dank starker Passagierzahlen",
                 "zh": "全球民航航空煤油（Jet Fuel A-1）裂解价差报收于 21.80 美元/桶，受跨洋干线客运复苏支撑",
                 "ru": "Спреды на авиакеросин зафиксировались на уровне $21,80/барр. на фоне роста пассажиропотока",
-                "ja": "国際航空旅客の回復を受け、ジェット燃料（ケロシン）クラックスプレッドは21.80ドル/bblで堅調推移"
+                "ja": "国際航空旅客の回復を受け、ジェット燃料（ケロシン）クラックスプレッドは21.80ドル/bblで堅調推移",
+                "pt": "Crack Spreads do Querosene de Aviação Fixam em $21,80/bbl com Demanda da Ásia",
+                "it": "Crack Spread del Carburante Jet Stabili a 21,80 $/barile con la Ripresa della Domanda Asiatica",
+                "ko": "항공유(케로신) 정제 크랙 스프레드, 아시아 태평양 여행 수요 강세 속 배럴당 $21.80 안착",
+                "tr": "Havacılık Jet Yakıtı Çatlama Marjları Asya Seyahat Talebiyle 21,80 $/bbl'ye Yerleşti",
+                "nl": "Kerosine (Jet Fuel) Crackspreads Stabiliseren op $21,80/vat door Aziatische Reislust",
+                "id": "Crack Spread Bahan Bakar Jet Avtur Stabil di $21,80/bbl Didorong Permintaan Perjalanan Asia",
+                "ur": "ہوا بازی کا ایندھن (جیٹ فیول) ایشیائی فضائی سفر کی مانگ کی بدولت $21.80 فی بیرل پر مستحکم",
+                "bn": "এশিয়া ভ্রমণের চাহিদার কারণে এভিয়েশন জেট ফুয়েল ক্র্যাক স্প্রেড $২১.৮০/ব্যারেলে স্থিতিশীল",
+                "ta": "ஆசிய பயண தேவையைத் தொடர்ந்து ஜெட் எரிபொருள் விலை லாபம் $21.80/bbl ஆக நிலைபெற்றது"
             },
             "impact": "MARKET_UPDATE",
             "impact_color": "#10B981",
@@ -531,7 +675,16 @@ class GlobalNewsEngine:
                 "de": "IEA vs. OPEC Ausblick 2026: Prognosen für weltweites Nachfragewachstum weichen um 1,1 mbpd ab",
                 "zh": "国际能源署（IEA）与欧佩克（OPEC）年度展望分歧加剧：2026 全球需求增量预测相差 1.1 百万桶/日",
                 "ru": "Прогноз МЭА и ОПЕК на 2026 год: Расхождение в оценке роста спроса на нефть составляет 1,1 млн б/с",
-                "ja": "IEA対OPEC 2026年市場展望: 世界石油需要成長予測の格差は日量110万バレルに拡大"
+                "ja": "IEA対OPEC 2026年市場展望: 世界石油需要成長予測の格差は日量110万バレルに拡大",
+                "pt": "Perspectivas AIE vs OPEP 2026: Projeções Divergentes sobre o Crescimento da Demanda",
+                "it": "Prospettive IEA vs OPEC 2026: Previsioni Divergenti sulla Domanda Globale di Petrolio",
+                "ko": "IEA 대 OPEC 2026 연간 전망 보고서: 전 세계 석유 수요 증가율에 대한 극명한 시각차 노출",
+                "tr": "Uluslararası Enerji Ajansı ve OPEC 2026 Görünümü: Talep Artışında Farklı Tahminler",
+                "nl": "IEA versus OPEC 2026 Vooruitzichten: Uiteenlopende Prognoses voor Vraag naar Olie",
+                "id": "Prospek IEA vs OPEC 2026: Proyeksi yang Berbeda tentang Pertumbuhan Permintaan Minyak",
+                "ur": "عالمی توانائی ایجنسی بمقابلہ اوپیک 2026 آؤٹ لک: تیل کی طلب میں اضافے پر متضاد پیش گوئیاں",
+                "bn": "আইইএ বনাম ওপেক ২০২৬ আউটলুক: বৈশ্বিক তেলের চাহিদা বৃদ্ধির উপর ভিন্ন পূর্বাভাস",
+                "ta": "IEA vs OPEC 2026 கண்ணோட்டம்: உலக எண்ணெய் தேவை வளர்ச்சியில் மாறுபட்ட கணிப்புகள்"
             },
             "impact": "STRATEGIC",
             "impact_color": "#8B5CF6",
@@ -562,7 +715,16 @@ class GlobalNewsEngine:
                 "de": "Asiatischer LNG-Spotpreis (JKM) bei 12,40 $/MMBtu verdrängt Schweröl in Kraftwerken",
                 "zh": "亚洲液化天然气现货基准（JKM）企稳于 12.40 美元/百万英热，加速沿海电厂燃料油替代进程",
                 "ru": "Спотовый индекс СПГ в Азии (JKM) держится на уровне $12,40/MMBtu, вытесняя мазут в энергетике",
-                "ja": "アジアLNGスポット指標（JKM）は12.40ドル/MMBtuで安定、火力発電所での重油焚き代替が加速"
+                "ja": "アジアLNGスポット指標（JKM）は12.40ドル/MMBtuで安定、火力発電所での重油焚き代替が加速",
+                "pt": "Benchmark Spot de GNL Asiático (JKM) Mantém-se em $12,40/MMBtu",
+                "it": "Benchmark Spot GNL Asiatico (JKM) Stabile a 12,40 $/MMBtu",
+                "ko": "아시아 LNG 현물 기준가(JKM), MMBtu당 $12.40 유지하며 산업용 천연가스 전환 촉진",
+                "tr": "Asya LNG Spot Göstergesi (JKM) 12,40 $/MMBtu Seviyesini Koruyor",
+                "nl": "Aziatische LNG Spotbenchmark (JKM) Houdt Stand op $12,40/MMBtu",
+                "id": "Acuan Spot LNG Asia (JKM) Bertahan di $12,40/MMBtu",
+                "ur": "ایشیائی اسپاٹ ایل این جی بینچ مارک (JKM) $12.40 فی MMBtu پر برقرار",
+                "bn": "এশিয়ান এলএনজি স্পট বেঞ্চমার্ক (জেকেএম) $১২.৪০/MMBtu-তে স্থিতিশীল",
+                "ta": "ஆசிய எல்என்ஜி ஸ்பாட் குறியீடு (JKM) $12.40/MMBtu இல் நீடிக்கிறது"
             },
             "impact": "MARKET_UPDATE",
             "impact_color": "#10B981",
@@ -577,6 +739,129 @@ class GlobalNewsEngine:
             "key_takeaways": [
                 "QatarEnergy and US Sabine Pass liquefaction facilities ran at 102% nameplate throughput to fulfill long-term SPA commitments.",
                 "Indian city gas distributors and fertilizer plants maintained 100% domestic gas allocation supplemented by spot LNG."
+            ]
+        },
+        {
+            "id": "NEWS-2026-IN-SAUDI-SPR-19",
+            "category": "TRADE_FLOWS",
+            "category_label": "🚢 Bilateral Import & Export Flows",
+            "minutes_ago": 7,
+            "headline": "India & Saudi Aramco Finalize Bilateral Strategic Petroleum Reserve (SPR) Expansion Pact at Padur",
+            "headline_i18n": {
+                "en": "India & Saudi Aramco Finalize Bilateral Strategic Petroleum Reserve (SPR) Expansion Pact at Padur",
+                "hi": "भारत व सऊदी अरामको ने पादुर में रणनीतिक पेट्रोलियम भंडार (SPR) विस्तार समझौते को अंतिम रूप दिया",
+                "es": "India y Saudi Aramco Firman Pacto para Ampliar la Reserva Estratégica (SPR) en Padur",
+                "fr": "L'Inde et Saudi Aramco Finalisent un Accord d'Expansion de la Réserve Stratégique à Padur",
+                "ar": "الهند وأرامكو السعودية تضعان اللمسات الأخيرة لاتفاقية توسيع احتياطي النفط الاستراتيجي في بادور",
+                "de": "Indien und Saudi Aramco besiegeln bilaterales Abkommen zum Ausbau der strategischen Ölreserve in Padur",
+                "zh": "印度与沙特阿美在帕杜尔正式敲定双边国家战略石油储备 (SPR) 扩容深化协定",
+                "ru": "Индия и Saudi Aramco заключили соглашение о расширении стратегического резерва нефти в Падуре",
+                "ja": "インドとサウジアラムコ、パドゥールにおける国家戦略石油備蓄（SPR）拡充協定を正式締結",
+                "pt": "Índia e Saudi Aramco Finalizam Acordo para Expandir Reserva Estratégica de Petróleo em Padur",
+                "it": "India e Saudi Aramco Siglano Accordo per Espandere la Riserva Petrolifera Strategica a Padur",
+                "ko": "인도 정부와 사우디 아람코, 파두르 지하 전략비축유(SPR) 2단계 공동 확장 협정 공식 체결",
+                "tr": "Hindistan ve Saudi Aramco, Padur'daki Stratejik Petrol Rezervi Genişletme Anlaşmasını Tamamladı",
+                "nl": "India & Saudi Aramco Rondden Bilateraal Verdrag af voor Strategische Olievoorraad in Padur",
+                "id": "India & Saudi Aramco Rampungkan Pakta Perluasan Cadangan Minyak Strategis (SPR) di Padur",
+                "ur": "بھارت اور سعودی آرامکو نے پادور میں اسٹریٹجک پٹرولیم ریزرو توسیعی معاہدے پر دستخط کر دیے",
+                "bn": "ভারত ও সৌদি আরামকো পদুরে কৌশলগত পেট্রোলিয়াম রিজার্ভ (SPR) সম্প্রসারণ চুক্তি চূড়ান্ত করেছে",
+                "ta": "இந்தியாவும் சவுதி அராம்கோவும் பாதூரில் உத்திசார் பெட்ரோலிய இருப்பு (SPR) விரிவாக்க ஒப்பந்தத்தை இறுதி செய்தன"
+            },
+            "impact": "STRATEGIC",
+            "impact_color": "#3B82F6",
+            "source": "ISPRL / Saudi Aramco Press Release",
+            "summary": "Indian Strategic Petroleum Reserves Limited (ISPRL) and Saudi Aramco have formalized a commercial agreement to commercialize Phase-II storage caverns at Padur, Karnataka. Saudi Aramco will lease 2.5 million metric tonnes (18.3 million barrels) of crude capacity, ensuring guaranteed physical supplies to Indian refiners during maritime supply disruptions while allowing commercial trading access.",
+            "metrics": {
+                "Padur SPR Capacity": "2.5 MMT (18.3 mbbl)",
+                "India Total SPR Cover": "74 Days",
+                "Commercial Lease Share": "50%",
+                "Bilateral Term Pact": "15 Years"
+            },
+            "key_takeaways": [
+                "Provides India guaranteed physical crude allocation within 48 hours of any Strait of Hormuz naval bottleneck emergency.",
+                "Deepens Aramco's downstream footprint in the Indian Ocean corridor alongside its existing crude supply agreements with Mangalore Refinery (MRPL) and IOCL."
+            ]
+        },
+        {
+            "id": "NEWS-2026-MED-REFINERY-20",
+            "category": "PRICE_TAX",
+            "category_label": "⛽ Live Fuel Rates & Sovereign Tax",
+            "minutes_ago": 15,
+            "headline": "European Distillate Crack Spreads Surge to $28.50/bbl Amid Mediterranean Refinery Turnarounds & Red Sea Premiums",
+            "headline_i18n": {
+                "en": "European Distillate Crack Spreads Surge to $28.50/bbl Amid Mediterranean Refinery Turnarounds & Red Sea Premiums",
+                "hi": "यूरोपीय डिस्टिलेट क्रैक स्प्रेड $28.50/bbl पर पहुंचा; रिफाइनरी रखरखाव व लाल सागर प्रीमियम का प्रभाव",
+                "es": "Márgenes de Destilados Europeos Suben a $28.50/bbl por Paradas de Refinerías y Fletes",
+                "fr": "Les Crack Spreads des Distillats Européens Bondissent à 28,50 $/bbl sous Arrêts Techniques et Taux Fret",
+                "ar": "هوامش تكرير المشتقات الوسيطة في أوروبا تقفز إلى 28.50 دولار/برميل وسط إغلاقات الصيانة وعلاوات الشحن",
+                "de": "Europäische Mitteldestillat-Crack-Spreads steigen auf 28,50 $/bbl bei Raffineriewartungen und Frachtaufschlägen",
+                "zh": "地中海炼厂春检叠加好望角绕航运费溢价，欧洲柴油重柴中间馏分油裂解价差飙升至 28.50 美元/桶",
+                "ru": "Европейская маржа переработки дистиллятов подскочила до $28,50/б на фоне ремонтов НПЗ и премий за фрахт",
+                "ja": "欧州中間留分クラックスプレッドが日量バレルあたり28.50ドルに急騰、地中海定期修繕と喜望峰迂回が重層化",
+                "pt": "Cracks de Destilados Europeus Disparam para $28,50/bbl com Manutenções e Prêmios de Frete",
+                "it": "Margini dei Distillati Europei Salgono a 28,50 $/barile tra Manutenzioni e Premi Noli",
+                "ko": "지중해 정유사 봄철 대정비 및 홍해 우회 프리미엄으로 유럽 디젤 크랙 스프레드 $28.50/bbl 급등",
+                "tr": "Akdeniz Rafineri Bakımları ve Navlun Primleri Arasında Avrupa Distilat Çatlaması 28,50 $/bbl'ye Yükseldi",
+                "nl": "Europese Distillaatcrackspreads Stijgen naar $28,50/vat door Raffinaderijonderhoud en Vrachttarieven",
+                "id": "Crack Spread Distilat Eropa Melonjak ke $28,50/bbl Akibat Perawatan Kilang & Premi Laut Merah",
+                "ur": "بحیرہ روم کی ریفائنری بندشوں اور مال برداری کے پریمیم کے باعث یورپی ڈیزل مارجن $28.50 فی بیرل تک پہنچ گیا",
+                "bn": "ইউরোপীয় ডিস্টিলেট ক্র্যাক স্প্রেড $২৮.৫০/ব্যারেলে পৌঁছেছে; শোধনাগার রক্ষণাবেক্ষণ ও মালবাহী প্রিমিয়ামের প্রভাব",
+                "ta": "மத்திய தரைக்கடல் சுத்திகரிப்பு பராமரிப்பு மற்றும் சரக்குக் கட்டணங்களால் ஐரோப்பிய டீசல் லாபம் $28.50/bbl ஆக உயர்ந்தது"
+            },
+            "impact": "HIGH",
+            "impact_color": "#F59E0B",
+            "source": "Argus Media & ICE Futures Europe",
+            "summary": "ICE Gasoil crack spreads over Brent reached a 14-month high of $28.50 per barrel as scheduled turnaround maintenance at four major Italian and Spanish coastal refineries coincided with tighter seaborne supply from the Persian Gulf. Commercial diesel stockpiles across the ARA (Amsterdam-Rotterdam-Antwerp) bunkering hub have dropped to 1.95 million tonnes, 12% below the five-year rolling average.",
+            "metrics": {
+                "Gasoil Crack Spread": "$28.50 / bbl",
+                "ARA Diesel Stockpiles": "1.95 MMT (-12%)",
+                "Cape Freight Surcharge": "+$2.10 / bbl",
+                "Refinery Offline Capacity": "680,000 bpd"
+            },
+            "key_takeaways": [
+                "Encourages complex Asian refiners in Jamnagar and Yeosu to optimize crude slate yields toward export-grade ultra-low sulphur diesel (ULSD).",
+                "Maintains structural upward price pressure on retail commercial transport diesel across northern European metropolitan corridors."
+            ]
+        },
+        {
+            "id": "NEWS-2026-VLGC-LNG-21",
+            "category": "HORMUZ_MARITIME",
+            "category_label": "🚨 Strait of Hormuz & Maritime",
+            "minutes_ago": 29,
+            "headline": "Asian Spot LNG Freight Rates Firm as Dual-Fuel VLGC Tanker Fleet Faces Hormuz Surveillance",
+            "headline_i18n": {
+                "en": "Asian Spot LNG Freight Rates Firm as Dual-Fuel VLGC Tanker Fleet Faces Hormuz Surveillance",
+                "hi": "एशियाई स्पॉट एलएनजी फ्रेट दरें मजबूत; दोहरे ईंधन वीएलजीसी बेड़े पर होर्मुज निगरानी का प्रभाव",
+                "es": "Tarifas de Flete de GNL Spot en Asia se Firman ante la Vigilancia en Ormuz para Buques VLGC",
+                "fr": "Les Tarifs de Fret Spot de GNL en Asie se Raffermissent face à la Surveillance Navale à Ormuz",
+                "ar": "أسعار شحن الغاز المسال الفوري في آسيا تتماسك مع خضوع أسطول ناقلات VLGC لمراقبة مضيق هرمز",
+                "de": "Asiatische Spot-LNG-Frachtraten ziehen an, während Dual-Fuel-VLGC-Flotte unter Hormus-Überwachung operiert",
+                "zh": "波斯湾大型双燃料 VLGC/LNGC 液化气运输船队面临霍尔木兹海峡常态监察，亚太 LNG 现货海运费稳步攀升",
+                "ru": "Спотовые ставки фрахта СПГ в Азии укрепляются на фоне надзора за танкерами в Ормузском проливе",
+                "ja": "二元燃料VLGC船団へのホルムズ警戒態勢を受け、アジア向けスポットLNG傭船運賃が底坚く推移",
+                "pt": "Tarifas de Frete Spot de GNL na Ásia Firmes com Frotas VLGC sob Vigilância em Ormuz",
+                "it": "Noli Spot di GNL in Asia più Solidi mentre la Flotta VLGC Affronta la Vigilanza a Hormuz",
+                "ko": "호르무즈 해군 감시 강화 속에 이중연료 VLGC 가스 운반선 아시아 현물 용선 운임 강세 시현",
+                "tr": "Çift Yakıtlı VLGC Tanker Filosu Hürmüz Denetimiyle Karşılaşırken Asya Spot LNG Navlunları Güçlendi",
+                "nl": "Aziatische Spot LNG-vrachttarieven Stevig terwijl Dual-Fuel VLGC-vloot Onder Toezicht Staat",
+                "id": "Tarif Angkut LNG Spot Asia Menguat saat Armada Tanker VLGC Hadapi Pengawasan Hormuz",
+                "ur": "آبنائے ہرمز کی سخت نگرانی کے دوران دوہرے ایندھن والے VLGC ٹینکر بیڑے کے باعث ایشیائی ایل این جی کرایوں میں اضافہ",
+                "bn": "হরমুজ নজরদারির মুখে ডুয়েল-ফুয়েল ভিএলজিসি ট্যাঙ্কার বহর; এশিয়ান স্পট এলএনজি মালবাহী হার চাঙ্গা",
+                "ta": "ஹார்முஸ் கண்காணிப்பை எதிர்கொள்ளும் இரட்டை எரிபொருள் VLGC டேங்கர் கப்பல்களால் ஆசிய எல்என்ஜி சரக்கு கட்டணங்கள் உயர்வு"
+            },
+            "impact": "CRITICAL",
+            "impact_color": "#EF4444",
+            "source": "Clarksons Shipping Intelligence / Spark Commodities",
+            "summary": "Day rates for modern 174,000 cbm two-stroke dual-fuel LNG and VLGC gas carriers loading at Ras Laffan and Das Island have firmed to $78,500/day. War-risk underwriting syndicates require mandatory 48-hour voyage passage notifications for vessels transiting westbound through the Strait of Hormuz to Asian destination ports.",
+            "metrics": {
+                "LNG Spot Charter Rate": "$78,500 / day",
+                "Weekly Charter Change": "+$9,200 / day",
+                "Ras Laffan Loadings": "18.2 mtpa rate",
+                "Transit Passage Notice": "48 Hours"
+            },
+            "key_takeaways": [
+                "Higher freight charters add approximately $0.45/MMBtu to delivered landed costs for Japanese, South Korean, and Indian LNG regasification terminals.",
+                "India's Petronet LNG Dahej and Kochi terminals continue operating at 98% nominal capacity under long-term contract indexed pricing."
             ]
         }
     ]
@@ -631,15 +916,16 @@ class GlobalNewsEngine:
         """Returns the count of active high-priority market alerts."""
         items = cls.get_live_news_feed()
         return len([i for i in items if i.get("impact") in ("CRITICAL", "HIGH", "STRATEGIC")])
-
     @classmethod
     def get_chokepoint_telemetry(cls, lang: Optional[str] = None) -> List[Dict[str, Any]]:
         """
         Returns live bottleneck telemetry cards for major global maritime chokepoints.
-        If lang is provided (e.g. 'hi', 'es', 'fr', 'ar', 'de', 'zh', 'ru', 'ja'),
-        all chokepoint text (names, status badges, risks, and contingencies)
-        are translated dynamically into the target language.
+        All chokepoint text (names, status badges, risks, and contingencies)
+        are translated dynamically into the target language across all 18 supported languages.
         """
+        from src.localization.i18n import SUPPORTED_LANGUAGES
+        active_lang = lang if (lang and lang in SUPPORTED_LANGUAGES) else "en"
+
         # Multilingual database for maritime bottlenecks
         i18n_names = {
             "hormuz": {
@@ -651,7 +937,16 @@ class GlobalNewsEngine:
                 "de": "Straße von Hormus",
                 "zh": "霍尔木兹海峡",
                 "ru": "Ормузский пролив",
-                "ja": "ホルムズ海峡"
+                "ja": "ホルムズ海峡",
+                "pt": "Estreito de Ormuz",
+                "it": "Stretto di Hormuz",
+                "ko": "호르무즈 해협",
+                "tr": "Hürmüz Boğazı",
+                "nl": "Straat van Hormuz",
+                "id": "Selat Hormuz",
+                "ur": "آبنائے ہرمز",
+                "bn": "হরমুজ প্রণালী",
+                "ta": "ஹார்முஸ் நீரிணை"
             },
             "bab": {
                 "en": "Bab el-Mandeb / Red Sea",
@@ -662,7 +957,16 @@ class GlobalNewsEngine:
                 "de": "Bab el-Mandeb / Rotes Meer",
                 "zh": "曼德海峡 / 红海航道",
                 "ru": "Баб-эль-Мандеб / Красное море",
-                "ja": "バブ・エル・マンデブ海峡 / 紅海"
+                "ja": "バブ・エル・マンデブ海峡 / 紅海",
+                "pt": "Bab el-Mandeb / Mar Vermelho",
+                "it": "Bab el-Mandeb / Mar Rosso",
+                "ko": "밥엘만데브 / 홍해",
+                "tr": "Bab el-Mandeb / Kızıldeniz",
+                "nl": "Bab el-Mandeb / Rode Zee",
+                "id": "Bab el-Mandeb / Laut Merah",
+                "ur": "باب المندب / بحیرہ احمر",
+                "bn": "বাব আল-মান্দেব / লোহিত সাগর",
+                "ta": "பாப் எல்-மந்தேப் / செங்கடல்"
             },
             "malacca": {
                 "en": "Strait of Malacca",
@@ -673,7 +977,16 @@ class GlobalNewsEngine:
                 "de": "Straße von Malakka",
                 "zh": "马六甲海峡",
                 "ru": "Малаккский пролив",
-                "ja": "マラッカ海峡"
+                "ja": "マラッカ海峡",
+                "pt": "Estreito de Malaca",
+                "it": "Stretto di Malacca",
+                "ko": "말라카 해협",
+                "tr": "Malakka Boğazı",
+                "nl": "Straat van Malakka",
+                "id": "Selat Malaka",
+                "ur": "آبنائے ملاکا",
+                "bn": "মালাক্কা প্রণালী",
+                "ta": "மலாக்கா நீரிணை"
             },
             "suez": {
                 "en": "Suez Canal",
@@ -684,7 +997,16 @@ class GlobalNewsEngine:
                 "de": "Suezkanal",
                 "zh": "苏伊士运河",
                 "ru": "Суэцкий канал",
-                "ja": "スエズ運河"
+                "ja": "スエズ運河",
+                "pt": "Canal de Suez",
+                "it": "Canale di Suez",
+                "ko": "수에즈 운하",
+                "tr": "Süveyş Kanalı",
+                "nl": "Suez-kanaal",
+                "id": "Terusan Suez",
+                "ur": "نہر سوئز",
+                "bn": "সুয়েজ খাল",
+                "ta": "சூயஸ் கால்வாய்"
             }
         }
 
@@ -698,7 +1020,16 @@ class GlobalNewsEngine:
                 "de": "ERHÖHTE MARINE-PATROUILLE",
                 "zh": "海军高度战备巡逻",
                 "ru": "УСИЛЕННЫЙ ПАТРУЛЬ ВМС",
-                "ja": "海軍警戒パトロール配備"
+                "ja": "海軍警戒パトロール配備",
+                "pt": "PATRULHA NAVAL ELEVADA",
+                "it": "PATTUGLIA NAVALE ELEVATA",
+                "ko": "해군 순찰 경계 강화",
+                "tr": "YÜKSEK DENİZ DEVRİYESİ",
+                "nl": "VERHOOGDE MARINEPATROUILLE",
+                "id": "PATROLI ANGKATAN LAUT DITINGKATKAN",
+                "ur": "سخت بحری گشت",
+                "bn": "উচ্চ নৌ টহল",
+                "ta": "தீவிர கடற்படை ரோந்து"
             },
             "bab": {
                 "en": "CAPE DIVERSION ACTIVE",
@@ -709,7 +1040,16 @@ class GlobalNewsEngine:
                 "de": "KAP-UMLEITUNG AKTIV",
                 "zh": "好望角远程绕航持续生效",
                 "ru": "ОБХОД ЧЕРЕЗ МЫС ДОБРОЙ НАДЕЖДЫ",
-                "ja": "喜望峰迂回航路が稼働中"
+                "ja": "喜望峰迂回航路が稼働中",
+                "pt": "DESVIO PELO CABO ATIVO",
+                "it": "DEVIAZIONE CAPO DI BUONA SPERANZA",
+                "ko": "희망봉 우회 항로 가동 중",
+                "tr": "ÜMİT BURNU YÖNLENDİRMESİ AKTİF",
+                "nl": "KAAP-OMLEIDING ACTIEF",
+                "id": "PENGALIHAN TANJUNG AKTIF",
+                "ur": "راس امید بائی پاس فعال",
+                "bn": "উত্তমাশা অন্তরীপ পথ সক্রিয়",
+                "ta": "நன்னம்பிக்கை முனை வழித்தடம் இயங்குகிறது"
             },
             "malacca": {
                 "en": "UNIMPEDED TRANSIT",
@@ -720,7 +1060,16 @@ class GlobalNewsEngine:
                 "de": "UNGEHINDERTER TRANSIT",
                 "zh": "航道畅通满负荷通行",
                 "ru": "БЕСПРЕПЯТСТВЕННЫЙ ТРАНЗИТ",
-                "ja": "正常通航・順調"
+                "ja": "正常通航・順調",
+                "pt": "TRÂNSITO DESIMPEDIDO",
+                "it": "TRANSITO SENZA OSTACOLI",
+                "ko": "원활한 정상 통항",
+                "tr": "ENGELSİZ GEÇİŞ",
+                "nl": "ONBELEMMERDE DOORGANG",
+                "id": "TRANSIT LANCAR",
+                "ur": "بلارکاوٹ آمد و رفت",
+                "bn": "নির্বিঘ্ন চলাচল",
+                "ta": "தடையில்லா போக்குவரத்து"
             },
             "suez": {
                 "en": "REDUCED THROUGHPUT",
@@ -731,7 +1080,16 @@ class GlobalNewsEngine:
                 "de": "REDUZIERTER DURCHSATZ",
                 "zh": "通航吞吐量受抑",
                 "ru": "СНИЖЕННАЯ ПРОПУСКНАЯ СПОСОБНОСТЬ",
-                "ja": "通航隻数減少・低下"
+                "ja": "通航隻数減少・低下",
+                "pt": "CAPACIDADE REDUZIDA",
+                "it": "CAPACITÀ RIDOTTA",
+                "ko": "통항량 감소 및 제한",
+                "tr": "DÜŞÜK KAPASİTE GEÇİŞİ",
+                "nl": "VERMINDERDE DOORVOER",
+                "id": "KAPASITAS BERKURANG",
+                "ur": "کم شدہ آمد و رفت",
+                "bn": "হ্রাসকৃত থ্রুপুট",
+                "ta": "குறைக்கப்பட்ட போக்குவரத்து"
             }
         }
 
@@ -745,7 +1103,16 @@ class GlobalNewsEngine:
                 "de": "Iranische Marinedrohnen-Übungen, GPS-Spoofing, Kriegsrisiko-Versicherungsaufschlag +0,42 %",
                 "zh": "无人机演训干扰、AIS/GPS 信号欺骗、战区船体溢价攀升 +0.42%",
                 "ru": "Учения военно-морских дронов, подмена GPS-сигналов, военная страховая премия +0,42%",
-                "ja": "海軍無人機演習、GPSスプーフィング、戦争危険保険料率+0.42%"
+                "ja": "海軍無人機演習、GPSスプーフィング、戦争危険保険料率+0.42%",
+                "pt": "Exercícios navais com drones, falsificação de GPS, prêmio de risco de guerra +0,42%",
+                "it": "Esercitazioni navali con droni, spoofing GPS, premio rischio guerra +0,42%",
+                "ko": "해군 드론 훈련, GPS 스푸핑, 전쟁 위험 보험 프리미엄 +0.42%",
+                "tr": "Deniz dronu tatbikatları, GPS sahtekarlığı, savaş riski sigorta primi +%0,42",
+                "nl": "Oefeningen met marinedrones, GPS-spoofing, oorlogsrisicoverzekering +0,42%",
+                "id": "Latihan drone angkatan laut, spoofing GPS, premi asuransi risiko perang +0,42%",
+                "ur": "بحری ڈرون مشقیں، GPS اسپوفنگ، جنگی خطرے کا پریمیم +0.42%",
+                "bn": "নৌ ড্রোন মহড়া, জিপিএস স্পুফিং, যুদ্ধ-ঝুঁকি বীমা প্রিমিয়াম +০.৪২%",
+                "ta": "கடற்படை ட்ரோன் பயிற்சிகள், GPS ஸ்பூஃபிங், போர் ஆபத்து காப்பீடு +0.42%"
             },
             "bab": {
                 "en": "68% of commercial tankers routing around Cape of Good Hope (+12 days delay)",
@@ -756,7 +1123,16 @@ class GlobalNewsEngine:
                 "de": "68 % der kommerziellen Tanker umfahren das Kap der Guten Hoffnung (+12 Tage Verzögerung)",
                 "zh": "68% 的商运原油油轮绕行非洲好望角（航行周期增加 10 至 14 天）",
                 "ru": "68% коммерческих танкеров идут в обход мыса Доброй Надежды (+12 дней задержки)",
-                "ja": "商用タンカーの68%が喜望峰へ迂回航行（航海日数が10〜14日延伸）"
+                "ja": "商用タンカーの68%が喜望峰へ迂回航行（航海日数が10〜14日延伸）",
+                "pt": "68% dos petroleiros desviando pelo Cabo da Boa Esperança (+12 dias de atraso)",
+                "it": "68% delle petroliere deviate per il Capo di Buona Speranza (+12 giorni di ritardo)",
+                "ko": "상업용 유조선의 68%가 희망봉으로 우회 (+12일 지연)",
+                "tr": "Ticari tankerlerin %68'i Ümit Burnu çevresinden yönlendiriliyor (+12 gün gecikme)",
+                "nl": "68% van de commerciële tankers vaart om via Kaap de Goede Hoop (+12 dagen vertraging)",
+                "id": "68% kapal tanker komersial dialihkan melalui Tanjung Harapan (+12 hari penundaan)",
+                "ur": "68% تجارتی ٹینکرز راس امید کے راستے پر (+12 دن کی تاخیر)",
+                "bn": "৬৮% বাণিজ্যিক ট্যাঙ্কার উত্তমাশা অন্তরীপ দিয়ে ঘুরছে (+১২ দিন বিলম্ব)",
+                "ta": "68% வணிக டேங்கர்கள் நன்னம்பிக்கை முனை வழியாக பயணிக்கின்றன (+12 நாட்கள் தாமதம்)"
             },
             "malacca": {
                 "en": "Congestion in Singapore roadstead; monsoonal squall routing",
@@ -767,7 +1143,16 @@ class GlobalNewsEngine:
                 "de": "Überlastung auf Reede in Singapur; monsunale Sturmlagen",
                 "zh": "新加坡外锚地待泊拥堵率上升，受季风对流风暴航道限速影响",
                 "ru": "Загруженность рейда Сингапура, сезонные муссонные шквалы",
-                "ja": "シンガポール沖合投錨地の過密混雑、季節風スコール影響"
+                "ja": "シンガポール沖合投錨地の過密混雑、季節風スコール影響",
+                "pt": "Congestionamento no ancoradouro de Cingapura; impactos de rajadas de monções",
+                "it": "Congestione nella rada di Singapore; impatti delle raffiche monsoniche",
+                "ko": "싱가포르 정박지 혼잡 및 계절풍 돌풍에 따른 항로 영향",
+                "tr": "Singapur demirleme sahasında yoğunluk; muson fırtınası rotası",
+                "nl": "Drukte op de rede van Singapore; invloed van moessonbuien",
+                "id": "Kepadatan di pangkalan Singapura; dampak hembusan angin muson",
+                "ur": "سنگاپور بندرگاہ پر بھیڑ؛ مون سون طوفانی اثرات",
+                "bn": "সিঙ্গাপুর রোডস্টেডে যানজট; মৌসুমি ঝড়ের প্রভাব",
+                "ta": "சிங்கப்பூர் நங்கூர தள நெரிசல்; பருவமழை தாக்கங்கள்"
             },
             "suez": {
                 "en": "Direct downstream consequence of Bab el-Mandeb security routing",
@@ -778,7 +1163,16 @@ class GlobalNewsEngine:
                 "de": "Direkte Folge der Sicherheitsumleitungen am Bab el-Mandeb",
                 "zh": "曼德海峡安全危机导致的下游运河过境申请连锁骤减",
                 "ru": "Прямое следствие перенаправления танкеров из Баб-эль-Мандеба",
-                "ja": "バブ・エル・マンデブ海峡の安全回避策に伴う連鎖的通航減"
+                "ja": "バブ・エル・マンデブ海峡の安全回避策に伴う連鎖的通航減",
+                "pt": "Consequência direta do desvio de segurança em Bab el-Mandeb",
+                "it": "Conseguenza diretta del reindirizzamento di sicurezza a Bab el-Mandeb",
+                "ko": "밥엘만데브 보안 우회 항로 운영에 따른 연쇄적 통항 감소",
+                "tr": "Bab el-Mandeb güvenlik yönlendirmesinin doğrudan sonucu",
+                "nl": "Direct gevolg van de veiligheidsomleiding bij Bab el-Mandeb",
+                "id": "Konsekuensi langsung dari pengalihan keamanan Bab el-Mandeb",
+                "ur": "باب المندب حفاظتی راستے کا براہ راست نتیجہ",
+                "bn": "বাব আল-মান্দেব নিরাপত্তা রুটের সরাসরি ফলশ্রুতি",
+                "ta": "பாப் எல்-மந்தேப் பாதுகாப்பு திசைதிருப்பலின் நேரடி விளைவு"
             }
         }
 
@@ -792,7 +1186,16 @@ class GlobalNewsEngine:
                 "de": "VAE Fujairah-Pipeline (1,8 mbpd) & saudische Petroline (5,0 mbpd)",
                 "zh": "阿联酋富查伊拉绕行管道 (1.8 mbpd) 及沙特东西原油管道 Petroline (5.0 mbpd)",
                 "ru": "Нефтепровод Фуджейра в ОАЭ (1,8 млн б/с) и саудовский Petroline (5,0 млн б/с)",
-                "ja": "UAEフジャイラ送油管（日量180万バレル）およびサウジ東横断ペトロライン（日量500万バレル）"
+                "ja": "UAEフジャイラ送油管（日量180万バレル）およびサウジ東横断ペトロライン（日量500万バレル）",
+                "pt": "Oleoduto Fujairah dos EAU (1,8 mbpd) e Petroline Saudita (5,0 mbpd)",
+                "it": "Oleodotto Fujairah degli EAU (1,8 mbpd) e Petroline Saudita (5,0 mbpd)",
+                "ko": "UAE 후자이라 파이프라인(1.8 mbpd) 및 사우디 페트로라인(5.0 mbpd)",
+                "tr": "BAE Fujairah boru hattı (1,8 mbpd) ve Suudi Petroline (5,0 mbpd)",
+                "nl": "VAE Fujairah-pijpleiding (1,8 mbpd) en Saoedische Petroline (5,0 mbpd)",
+                "id": "Pipa Fujairah UEA (1,8 mbpd) & Petroline Arab Saudi (5,0 mbpd)",
+                "ur": "متحدہ عرب امارات فجیرہ پائپ لائن (1.8 mbpd) اور سعودی پیٹرولائن (5.0 mbpd)",
+                "bn": "সংযুক্ত আরব আমিরাত ফুজাইরাহ পাইপলাইন (১.৮ mbpd) এবং সৌদি পেট্রোলাইন (৫.০ mbpd)",
+                "ta": "யுஏஇ புஜைரா பைப்லைன் (1.8 mbpd) & சவுதி பெட்ரோலைன் (5.0 mbpd)"
             },
             "bab": {
                 "en": "Cape of Good Hope transit, Mediterranean transshipment hubs",
@@ -803,7 +1206,16 @@ class GlobalNewsEngine:
                 "de": "Transit über das Kap der Guten Hoffnung, Mittelmeer-Umschlagzentren",
                 "zh": "西非航线长程联运及地中海转运集散枢纽港",
                 "ru": "Маршрут вокруг Африки, средиземноморские перевалочные хабы",
-                "ja": "喜望峰南下航路および地中海ハブ港での中継積替"
+                "ja": "喜望峰南下航路および地中海ハブ港での中継積替",
+                "pt": "Trânsito pelo Cabo da Boa Esperança, hubs de transbordo do Mediterrâneo",
+                "it": "Transito per il Capo di Buona Speranza, hub di trasbordo nel Mediterraneo",
+                "ko": "희망봉 통항 및 지중해 환적 허브 활용",
+                "tr": "Ümit Burnu geçişi, Akdeniz aktarma merkezleri",
+                "nl": "Doorvaart via Kaap de Goede Hoop, overslaghavens in de Middellandse Zee",
+                "id": "Transit Tanjung Harapan, pusat transshipment Mediterania",
+                "ur": "راس امید کا راستہ، بحیرہ روم کے ٹرانس شپمنٹ ہب",
+                "bn": "উত্তমাশা অন্তরীপ ট্রানজিট, ভূমধ্যসাগরীয় ট্রান্সশিপমেন্ট হাব",
+                "ta": "நன்னம்பிக்கை முனை போக்குவரத்து, மத்திய தரைக்கடல் பரிமாற்ற மையங்கள்"
             },
             "malacca": {
                 "en": "Lombok / Makassar Straits (adds 3.5 sailing days)",
@@ -814,7 +1226,16 @@ class GlobalNewsEngine:
                 "de": "Lombok- / Makassar-Straße (verlängert Fahrzeit um 3,5 Tage)",
                 "zh": "龙目海峡 / 望加锡海峡深水替代航路（航程增加 3.5 天）",
                 "ru": "Проливы Ломбок и Макасар (добавляет 3,5 дня плавания)",
-                "ja": "ロンボク・マカッサル深水海峡迂回ルート（航海日数+3.5日）"
+                "ja": "ロンボク・マカッサル深水海峡迂回ルート（航海日数+3.5日）",
+                "pt": "Estreitos de Lombok / Makassar (+3,5 dias de navegação)",
+                "it": "Stretti di Lombok / Makassar (+3,5 giorni di navigazione)",
+                "ko": "롬복 / 마카사르 해협 우회 (+3.5일 항해 추가)",
+                "tr": "Lombok / Makassar Boğazları (+3,5 seyir günü)",
+                "nl": "Lombok- / Makassar-straten (+3,5 vaardagen)",
+                "id": "Selat Lombok / Makassar (+3,5 hari pelayaran)",
+                "ur": "لومبوک / مکاسر آبنائے (+3.5 اضافی دن)",
+                "bn": "লম্বক / মাকাসার প্রণালী (+৩.৫ দিন অতিরিক্ত ভ্রমণ)",
+                "ta": "லொம்போக் / மக்காசார் நீரிணைகள் (+3.5 பயண நாட்கள்)"
             },
             "suez": {
                 "en": "SUMED crude transit pipeline (2.5 mbpd operational)",
@@ -825,7 +1246,16 @@ class GlobalNewsEngine:
                 "de": "SUMED-Rohölpipeline (2,5 mbpd betriebsbereit)",
                 "zh": "埃及苏麦德 SUMED 原油过境双管输油系统 (日输送力 2.5 mbpd)",
                 "ru": "Транзитный нефтепровод SUMED (2,5 млн б/с в работе)",
-                "ja": "SUMED原油パイプライン（日量250万バレル稼働中）"
+                "ja": "SUMED原油パイプライン（日量250万バレル稼働中）",
+                "pt": "Oleoduto de trânsito SUMED (2,5 mbpd operacional)",
+                "it": "Oleodotto di transito SUMED (2,5 mbpd operativo)",
+                "ko": "SUMED 원유 수송 파이프라인 (2.5 mbpd 가동 중)",
+                "tr": "SUMED ham petrol geçiş boru hattı (2,5 mbpd operasyonel)",
+                "nl": "SUMED ruwe olie transito-pijpleiding (2,5 mbpd operationeel)",
+                "id": "Pipa transit minyak mentah SUMED (2,5 mbpd operasional)",
+                "ur": "SUMED خام تیل ٹرانزٹ پائپ لائن (2.5 mbpd فعال)",
+                "bn": "সুমেড অপরিশোধিত ট্রানজিট পাইপলাইন (২.৫ mbpd চালু)",
+                "ta": "SUMED கச்சா எண்ணெய் போக்குவரத்து குழாய் (2.5 mbpd இயங்குகிறது)"
             }
         }
 
@@ -839,7 +1269,16 @@ class GlobalNewsEngine:
                 "de": "21 % der weltweiten Erdölflüssigkeiten",
                 "zh": "占全球石油液体总量的 21%",
                 "ru": "21% мировых поставок жидких углеводородов",
-                "ja": "世界石油液体供給の21%"
+                "ja": "世界石油液体供給の21%",
+                "pt": "21% dos líquidos de petróleo",
+                "it": "21% dei liquidi petroliferi",
+                "ko": "글로벌 석유 액체류의 21%",
+                "tr": "Petrol sıvılarının %21'i",
+                "nl": "21% van vloeibare aardolie",
+                "id": "21% dari cairan minyak bumi",
+                "ur": "عالمی پٹرولیم مائعات کا 21%",
+                "bn": "পেট্রোলিয়াম তরলের ২১%",
+                "ta": "பெட்ரோலிய திரவங்களின் 21%"
             },
             "bab": {
                 "en": "Reduced from 7.5 mbpd",
@@ -850,7 +1289,16 @@ class GlobalNewsEngine:
                 "de": "Reduziert von 7,5 mbpd",
                 "zh": "通行量由 7.5 mbpd 大幅骤降",
                 "ru": "Снижен с 7,5 млн б/с",
-                "ja": "平常時の日量750万バレルから大幅縮小"
+                "ja": "平常時の日量750万バレルから大幅縮小",
+                "pt": "Reduzido de 7,5 mbpd",
+                "it": "Ridotto da 7,5 mbpd",
+                "ko": "평상시 7.5 mbpd에서 급감",
+                "tr": "7,5 mbpd seviyesinden düştü",
+                "nl": "Gedaald van 7,5 mbpd",
+                "id": "Menurun dari 7,5 mbpd",
+                "ur": "7.5 mbpd سے کم ہو چکا ہے",
+                "bn": "৭.৫ mbpd থেকে কমে গেছে",
+                "ta": "7.5 mbpd இலிருந்து குறைக்கப்பட்டது"
             },
             "malacca": {
                 "en": "16% of petroleum liquids",
@@ -861,7 +1309,16 @@ class GlobalNewsEngine:
                 "de": "16 % der weltweiten Erdölflüssigkeiten",
                 "zh": "占全球石油液体总量的 16%",
                 "ru": "16% мировых поставок жидких углеводородов",
-                "ja": "世界石油液体供給の16%"
+                "ja": "世界石油液体供給の16%",
+                "pt": "16% dos líquidos de petróleo",
+                "it": "16% dei liquidi petroliferi",
+                "ko": "글로벌 석유 액체류의 16%",
+                "tr": "Petrol sıvılarının %16'sı",
+                "nl": "16% van vloeibare aardolie",
+                "id": "16% dari cairan minyak bumi",
+                "ur": "عالمی پٹرولیم مائعات کا 16%",
+                "bn": "পেট্রোলিয়াম তরলের ১৬%",
+                "ta": "பெட்ரோலிய திரவங்களின் 16%"
             },
             "suez": {
                 "en": "Reduced from 5.1 mbpd",
@@ -872,11 +1329,18 @@ class GlobalNewsEngine:
                 "de": "Reduziert von 5,1 mbpd",
                 "zh": "通航量由 5.1 mbpd 大幅滑落",
                 "ru": "Снижен с 5,1 млн б/с",
-                "ja": "平常時の日量510万バレルから低下"
+                "ja": "平常時の日量510万バレルから低下",
+                "pt": "Reduzido de 5,1 mbpd",
+                "it": "Ridotto da 5,1 mbpd",
+                "ko": "평상시 5.1 mbpd에서 급감",
+                "tr": "5,1 mbpd seviyesinden düştü",
+                "nl": "Gedaald van 5,1 mbpd",
+                "id": "Menurun dari 5,1 mbpd",
+                "ur": "5.1 mbpd سے کم ہو چکا ہے",
+                "bn": "৫.১ mbpd থেকে কমে গেছে",
+                "ta": "5.1 mbpd இலிருந்து குறைக்கப்பட்டது"
             }
         }
-
-        active_lang = lang if (lang and lang in ("hi", "es", "fr", "ar", "de", "zh", "ru", "ja")) else "en"
 
         def _pick(d: Dict[str, Dict[str, str]], key: str) -> str:
             sub = d.get(key, {})

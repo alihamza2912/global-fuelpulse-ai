@@ -110,3 +110,37 @@ def test_news_globe_icon_data_uri():
     assert "NEWS" in uri
 
 
+def test_21_live_news_stories_and_headline_i18n():
+    """Validates the 21-story news database and full headline i18n."""
+    news = GlobalNewsEngine.get_live_news_feed()
+    assert len(news) == 21, f"Expected 21 stories, found {len(news)}"
+    
+    # Check new 2026 stories
+    ids = [n["id"] for n in news]
+    assert "NEWS-2026-IN-SAUDI-SPR-19" in ids
+    assert "NEWS-2026-MED-REFINERY-20" in ids
+    assert "NEWS-2026-VLGC-LNG-21" in ids
+
+    # Check headline localization across 18 languages for first story
+    from src.localization.i18n import SUPPORTED_LANGUAGES
+    for code in SUPPORTED_LANGUAGES:
+        localized_feed = GlobalNewsEngine.get_live_news_feed(lang=code)
+        assert len(localized_feed) == 21
+        first_headline = localized_feed[0]["headline"]
+        assert len(first_headline) > 0
+
+
+def test_all_18_languages_chokepoints_telemetry():
+    """Validates chokepoint telemetry localization across all 18 supported languages."""
+    from src.localization.i18n import SUPPORTED_LANGUAGES
+    for code in SUPPORTED_LANGUAGES:
+        cps = GlobalNewsEngine.get_chokepoint_telemetry(code)
+        assert len(cps) == 4
+        for cp in cps:
+            assert len(cp["name"]) > 0
+            assert len(cp["status"]) > 0
+            assert len(cp["key_risk"]) > 0
+            assert len(cp["contingency"]) > 0
+
+
+

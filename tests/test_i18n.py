@@ -16,7 +16,11 @@ from src.localization.i18n import (
 
 def test_supported_languages_catalog():
     langs = get_available_languages()
-    expected_codes = ["en", "hi", "es", "fr", "ar", "de", "zh", "ru", "ja"]
+    expected_codes = [
+        "en", "hi", "es", "fr", "ar", "de", "zh", "ru", "ja",
+        "pt", "it", "ko", "tr", "nl", "id", "ur", "bn", "ta"
+    ]
+    assert len(langs) == 18, f"Expected 18 languages, found {len(langs)}"
     for code in expected_codes:
         assert code in langs, f"Language {code} missing from supported catalog"
         assert "name" in langs[code]
@@ -122,4 +126,34 @@ def test_deep_localization_keys():
     assert "पद्धतिगत" in t("method_distinction_title", "hi")
     assert "कच्चे तेल" in t("method_distinction_text", "hi")
     assert "समुद्री परिवहन" in t("maritime_alerts_expander", "hi")
+
+
+def test_all_18_languages_full_key_coverage():
+    """Validates that 100% of all 165 translation keys are present for all 18 languages."""
+    total_keys = len(TRANSLATIONS)
+    assert total_keys == 165, f"Expected 165 keys in TRANSLATIONS, found {total_keys}"
+    for code in SUPPORTED_LANGUAGES:
+        present = sum(1 for k, d in TRANSLATIONS.items() if code in d and d[code])
+        assert present == total_keys, f"Language {code} only has {present}/{total_keys} keys"
+
+
+def test_expanded_9_languages_translations():
+    """Verifies that expanded languages (pt, it, ko, tr, nl, id, ur, bn, ta) return valid localized text."""
+    test_keys = [
+        "chapter_01_title",
+        "chapter_05_title",
+        "home_hero_title",
+        "home_cta_dashboard",
+        "india_center_title",
+        "petrol_rsp",
+        "diesel_rsp"
+    ]
+    for code in ["pt", "it", "ko", "tr", "nl", "id", "ur", "bn", "ta"]:
+        for k in test_keys:
+            val = t(k, code)
+            assert val != k, f"Key {k} missing in language {code}"
+            assert len(val) > 0
+            # Ensure not identical to English
+            assert val != t(k, "en"), f"Key {k} in {code} fell back to English"
+
 

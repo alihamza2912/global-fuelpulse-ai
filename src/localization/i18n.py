@@ -2294,6 +2294,26 @@ TRANSLATIONS: Dict[str, Dict[str, str]] = {
 }
 
 
+# Merge expanded translations for remaining 9 languages (pt, it, ko, tr, nl, id, ur, bn, ta)
+try:
+    from src.localization.translations_expanded import EXPANDED_TRANSLATIONS
+    for _k, _v in EXPANDED_TRANSLATIONS.items():
+        if _k in TRANSLATIONS:
+            TRANSLATIONS[_k].update(_v)
+        else:
+            TRANSLATIONS[_k] = dict(_v)
+except Exception:
+    try:
+        from translations_expanded import EXPANDED_TRANSLATIONS
+        for _k, _v in EXPANDED_TRANSLATIONS.items():
+            if _k in TRANSLATIONS:
+                TRANSLATIONS[_k].update(_v)
+            else:
+                TRANSLATIONS[_k] = dict(_v)
+    except Exception:
+        pass
+
+
 # ==============================================================================
 # 3. HELPER FUNCTIONS
 # ==============================================================================
@@ -2302,21 +2322,35 @@ def get_current_language() -> str:
     Retrieves the currently selected language code from session state or URL params.
     Defaults to 'en'.
     """
-    if "app_language" not in st.session_state:
-        # Check query param first
+    try:
         qp_lang = st.query_params.get("lang")
+        if isinstance(qp_lang, list):
+            qp_lang = qp_lang[0] if qp_lang else None
+    except Exception:
+        qp_lang = None
+
+    if "app_language" not in st.session_state:
         if qp_lang and qp_lang in SUPPORTED_LANGUAGES:
             st.session_state["app_language"] = qp_lang
         else:
             st.session_state["app_language"] = "en"
-    return st.session_state["app_language"]
+        st.session_state["_last_synced_qp_lang"] = st.session_state["app_language"]
+    elif qp_lang and qp_lang in SUPPORTED_LANGUAGES and qp_lang != st.session_state.get("_last_synced_qp_lang"):
+        st.session_state["app_language"] = qp_lang
+        st.session_state["_last_synced_qp_lang"] = qp_lang
+
+    return st.session_state.get("app_language", "en")
 
 
 def set_language(lang_code: str) -> None:
     """Updates the active application language in session state and query parameters."""
     if lang_code in SUPPORTED_LANGUAGES:
         st.session_state["app_language"] = lang_code
-        st.query_params["lang"] = lang_code
+        st.session_state["_last_synced_qp_lang"] = lang_code
+        try:
+            st.query_params["lang"] = lang_code
+        except Exception:
+            pass
 
 
 def t(key: str, lang: Optional[str] = None, **kwargs) -> str:

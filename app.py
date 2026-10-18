@@ -246,6 +246,7 @@ def navigate_to(target: str):
     st.session_state.active_canonical = canonical
     st.session_state.active_nav = KEY_TO_NAV.get(canonical, "🏠 Overview")
     st.query_params["tab"] = canonical
+    st.query_params["lang"] = st.session_state.get("app_language", current_lang)
     st.rerun()
 
 
@@ -410,7 +411,7 @@ with col_lang:
         st.markdown(f"#### 🌐 {t('select_language', current_lang)} ({len(all_langs)} World Languages)")
         st.caption("Scroll down to select and activate your language:")
         
-        with st.container(height=300):
+        with st.container(height=340):
             for code, data in all_langs.items():
                 is_selected = (code == current_lang)
                 active_mark = "✓ " if is_selected else ""
@@ -424,20 +425,6 @@ with col_lang:
                     if code != current_lang:
                         set_language(code)
                         st.rerun()
-        
-        st.markdown("---")
-        lang_codes = list(all_langs.keys())
-        cur_idx = lang_codes.index(current_lang) if current_lang in lang_codes else 0
-        dropdown_pick = st.selectbox(
-            "Or jump directly via dropdown:",
-            options=lang_codes,
-            index=cur_idx,
-            format_func=lambda c: f"{all_langs[c]['flag']} {all_langs[c]['native']} ({all_langs[c]['name']})",
-            key="popover_quick_lang_select"
-        )
-        if dropdown_pick != current_lang:
-            set_language(dropdown_pick)
-            st.rerun()
 
 with col_news:
     alerts_count = GlobalNewsEngine.get_active_alerts_count()
