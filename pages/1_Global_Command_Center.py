@@ -62,9 +62,6 @@ render_command_strip(
     reporting_period="LATEST 2024–2025"
 )
 
-# 1b. Integrated Universal AI Assistant Dock
-render_universal_ai_assistant(context_page="Global Command Center", key_prefix="p1_cmd")
-
 # 2. Interactive Analytical Controls Filter Bar
 render_html(f'<div class="atlas-section-title">{t("sidebar_01_command", current_lang)} — CONTROL TERMINAL & PARAMETERS</div>')
 ctrl_c1, ctrl_c2, ctrl_c3, ctrl_c4 = st.columns([3, 3, 4, 2])
@@ -319,3 +316,6 @@ audit_table = all_prices[[
 })
 st.dataframe(audit_table, width="stretch", hide_index=True)
 render_csv_download(audit_table, f"atlas_{selected_fuel}_command_center.csv")
+
+# Universal Floating AI Assistant Dock (Bottom-Right FAB)
+render_universal_ai_assistant(context_page="Global Command Center", key_prefix="p1_cmd")

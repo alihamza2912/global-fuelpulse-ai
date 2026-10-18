@@ -56,4 +56,5 @@ htmlcov/
 logs/
 .ai_quota_state.json
 .ai_question_cache.json
+data/user_quota_store.json
 

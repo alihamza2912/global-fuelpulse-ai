@@ -47,9 +47,6 @@ render_page_header(
     observation_date="Continuous Data Assurance"
 )
 
-# Integrated Universal AI Assistant Dock
-render_universal_ai_assistant(context_page="Data Trust & Quality", key_prefix="p8_trust")
-
 # Interactive Trigger
 trig_c1, trig_c2 = st.columns([6, 2])
 with trig_c2:
@@ -177,3 +174,6 @@ with col_t2:
         3. **Zero Fabricated Fallbacks:** In real data mode, when external APIs fail or are rate-limited, the system transparently logs the error and displays existing verified historical observations rather than generating hallucinated numbers.
         """
     )
+
+# Universal Floating AI Assistant Dock (Bottom-Right FAB)
+render_universal_ai_assistant(context_page="Data Trust & Quality", key_prefix="p8_trust")

@@ -49,9 +49,6 @@ render_page_header(
     observation_date="Weekly & Daily Reporting Intervals"
 )
 
-# Integrated Universal AI Assistant
-render_universal_ai_assistant(context_page="Fuel Price Explorer", key_prefix="p2_price")
-
 # Interactive Filters
 f_col1, f_col2, f_col3, f_col4 = st.columns([2, 2, 2, 2])
 
@@ -266,3 +263,6 @@ table_view = all_prices[[
 })
 st.dataframe(table_view, width="stretch", hide_index=True)
 render_csv_download(table_view, f"fuelpulse_{fuel_type}_prices.csv")
+
+# Universal Floating AI Assistant Dock (Bottom-Right FAB)
+render_universal_ai_assistant(context_page="Fuel Price Explorer", key_prefix="p2_price")

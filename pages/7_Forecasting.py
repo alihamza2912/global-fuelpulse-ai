@@ -50,9 +50,6 @@ render_page_header(
     observation_date="Weekly Projections"
 )
 
-# Integrated Universal AI Assistant Dock
-render_universal_ai_assistant(context_page="Price Forecasting", key_prefix="p7_forecast")
-
 # Tabs: Forecasting & Anomaly Detection
 tab_fc, tab_anom = st.tabs(["📈 ML Fuel Price Forecasting", "🚨 Energy Market Anomaly Radar"])
 
@@ -255,3 +252,6 @@ with tab_anom:
         st.dataframe(display_anom, width="stretch", hide_index=True)
     else:
         st.success("✅ No anomalous price movements or trade volume disruptions detected in current window.")
+
+# Universal Floating AI Assistant Dock (Bottom-Right FAB)
+render_universal_ai_assistant(context_page="Price Forecasting", key_prefix="p7_forecast")

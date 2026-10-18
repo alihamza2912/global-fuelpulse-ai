@@ -517,3 +517,66 @@ def test_site_wide_language_synchronization():
     assert "Command Center" in t("sidebar_01_command", "en")
 
 
+def test_session_abuse_protector_disk_persistence(tmp_path):
+    """Verifies that SessionAbuseProtector writes and reloads quotas from disk across browser reloads."""
+    store_file = tmp_path / "test_user_quota.json"
+    protector1 = SessionAbuseProtector(store_path=store_file)
+
+    # Record 2 questions
+    v1, _, _ = protector1.validate_and_record("sess_user_1", "What is crude price?", enforce_user_daily_limit=True)
+    assert v1 is True
+    # Bypass cooldown for test
+    protector1._sessions["sess_user_1"]["last_timestamp"] = time.time() - 10.0
+    v2, _, _ = protector1.validate_and_record("sess_user_1", "Who supplies Saudi oil?", enforce_user_daily_limit=True)
+    assert v2 is True
+
+    # Check status on instance 1
+    st1 = protector1.get_session_status("sess_user_1", enforce_user_daily_limit=True)
+    assert st1["daily_questions_used"] == 2
+    assert st1["daily_questions_remaining"] == 1
+    assert st1["is_daily_quota_finished"] is False
+
+    # Simulate browser refresh/reconnect with a new SessionAbuseProtector reading same disk store
+    protector2 = SessionAbuseProtector(store_path=store_file)
+    st2 = protector2.get_session_status("sess_user_1", enforce_user_daily_limit=True)
+    assert st2["daily_questions_used"] == 2
+    assert st2["daily_questions_remaining"] == 1
+
+    # Record 3rd question - should use quota up
+    protector2._sessions["sess_user_1"]["last_timestamp"] = time.time() - 10.0
+    v3, _, _ = protector2.validate_and_record("sess_user_1", "What is petrol tax in Prayagraj?", enforce_user_daily_limit=True)
+    assert v3 is True
+
+    st3 = protector2.get_session_status("sess_user_1", enforce_user_daily_limit=True)
+    assert st3["daily_questions_used"] == 3
+    assert st3["daily_questions_remaining"] == 0
+    assert st3["is_daily_quota_finished"] is True
+
+    # 4th question should be blocked with 24-hour reset notice
+    protector2._sessions["sess_user_1"]["last_timestamp"] = time.time() - 10.0
+    v4, topic4, msg4 = protector2.validate_and_record("sess_user_1", "Explain Strait of Hormuz", enforce_user_daily_limit=True)
+    assert v4 is False
+    assert "Daily Free Quota Finished" in topic4
+    assert "3/3 Questions Used" in msg4
+    assert "resets in" in msg4.lower() or "reset in" in msg4.lower()
+
+
+def test_floating_assistant_component_import():
+    """Verifies that render_floating_ai_assistant and render_universal_ai_assistant are defined."""
+    from src.ui_components import render_floating_ai_assistant, render_universal_ai_assistant, _get_contextual_ai_suggestions
+
+    assert callable(render_floating_ai_assistant)
+    assert callable(render_universal_ai_assistant)
+    
+    # Verify contextual suggestions adapt per page
+    trade_chips = _get_contextual_ai_suggestions("Global Trade")
+    assert any("Saudi" in c[0] for c in trade_chips)
+    assert any("Import" in c[0] or "Exports" in c[0] for c in trade_chips)
+
+    price_chips = _get_contextual_ai_suggestions("Fuel Price Explorer")
+    assert any("Prayagraj" in c[0] for c in price_chips)
+
+    risk_chips = _get_contextual_ai_suggestions("Supply Risk")
+    assert any("Hormuz" in c[0] for c in risk_chips)
+
+

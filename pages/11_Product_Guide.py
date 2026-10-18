@@ -39,9 +39,6 @@ render_page_header(
     observation_date="Version 2.0 Production Release"
 )
 
-# Integrated Universal AI Assistant Dock
-render_universal_ai_assistant(context_page="Product Guide", key_prefix="p11_guide")
-
 tab_about, tab_arch, tab_feat, tab_trust, tab_meth, tab_road, tab_faq = st.tabs([
     "📖 About Project",
     "⚙️ Architecture",
@@ -72,3 +69,6 @@ with tab_road:
 
 with tab_faq:
     render_faq_view()
+
+# Universal Floating AI Assistant Dock (Bottom-Right FAB)
+render_universal_ai_assistant(context_page="Product Guide", key_prefix="p11_guide")

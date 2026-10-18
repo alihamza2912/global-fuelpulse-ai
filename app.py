@@ -429,3 +429,6 @@ elif active_canonical == "faq":
     render_faq_view(navigate_to)
 else:
     render_home_view(navigate_to)
+
+# 8. Universal Floating AI Assistant Dock (Bottom-Right FAB on All Views)
+render_universal_ai_assistant(context_page=active_canonical.replace("_", " ").title(), key_prefix="app_root")

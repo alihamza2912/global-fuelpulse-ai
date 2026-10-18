@@ -47,9 +47,6 @@ render_page_header(
     observation_date="Simulation Sandbox"
 )
 
-# Integrated Universal AI Assistant Dock
-render_universal_ai_assistant(context_page="Supply Shock Simulator", key_prefix="p6_shock")
-
 # User Interactive Controls
 st.subheader("⚙️ Scenario Simulation Parameters")
 sim_c1, sim_c2, sim_c3 = st.columns(3)
@@ -182,3 +179,6 @@ with sc_col2:
 
 st.markdown("---")
 st.warning(f"**Methodological Note:** {sim_results['assumptions_disclaimer']}")
+
+# Universal Floating AI Assistant Dock (Bottom-Right FAB)
+render_universal_ai_assistant(context_page="Supply Shock Simulator", key_prefix="p6_shock")

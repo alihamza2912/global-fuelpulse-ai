@@ -51,9 +51,6 @@ render_page_header(
     observation_date="Daily & Monthly Official Series"
 )
 
-# Integrated Universal AI Assistant Dock
-render_universal_ai_assistant(context_page="India Energy Intelligence", key_prefix="p10_india")
-
 # Fetch Metro Fuel Prices
 query = """
 SELECT 
@@ -270,3 +267,6 @@ if not india_df.empty:
     })
     st.dataframe(display_in, width="stretch", hide_index=True)
     render_csv_download(display_in, "fuelpulse_india_metro_prices.csv")
+
+# Universal Floating AI Assistant Dock (Bottom-Right FAB)
+render_universal_ai_assistant(context_page="India Energy Intelligence", key_prefix="p10_india")

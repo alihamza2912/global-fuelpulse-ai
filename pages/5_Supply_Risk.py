@@ -48,9 +48,6 @@ render_page_header(
     observation_date="Strategic 2024–2025 Intelligence"
 )
 
-# Integrated Universal AI Assistant Dock
-render_universal_ai_assistant(context_page="Supply Risk", key_prefix="p5_risk")
-
 # Load Dependence Leaderboard
 dep_df = SupplyRiskMonitor.get_import_dependence_leaderboard(period="2024")
 
@@ -166,3 +163,6 @@ st.info(
     Trade concentration alone does not guarantee geopolitical disruption. The Herfindahl-Hirschman Index measures structural dependency on few trading partners. Geopolitical assessments should integrate strategic commercial stocks (SPR), bilateral diplomatic agreements, and alternative pipeline transit capacities.
     """
 )
+
+# Universal Floating AI Assistant Dock (Bottom-Right FAB)
+render_universal_ai_assistant(context_page="Supply Risk", key_prefix="p5_risk")

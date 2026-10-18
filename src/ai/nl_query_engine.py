@@ -6,9 +6,11 @@ Google Gemini free-tier intelligence with comprehensive quota protection.
 """
 
 import re
+import json
 import time
 import logging
 import threading
+from pathlib import Path
 from typing import Dict, Any, List, Optional, Tuple
 import pandas as pd
 from sqlalchemy import text
@@ -72,10 +74,60 @@ class SessionAbuseProtector:
         r"\b(ransomware|exploit\s+kit|ddos\s+attack|malware\s+script)\b"
     ]
 
-    def __init__(self):
+    def __init__(self, store_path: Optional[Path] = None):
         self._sessions: Dict[str, Dict[str, Any]] = {}
         self._lock = threading.RLock()
         self._compiled_regexes = [re.compile(p, re.IGNORECASE) for p in self.ILLEGAL_PATTERNS]
+        if store_path is not None:
+            self._store_file = store_path
+        else:
+            self._store_file = Path(__file__).resolve().parent.parent.parent / "data" / "user_quota_store.json"
+        self._load_from_disk()
+
+    def _resolve_client_identifier(self, session_id: str) -> str:
+        """
+        Determines the persistent client key.
+        In Streamlit runtime, attempts to get client IP address so browser refreshes
+        cannot circumvent the 24-hour rate limit.
+        """
+        try:
+            import streamlit as st
+            if hasattr(st, "context"):
+                ip = getattr(st.context, "ip_address", None)
+                if ip and str(ip).strip() and str(ip) not in ("127.0.0.1", "::1", "localhost"):
+                    return f"ip_{ip}"
+                headers = getattr(st.context, "headers", None)
+                if headers and isinstance(headers, dict):
+                    xfwd = headers.get("x-forwarded-for") or headers.get("x-real-ip")
+                    if xfwd and str(xfwd).strip():
+                        return f"ip_{xfwd.split(',')[0].strip()}"
+        except Exception:
+            pass
+        return session_id
+
+    def _load_from_disk(self):
+        try:
+            if self._store_file and self._store_file.exists():
+                with open(self._store_file, "r", encoding="utf-8") as f:
+                    data = json.load(f)
+                    if isinstance(data, dict):
+                        now = time.time()
+                        for k, v in data.items():
+                            if isinstance(v, dict):
+                                daily = [ts for ts in v.get("daily_timestamps", []) if (now - ts) < 86400.0]
+                                v["daily_timestamps"] = daily
+                                self._sessions[k] = v
+        except Exception as e:
+            logger.debug(f"Quota disk load notice: {e}")
+
+    def _save_to_disk(self):
+        try:
+            if self._store_file:
+                self._store_file.parent.mkdir(parents=True, exist_ok=True)
+                with open(self._store_file, "w", encoding="utf-8") as f:
+                    json.dump(self._sessions, f)
+        except Exception as e:
+            logger.debug(f"Quota disk save notice: {e}")
 
     def check_illegal_activity(self, question: str) -> Tuple[bool, Optional[str]]:
         """
@@ -114,16 +166,19 @@ class SessionAbuseProtector:
         cleaned_q = question.strip() if question else ""
 
         with self._lock:
-            if session_id not in self._sessions:
-                self._sessions[session_id] = {
+            cid = self._resolve_client_identifier(session_id)
+            if cid not in self._sessions:
+                self._sessions[cid] = {
                     "last_timestamp": 0.0,
                     "hourly_timestamps": [],
                     "daily_timestamps": [],
                     "is_blocked": False,
                     "block_reason": None
                 }
+            if session_id != cid:
+                self._sessions[session_id] = self._sessions[cid]
 
-            sdata = self._sessions[session_id]
+            sdata = self._sessions[cid]
 
             # 1. Check if session was permanently blocked due to illegal activity
             if sdata.get("is_blocked"):
@@ -141,7 +196,8 @@ class SessionAbuseProtector:
             if is_illegal:
                 sdata["is_blocked"] = True
                 sdata["block_reason"] = violation_reason
-                logger.warning(f"SECURITY ALERT: Blocked session {session_id}. Reason: {violation_reason}")
+                self._save_to_disk()
+                logger.warning(f"SECURITY ALERT: Blocked session {session_id} ({cid}). Reason: {violation_reason}")
                 return (
                     False,
                     "🚫 Security Violation: Access Terminated",
@@ -212,12 +268,14 @@ class SessionAbuseProtector:
             if "daily_timestamps" not in sdata:
                 sdata["daily_timestamps"] = []
             sdata["daily_timestamps"].append(now)
+            self._save_to_disk()
             return True, None, None
 
     def get_session_status(self, session_id: str, has_custom_key: bool = False, enforce_user_daily_limit: bool = False) -> Dict[str, Any]:
         """Returns the current user session quota and security status."""
         with self._lock:
-            sdata = self._sessions.get(session_id, {})
+            cid = self._resolve_client_identifier(session_id)
+            sdata = self._sessions.get(cid) or self._sessions.get(session_id, {})
             is_blocked = sdata.get("is_blocked", False)
             now = time.time()
             daily_active = [ts for ts in sdata.get("daily_timestamps", []) if (now - ts) < 86400.0]
@@ -257,6 +315,11 @@ class SessionAbuseProtector:
         """Clears session tracking state."""
         with self._lock:
             self._sessions.clear()
+            try:
+                if self._store_file and self._store_file.exists():
+                    self._store_file.unlink()
+            except Exception:
+                pass
 
 
 session_protector = SessionAbuseProtector()

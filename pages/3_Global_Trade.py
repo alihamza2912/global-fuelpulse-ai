@@ -61,9 +61,6 @@ render_command_strip(
     reporting_period="2025–2026 LIVE CUSTOMS RADAR"
 )
 
-# 1b. Integrated Universal AI Assistant Dock
-render_universal_ai_assistant(context_page="Global Petroleum Trade", key_prefix="p3_trade")
-
 # 2. Controls & Parameter Bar
 render_html(f'<div class="atlas-section-title">{t("sidebar_03_trade", current_lang)} — LOGISTICS RADAR CONTROLS</div>')
 tr_c1, tr_c2, tr_c3, tr_c4 = st.columns([3, 2, 3, 2])
@@ -343,3 +340,6 @@ if not flows_df.empty:
     })
     st.dataframe(display_flows, width="stretch", hide_index=True)
     render_csv_download(display_flows, f"atlas_trade_flows_{product_cat}_{reporting_period}.csv")
+
+# Universal Floating AI Assistant Dock (Bottom-Right FAB)
+render_universal_ai_assistant(context_page="Global Petroleum Trade", key_prefix="p3_trade")

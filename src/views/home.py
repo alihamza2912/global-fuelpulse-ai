@@ -57,8 +57,8 @@ def render_home_view(navigate_fn=None):
     </div>
     """)
 
-    # 2. Hero Action Buttons (Centered Balanced 2-CTA Grid)
-    _, c2, c3, _ = st.columns([2.5, 3.5, 3.5, 2.5])
+    # 2. Hero Action Buttons (Balanced 2-CTA Grid)
+    c2, c3 = st.columns([1, 1], gap="medium")
     with c2:
         if st.button(t('home_cta_dashboard', cur_lang), type="primary", use_container_width=True, key="hero_cta_dash"):
             if navigate_fn:
@@ -296,102 +296,36 @@ def render_home_view(navigate_fn=None):
 
     # 5b. Feature 09: AI Energy Market Analyst Spotlight
     render_html(f"""
-    <div style="background: radial-gradient(circle at 10% 20%, rgba(245, 185, 66, 0.12) 0%, rgba(14, 21, 38, 0.95) 70%), #070A12; border: 1px solid rgba(255, 255, 255, 0.14); border-radius: 12px; padding: 20px 24px; margin: 18px 0 16px 0;">
-        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 8px;">
+    <div style="background: radial-gradient(circle at 10% 20%, rgba(245, 185, 66, 0.12) 0%, rgba(14, 21, 38, 0.95) 70%), #070A12; border: 1px solid rgba(255, 255, 255, 0.14); border-radius: 12px; padding: 22px 26px; margin: 22px 0 18px 0;">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 10px;">
             <div style="display: flex; align-items: center; gap: 10px;">
-                {get_lucide_icon_svg("bot", size=22, color="#F5B942")}
+                {get_lucide_icon_svg("bot", size=24, color="#F5B942")}
                 <div>
                     <span style="font-family: 'Space Grotesk', sans-serif; font-size: 0.72rem; font-weight: 800; color: #F5B942; letter-spacing: 0.08em; text-transform: uppercase;">FEATURE 09 // SYNTHETIC REASONING</span>
-                    <h3 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.15rem; font-weight: 800; color: #F9FAFB; margin: 2px 0 0 0;">AI Energy Market Analyst (LLM-Assisted & Autonomous SQL)</h3>
+                    <h3 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.22rem; font-weight: 800; color: #F9FAFB; margin: 2px 0 0 0;">AI Energy Market Analyst (LLM-Assisted & Autonomous SQL)</h3>
                 </div>
             </div>
-            <span style="background: rgba(16, 185, 129, 0.18); color: #34D399; font-family: 'Space Grotesk', sans-serif; font-size: 0.72rem; font-weight: 800; padding: 3px 10px; border-radius: 999px; border: 1px solid rgba(16, 185, 129, 0.4);">
-                ● 100% FREE AUTONOMOUS • 0 QUOTA REQUIRED
+            <span style="background: rgba(16, 185, 129, 0.18); color: #34D399; font-family: 'Space Grotesk', sans-serif; font-size: 0.72rem; font-weight: 800; padding: 4px 12px; border-radius: 999px; border: 1px solid rgba(16, 185, 129, 0.4);">
+                ● 100% FREE AUTONOMOUS • 3 QUESTIONS / 24H QUOTA
             </span>
         </div>
-        <p style="font-family: 'Inter', sans-serif; font-size: 0.85rem; color: #94A3B8; margin: 0 0 14px 0; line-height: 1.5;">
-            Natural-language energy market intelligence engine translating plain questions into verified, read-only SQL queries with zero API key dependencies and continuous grounding.
+        <p style="font-family: 'Inter', sans-serif; font-size: 0.9rem; color: #94A3B8; margin: 0 0 16px 0; line-height: 1.6;">
+            Natural-language energy market intelligence engine translating plain questions into verified, read-only SQL queries with zero API key dependencies, tamper-resistant 24-hour rate limiting, and continuous grounding. Accessible anytime across all pages via the <b>floating assistant (🤖)</b> in the bottom right corner.
         </p>
     </div>
     """)
-    
-    home_c1, home_c2, home_c3, home_c4, home_c5 = st.columns(5)
-    home_q = None
-    import uuid
-    if "ai_session_id" not in st.session_state:
-        st.session_state.ai_session_id = str(uuid.uuid4())
-    sess_id = st.session_state.ai_session_id
 
-    from src.ai.nl_query_engine import AIEnergyMarketAnalyst, session_protector
-    from config.settings import is_user_custom_key_configured
-    from src.ai.gemini_client import gemini_client
-
-    has_custom_key = is_user_custom_key_configured() or gemini_client.is_key_configured()
-    sess_status = session_protector.get_session_status(sess_id, has_custom_key=has_custom_key, enforce_user_daily_limit=True)
-
-    if sess_status.get("is_blocked"):
-        status_badge_html = '<div style="display:inline-block;padding:5px 12px;background:rgba(239, 68, 68, 0.2);color:#EF4444;font-weight:700;font-size:12px;border:1px solid #EF4444;border-radius:4px;margin-bottom:12px;">🚫 Security Violation: Session Terminated</div>'
-    elif sess_status.get("is_daily_quota_finished"):
-        status_badge_html = f'<div style="display:inline-block;padding:5px 12px;background:rgba(245, 185, 66, 0.2);color:#F5B942;font-weight:700;font-size:12px;border:1px solid #F5B942;border-radius:4px;margin-bottom:12px;">⏳ Daily Quota Reached (3/3 Used) • Resets in {sess_status["reset_time_str"]}</div>'
-    else:
-        status_badge_html = f'<div style="display:inline-block;padding:5px 12px;background:rgba(16, 185, 129, 0.2);color:#10B981;font-weight:700;font-size:12px;border:1px solid #10B981;border-radius:4px;margin-bottom:12px;">🟢 Antigravity AI Active • {sess_status["daily_questions_remaining"]} / 3 Questions Remaining Today (24h Quota)</div>'
-    render_html(status_badge_html)
-
-    home_c1, home_c2, home_c3, home_c4, home_c5 = st.columns(5)
-    home_q = None
-    with home_c1:
-        if st.button("🇸🇦 Saudi Tax & Rates", key="home_ai_btn_saudi", width="stretch", type="secondary"):
-            home_q = "how much Saudi take tax from there people"
-    with home_c2:
-        if st.button("🇮🇳 Prayagraj Petrol & Tax", key="home_ai_btn1", width="stretch", type="secondary"):
-            home_q = "What is the petrol price in Prayagraj and how much tax does Uttar Pradesh take?"
-    with home_c3:
-        if st.button("🌍 Top Petrol Contributor", key="home_ai_btn2", width="stretch", type="secondary"):
-            home_q = "who is the more contributor of petrol in the world"
-    with home_c4:
-        if st.button("🚢 Strait of Hormuz Risk", key="home_ai_btn3", width="stretch", type="secondary"):
-            home_q = "What is the risk of a disruption in the Strait of Hormuz?"
-    with home_c5:
-        if st.button("🏢 Indian PSU OMCs", key="home_ai_btn4", width="stretch", type="secondary"):
-            home_q = "What is the market share and refining capacity of Indian PSU OMCs like IOCL, BPCL, and HPCL?"
-
-    home_ai_input = st.text_input(
-        "Ask any question about fuel rates, state taxes, maritime risks, or crude markets:",
-        value=home_q if home_q else "",
-        placeholder="e.g. how much Saudi take tax from there people, or What is petrol rate in Prayagraj?",
-        key="home_ai_text_input"
-    )
-    if home_ai_input and home_ai_input.strip():
-        with st.spinner("Analyzing with AI Market Analyst Engine..."):
-            home_resp = AIEnergyMarketAnalyst.answer_question(
-                home_ai_input,
-                session_id=sess_id,
-                allow_free_autonomous=True,
-                enforce_user_daily_limit=True
-            )
-            if home_resp.get("is_security_blocked") or "Security Violation" in home_resp.get("topic", ""):
-                render_html("""<div style="display:inline-block;padding:7px 14px;background:rgba(239, 68, 68, 0.2);color:#EF4444;font-weight:700;font-size:12.5px;border:1.5px solid #EF4444;margin-bottom:8px;border-radius:4px;">🚫 Enterprise Security Alert: Malicious activity detected. Session terminated.</div>""")
-            elif "Daily Free Quota Finished" in home_resp.get("topic", "") or "Daily Quota Limit Reached" in home_resp.get("topic", ""):
-                render_html(f"""<div style="display:inline-block;padding:7px 14px;background:rgba(245, 185, 66, 0.2);color:#F5B942;font-weight:700;font-size:12.5px;border:1.5px solid #F5B942;margin-bottom:8px;border-radius:4px;">⏳ Daily Quota Reached (3/3 Questions Used) • Resets in {sess_status["reset_time_str"]}</div>""")
-            elif home_resp.get("autonomous_free_mode"):
-                render_html("""<div style="display:inline-block;padding:5px 12px;background:rgba(16, 185, 129, 0.2);color:#10B981;font-weight:700;font-size:12px;border:1.5px solid #10B981;margin-bottom:8px;border-radius:4px;">🟢 Antigravity AI Engine (3 Questions / 24h Quota)</div>""")
-            st.markdown(home_resp["answer_text"])
-            if home_resp.get("visualization_fig") is not None:
-                st.plotly_chart(home_resp["visualization_fig"], width="stretch", theme=None)
-            if home_resp.get("data_records"):
-                st.dataframe(pd.DataFrame(home_resp["data_records"]), width="stretch", hide_index=True)
-    
-    col_h_studio, col_h_dash = st.columns([1, 1])
+    col_h_studio, col_h_dash = st.columns([1, 1], gap="medium")
     with col_h_studio:
         render_html("""
         <a href="/AI_Analyst" target="_self" style="text-decoration: none; display: block;">
-            <div style="background: #EAB308; color: #070A12; font-family: 'Space Grotesk', sans-serif; font-size: 12.5px; font-weight: 700; height: 34px; line-height: 34px; text-align: center; border-radius: 6px; box-shadow: 0 2px 6px rgba(0,0,0,0.25); cursor: pointer; transition: all 0.15s ease;">
+            <div style="background: linear-gradient(135deg, #F5B942 0%, #D97706 100%); color: #070A12; font-family: 'Space Grotesk', sans-serif; font-size: 13px; font-weight: 800; height: 38px; line-height: 38px; text-align: center; border-radius: 8px; box-shadow: 0 4px 12px rgba(245, 185, 66, 0.3); cursor: pointer; transition: all 0.15s ease;">
                 🤖 Launch Dedicated AI Analyst Studio (/AI_Analyst) →
             </div>
         </a>
         """)
     with col_h_dash:
-        if st.button("📊 Explore Dashboard Chapter 09 (Interactive Analyst)", key="home_btn_ai_dash", width="stretch", type="secondary"):
+        if st.button("📊 Explore Dashboard Chapter 09 (Interactive Analyst)", key="home_btn_ai_dash", use_container_width=True, type="secondary"):
             if navigate_fn:
                 navigate_fn("Live Intelligence Dashboard")
             else:

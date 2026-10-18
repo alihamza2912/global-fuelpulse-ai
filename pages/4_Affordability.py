@@ -46,9 +46,6 @@ render_page_header(
     observation_date="2024 Benchmark Data"
 )
 
-# Integrated Universal AI Assistant Dock
-render_universal_ai_assistant(context_page="Fuel Affordability", key_prefix="p4_afford")
-
 # Load Affordability Overview
 afford_df = AffordabilityAnalytics.get_affordability_overview(reporting_year=2024)
 
@@ -179,3 +176,6 @@ st.dataframe(
     hide_index=True
 )
 render_csv_download(afford_df, "fuelpulse_affordability_index.csv")
+
+# Universal Floating AI Assistant Dock (Bottom-Right FAB)
+render_universal_ai_assistant(context_page="Fuel Affordability", key_prefix="p4_afford")

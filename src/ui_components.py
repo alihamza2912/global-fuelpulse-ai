@@ -9,7 +9,7 @@ import streamlit as st
 import pandas as pd
 import textwrap
 import urllib.parse
-from typing import Optional, Dict, Any, List
+from typing import Optional, Dict, Any, List, Tuple
 from datetime import datetime
 from config.settings import settings
 from src.database.connection import db_manager
@@ -402,7 +402,7 @@ def apply_theme():
   max-width: 1360px !important;
   margin-left: auto !important;
   margin-right: auto !important;
-  padding-top: 3.0rem !important;
+  padding-top: 1.25rem !important;
   padding-bottom: 2.5rem !important;
   padding-left: 24px !important;
   padding-right: 24px !important;
@@ -413,7 +413,7 @@ def apply_theme():
   .block-container {{
     padding-left: 18px !important;
     padding-right: 18px !important;
-    padding-top: 2.75rem !important;
+    padding-top: 1.15rem !important;
   }}
 }}
 
@@ -421,7 +421,54 @@ def apply_theme():
   .block-container {{
     padding-left: 12px !important;
     padding-right: 12px !important;
-    padding-top: 2.5rem !important;
+    padding-top: 1.0rem !important;
+  }}
+}}
+
+/* Universal Pinned Floating Action Button (FAB) */
+div[class*="global_fuelpulse_fab"] button,
+div[data-testid*="global_fuelpulse_fab"] button {{
+  position: fixed !important;
+  bottom: 24px !important;
+  right: 24px !important;
+  z-index: 999999 !important;
+  width: 58px !important;
+  height: 58px !important;
+  min-width: 58px !important;
+  max-width: 58px !important;
+  min-height: 58px !important;
+  max-height: 58px !important;
+  border-radius: 50% !important;
+  padding: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background: linear-gradient(135deg, #F5B942 0%, #D97706 100%) !important;
+  color: #0F172A !important;
+  border: 2px solid rgba(255, 255, 255, 0.75) !important;
+  box-shadow: 0 8px 24px rgba(245, 185, 66, 0.45), 0 4px 12px rgba(0, 0, 0, 0.6) !important;
+  font-size: 26px !important;
+  line-height: 1 !important;
+  cursor: pointer !important;
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s ease !important;
+}}
+
+div[class*="global_fuelpulse_fab"] button:hover,
+div[data-testid*="global_fuelpulse_fab"] button:hover {{
+  transform: scale(1.12) !important;
+  box-shadow: 0 12px 32px rgba(245, 185, 66, 0.65), 0 6px 16px rgba(0, 0, 0, 0.8) !important;
+}}
+
+div[class*="global_fuelpulse_fab"] button:active,
+div[data-testid*="global_fuelpulse_fab"] button:active {{
+  transform: scale(0.94) !important;
+}}
+
+@media (max-width: 768px) {{
+  div[class*="global_fuelpulse_fab"] button,
+  div[data-testid*="global_fuelpulse_fab"] button {{
+    bottom: 18px !important;
+    right: 18px !important;
   }}
 }}
 
@@ -1982,14 +2029,78 @@ def render_universal_top_header(active_page_name: str = "Overview", key_prefix: 
 
 
 # ==============================================================================
-# 5b. UNIVERSAL AI ASSISTANT EMBEDDABLE COMPONENT
+# 5b. UNIVERSAL FLOATING AI ASSISTANT (FAB + DIALOG DRAWER)
 # ==============================================================================
-def render_universal_ai_assistant(context_page: str = "Overview", key_prefix: str = ""):
+def _get_contextual_ai_suggestions(context_page: str) -> List[Tuple[str, str]]:
+    """Returns tailored prompt chips based on the active page context."""
+    c_lower = (context_page or "").lower()
+    if "trade" in c_lower:
+        return [
+            ("🇸🇦 Saudi Fuel Supplier", "who is the main supplier of fuel from saudi"),
+            ("🇮🇳 India Import Sourcing", "what are India petroleum import sourcing partners"),
+            ("🇦🇪 Dubai & UAE Exports", "what are Dubai petroleum export destinations"),
+            ("🇷🇺 Russian Crude Flows", "what are Russia petroleum export destinations")
+        ]
+    elif "price" in c_lower or "explorer" in c_lower:
+        return [
+            ("🇮🇳 Prayagraj Petrol & Tax", "What is the petrol price in Prayagraj and how much tax does Uttar Pradesh take?"),
+            ("⛽ Delhi Pump Breakdown", "What is the fuel price in Delhi and its tax breakdown?"),
+            ("🌐 US vs Germany Comparison", "Compare petrol retail prices in USA and Germany"),
+            ("🇸🇦 Saudi Fuel Supplier", "who is the main supplier of fuel from saudi")
+        ]
+    elif "india" in c_lower:
+        return [
+            ("🇮🇳 Prayagraj Petrol & Tax", "What is the petrol price in Prayagraj and how much tax does Uttar Pradesh take?"),
+            ("⛽ Indian OMCs (IOCL/BPCL)", "Who are the major fuel retailers and OMCs in India?"),
+            ("📊 Delhi Tax Wedge", "What is the fuel price in Delhi and its tax breakdown?"),
+            ("🇸🇦 Saudi Fuel Supplier", "who is the main supplier of fuel from saudi")
+        ]
+    elif "afford" in c_lower:
+        return [
+            ("⚖️ Highest Fuel Burden", "Which country has the highest fuel burden as % of daily income?"),
+            ("🇮🇳 India vs Global Burden", "How affordable is petrol in India compared to Europe?"),
+            ("🇸🇦 Saudi Fuel Supplier", "who is the main supplier of fuel from saudi")
+        ]
+    elif "risk" in c_lower:
+        return [
+            ("🚢 Hormuz Chokepoint Risk", "What is the risk of a disruption in the Strait of Hormuz?"),
+            ("🛡️ HHI Supply Concentration", "Which countries face the highest oil import concentration risk?"),
+            ("🇸🇦 Saudi Fuel Supplier", "who is the main supplier of fuel from saudi")
+        ]
+    elif "shock" in c_lower:
+        return [
+            ("🚚 Fleet Fuel Shock (10%)", "What would a 10% increase in fuel prices do to my fleet budget?"),
+            ("⚡ Crude Surge +$20/bbl", "What happens to retail prices if crude spikes by $20/bbl?"),
+            ("🇸🇦 Saudi Fuel Supplier", "who is the main supplier of fuel from saudi")
+        ]
+    elif "forecast" in c_lower:
+        return [
+            ("📈 60-Day Price Radar", "What is the 60-day price forecast for petrol in India?"),
+            ("🛢️ Brent Crude Trajectory", "What is the projected price trend for Brent crude?"),
+            ("🇸🇦 Saudi Fuel Supplier", "who is the main supplier of fuel from saudi")
+        ]
+    elif "trust" in c_lower:
+        return [
+            ("🔒 PPAC & EIA Provenance", "Where does the fuel price data come from and how often is it updated?"),
+            ("🛡️ Hallucination Safeguard", "How does Antigravity AI verify relational database records?"),
+            ("🇸🇦 Saudi Fuel Supplier", "who is the main supplier of fuel from saudi")
+        ]
+    else:
+        return [
+            ("🇸🇦 Saudi Fuel Supplier", "who is the main supplier of fuel from saudi"),
+            ("🌍 World Oil Leader", "who is the more contributor of petrol in the world"),
+            ("🇮🇳 Prayagraj Petrol & Tax", "What is the petrol price in Prayagraj and how much tax does Uttar Pradesh take?"),
+            ("🚢 Hormuz Chokepoint Risk", "What is the risk of a disruption in the Strait of Hormuz?")
+        ]
+
+
+@st.dialog("🤖 Antigravity AI — Energy Market Intelligence", width="large")
+def _show_ai_assistant_dialog(context_page: str = "Overview"):
     """
-    Renders an integrated Antigravity AI Market Intelligence Assistant widget directly on any page.
+    Renders the responsive modal AI Assistant dialog.
     - Zero meta-labels like 'Simple English Explanation'
     - Answers the exact question asked with grounded energy intelligence
-    - Enforces 24-hour daily quota (3 questions/24h per user)
+    - Enforces 24-hour daily quota (3 questions/24h per user) with tamper-resistant server persistence
     - Renders visual Mermaid diagrams and Plotly figures (dragmode=False)
     """
     import uuid
@@ -1997,7 +2108,7 @@ def render_universal_ai_assistant(context_page: str = "Overview", key_prefix: st
     from src.localization.i18n import get_current_language
 
     current_lang = get_current_language()
-    pfx = (key_prefix or context_page).lower().replace(" ", "_").replace(".", "_").replace("•", "_")
+    pfx = ("dlg_" + context_page).lower().replace(" ", "_").replace(".", "_").replace("•", "_")
 
     if "ai_session_id" not in st.session_state:
         st.session_state.ai_session_id = str(uuid.uuid4())
@@ -2010,103 +2121,40 @@ def render_universal_ai_assistant(context_page: str = "Overview", key_prefix: st
     is_quota_finished = sess_status.get("is_daily_quota_finished", False)
 
     if is_blocked:
-        status_text = "🚫 Access Blocked • Security Rule Violation"
+        status_text = "🚫 Access Blocked • Security Violation"
         status_color = "#EF4444"
     elif is_quota_finished:
         status_text = f"⏳ Daily Quota Reached (3/3 Used) • Resets in {reset_str}"
         status_color = "#F5B942"
     else:
-        status_text = f"🟢 Antigravity AI Active • {rem_q}/3 Questions Remaining Today (24h Window)"
+        status_text = f"🟢 Antigravity AI Active • {rem_q}/3 Questions Today (24h Quota)"
         status_color = "#34D399"
 
-    c_lower = context_page.lower()
-    if "command" in c_lower or "overview" in c_lower or "home" in c_lower:
-        suggested = [
-            ("🇸🇦 Saudi Fuel Supplier", "who is the main supplier of fuel from saudi"),
-            ("🌍 World Oil Leader", "who is the more contributor of petrol in the world"),
-            ("🚢 Hormuz Chokepoint", "What is the risk of a disruption in the Strait of Hormuz?"),
-            ("🇸🇦 Saudi Tax Rates", "how much Saudi take tax from there people")
-        ]
-    elif "trade" in c_lower:
-        suggested = [
-            ("🇸🇦 Saudi Fuel Supplier", "who is the main supplier of fuel from saudi"),
-            ("🇮🇳 India Import Sourcing", "what are India petroleum import sourcing partners"),
-            ("🇦🇪 Dubai & UAE Exports", "what are Dubai petroleum export destinations"),
-            ("🇷🇺 Russian Crude Flows", "what are Russia petroleum export destinations")
-        ]
-    elif "price" in c_lower:
-        suggested = [
-            ("🇮🇳 Prayagraj Petrol & Tax", "What is the petrol price in Prayagraj and how much tax does Uttar Pradesh take?"),
-            ("⛽ Delhi Pump Breakdown", "What is the fuel price in Delhi and its tax breakdown?"),
-            ("🌐 US vs Germany Comparison", "Compare petrol retail prices in USA and Germany"),
-            ("🇸🇦 Saudi Fuel Supplier", "who is the main supplier of fuel from saudi")
-        ]
-    elif "india" in c_lower:
-        suggested = [
-            ("🇮🇳 Prayagraj Petrol & Tax", "What is the petrol price in Prayagraj and how much tax does Uttar Pradesh take?"),
-            ("⛽ Indian OMCs (IOCL/BPCL)", "Who are the major fuel retailers and OMCs in India?"),
-            ("📊 Delhi Tax Wedge", "What is the fuel price in Delhi and its tax breakdown?"),
-            ("🇸🇦 Saudi Fuel Supplier", "who is the main supplier of fuel from saudi")
-        ]
-    elif "afford" in c_lower:
-        suggested = [
-            ("⚖️ Highest Fuel Burden", "Which country has the highest fuel burden as % of daily income?"),
-            ("🇮🇳 India vs Global Burden", "How affordable is petrol in India compared to Europe?"),
-            ("🇸🇦 Saudi Fuel Supplier", "who is the main supplier of fuel from saudi")
-        ]
-    elif "risk" in c_lower:
-        suggested = [
-            ("🚢 Hormuz Chokepoint Risk", "What is the risk of a disruption in the Strait of Hormuz?"),
-            ("🛡️ HHI Supply Concentration", "Which countries face the highest oil import concentration risk?"),
-            ("🇸🇦 Saudi Fuel Supplier", "who is the main supplier of fuel from saudi")
-        ]
-    elif "shock" in c_lower:
-        suggested = [
-            ("🚚 Fleet Fuel Shock (10%)", "What would a 10% increase in fuel prices do to my fleet budget?"),
-            ("⚡ Crude Surge +$20/bbl", "What happens to retail prices if crude spikes by $20/bbl?"),
-            ("🇸🇦 Saudi Fuel Supplier", "who is the main supplier of fuel from saudi")
-        ]
-    elif "forecast" in c_lower:
-        suggested = [
-            ("📈 60-Day Price Radar", "What is the 60-day price forecast for petrol in India?"),
-            ("🛢️ Brent Crude Trajectory", "What is the projected price trend for Brent crude?"),
-            ("🇸🇦 Saudi Fuel Supplier", "who is the main supplier of fuel from saudi")
-        ]
-    elif "trust" in c_lower:
-        suggested = [
-            ("🔒 PPAC & EIA Provenance", "Where does the fuel price data come from and how often is it updated?"),
-            ("🛡️ Hallucination Safeguard", "How does Antigravity AI verify relational database records?"),
-            ("🇸🇦 Saudi Fuel Supplier", "who is the main supplier of fuel from saudi")
-        ]
-    else:
-        suggested = [
-            ("🇸🇦 Saudi Fuel Supplier", "who is the main supplier of fuel from saudi"),
-            ("🌍 World Oil Leader", "who is the more contributor of petrol in the world"),
-            ("🇮🇳 Prayagraj Petrol & Tax", "What is the petrol price in Prayagraj and how much tax does Uttar Pradesh take?"),
-            ("🚢 Hormuz Chokepoint Risk", "What is the risk of a disruption in the Strait of Hormuz?")
-        ]
-
+    # Dialog Header Card
     st.markdown(f"""
-    <div style="background: rgba(14, 21, 38, 0.88); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border: 1.5px solid rgba(245, 185, 66, 0.35); border-radius: 12px; padding: 18px 22px; margin: 18px 0 24px 0; box-shadow: 0 10px 30px rgba(0,0,0,0.4);">
-        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.08); padding-bottom: 10px;">
-            <div style="display: flex; align-items: center; gap: 10px;">
-                <span style="font-size: 24px;">🤖</span>
+    <div style="background: rgba(14, 21, 38, 0.95); backdrop-filter: blur(16px); border: 1.5px solid rgba(245, 185, 66, 0.35); border-radius: 12px; padding: 14px 18px; margin-bottom: 14px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="font-size: 24px;">⚡</span>
                 <div>
-                    <div style="font-family: 'Space Grotesk', sans-serif; font-size: 1.15rem; font-weight: 800; color: #F9FAFB; letter-spacing: -0.01em;">
-                        ANTIGRAVITY AI MARKET INTELLIGENCE ASSISTANT
+                    <div style="font-family: 'Space Grotesk', sans-serif; font-size: 1.05rem; font-weight: 800; color: #F9FAFB;">
+                        GLOBAL FUELPULSE AI INTELLIGENCE
                     </div>
-                    <div style="font-size: 0.75rem; color: #94A3B8; font-weight: 600;">
-                        Context: <b style="color: #F5B942;">{context_page}</b> • Direct Grounded Energy Intelligence & Visual Flowcharts
+                    <div style="font-size: 0.74rem; color: #94A3B8; font-weight: 600;">
+                        Context: <b style="color: #F5B942;">{context_page}</b> • Direct Grounded Analysis & Visual Projections
                     </div>
                 </div>
             </div>
-            <div style="background: rgba(0,0,0,0.35); border: 1px solid rgba(255, 255, 255, 0.12); padding: 5px 12px; border-radius: 999px; font-family: 'Space Grotesk', sans-serif; font-size: 0.76rem; font-weight: 700; color: {status_color};">
+            <div style="background: rgba(0,0,0,0.4); border: 1px solid rgba(255, 255, 255, 0.12); padding: 4px 10px; border-radius: 999px; font-family: 'Space Grotesk', sans-serif; font-size: 0.72rem; font-weight: 700; color: {status_color};">
                 {status_text}
             </div>
         </div>
     </div>
     """, unsafe_allow_html=True)
 
+    # Contextual Suggested Chips
+    suggested = _get_contextual_ai_suggestions(context_page)
+    st.markdown("<div style='font-family: \"Space Grotesk\", sans-serif; font-size: 0.78rem; font-weight: 700; color: #CBD5E1; margin-bottom: 6px;'>💡 Suggested Intelligence Queries:</div>", unsafe_allow_html=True)
     chip_cols = st.columns(len(suggested))
     selected_query = None
     for idx, (label, query_str) in enumerate(suggested):
@@ -2152,15 +2200,20 @@ def render_universal_ai_assistant(context_page: str = "Overview", key_prefix: st
         if resp.get("is_security_blocked"):
             render_html("""<div style="padding:6px 14px;background:rgba(239, 68, 68, 0.2);color:#EF4444;font-weight:700;font-size:12.5px;border:1.5px solid #EF4444;border-radius:4px;margin-bottom:8px;">🚫 Security Alert • Access Blocked</div>""")
         elif "Daily Free Quota Finished" in resp.get("topic", "") or "Daily Quota Limit Reached" in resp.get("topic", ""):
-            render_html("""<div style="padding:6px 14px;background:rgba(245, 185, 66, 0.2);color:#F5B942;font-weight:700;font-size:12.5px;border:1.5px solid #F5B942;border-radius:4px;margin-bottom:8px;">⏳ Daily Quota Reached (3/3 Used) • Resets After 24 Hours</div>""")
+            render_html(f"""<div style="padding:6px 14px;background:rgba(245, 185, 66, 0.2);color:#F5B942;font-weight:700;font-size:12.5px;border:1.5px solid #F5B942;border-radius:4px;margin-bottom:8px;">⏳ Daily Quota Reached (3/3 Used) • Resets in {sess_status["reset_time_str"]}</div>""")
         else:
             render_html("""<div style="padding:4px 12px;background:rgba(16, 185, 129, 0.2);color:#10B981;font-weight:700;font-size:12px;border:1px solid #10B981;border-radius:4px;display:inline-block;margin-bottom:8px;">🟢 Antigravity AI Engine Verified Response</div>""")
 
         st.markdown(resp["answer_text"])
 
         if resp.get("visualization_fig") is not None:
+            fig = resp["visualization_fig"]
+            try:
+                fig.update_layout(dragmode=False)
+            except Exception:
+                pass
             st.markdown("#### 📊 Grounded Scenario & Visual Intelligence Projection")
-            st.plotly_chart(resp["visualization_fig"], width="stretch", theme=None)
+            st.plotly_chart(fig, width="stretch", theme=None, config={"scrollZoom": False, "displayModeBar": True})
 
         if resp.get("data_records"):
             with st.expander("📑 Underlying Verified Relational Mart Records", expanded=False):
@@ -2170,6 +2223,25 @@ def render_universal_ai_assistant(context_page: str = "Overview", key_prefix: st
 
         if resp.get("sources_cited"):
             st.caption(f"Verified Provenance: {', '.join(resp['sources_cited'])}")
+
+
+def render_floating_ai_assistant(context_page: str = "Overview", key_prefix: str = ""):
+    """
+    Renders the universal Floating Action Button (FAB) at bottom-right corner.
+    Clicking it opens the responsive modal AI Assistant dialog.
+    Takes 0 screen height on the background page, completely eliminating layout pushing.
+    """
+    pfx = (key_prefix or context_page).lower().replace(" ", "_").replace(".", "_").replace("•", "_")
+    btn_key = f"global_fuelpulse_fab_{pfx}" if pfx else "global_fuelpulse_fab"
+
+    # Render floating button anchored to bottom right
+    if st.button("🤖", key=btn_key, help=f"Ask Antigravity AI Market Intelligence ({context_page})"):
+        _show_ai_assistant_dialog(context_page=context_page)
+
+
+def render_universal_ai_assistant(context_page: str = "Overview", key_prefix: str = ""):
+    """Maintains backward compatibility across all views by rendering the universal floating FAB."""
+    render_floating_ai_assistant(context_page=context_page, key_prefix=key_prefix)
 
 
 # ==============================================================================
