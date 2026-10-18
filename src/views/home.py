@@ -58,6 +58,7 @@ def render_home_view(navigate_fn=None):
     """)
 
     # 2. Hero Action Buttons (Balanced 2-CTA Grid)
+    render_html('<div class="fuelpulse-hero-actions">')
     c2, c3 = st.columns([1, 1], gap="medium")
     with c2:
         if st.button(t('home_cta_dashboard', cur_lang), type="primary", use_container_width=True, key="hero_cta_dash"):
@@ -73,6 +74,7 @@ def render_home_view(navigate_fn=None):
             else:
                 st.session_state.active_nav = "🇮🇳 India Fuel Center"
                 st.rerun()
+    render_html('</div>')
 
     st.write("")
 
@@ -180,6 +182,7 @@ def render_home_view(navigate_fn=None):
     st.write("")
 
     # 4. Problem Solved & Executive Perspective
+    render_html('<div class="fuelpulse-perspective-container">')
     col_problem, col_who = st.columns([1, 1], gap="large")
 
     with col_problem:
@@ -225,6 +228,7 @@ def render_home_view(navigate_fn=None):
             </div>
         </div>
         """)
+    render_html('</div>')
 
     st.write("")
 
@@ -235,16 +239,17 @@ def render_home_view(navigate_fn=None):
     </div>
     """, unsafe_allow_html=True)
 
+    render_html('<div class="fuelpulse-suite-container">')
     grid1, grid2, grid3 = st.columns(3)
 
     with grid1:
         render_html(f"""
-        <div class="fuelpulse-product-card" style="background: rgba(14, 21, 38, 0.65); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; padding: 18px; margin-bottom: 14px; min-height: 170px;">
+        <div class="fuelpulse-product-card" style="background: rgba(14, 21, 38, 0.65); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; padding: 18px; margin-bottom: 10px;">
             <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
                 {get_lucide_icon_svg("chart-no-axes-combined", size=20, color="#F5B942")}
                 <span style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; color: #F9FAFB; font-size: 0.95rem;">{t('home_card_dash_title', cur_lang)}</span>
             </div>
-            <p style="font-size: 0.82rem; color: #94A3B8; line-height: 1.45; margin-bottom: 12px;">
+            <p style="font-size: 0.82rem; color: #94A3B8; line-height: 1.45; margin: 0;">
                 {t('home_card_dash_desc', cur_lang)}
             </p>
         </div>
@@ -258,12 +263,12 @@ def render_home_view(navigate_fn=None):
 
     with grid2:
         render_html(f"""
-        <div class="fuelpulse-product-card" style="background: rgba(14, 21, 38, 0.65); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; padding: 18px; margin-bottom: 14px; min-height: 170px;">
+        <div class="fuelpulse-product-card" style="background: rgba(14, 21, 38, 0.65); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; padding: 18px; margin-bottom: 10px;">
             <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
                 {get_lucide_icon_svg("map-pinned", size=20, color="#60A5FA")}
                 <span style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; color: #F9FAFB; font-size: 0.95rem;">{t('home_card_india_title', cur_lang)}</span>
             </div>
-            <p style="font-size: 0.82rem; color: #94A3B8; line-height: 1.45; margin-bottom: 12px;">
+            <p style="font-size: 0.82rem; color: #94A3B8; line-height: 1.45; margin: 0;">
                 {t('home_card_india_desc', cur_lang)}
             </p>
         </div>
@@ -277,12 +282,12 @@ def render_home_view(navigate_fn=None):
 
     with grid3:
         render_html(f"""
-        <div class="fuelpulse-product-card" style="background: rgba(14, 21, 38, 0.65); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; padding: 18px; margin-bottom: 14px; min-height: 170px;">
+        <div class="fuelpulse-product-card" style="background: rgba(14, 21, 38, 0.65); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; padding: 18px; margin-bottom: 10px;">
             <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
                 {get_lucide_icon_svg("shield-check", size=20, color="#34D399")}
                 <span style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; color: #F9FAFB; font-size: 0.95rem;">{t('home_card_trust_title', cur_lang)}</span>
             </div>
-            <p style="font-size: 0.82rem; color: #94A3B8; line-height: 1.45; margin-bottom: 12px;">
+            <p style="font-size: 0.82rem; color: #94A3B8; line-height: 1.45; margin: 0;">
                 {t('home_card_trust_desc', cur_lang)}
             </p>
         </div>
@@ -293,6 +298,7 @@ def render_home_view(navigate_fn=None):
             else:
                 st.session_state.active_nav = "🔒 Data Trust"
                 st.rerun()
+    render_html('</div>')
 
     # 5b. Feature 09: AI Energy Market Analyst Spotlight
     render_html(f"""
@@ -315,22 +321,24 @@ def render_home_view(navigate_fn=None):
     </div>
     """)
 
+    render_html('<div class="fuelpulse-f9-actions">')
     col_h_studio, col_h_dash = st.columns([1, 1], gap="medium")
     with col_h_studio:
         render_html("""
         <a href="/AI_Analyst" target="_self" style="text-decoration: none; display: block;">
-            <div style="background: linear-gradient(135deg, #F5B942 0%, #D97706 100%); color: #070A12; font-family: 'Space Grotesk', sans-serif; font-size: 13px; font-weight: 800; height: 38px; line-height: 38px; text-align: center; border-radius: 8px; box-shadow: 0 4px 12px rgba(245, 185, 66, 0.3); cursor: pointer; transition: all 0.15s ease;">
+            <div style="background: linear-gradient(135deg, #F5B942 0%, #D97706 100%); color: #070A12; font-family: 'Space Grotesk', sans-serif; font-size: 13px; font-weight: 800; height: 42px; line-height: 42px; text-align: center; border-radius: 8px; box-shadow: 0 4px 12px rgba(245, 185, 66, 0.3); cursor: pointer; transition: all 0.15s ease;">
                 🤖 Launch Dedicated AI Analyst Studio (/AI_Analyst) →
             </div>
         </a>
         """)
     with col_h_dash:
-        if st.button("📊 Explore Dashboard Chapter 09 (Interactive Analyst)", key="home_btn_ai_dash", use_container_width=True, type="secondary"):
+        if st.button("📊 Explore Dashboard Chapter 09 →", key="home_btn_ai_dash", use_container_width=True, type="secondary"):
             if navigate_fn:
                 navigate_fn("Live Intelligence Dashboard")
             else:
                 st.session_state.active_nav = "⚡ Intelligence Dashboard"
                 st.rerun()
+    render_html('</div>')
 
     # 6. Honest Scope & Coverage Disclosure
     render_html(f"""

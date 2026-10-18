@@ -81,6 +81,7 @@ def render_how_it_works_view(navigate_fn=None):
     </div>
     """, unsafe_allow_html=True)
 
+    render_html('<div class="fuelpulse-suite-container">')
     c1, c2, c3 = st.columns(3)
 
     with c1:
@@ -116,11 +117,12 @@ def render_how_it_works_view(navigate_fn=None):
             <ul style="font-family: 'Inter', sans-serif; font-size: 0.83rem; line-height: 1.6; color: #94A3B8; margin: 0; padding-left: 18px;">
                 <li><b style="color: #F9FAFB;">Streamlit 1.40+</b> (Websocket Compr.)</li>
                 <li><b style="color: #F9FAFB;">Plotly 5.24</b> (GPU WebGL Graphics)</li>
-                <li><b style="color: #F9FAFB;">Pytest 9.0+</b> (69 Automated Tests)</li>
+                <li><b style="color: #F9FAFB;">Pytest 9.0+</b> (85 Automated Tests)</li>
                 <li><b style="color: #F9FAFB;">AppTest</b> (Headless UI Assurance)</li>
             </ul>
         </div>
         """)
+    render_html('</div>')
 
     st.write("")
 

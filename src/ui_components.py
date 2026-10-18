@@ -521,7 +521,9 @@ div[data-testid="stSidebar"] div.stButton > button[kind="secondary"]:hover {{
 
 /* Main Top Two-Tier Navigation button styling */
 div.fuelpulse-tnav-container div.stButton > button {{
-  height: 36px !important;
+  height: 38px !important;
+  min-height: 38px !important;
+  max-height: 38px !important;
   padding: 4px 8px !important;
   border-radius: 6px !important;
   font-family: 'Space Grotesk', -apple-system, sans-serif !important;
@@ -530,6 +532,9 @@ div.fuelpulse-tnav-container div.stButton > button {{
   white-space: nowrap !important;
   overflow: hidden !important;
   text-overflow: ellipsis !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
   transition: all 0.15s ease-in-out !important;
 }}
 
@@ -551,6 +556,84 @@ div.fuelpulse-tnav-container div.stButton > button[kind="secondary"]:hover {{
   background: rgba(255, 255, 255, 0.08) !important;
   color: #F9FAFB !important;
   border-color: rgba(255, 255, 255, 0.2) !important;
+}}
+
+/* Equal-Height Desktop Flexbox Containers */
+@media (min-width: 769px) {{
+  div.fuelpulse-suite-container div[data-testid="stHorizontalBlock"] {{
+    display: flex !important;
+    align-items: stretch !important;
+    gap: 16px !important;
+  }}
+  div.fuelpulse-suite-container div[data-testid="column"] {{
+    flex: 1 1 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+  }}
+  div.fuelpulse-suite-container .fuelpulse-product-card {{
+    flex-grow: 1 !important;
+    min-height: 160px !important;
+    margin-bottom: 12px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: flex-start !important;
+    box-sizing: border-box !important;
+  }}
+  div.fuelpulse-suite-container div.stButton > button {{
+    height: 42px !important;
+    min-height: 42px !important;
+    font-size: 13.5px !important;
+    font-weight: 700 !important;
+  }}
+
+  div.fuelpulse-f9-actions div[data-testid="stHorizontalBlock"] {{
+    display: flex !important;
+    align-items: center !important;
+    gap: 14px !important;
+  }}
+  div.fuelpulse-f9-actions div[data-testid="column"] {{
+    flex: 1 1 0 !important;
+  }}
+  div.fuelpulse-f9-actions a div,
+  div.fuelpulse-f9-actions div.stButton > button {{
+    height: 42px !important;
+    min-height: 42px !important;
+    line-height: 42px !important;
+    font-size: 13px !important;
+    font-weight: 700 !important;
+    border-radius: 8px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+  }}
+
+  div.fuelpulse-hero-actions div[data-testid="stHorizontalBlock"] {{
+    display: flex !important;
+    gap: 14px !important;
+  }}
+  div.fuelpulse-hero-actions div[data-testid="column"] {{
+    flex: 1 1 0 !important;
+  }}
+  div.fuelpulse-hero-actions div.stButton > button {{
+    height: 44px !important;
+    min-height: 44px !important;
+    font-size: 14px !important;
+    font-weight: 700 !important;
+  }}
+
+  div.fuelpulse-perspective-container div[data-testid="stHorizontalBlock"] {{
+    display: flex !important;
+    align-items: stretch !important;
+    gap: 18px !important;
+  }}
+  div.fuelpulse-perspective-container div[data-testid="column"] {{
+    flex: 1 1 0 !important;
+  }}
+  div.fuelpulse-perspective-container div[data-testid="column"] > div {{
+    height: 100% !important;
+  }}
 }}
 
 
@@ -1763,6 +1846,157 @@ button[data-testid*="primaryActive"] * {{
     grid-column: 1 / -1 !important;
   }}
 
+  /* D1. Suite Platform Cards: 1 column full width on mobile (eliminates 2-small + 1-big mismatch) */
+  div.fuelpulse-suite-container [data-testid="stHorizontalBlock"] {{
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 14px !important;
+  }}
+  div.fuelpulse-suite-container [data-testid="column"],
+  div.fuelpulse-suite-container [data-testid="stColumn"] {{
+    width: 100% !important;
+    min-width: 100% !important;
+    max-width: 100% !important;
+    flex: 1 1 100% !important;
+    grid-column: 1 / -1 !important;
+  }}
+  div.fuelpulse-suite-container .fuelpulse-product-card {{
+    min-height: auto !important;
+    margin-bottom: 8px !important;
+  }}
+  div.fuelpulse-suite-container div.stButton > button {{
+    height: 42px !important;
+    min-height: 42px !important;
+    font-size: 13.5px !important;
+    width: 100% !important;
+  }}
+
+  /* D2. Feature 09 action buttons: stack at 100% width on mobile */
+  div.fuelpulse-f9-actions [data-testid="stHorizontalBlock"] {{
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 10px !important;
+  }}
+  div.fuelpulse-f9-actions [data-testid="column"],
+  div.fuelpulse-f9-actions [data-testid="stColumn"] {{
+    width: 100% !important;
+    min-width: 100% !important;
+    max-width: 100% !important;
+    grid-column: 1 / -1 !important;
+  }}
+  div.fuelpulse-f9-actions a div,
+  div.fuelpulse-f9-actions div.stButton > button {{
+    height: 42px !important;
+    min-height: 42px !important;
+    line-height: 42px !important;
+    font-size: 12.5px !important;
+    font-weight: 700 !important;
+    border-radius: 8px !important;
+    width: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+  }}
+
+  /* D3. Hero action buttons: stack at 100% width on mobile */
+  div.fuelpulse-hero-actions [data-testid="stHorizontalBlock"] {{
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 10px !important;
+  }}
+  div.fuelpulse-hero-actions [data-testid="column"],
+  div.fuelpulse-hero-actions [data-testid="stColumn"] {{
+    width: 100% !important;
+    min-width: 100% !important;
+    max-width: 100% !important;
+    grid-column: 1 / -1 !important;
+  }}
+  div.fuelpulse-hero-actions div.stButton > button {{
+    height: 44px !important;
+    min-height: 44px !important;
+    font-size: 13.5px !important;
+    width: 100% !important;
+  }}
+
+  /* D4. Problem & Perspective: stack at 100% width on mobile */
+  div.fuelpulse-perspective-container [data-testid="stHorizontalBlock"] {{
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 12px !important;
+  }}
+  div.fuelpulse-perspective-container [data-testid="column"],
+  div.fuelpulse-perspective-container [data-testid="stColumn"] {{
+    width: 100% !important;
+    min-width: 100% !important;
+    max-width: 100% !important;
+    grid-column: 1 / -1 !important;
+  }}
+
+  /* D5. Two-tier Navigation Mobile Grid: exact 40px height, 2 columns on row 1 & 2, full-width on row 3 */
+  div.fuelpulse-tnav-container {{
+    margin-bottom: 12px !important;
+  }}
+  div.fuelpulse-tnav-container div[data-testid="stHorizontalBlock"] {{
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 6px !important;
+    margin-bottom: 6px !important;
+    width: 100% !important;
+  }}
+  div.fuelpulse-tnav-container div[data-testid="column"],
+  div.fuelpulse-tnav-container div[data-testid="stColumn"] {{
+    width: 100% !important;
+    min-width: 0 !important;
+  }}
+  div.fuelpulse-tnav-container div[data-testid="column"]:last-child,
+  div.fuelpulse-tnav-container div[data-testid="stColumn"]:last-child {{
+    grid-column: 1 / -1 !important;
+  }}
+  div.fuelpulse-tnav-container div.stButton > button {{
+    height: 40px !important;
+    min-height: 40px !important;
+    max-height: 40px !important;
+    line-height: 1.15 !important;
+    font-size: 11.5px !important;
+    padding: 2px 6px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    width: 100% !important;
+  }}
+
+  /* D6. Hero title & subtitle typography on mobile */
+  .fuelpulse-hero-title {{
+    font-size: 1.85rem !important;
+    line-height: 1.15 !important;
+    letter-spacing: -0.02em !important;
+    margin-bottom: 10px !important;
+  }}
+  .fuelpulse-hero-desc {{
+    font-size: 0.92rem !important;
+    line-height: 1.5 !important;
+    padding: 0 4px !important;
+    margin-bottom: 16px !important;
+  }}
+
+  /* D7. Browser Mockup telemetry strip: 2x2 grid */
+  .fuelpulse-mockup-strip {{
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 8px !important;
+    padding: 10px 10px 6px 10px !important;
+  }}
+  .fuelpulse-mockup-strip > div {{
+    padding: 8px 10px !important;
+  }}
+  .fuelpulse-mockup-strip > div > div:nth-child(2) {{
+    font-size: 1.1rem !important;
+  }}
+
   /* E. Charts, Dataframes, Tables, and Heavy Visuals Span Full Width */
   [data-testid="stHorizontalBlock"] > [data-testid="column"]:has(.js-plotly-plot),
   [data-testid="stHorizontalBlock"] > [data-testid="stColumn"]:has(.js-plotly-plot),
@@ -1825,11 +2059,16 @@ button[data-testid*="primaryActive"] * {{
     font-size: 11px !important;
   }}
 
-  /* G. Compact Metric & Instrument Cards */
+  /* G. Compact Metric & Instrument Cards (Equal height flex container) */
   .editorial-card, .instrument-card {{
-    min-height: 84px !important;
-    padding: 10px 12px !important;
+    min-height: 96px !important;
+    height: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+    padding: 12px 14px !important;
     margin-bottom: 6px !important;
+    box-sizing: border-box !important;
   }}
 
   .instrument-tag {{

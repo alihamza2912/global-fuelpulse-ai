@@ -52,12 +52,13 @@ def render_roadmap_view(navigate_fn=None):
         ("Automated Quality Auditor", "Zero Quarantine Violations", t("status_verified", cur_lang), "#10B981")
     ]
 
+    render_html('<div class="fuelpulse-suite-container">')
     sc1, sc2, sc3 = st.columns(3)
     for idx, (svc, tech, st_text, st_col) in enumerate(status_items):
         target_col = [sc1, sc2, sc3][idx % 3]
         with target_col:
             render_html(f"""
-            <div style="background: rgba(14, 21, 38, 0.65); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 6px; padding: 12px 14px; margin-bottom: 10px;">
+            <div style="background: rgba(14, 21, 38, 0.65); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 6px; padding: 12px 14px; margin-bottom: 10px; height: 100%;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
                     <span style="font-family: 'Space Grotesk', sans-serif; font-size: 0.85rem; font-weight: 700; color: #F9FAFB;">{svc}</span>
                     <span style="font-family: 'Space Grotesk', sans-serif; font-size: 0.68rem; font-weight: 800; color: {st_col}; background: rgba(255, 255, 255, 0.05); border: 1px solid {st_col}; padding: 2px 6px; border-radius: 4px;">{st_text}</span>
@@ -65,6 +66,7 @@ def render_roadmap_view(navigate_fn=None):
                 <div style="font-size: 0.75rem; color: #94A3B8;">{tech}</div>
             </div>
             """)
+    render_html('</div>')
 
     st.write("")
 

@@ -304,22 +304,24 @@ def render_features_view(navigate_fn=None):
                         if ai_resp.get("data_records"):
                             st.dataframe(pd.DataFrame(ai_resp["data_records"]), width="stretch", hide_index=True)
 
+                render_html('<div class="fuelpulse-f9-actions">')
                 col_f9_studio, col_f9_dash = st.columns([1, 1])
                 with col_f9_studio:
                     render_html("""
                     <a href="/AI_Analyst" target="_self" style="text-decoration: none; display: block;">
-                        <div style="background: #EAB308; color: #070A12; font-family: 'Space Grotesk', sans-serif; font-size: 12.5px; font-weight: 700; height: 34px; line-height: 34px; text-align: center; border-radius: 6px; box-shadow: 0 2px 6px rgba(0,0,0,0.25); cursor: pointer; transition: all 0.15s ease;">
+                        <div style="background: #EAB308; color: #070A12; font-family: 'Space Grotesk', sans-serif; font-size: 13px; font-weight: 800; height: 42px; line-height: 42px; text-align: center; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.25); cursor: pointer; transition: all 0.15s ease;">
                             🤖 Open Full AI Analyst Studio (/AI_Analyst) →
                         </div>
                     </a>
                     """)
                 with col_f9_dash:
-                    if st.button("📊 View in Dashboard Chapter 09", key="feat_f9_dash_btn", width="stretch", type="secondary"):
+                    if st.button("📊 View in Dashboard Chapter 09 →", key="feat_f9_dash_btn", width="stretch", type="secondary"):
                         if navigate_fn:
                             navigate_fn("Live Intelligence Dashboard")
                         else:
                             st.session_state.active_nav = "⚡ Intelligence Dashboard"
                             st.rerun()
+                render_html('</div>')
                 st.markdown("<div style='margin-bottom: 20px;'></div>", unsafe_allow_html=True)
         else:
             col_btn, _ = st.columns([2.0, 3.0])
