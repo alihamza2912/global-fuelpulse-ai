@@ -1319,6 +1319,105 @@ VIEWS_TRANSLATIONS = {
         "zh": "SQLITE 离线安全认证",
         "ru": "ПРОВЕРЕНО SQLITE",
         "ja": "SQLITE 検証済み"
+    },
+    "ai_settings_expander_title": {
+        "en": "⚙️ Live Web Research & Account API Key Settings",
+        "hi": "⚙️ लाइव वेब रिसर्च एवं अकाउंट एपीआई कुंजी सेटिंग्स",
+        "es": "⚙️ Investigación Web en Vivo y Clave API de Cuenta",
+        "fr": "⚙️ Recherche Web en Direct & Paramètres de Clé API",
+        "ar": "⚙️ إعدادات البحث المباشر على الويب ومفتاح API للحساب",
+        "de": "⚙️ Live-Web-Recherche & Account-API-Schlüssel-Einstellungen",
+        "zh": "⚙️ 实时网络深度调研与个人账户 API 密钥设置",
+        "ru": "⚙️ Настройки онлайн-исследований и API-ключей аккаунта",
+        "ja": "⚙️ リアルタイムWebリサーチおよびアカウントAPIキー設定"
+    },
+    "ai_deep_search_status": {
+        "en": "🌐 Live Online Research: ACTIVE",
+        "hi": "🌐 लाइव ऑनलाइन रिसर्च: सक्रिय",
+        "es": "🌐 Investigación en Línea en Vivo: ACTIVA",
+        "fr": "🌐 Recherche en Ligne en Direct : ACTIVE",
+        "ar": "🌐 البحث المباشر عبر الإنترنت: نشط",
+        "de": "🌐 Live-Online-Recherche: AKTIV",
+        "zh": "🌐 实时全网在线深度调研: 已激活",
+        "ru": "🌐 Онлайн-исследования в реальном времени: АКТИВНО",
+        "ja": "🌐 リアルタイムWebリサーチ: 稼働中"
+    },
+    "ai_deep_search_desc": {
+        "en": "Real-time web indexing via DuckDuckGo & Wikipedia extracts verified live figures for any energy query.",
+        "hi": "डकडकगो और विकिपीडिया के माध्यम से रीयल-टाइम वेब इंडेक्सिंग किसी भी ऊर्जा प्रश्न के लिए सत्यापित लाइव आंकड़े निकालती है।",
+        "es": "La indexación web en tiempo real a través de DuckDuckGo y Wikipedia extrae cifras verificadas en vivo para cualquier consulta.",
+        "fr": "L'indexation web en direct via DuckDuckGo et Wikipédia extrait des données vérifiées en direct pour toute question énergétique.",
+        "ar": "تستخرج الفهرسة اللحظية عبر DuckDuckGo وويكيبيديا أرقاماً معتمدة ومباشرة لأي استفسار عن الطاقة.",
+        "de": "Echtzeit-Web-Indexierung über DuckDuckGo und Wikipedia liefert verifizierte Live-Zahlen für jede Energieabfrage.",
+        "zh": "通过 DuckDuckGo 和维基百科进行全网实时索引，为任何能源议题提取最新且经过验证的数据。",
+        "ru": "Индексация в реальном времени через DuckDuckGo и Wikipedia извлекает проверенные оперативные данные для любых запросов.",
+        "ja": "DuckDuckGoとWikipediaのリアルタイム検索により、あらゆるエネルギーの質問に対して検証済みの最新データを抽出します。"
+    },
+    "ai_api_key_label": {
+        "en": "Personal Google Gemini API Key (Optional):",
+        "hi": "व्यक्तिगत Google Gemini API कुंजी (वैकल्पिक):",
+        "es": "Clave API Personal de Google Gemini (Opcional):",
+        "fr": "Clé API Personnelle Google Gemini (Optionnel) :",
+        "ar": "مفتاح Google Gemini API الشخصي (اختياري):",
+        "de": "Persönlicher Google Gemini API-Schlüssel (Optional):",
+        "zh": "个人 Google Gemini API 密钥 (选填):",
+        "ru": "Персональный API-ключ Google Gemini (Необязательно):",
+        "ja": "個人の Google Gemini API キー (任意):"
+    },
+    "ai_api_key_placeholder": {
+        "en": "AIzaSy... (leave blank to use integrated Antigravity Engine)",
+        "hi": "AIzaSy... (एकीकृत एंटीग्रेविटी इंजन का उपयोग करने के लिए खाली छोड़ें)",
+        "es": "AIzaSy... (deje en blanco para usar el motor integrado Antigravity)",
+        "fr": "AIzaSy... (laisser vide pour utiliser le moteur intégré Antigravity)",
+        "ar": "AIzaSy... (اتركه فارغاً لاستخدام محرك Antigravity المدمج)",
+        "de": "AIzaSy... (leer lassen für integrierte Antigravity Engine)",
+        "zh": "AIzaSy... (留空以使用内置的 Antigravity 智能引擎)",
+        "ru": "AIzaSy... (оставьте пустым для встроенного движка Antigravity)",
+        "ja": "AIzaSy... (空欄の場合は標準の Antigravity エンジンを使用)"
+    },
+    "ai_api_key_help": {
+        "en": "Enter your personal free Google AI Studio key (https://aistudio.google.com/app/apikey) to use your own quota tokens.",
+        "hi": "अपने स्वयं के कोटा टोकन का उपयोग करने के लिए अपनी व्यक्तिगत मुफ्त Google AI Studio कुंजी दर्ज करें।",
+        "es": "Ingrese su clave gratuita de Google AI Studio para usar sus propios tokens de cuota.",
+        "fr": "Entrez votre clé gratuite Google AI Studio pour utiliser vos propres jetons de quota.",
+        "ar": "أدخل مفتاح Google AI Studio المجاني الخاص بك لاستخدام حصة الرموز المميزة الخاصة بك.",
+        "de": "Geben Sie Ihren persönlichen Google AI Studio-Schlüssel ein, um Ihr eigenes Token-Kontingent zu nutzen.",
+        "zh": "输入您个人免费的 Google AI Studio API 密钥以使用您自己的配额 Token。",
+        "ru": "Введите личный бесплатный ключ Google AI Studio, чтобы использовать персональные токены квоты.",
+        "ja": "個人の無料 Google AI Studio キーを入力して、ご自身のトークン割当量を使用します。"
+    },
+    "ai_api_key_save_btn": {
+        "en": "Save Key",
+        "hi": "कुंजी सहेजें",
+        "es": "Guardar Clave",
+        "fr": "Enregistrer la Clé",
+        "ar": "حفظ المفتاح",
+        "de": "Schlüssel speichern",
+        "zh": "保存密钥",
+        "ru": "Сохранить ключ",
+        "ja": "キーを保存"
+    },
+    "ai_api_key_saved_msg": {
+        "en": "✅ Personal API Key configured! Direct LLM tokens activated for this session.",
+        "hi": "✅ व्यक्तिगत एपीआई कुंजी कॉन्फ़िगर हो गई! इस सत्र के लिए डायरेक्ट एलएलएम टोकन सक्रिय।",
+        "es": "✅ Clave API personal configurada. Tokens LLM directos activados para esta sesión.",
+        "fr": "✅ Clé API personnelle configurée ! Jetons LLM directs activés pour cette session.",
+        "ar": "✅ تم ضبط مفتاح API الشخصي! تم تفعيل رموز LLM المباشرة لهذه الجلسة.",
+        "de": "✅ Persönlicher API-Schlüssel konfiguriert! Direkte LLM-Tokens für diese Sitzung aktiviert.",
+        "zh": "✅ 个人 API 密钥已成功配置！已为本次会话启用专属 LLM Token。",
+        "ru": "✅ Личный API-ключ настроен! Прямые токены LLM активированы для этой сессии.",
+        "ja": "✅ 個人のAPIキーが設定されました！このセッションで直接LLMトークンが有効化されました。"
+    },
+    "ai_api_key_revert_msg": {
+        "en": "ℹ️ Reverted to integrated Antigravity Energy Intelligence Engine.",
+        "hi": "ℹ️ एकीकृत एंटीग्रेविटी ऊर्जा बुद्धिमत्ता इंजन पर वापस आ गए।",
+        "es": "ℹ️ Se restableció al motor integrado de inteligencia energética Antigravity.",
+        "fr": "ℹ️ Retour au moteur intégré d'intelligence énergétique Antigravity.",
+        "ar": "ℹ️ تم الرجوع إلى محرك استخبارات الطاقة المدمج Antigravity.",
+        "de": "ℹ️ Zurückgesetzt auf integrierte Antigravity Energy Intelligence Engine.",
+        "zh": "ℹ️ 已重置回内置的 Antigravity 全球能源智能引擎。",
+        "ru": "ℹ️ Возврат к встроенному движку энергетического анализа Antigravity.",
+        "ja": "ℹ️ 標準の Antigravity エネルギー市場インテリジェンスエンジンに戻りました。"
     }
 }
 

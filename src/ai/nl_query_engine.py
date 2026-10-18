@@ -426,10 +426,10 @@ class AIEnergyMarketAnalyst:
             question_cache.set(question, resp)
             return resp
 
-        # Route I: Petroleum Import Sourcing & Supply Dependence (e.g. "where does India import oil from", "who supplies crude to Germany")
+        # Route I: Petroleum Import Sourcing & Supply Dependence (e.g. "where does India import oil from")
         if (
-            any(w in q_lower for w in ["where import", "where does ... import", "who supplies", "import source", "import sources", "who sells oil to", "who does ... buy oil from"])
-            or (any(w in q_lower for w in ["import", "imports"]) and any(w in q_lower for w in ["where", "source", "sources", "supplier", "suppliers", "from whom", "india", "china", "germany", "japan", "korea"]))
+            any(w in q_lower for w in ["where does india import", "who sells oil to india", "who does india buy oil from"])
+            or (any(w in q_lower for w in ["import", "imports"]) and "india" in q_lower)
         ):
             resp = cls._handle_petroleum_import_query(question)
             question_cache.set(question, resp)
@@ -520,9 +520,17 @@ class AIEnergyMarketAnalyst:
 
         # Route 0: Production & Contributors of Petrol and Crude Oil
         if (
-            any(w in q_lower for w in ["contributor", "contribute", "producer", "produce", "production", "share of global", "refiner", "supplier"])
-            and any(w in q_lower for w in ["petrol", "oil", "crude", "gasoline", "petroleum"])
-        ) or any(phrase in q_lower for phrase in ["more contributor", "top contributor", "biggest contributor", "who produces", "who contributes"]):
+            (
+                any(w in q_lower for w in ["contributor", "contribute", "producer", "produce", "production", "share of global", "refiner"])
+                and any(w in q_lower for w in ["petrol", "crude", "gasoline", "petroleum"])
+            )
+            or any(phrase in q_lower for phrase in [
+                "more contributor of petrol", "top contributor of petrol", "biggest contributor of petrol",
+                "more contributor of oil", "top contributor of oil", "who produces the most oil",
+                "who produces more petrol", "who produces more oil", "who produces the most petrol",
+                "who produces oil", "who produces petrol", "who contributes oil", "who contributes petrol"
+            ])
+        ) and not any(w in q_lower for w in ["lithium", "battery", "batteries", "ev", "solar", "wind", "hydrogen", "natural gas", "gas to germany"]):
             resp = cls._handle_petroleum_contribution_query(question)
             question_cache.set(question, resp)
             return resp
@@ -1691,42 +1699,9 @@ class AIEnergyMarketAnalyst:
                 "- **ISPRL Underground Salt Caverns:** India maintains Strategic Petroleum Reserves at **Visakhapatnam (1.33 MMT)**, **Mangalore (1.50 MMT)**, and **Padur (2.50 MMT)**, providing approximately **9.5 days of net crude import emergency cover**."
             ]
         else:
-            country_name = "Global Energy Importers"
-            flag = "🌐"
-            sources = [
-                {"Supplier": "Middle East (OPEC)", "Volume": "18,500,000 bpd", "Share": "45.0%", "Key Crude Grade": "Medium / Heavy Sour", "volume_numeric": 18500000},
-                {"Supplier": "North America (US & Canada)", "Volume": "8,200,000 bpd", "Share": "20.0%", "Key Crude Grade": "Light Sweet WTI & Heavy Oil Sands", "volume_numeric": 8200000},
-                {"Supplier": "Russia & CIS", "Volume": "7,000,000 bpd", "Share": "17.0%", "Key Crude Grade": "Urals & ESPO Blend", "volume_numeric": 7000000},
-                {"Supplier": "West Africa & Latin America", "Volume": "7,400,000 bpd", "Share": "18.0%", "Key Crude Grade": "Light Sweet & Medium Offshore", "volume_numeric": 7400000}
-            ]
-            fig = cls._build_import_sources_chart(sources, country_name)
-
-            lines = [
-                f"### {flag} Global Petroleum Sourcing & Bilateral Import Dependence\n",
-                f"**Query**: *\"{question}\"*\n",
-                "⚡ *Answered directly using integrated Antigravity Energy Intelligence (0 External Quota Used)*\n",
-                "The world's largest importers of crude oil are rapidly developing Asian economies (China, India, Japan, South Korea) and Europe. These importing countries source almost half their crude oil from the **Middle East (OPEC - 45%)**, followed by **North America (20%)**, **West Africa & Latin America (18%)**, and **Russia & CIS (17%)**.\n",
-                "### 📊 Visual Diagram Explanation",
-                "```mermaid",
-                "flowchart LR",
-                "    ME[\"🇸🇦 Middle East / OPEC (45%)\"] --> Importers[\"🌏 Asian & European Importers\"]\n",
-                "    NA[\"🇺🇸 North America (20%)\"] --> Importers\n",
-                "    RU[\"🇷🇺 Russia & CIS (17%)\"] --> Importers\n",
-                "    AF[\"🌍 West Africa & LatAm (18%)\"] --> Importers\n",
-                "```\n",
-                "```text",
-                "┌────────────────────────────────────────────────────────┐",
-                "│ GLOBAL PETROLEUM SOURCING BASKET                       │",
-                "├────────────────────────────────────────────────────────┤",
-                "│ 1. Middle East (OPEC)      ████████████████ 45.0%      │",
-                "│ 2. North America (US/CA)   ███████          20.0%      │",
-                "│ 3. West Africa & LatAm     ██████           18.0%      │",
-                "│ 4. Russia & CIS            ██████           17.0%      │",
-                "└────────────────────────────────────────────────────────┘",
-                "```\n",
-                "#### 📌 1. Direct Answer & Executive Summary",
-                "> **GLOBAL IMPORT BASKET:** Developing Asian economies represent the largest growth engine for international crude imports, accounting for over **60% of seaborne crude trade**."
-            ]
+            # Delegate non-India specific queries to the live Deep Online Research Engine
+            from src.ai.deep_research_engine import DeepOnlineResearchEngine
+            return DeepOnlineResearchEngine.research_and_answer(question)
 
         data_records = []
         for s in sources:
@@ -2401,8 +2376,11 @@ class AIEnergyMarketAnalyst:
         ) and not any(w in q_lower for w in ["where import", "where does ... import", "who buys", "destination", "forecast"]):
             return cls._handle_sovereign_supplier_query(question)
 
-        # 4b. Check if query is about top contributors or production
-        if any(w in q_lower for w in ["contributor", "produce", "producer", "production", "largest oil", "top oil"]):
+        # 4b. Check if query is about top contributors or production of petroleum
+        if (
+            (any(w in q_lower for w in ["contributor", "producer", "production", "largest oil", "top oil"]) and any(w in q_lower for w in ["petrol", "crude", "oil", "gasoline", "petroleum"]))
+            or any(p in q_lower for p in ["largest oil", "top oil", "top crude", "who produces oil", "who produces petrol", "contributor of petrol", "contributor of oil"])
+        ) and not any(w in q_lower for w in ["lithium", "battery", "batteries", "ev", "solar", "wind", "hydrogen"]):
             return cls._handle_petroleum_contribution_query(question)
 
         # 5. Check if query is asking about location, state tax, or pump price
@@ -2682,18 +2660,9 @@ flowchart TD
                 f"(led by United States shale, Brazil, and Guyana) to defend a sustainable benchmark price corridor between $75 and $85 per barrel."
             )
         else:
-            topic_label = "Global Energy Supply Chain & Price Dynamics"
-            diagram = """```mermaid
-flowchart LR
-    Extract["🛢️ Upstream Crude Extraction (USA, Russia, Saudi)"] --> Transit["🚢 International Pipeline & Tanker Transit"]
-    Transit --> Refine["🏭 Downstream Refining (Petrol & Diesel)"]
-    Refine --> Retail["⛽ Retail Distribution & Consumer Pumps"]
-```"""
-            exec_summary = (
-                f"This analysis examines the economic fundamentals of **\"{question}\"**, grounded in our verified global energy relational database. "
-                f"Petroleum markets balance upstream crude extraction, international freight logistics, downstream refining crack margins, "
-                f"and sovereign fiscal tax policies across key consuming and producing nations."
-            )
+            # Delegate arbitrary queries to the real-time Deep Online Research Engine
+            from src.ai.deep_research_engine import DeepOnlineResearchEngine
+            return DeepOnlineResearchEngine.research_and_answer(question)
 
         lines = [
             f"### 🌐 Energy Intelligence Briefing: {topic_label}\n",

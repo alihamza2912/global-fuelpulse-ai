@@ -114,7 +114,7 @@ with btn_col4:
         preset_q = "What is the risk of a disruption in the Strait of Hormuz?"
 
 # Dual Input: Typing (with Enter to Submit) + Voice Note Recording
-tab_type, tab_voice = st.tabs(["💬 Type Question", "🎙️ Voice Note"])
+tab_type, tab_voice = st.tabs([t("ai_tab_type", current_lang), t("ai_tab_voice", current_lang)])
 with tab_type:
     with st.form(key="page9_ask_form", clear_on_submit=False, border=False):
         c_in, c_btn = st.columns([5.2, 1.3], gap="small", vertical_alignment="center")
@@ -122,16 +122,16 @@ with tab_type:
             text_q = st.text_input(
                 "Ask a market intelligence question freely:",
                 value=preset_q if preset_q else "",
-                placeholder="e.g. which India company can easily beat Saudi company? (Press Enter to search)",
+                placeholder=t("ai_input_placeholder", current_lang),
                 label_visibility="collapsed"
             )
         with c_btn:
-            ask_page9_btn = st.form_submit_button("Ask AI ⚡", use_container_width=True, type="primary")
+            ask_page9_btn = st.form_submit_button(t("ai_btn_ask", current_lang), use_container_width=True, type="primary")
 
 voice_q = None
 with tab_voice:
-    st.markdown("<div style='font-size:0.82rem; color:#94A3B8; margin-bottom:8px;'>🎙️ <b>Voice Note:</b> Record your question directly using your microphone. Our speech recognizer transcribes it automatically:</div>", unsafe_allow_html=True)
-    voice_audio = st.audio_input("Record Voice Question", key="page9_voice_recorder")
+    st.markdown(f"<div style='font-size:0.82rem; color:#94A3B8; margin-bottom:8px;'>{t('ai_voice_subtext', current_lang)}</div>", unsafe_allow_html=True)
+    voice_audio = st.audio_input(t("ai_record_voice_label", current_lang), key="page9_voice_recorder")
     if voice_audio is not None:
         import io
         import speech_recognition as sr
@@ -141,12 +141,47 @@ with tab_voice:
                 audio_data = r.record(source)
                 voice_transcribed = r.recognize_google(audio_data)
                 st.success(f"🗣️ Transcribed Voice Note: **\"{voice_transcribed}\"**")
-                if st.button("Submit Voice Question ⚡", key="page9_submit_voice", type="primary"):
+                if st.button(t("ai_btn_submit_voice", current_lang), key="page9_submit_voice", type="primary"):
                     voice_q = voice_transcribed
         except sr.UnknownValueError:
             st.info("💡 Audio captured. If speech was faint, you can type your question directly in the Type Question tab.")
         except Exception:
             st.info("💡 Audio captured. You can also type your question directly in the Type Question tab.")
+
+# ⚙️ Live Web Research & Account API Key Settings Expander
+with st.expander(t("ai_settings_expander_title", current_lang), expanded=False):
+    st.markdown(
+        f"""
+        <div style='background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 8px; padding: 10px 14px; margin-bottom: 10px; font-size: 0.82rem;'>
+            <span style='color: #34D399; font-weight: 800;'>{t('ai_deep_search_status', current_lang)}</span><br/>
+            <span style='color: #94A3B8;'>{t('ai_deep_search_desc', current_lang)}</span>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+    c_k1, c_k2 = st.columns([4.2, 1.3], vertical_alignment="bottom")
+    with c_k1:
+        existing_custom_k = st.session_state.get("user_api_key", "")
+        entered_k = st.text_input(
+            t("ai_api_key_label", current_lang),
+            value=existing_custom_k,
+            type="password",
+            placeholder=t("ai_api_key_placeholder", current_lang),
+            key="page9_api_key_input",
+            help=t("ai_api_key_help", current_lang)
+        )
+    with c_k2:
+        if st.button(t("ai_api_key_save_btn", current_lang), key="page9_save_key_btn", use_container_width=True):
+            if entered_k.strip():
+                st.session_state["user_api_key"] = entered_k.strip()
+                st.session_state["gemini_api_key"] = entered_k.strip()
+                st.success(t("ai_api_key_saved_msg", current_lang))
+                st.rerun()
+            else:
+                st.session_state.pop("user_api_key", None)
+                st.session_state.pop("gemini_api_key", None)
+                st.info(t("ai_api_key_revert_msg", current_lang))
+                st.rerun()
 
 active_q = None
 if (ask_page9_btn and text_q.strip()):

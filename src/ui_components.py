@@ -2425,6 +2425,41 @@ def _show_ai_assistant_dialog(context_page: str = "Overview"):
             except Exception:
                 st.info("💡 Audio captured. You can also type your question directly in the Type tab.")
 
+    # ⚙️ Live Web Research & Account API Key Settings Expander
+    with st.expander(t("ai_settings_expander_title", current_lang), expanded=False):
+        st.markdown(
+            f"""
+            <div style='background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 8px; padding: 10px 14px; margin-bottom: 10px; font-size: 0.82rem;'>
+                <span style='color: #34D399; font-weight: 800;'>{t('ai_deep_search_status', current_lang)}</span><br/>
+                <span style='color: #94A3B8;'>{t('ai_deep_search_desc', current_lang)}</span>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+        c_k1, c_k2 = st.columns([4.2, 1.3], vertical_alignment="bottom")
+        with c_k1:
+            existing_custom_k = st.session_state.get("user_api_key", "")
+            entered_k = st.text_input(
+                t("ai_api_key_label", current_lang),
+                value=existing_custom_k,
+                type="password",
+                placeholder=t("ai_api_key_placeholder", current_lang),
+                key=f"{pfx}_api_key_input",
+                help=t("ai_api_key_help", current_lang)
+            )
+        with c_k2:
+            if st.button(t("ai_api_key_save_btn", current_lang), key=f"{pfx}_save_key_btn", use_container_width=True):
+                if entered_k.strip():
+                    st.session_state["user_api_key"] = entered_k.strip()
+                    st.session_state["gemini_api_key"] = entered_k.strip()
+                    st.success(t("ai_api_key_saved_msg", current_lang))
+                    st.rerun()
+                else:
+                    st.session_state.pop("user_api_key", None)
+                    st.session_state.pop("gemini_api_key", None)
+                    st.info(t("ai_api_key_revert_msg", current_lang))
+                    st.rerun()
+
     active_run_q = None
     if ask_clicked and user_input.strip():
         active_run_q = user_input.strip()
