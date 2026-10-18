@@ -9,10 +9,18 @@ import sys
 from pathlib import Path
 from dotenv import load_dotenv
 
-# Ensure project root is ALWAYS in sys.path (crucial for Streamlit Cloud)
+# Ensure project root AND src directory are ALWAYS at the front of sys.path (crucial for Streamlit Cloud)
 ROOT_DIR = Path(__file__).resolve().parent
-if str(ROOT_DIR) not in sys.path:
-    sys.path.insert(0, str(ROOT_DIR))
+SRC_DIR = ROOT_DIR / "src"
+
+# Strip conflicting parent mount directories (such as /mount/src on Streamlit Cloud)
+parent_mount = ROOT_DIR.parent
+sys.path = [p for p in sys.path if Path(p).resolve() != parent_mount and Path(p).resolve() != parent_mount.parent]
+
+for d in [str(ROOT_DIR), str(SRC_DIR)]:
+    while d in sys.path:
+        sys.path.remove(d)
+    sys.path.insert(0, d)
 
 # Ensure .env is loaded using absolute path from project root
 ENV_FILE = ROOT_DIR / ".env"
@@ -24,45 +32,88 @@ import pandas as pd
 from datetime import datetime
 
 from config.settings import settings
-from src.database.connection import db_manager
-from src.database.migrations import init_database
+try:
+    from src.database.connection import db_manager
+    from src.database.migrations import init_database
+except (ImportError, ModuleNotFoundError):
+    from database.connection import db_manager
+    from database.migrations import init_database
 
-from src.ui_components import (
-    apply_theme,
-    render_command_strip,
-    render_html,
-    get_brand_logo_svg,
-    get_logo_mark_svg,
-    get_news_globe_icon_svg,
-    get_fuel_client_logo_html,
-    render_app_header_brand_html,
-    render_two_tier_nav_html,
-    get_lucide_icon_svg,
-    COLOR_AMBER,
-    COLOR_WHITE,
-    COLOR_INK,
-    COLOR_GRAY_MUTED
-)
+try:
+    from src.ui_components import (
+        apply_theme,
+        render_command_strip,
+        render_html,
+        get_brand_logo_svg,
+        get_logo_mark_svg,
+        get_news_globe_icon_svg,
+        get_fuel_client_logo_html,
+        render_app_header_brand_html,
+        render_two_tier_nav_html,
+        get_lucide_icon_svg,
+        COLOR_AMBER,
+        COLOR_WHITE,
+        COLOR_INK,
+        COLOR_GRAY_MUTED
+    )
+except (ImportError, ModuleNotFoundError):
+    from ui_components import (
+        apply_theme,
+        render_command_strip,
+        render_html,
+        get_brand_logo_svg,
+        get_logo_mark_svg,
+        get_news_globe_icon_svg,
+        get_fuel_client_logo_html,
+        render_app_header_brand_html,
+        render_two_tier_nav_html,
+        get_lucide_icon_svg,
+        COLOR_AMBER,
+        COLOR_WHITE,
+        COLOR_INK,
+        COLOR_GRAY_MUTED
+    )
 
-from src.localization.i18n import (
-    t,
-    get_current_language,
-    set_language,
-    get_available_languages,
-    get_localized_nav_map
-)
+try:
+    from src.localization.i18n import (
+        t,
+        get_current_language,
+        set_language,
+        get_available_languages,
+        get_localized_nav_map
+    )
+except (ImportError, ModuleNotFoundError):
+    from localization.i18n import (
+        t,
+        get_current_language,
+        set_language,
+        get_available_languages,
+        get_localized_nav_map
+    )
 
 # Modular Product Views
-from src.views.home import render_home_view
-from src.views.dashboard import render_dashboard_view
-from src.views.india_center import render_india_center_view
-from src.views.about import render_about_view
-from src.views.how_it_works import render_how_it_works_view
-from src.views.features import render_features_view
-from src.views.data_trust import render_data_trust_view
-from src.views.methodology import render_methodology_view
-from src.views.roadmap import render_roadmap_view
-from src.views.faq import render_faq_view
+try:
+    from src.views.home import render_home_view
+    from src.views.dashboard import render_dashboard_view
+    from src.views.india_center import render_india_center_view
+    from src.views.about import render_about_view
+    from src.views.how_it_works import render_how_it_works_view
+    from src.views.features import render_features_view
+    from src.views.data_trust import render_data_trust_view
+    from src.views.methodology import render_methodology_view
+    from src.views.roadmap import render_roadmap_view
+    from src.views.faq import render_faq_view
+except (ImportError, ModuleNotFoundError):
+    from views.home import render_home_view
+    from views.dashboard import render_dashboard_view
+    from views.india_center import render_india_center_view
+    from views.about import render_about_view
+    from views.how_it_works import render_how_it_works_view
+    from views.features import render_features_view
+    from views.data_trust import render_data_trust_view
+    from views.methodology import render_methodology_view
+    from views.roadmap import render_roadmap_view
+    from views.faq import render_faq_view
 
 
 # 1. Page Configuration

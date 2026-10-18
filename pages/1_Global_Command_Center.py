@@ -3,6 +3,21 @@ THE ENERGY ATLAS — GLOBAL COMMAND CENTER
 Signature Asymmetric Intelligence Console: World Map Anchor, Global Signal Rail & Market Movements.
 """
 
+import sys
+from pathlib import Path
+
+# Ensure project root AND src directory are in sys.path and remove conflicting parent mount
+ROOT_DIR = Path(__file__).resolve().parent.parent
+SRC_DIR = ROOT_DIR / "src"
+
+parent_mount = ROOT_DIR.parent
+sys.path = [p for p in sys.path if Path(p).resolve() != parent_mount and Path(p).resolve() != parent_mount.parent]
+
+for d in [str(ROOT_DIR), str(SRC_DIR)]:
+    while d in sys.path:
+        sys.path.remove(d)
+    sys.path.insert(0, d)
+
 import streamlit as st
 import pandas as pd
 import plotly.express as px

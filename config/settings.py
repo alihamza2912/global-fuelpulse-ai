@@ -27,7 +27,7 @@ class DatabaseSettings:
     engine_type: str = field(
         default_factory=lambda: os.getenv(
             "DB_ENGINE",
-            "sqlite" if (BASE_DIR / "fuelx_local.db").exists() and "DB_HOST" not in os.environ else "mysql"
+            "mysql" if ("DB_HOST" in os.environ and os.getenv("DB_HOST") not in ("127.0.0.1", "localhost", "")) else "sqlite"
         )
     )
     sqlite_fallback_path: Path = field(

@@ -6,13 +6,26 @@ and anti-abuse security protection.
 """
 
 import uuid
+import sys
 from pathlib import Path
 import streamlit as st
 import pandas as pd
 from dotenv import load_dotenv
 
+# Ensure project root AND src directory are in sys.path and remove conflicting parent mount
+ROOT_DIR = Path(__file__).resolve().parent.parent
+SRC_DIR = ROOT_DIR / "src"
+
+parent_mount = ROOT_DIR.parent
+sys.path = [p for p in sys.path if Path(p).resolve() != parent_mount and Path(p).resolve() != parent_mount.parent]
+
+for d in [str(ROOT_DIR), str(SRC_DIR)]:
+    while d in sys.path:
+        sys.path.remove(d)
+    sys.path.insert(0, d)
+
 # Ensure .env is loaded using absolute path from project root
-ENV_FILE = Path(__file__).resolve().parent.parent / ".env"
+ENV_FILE = ROOT_DIR / ".env"
 if ENV_FILE.exists():
     load_dotenv(dotenv_path=ENV_FILE, override=True)
 
