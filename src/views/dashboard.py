@@ -567,11 +567,11 @@ def get_cached_ch07_charts(product_demand, regional_demand):
     return fig_prod_dem, fig_reg_dem
 
 @st.cache_data(ttl=3600, show_spinner=False)
-def get_cached_ch08_chart():
+def get_cached_ch08_chart(cur_lang: str = "en"):
     """Caches sovereign revenue pie chart."""
     rev_split_df = pd.DataFrame([
-        {"Exchequer": "Central Government (Excise)", "Amount_Lakh_Cr": 2.81, "Share_Pct": 58.3},
-        {"Exchequer": "State Governments (VAT/Cess)", "Amount_Lakh_Cr": 2.01, "Share_Pct": 41.7}
+        {"Exchequer": t("ch08_central_gov", cur_lang), "Amount_Lakh_Cr": 2.81, "Share_Pct": 58.3},
+        {"Exchequer": t("ch08_state_gov", cur_lang), "Amount_Lakh_Cr": 2.01, "Share_Pct": 41.7}
     ])
     fig_rev_pie = px.pie(
         rev_split_df,
@@ -1504,18 +1504,34 @@ def render_dashboard_view(navigate_fn=None):
     dem_c1, dem_c2 = st.columns([7, 5])
 
     with dem_c1:
-        st.markdown("#### ⛽ Consumption by Petroleum Commodity (National Total ~233 MMT)")
+        st.markdown(f"#### {t('dash_ch07_chart1_title', cur_lang)}")
         st.plotly_chart(fig_prod_dem, width="stretch", theme=None)
 
     with dem_c2:
-        st.markdown("#### 🧭 Geographic Demand Distribution")
+        st.markdown(f"#### {t('dash_ch07_chart2_title', cur_lang)}")
         st.plotly_chart(fig_reg_dem, width="stretch", theme=None)
 
-    st.dataframe(regional_demand[["region", "consumption_share_pct", "consumption_mmt", "demand_driver"]].rename(columns={
-        "region": "Geographic Zone",
-        "consumption_share_pct": "National Share %",
-        "consumption_mmt": "Volume (MMT)",
-        "demand_driver": "Key Industrial & Economic Drivers"
+    reg_df = regional_demand[["region", "consumption_share_pct", "consumption_mmt", "demand_driver"]].copy()
+    region_map = {
+        "Northern Region": t("region_north", cur_lang),
+        "Western Region": t("region_west", cur_lang),
+        "Southern Region": t("region_south", cur_lang),
+        "Eastern Region": t("region_east", cur_lang)
+    }
+    driver_map = {
+        "Extensive agricultural irrigation diesel, cross-Himalayan transit corridors, heavy winter thermal heating oil": t("driver_north", cur_lang),
+        "Major petrochemical hubs (Gujarat/Maharashtra), industrial freight corridors, high-density vehicular penetration": t("driver_west", cur_lang),
+        "IT service corridors, manufacturing industrial clusters, coastal fisheries marine diesel, agricultural power": t("driver_south", cur_lang),
+        "Mining heavy equipment freight, coal transportation corridors, steel manufacturing, riverine/inland road transit": t("driver_east", cur_lang)
+    }
+    reg_df["region"] = reg_df["region"].map(lambda r: region_map.get(r, r))
+    reg_df["demand_driver"] = reg_df["demand_driver"].map(lambda d: driver_map.get(d, d))
+
+    st.dataframe(reg_df.rename(columns={
+        "region": t("geo_zone", cur_lang),
+        "consumption_share_pct": t("nat_share_pct", cur_lang),
+        "consumption_mmt": t("vol_mmt", cur_lang),
+        "demand_driver": t("key_econ_drivers", cur_lang)
     }), width="stretch", hide_index=True)
 
 
@@ -1538,22 +1554,22 @@ def render_dashboard_view(navigate_fn=None):
         render_html(
             f"""
             <div style="background: rgba(14, 21, 38, 0.75); backdrop-filter: blur(14px); border: 1px solid rgba(255, 255, 255, 0.12); box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4); border-radius: 8px; padding: 22px 24px; height: 100%;">
-                <div style="font-size: 0.82rem; font-weight: 800; text-transform: uppercase; color: #94A3B8; margin-bottom: 6px;">SOVEREIGN PETROLEUM FISCAL REVENUE</div>
+                <div style="font-size: 0.82rem; font-weight: 800; text-transform: uppercase; color: #94A3B8; margin-bottom: 6px;">{t('sovereign_fiscal_title', cur_lang)}</div>
                 <div style="font-size: 2.2rem; font-weight: 800; color: #F9FAFB; line-height: 1.1;">₹4.82 Lakh Cr</div>
-                <div style="font-size: 0.85rem; color: #94A3B8; margin-top: 6px; margin-bottom: 16px;">Total Contribution to Central and State Exchequers (FY2023–24)</div>
+                <div style="font-size: 0.85rem; color: #94A3B8; margin-top: 6px; margin-bottom: 16px;">{t('sovereign_fiscal_sub', cur_lang)}</div>
 
                 <div style="border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 12px; font-size: 0.85rem; line-height: 1.6; color: #E2E8F0;">
-                    • <b>Central Exchequer:</b> ~₹2.81 Lakh Crore via Specific Central Excise Duty on Petrol & Diesel.<br>
-                    • <b>State Exchequers:</b> ~₹2.01 Lakh Crore via State VAT, Sales Tax, and Local Cess.<br>
-                    • <b>Non-GST Treatment:</b> Petrol, Diesel, and Crude Oil remain outside GST, preserving fiscal autonomy for Indian states.
+                    {t('sovereign_fiscal_b1', cur_lang)}<br>
+                    {t('sovereign_fiscal_b2', cur_lang)}<br>
+                    {t('sovereign_fiscal_b3', cur_lang)}
                 </div>
             </div>
             """
         )
 
     with rev_c2:
-        st.markdown("#### 🏛️ Central vs. State Petroleum Revenue Composition")
-        fig_rev_pie = get_cached_ch08_chart()
+        st.markdown(f"#### {t('ch08_chart_title', cur_lang)}")
+        fig_rev_pie = get_cached_ch08_chart(cur_lang)
         st.plotly_chart(fig_rev_pie, width="stretch", theme=None)
 
 
@@ -1576,11 +1592,11 @@ def render_dashboard_view(navigate_fn=None):
         aff_c1, aff_c2 = st.columns([6, 6])
         fig_aff_bar, fig_scatter = get_cached_ch09_charts(afford_df)
         with aff_c1:
-            st.markdown("#### ⚖️ % of Daily Income Spent per Litre of Petrol")
+            st.markdown(f"#### {t('ch09_chart1_title', cur_lang)}")
             st.plotly_chart(fig_aff_bar, width="stretch", theme=None)
 
         with aff_c2:
-            st.markdown("#### 🔍 Nominal GDP per Capita vs. Fuel Burden (Log Scale)")
+            st.markdown(f"#### {t('ch09_chart2_title', cur_lang)}")
             st.plotly_chart(fig_scatter, width="stretch", theme=None)
 
 
@@ -1597,14 +1613,14 @@ def render_dashboard_view(navigate_fn=None):
         action_label=t("explore_drilldown", cur_lang)
     )
 
-    tab_fc_view, tab_sim_view = st.tabs(["📈 ML Time-Series Forecasts", "⚡ Interactive Sensitivity Sandbox"])
+    tab_fc_view, tab_sim_view = st.tabs([t("tab_ml_forecasts", cur_lang), t("tab_sensitivity_sandbox", cur_lang)])
 
     with tab_fc_view:
         fc_c1, fc_c2 = st.columns([4, 8])
         with fc_c1:
-            st.markdown("#### Model Selection")
+            st.markdown(f"#### {t('ml_model_selection', cur_lang)}")
             fc_country = st.selectbox(
-                "Forecast Economy",
+                t("ml_forecast_economy", cur_lang),
                 ["USA", "IND", "DEU", "FRA", "GBR", "SAU"],
                 index=1,
                 format_func=lambda x: {
@@ -1617,33 +1633,36 @@ def render_dashboard_view(navigate_fn=None):
                 }.get(x, x)
             )
             fc_fuel = st.selectbox(
-                "Product",
+                t("ml_product", cur_lang),
                 ["petrol_regular", "diesel"],
                 index=0,
                 format_func=lambda x: "Petrol (Regular)" if x == "petrol_regular" else "Diesel"
             )
             fc_results = get_cached_forecast_data(country_iso3=fc_country, fuel_type=fc_fuel, horizon_weeks=4)
 
-            val_status = "SUPERIOR TO NAIVE" if fc_results.get("model_beats_baseline", True) else "BASELINE PARITY"
+            val_status = t("ml_superior_naive", cur_lang) if fc_results.get("model_beats_baseline", True) else t("ml_baseline_parity", cur_lang)
+            baseline_sub = t("ml_baseline_mae_sub", cur_lang, baseline_mae=fc_results.get('baseline_mae', 0.0))
             render_instrument_card(
-                "Test Set MAE",
+                t("ml_test_set_mae", cur_lang),
                 f"${fc_results['mae']:.4f}/L",
                 accent="teal",
-                subtext=f"Baseline MAE: ${fc_results.get('baseline_mae', 0.0):.4f}/L"
+                subtext=baseline_sub
             )
+            trained_sub = t("ml_trained_sub", cur_lang, train_window=fc_results.get('train_window', '2024–2026'))
             render_instrument_card(
-                "Model Validation",
+                t("ml_model_validation", cur_lang),
                 val_status,
                 accent="green" if fc_results.get("model_beats_baseline", True) else "amber",
-                subtext=f"Trained: {fc_results.get('train_window', '2024–2026')}"
+                subtext=trained_sub
             )
             imp_val = fc_results.get("improvement_pct", 0.0)
             imp_sign = "+" if imp_val > 0 else ""
+            tested_sub = t("ml_tested_sub", cur_lang, test_window=fc_results.get('test_window', 'Holdout'))
             render_instrument_card(
-                "Holdout Accuracy Delta",
+                t("ml_holdout_delta", cur_lang),
                 f"{imp_sign}{imp_val:.1f}%",
                 accent="green" if imp_val >= 0 else "amber",
-                subtext=f"Tested: {fc_results.get('test_window', 'Holdout')}"
+                subtext=tested_sub
             )
 
         with fc_c2:
@@ -1652,7 +1671,8 @@ def render_dashboard_view(navigate_fn=None):
                 "FRA": "France", "GBR": "United Kingdom", "SAU": "Saudi Arabia"
             }.get(fc_country, fc_country)
             product_display = "Petrol (Regular)" if fc_fuel == "petrol_regular" else "Diesel"
-            st.markdown(f"#### 📈 Price Projection Trajectory: {country_display} ({product_display})")
+            chart_header = t("ml_chart_title", cur_lang, country=country_display, product=product_display)
+            st.markdown(f"#### {chart_header}")
             hist_dates = fc_results.get("historical_dates", [])
             hist_prices = fc_results.get("historical_prices", [])
             forecasts = fc_results.get("forecasts", [])
@@ -1660,7 +1680,7 @@ def render_dashboard_view(navigate_fn=None):
             fig_fc = go.Figure()
             if hist_dates and hist_prices:
                 fig_fc.add_trace(go.Scatter(
-                    x=hist_dates, y=hist_prices, mode="lines+markers", name="Historical Actual",
+                    x=hist_dates, y=hist_prices, mode="lines+markers", name=t("ml_trace_hist", cur_lang),
                     line=dict(color=COLOR_INK, width=2.5), marker=dict(size=7, color=COLOR_INK)
                 ))
             if forecasts:
@@ -1674,17 +1694,17 @@ def render_dashboard_view(navigate_fn=None):
                 ))
                 fig_fc.add_trace(go.Scatter(
                     x=fc_dates, y=fc_lower, mode="lines", line=dict(width=0), fill="tonexty",
-                    fillcolor="rgba(245, 185, 66, 0.25)", name="95% Confidence Envelope"
+                    fillcolor="rgba(245, 185, 66, 0.25)", name=t("ml_trace_conf", cur_lang)
                 ))
                 fig_fc.add_trace(go.Scatter(
-                    x=fc_dates, y=fc_preds, mode="lines+markers", name="Projected Trajectory",
+                    x=fc_dates, y=fc_preds, mode="lines+markers", name=t("ml_trace_proj", cur_lang),
                     line=dict(color=COLOR_AMBER, width=2.5, dash="dash"), marker=dict(size=8, symbol="diamond", color=COLOR_AMBER, line=dict(color=COLOR_INK, width=1.5))
                 ))
             apply_clean_layout(
                 fig_fc,
                 height=460,
-                xaxis_title="Observation Timeline",
-                yaxis_title="Price (USD / Litre)",
+                xaxis_title=t("ml_xaxis_timeline", cur_lang),
+                yaxis_title=t("ml_yaxis_price", cur_lang),
                 legend_below=True
             )
             st.plotly_chart(fig_fc, width="stretch", theme=None)

@@ -79,11 +79,11 @@ def render_methodology_view(navigate_fn=None):
     HHI = \sum_{i=1}^N \left( s_i \right)^2 \quad \text{where} \quad s_i = \left( \frac{\text{Import Volume}_i}{\sum_{j=1}^N \text{Import Volume}_j} \right) \times 100\%
     """)
 
-    render_html("""
+    render_html(f"""
     <div style="background: rgba(14, 21, 38, 0.5); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 6px; padding: 12px 16px; margin-bottom: 20px; font-family: 'Space Grotesk', sans-serif; font-size: 0.8rem; color: #F9FAFB;">
-        <div>• <b>HHI &lt; 1,500:</b> Diversified Energy Supply (Resilient)</div>
-        <div>• <b>1,500 &le; HHI &le; 2,500:</b> Moderately Concentrated Supply (Guarded)</div>
-        <div>• <b>HHI &gt; 2,500:</b> Highly Concentrated Supply (Elevated Embargo / Geopolitical Risk)</div>
+        <div>{t('meth_hhi_resilient', cur_lang)}</div>
+        <div>{t('meth_hhi_guarded', cur_lang)}</div>
+        <div>{t('meth_hhi_elevated', cur_lang)}</div>
     </div>
     """)
 
@@ -111,9 +111,9 @@ def render_methodology_view(navigate_fn=None):
     st.write("")
 
     # 4. Macroeconomic Shock Simulator Elasticity Model
-    st.markdown("""
+    st.markdown(f"""
     <div style="font-family: 'Space Grotesk', sans-serif; font-size: 1.25rem; font-weight: 800; color: #F9FAFB; margin-bottom: 8px;">
-        4. FUEL SHOCK SIMULATION & PASS-THROUGH ELASTICITY
+        {t('meth_sec4_shock_title', cur_lang)}
     </div>
     """, unsafe_allow_html=True)
 
@@ -143,7 +143,7 @@ def render_methodology_view(navigate_fn=None):
     # 5. Forecast Error Evaluation Metrics
     st.markdown(f"""
     <div style="font-family: 'Space Grotesk', sans-serif; font-size: 1.25rem; font-weight: 800; color: #F9FAFB; margin-bottom: 8px;">
-        {t('meth_sec4_title', cur_lang)}
+        {t('meth_sec5_error_title', cur_lang)}
     </div>
     """, unsafe_allow_html=True)
 

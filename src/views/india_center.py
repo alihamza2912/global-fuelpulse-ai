@@ -199,7 +199,7 @@ def render_india_center_view(navigate_fn=None):
         <div style="background: rgba(14, 21, 38, 0.7); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 8px; padding: 14px 16px; height: 100%;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
                 <div style="font-family: 'Space Grotesk', sans-serif; font-size: 0.85rem; font-weight: 800; color: #F5B942;">
-                    METRO RETAIL PRICE SUMMARY (OCT 2026 LIVE BENCHMARKS)
+                    {t('india_metro_summary_title', cur_lang)}
                 </div>
                 <span style="font-size: 0.68rem; color: #10B981; font-weight: 700; background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 4px; padding: 2px 6px;">
                     LIVE MARKET VERIFIED
@@ -208,10 +208,10 @@ def render_india_center_view(navigate_fn=None):
             <table style="width: 100%; border-collapse: collapse; font-family: 'Space Grotesk', sans-serif; font-size: 0.82rem; color: #F9FAFB;">
                 <thead>
                     <tr style="border-bottom: 1px solid rgba(255, 255, 255, 0.15); text-align: left; color: #94A3B8;">
-                        <th style="padding: 6px 4px;">City</th>
-                        <th style="padding: 6px 4px;">Petrol (₹)</th>
-                        <th style="padding: 6px 4px;">Diesel (₹)</th>
-                        <th style="padding: 6px 4px;">Spread</th>
+                        <th style="padding: 6px 4px;">{t('india_th_city', cur_lang)}</th>
+                        <th style="padding: 6px 4px;">{t('india_th_petrol', cur_lang)}</th>
+                        <th style="padding: 6px 4px;">{t('india_th_diesel', cur_lang)}</th>
+                        <th style="padding: 6px 4px;">{t('india_th_spread', cur_lang)}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -219,8 +219,8 @@ def render_india_center_view(navigate_fn=None):
                 </tbody>
             </table>
             <div style="font-family: 'Inter', sans-serif; font-size: 0.73rem; color: #94A3B8; margin-top: 10px; line-height: 1.45;">
-                • All major metro retail petrol rates reflect active live market benchmarks above ₹100/Litre.<br/>
-                • Source: Petroleum Planning & Analysis Cell (PPAC), MoPNG daily series.
+                • {t('india_metro_note1', cur_lang)}<br/>
+                • {t('india_metro_note2', cur_lang)}
             </div>
         </div>
         """)
@@ -267,32 +267,33 @@ def render_india_center_view(navigate_fn=None):
             "Ladakh (Leh)"
         ]
         sel_metro = st.selectbox(
-            "Select State or Metro Center",
+            t('india_sel_state', cur_lang),
             state_options,
             key="india_center_metro_select"
         )
+        fuel_choices = [t('india_fuel_petrol', cur_lang), t('india_fuel_diesel', cur_lang)]
         sel_fuel = st.radio(
-            "Select Fuel Product",
-            ["Petrol (Regular)", "Automotive Diesel"],
+            t('india_sel_fuel', cur_lang),
+            fuel_choices,
             horizontal=True,
             key="india_center_fuel_select"
         )
 
-        render_html("""
+        render_html(f"""
         <div style="background: rgba(14, 21, 38, 0.6); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 6px; padding: 12px; font-size: 0.78rem; line-height: 1.5; color: #94A3B8; margin-top: 10px;">
-            <b>FORMULA BREAKDOWN:</b><br/>
-            1. Refinery Transfer Price (RTP)<br/>
-            2. + Inland Freight & Depot Handling<br/>
-            3. + Central Excise Duty (Govt of India)<br/>
-            4. + Dealer Commission (Fixed OMC rate)<br/>
-            5. + State VAT (Ad-Valorem + Surcharge)<br/>
-            = <b>Retail Selling Price (RSP)</b>
+            <b>{t('india_formula_title', cur_lang)}</b><br/>
+            1. {t('india_formula_s1', cur_lang)}<br/>
+            2. + {t('india_formula_s2', cur_lang)}<br/>
+            3. + {t('india_formula_s3', cur_lang)}<br/>
+            4. + {t('india_formula_s4', cur_lang)}<br/>
+            5. + {t('india_formula_s5', cur_lang)}<br/>
+            = <b>{t('india_formula_rsp', cur_lang)}</b>
         </div>
         """)
 
     with wf_col2:
         # Dynamically resolved via GlobalTaxEngine (all petrol rates strictly > ₹100/L)
-        is_petrol = (sel_fuel == "Petrol (Regular)")
+        is_petrol = (sel_fuel == t('india_fuel_petrol', cur_lang) or sel_fuel == "Petrol (Regular)")
         query_key = sel_metro.split("(")[0].strip()
         tax_res = GlobalTaxEngine.resolve_query(query_key) or GlobalTaxEngine.resolve_query("Delhi")
 
@@ -315,7 +316,14 @@ def render_india_center_view(navigate_fn=None):
             name="Build-Up",
             orientation="v",
             measure=["relative", "relative", "relative", "relative", "relative", "total"],
-            x=["Refinery Cost", "Freight & Depot", "Central Excise", "Dealer Commission", "State VAT", "Pump Price (RSP)"],
+            x=[
+                t("wf_bar_refinery", cur_lang),
+                t("wf_bar_freight", cur_lang),
+                t("wf_bar_excise", cur_lang),
+                t("wf_bar_dealer", cur_lang),
+                t("wf_bar_vat", cur_lang),
+                t("wf_bar_rsp", cur_lang),
+            ],
             textposition="outside",
             text=[f"₹{base_price:.2f}", f"₹{freight:.2f}", f"₹{excise:.2f}", f"₹{commission:.2f}", f"₹{vat:.2f}", f"₹{total:.2f}"],
             y=[base_price, freight, excise, commission, vat, 0],
@@ -327,7 +335,7 @@ def render_india_center_view(navigate_fn=None):
         apply_clean_layout(
             fig_wf,
             height=340,
-            yaxis_title="Price (₹ / Litre)",
+            yaxis_title=t("wf_yaxis_title", cur_lang),
             margin_b=60
         )
         st.plotly_chart(fig_wf, use_container_width=True, key="fig_india_center_waterfall")
@@ -337,11 +345,12 @@ def render_india_center_view(navigate_fn=None):
         state_pct_pump = tax_res.get('state_tax_share_pump_pct', 18.0)
         tot_tax_pct = tax_res.get('total_tax_share_pump_pct', 38.0)
         statute = tax_res.get('statutory_note', '')
+        tax_header = t("india_tax_bite_header", cur_lang, state=tax_res['state_name'].upper())
+        tax_body = t("india_tax_bite_body", cur_lang, vat=vat, state_pct_pump=state_pct_pump, state_pct_base=state_pct_base, tot_tax_pct=tot_tax_pct, statute=statute)
         render_html(f"""
         <div style="background: rgba(14, 21, 38, 0.8); border-left: 3px solid #F5B942; border-radius: 4px; padding: 10px 14px; font-size: 0.77rem; color: #CBD5E1; margin-top: 6px;">
-            <b style="color: #F5B942;">STATE TAX BITE FOR {tax_res['state_name'].upper()}:</b> 
-            State VAT is <b>₹{vat:.2f}/L</b> (<b>{state_pct_pump}%</b> of pump price, taking <b>+{state_pct_base}%</b> over base refinery cost). 
-            Combined Central + State tax wedge is <b>{tot_tax_pct}%</b> of pump price. <span style="color: #94A3B8;">({statute})</span>
+            <b style="color: #F5B942;">{tax_header}</b> 
+            {tax_body}
         </div>
         """)
 
@@ -357,52 +366,52 @@ def render_india_center_view(navigate_fn=None):
     omc_col1, omc_col2 = st.columns([1, 1], gap="medium")
 
     with omc_col1:
-        render_html("""
+        render_html(f"""
         <div style="background: rgba(14, 21, 38, 0.7); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 8px; padding: 20px; height: 100%;">
             <div style="font-family: 'Space Grotesk', sans-serif; font-size: 0.85rem; font-weight: 800; color: #F5B942; margin-bottom: 8px;">
-                PUBLIC SECTOR UNDERTAKINGS (PSU OMCS)
+                {t('india_psu_title', cur_lang)}
             </div>
             <p style="font-family: 'Inter', sans-serif; font-size: 0.86rem; color: #94A3B8; line-height: 1.55; margin-bottom: 14px;">
-                State-controlled OMCs account for over <b>89%</b> of retail fuel dispensing across India. Under Ministry guidance, PSU OMCs adhere to uniform pricing within each municipal territory.
+                {t('india_psu_desc', cur_lang)}
             </p>
             <div style="display: flex; flex-direction: column; gap: 10px; font-family: 'Space Grotesk', sans-serif; font-size: 0.82rem;">
                 <div style="display: flex; justify-content: space-between; padding: 8px 12px; background: rgba(7, 10, 18, 0.5); border-radius: 6px;">
                     <span style="font-weight: 700; color: #F9FAFB;">Indian Oil Corporation (IOCL)</span>
-                    <span style="color: #F5B942; font-weight: 800;">42.2% Market Share (36,500+ Outlets)</span>
+                    <span style="color: #F5B942; font-weight: 800;">{t('india_iocl_share', cur_lang)}</span>
                 </div>
                 <div style="display: flex; justify-content: space-between; padding: 8px 12px; background: rgba(7, 10, 18, 0.5); border-radius: 6px;">
                     <span style="font-weight: 700; color: #F9FAFB;">Bharat Petroleum (BPCL)</span>
-                    <span style="color: #60A5FA; font-weight: 800;">26.1% Market Share (21,200+ Outlets)</span>
+                    <span style="color: #60A5FA; font-weight: 800;">{t('india_bpcl_share', cur_lang)}</span>
                 </div>
                 <div style="display: flex; justify-content: space-between; padding: 8px 12px; background: rgba(7, 10, 18, 0.5); border-radius: 6px;">
                     <span style="font-weight: 700; color: #F9FAFB;">Hindustan Petroleum (HPCL)</span>
-                    <span style="color: #34D399; font-weight: 800;">21.0% Market Share (20,800+ Outlets)</span>
+                    <span style="color: #34D399; font-weight: 800;">{t('india_hpcl_share', cur_lang)}</span>
                 </div>
             </div>
         </div>
         """)
 
     with omc_col2:
-        render_html("""
+        render_html(f"""
         <div style="background: rgba(14, 21, 38, 0.7); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 8px; padding: 20px; height: 100%;">
             <div style="font-family: 'Space Grotesk', sans-serif; font-size: 0.85rem; font-weight: 800; color: #60A5FA; margin-bottom: 8px;">
-                PRIVATE RETAILERS & PRICING FREEDOM
+                {t('india_pvt_title', cur_lang)}
             </div>
             <p style="font-family: 'Inter', sans-serif; font-size: 0.86rem; color: #94A3B8; line-height: 1.55; margin-bottom: 14px;">
-                Private fuel retailers command ~<b>10.7%</b> of retail pumps nationwide, operating predominantly on national highway corridors and industrial freight arteries.
+                {t('india_pvt_desc', cur_lang)}
             </p>
             <div style="display: flex; flex-direction: column; gap: 10px; font-family: 'Space Grotesk', sans-serif; font-size: 0.82rem;">
                 <div style="display: flex; justify-content: space-between; padding: 8px 12px; background: rgba(7, 10, 18, 0.5); border-radius: 6px;">
                     <span style="font-weight: 700; color: #F9FAFB;">Nayara Energy (Vadinar Refinery)</span>
-                    <span style="color: #94A3B8; font-weight: 700;">6,600+ Outlets (OMC Parity ± ₹0.50)</span>
+                    <span style="color: #94A3B8; font-weight: 700;">{t('india_nayara_share', cur_lang)}</span>
                 </div>
                 <div style="display: flex; justify-content: space-between; padding: 8px 12px; background: rgba(7, 10, 18, 0.5); border-radius: 6px;">
                     <span style="font-weight: 700; color: #F9FAFB;">Reliance BP Mobility (Jio-bp)</span>
-                    <span style="color: #94A3B8; font-weight: 700;">1,800+ Outlets (Active Additive Blends)</span>
+                    <span style="color: #94A3B8; font-weight: 700;">{t('india_jio_share', cur_lang)}</span>
                 </div>
                 <div style="display: flex; justify-content: space-between; padding: 8px 12px; background: rgba(7, 10, 18, 0.5); border-radius: 6px;">
                     <span style="font-weight: 700; color: #F9FAFB;">Shell India</span>
-                    <span style="color: #94A3B8; font-weight: 700;">360+ Outlets (Premium Differentiated)</span>
+                    <span style="color: #94A3B8; font-weight: 700;">{t('india_shell_share', cur_lang)}</span>
                 </div>
             </div>
         </div>
@@ -411,11 +420,11 @@ def render_india_center_view(navigate_fn=None):
     st.write("")
 
     # 6. Honest Scope & Coverage Limitations
-    render_html("""
+    render_html(f"""
     <div style="background: rgba(14, 21, 38, 0.6); border: 1px dashed rgba(255, 255, 255, 0.15); border-radius: 8px; padding: 18px 22px; font-family: 'Inter', sans-serif; font-size: 0.82rem; color: #94A3B8; line-height: 1.6;">
-        <b style="color: #F9FAFB; font-family: 'Space Grotesk', sans-serif;">🇮🇳 VERIFIED GEOGRAPHIC SCOPE & LIMITATIONS:</b><br/>
-        1. <b>Metro Daily Feeds:</b> Delhi, Mumbai, Kolkata, and Chennai daily prices are ingested directly from official PPAC series.<br/>
-        2. <b>Tier-2/3 District Prices:</b> While state VAT is uniform within state boundaries, retail pump prices in inland districts reflect additional freight surcharges based on distance from the nearest bulk oil depot (railhead/pipeline terminal).<br/>
-        3. <b>Private Retailer Differentials:</b> Private outlets (Jio-bp, Nayara, Shell) maintain pricing autonomy. In metropolitan hubs, they frequently price at parity with PSU OMCs, while on highways they may apply slight discounts or premium fuel surcharges.
+        <b style="color: #F9FAFB; font-family: 'Space Grotesk', sans-serif;">{t('india_geo_scope_title', cur_lang)}</b><br/>
+        1. {t('india_geo_scope_b1', cur_lang)}<br/>
+        2. {t('india_geo_scope_b2', cur_lang)}<br/>
+        3. {t('india_geo_scope_b3', cur_lang)}
     </div>
     """)

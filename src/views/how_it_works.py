@@ -45,18 +45,18 @@ def render_how_it_works_view(navigate_fn=None):
     """, unsafe_allow_html=True)
 
     stages = [
-        ("01", "INGESTION & CONNECTOR POOL", "#F5B942",
-         "Automated ETL connectors poll registered APIs and published bulletins: US EIA (crude spot benchmarks, inventory stocks), India PPAC (metro pump prices, Indian Crude Basket), European Commission Oil Bulletin (weekly EU member prices), and Open Exchange Rates (live daily FX conversions)."),
-        ("02", "SCHEMA VALIDATION & ISOLATION", "#60A5FA",
-         "Strict domain integrity checks enforce boundary constraints (e.g. retail price between $0.10 and $4.50/L, non-negative refinery volumes, valid ISO-3 country codes). Anomalous or corrupted records are isolated into a quarantine log rather than polluting reporting tables."),
-        ("03", "RELATIONAL MODELING & STORAGE", "#34D399",
-         "Data is stored in high-performance relational tables adhering to star schema principles: dimension tables (`dim_country`, `dim_location`, `data_sources`) and partitioned fact tables (`fuel_prices`, `fact_energy_indicator`, `petroleum_trade_flows`, `etl_run_log`). Supports both embedded SQLite and enterprise MySQL."),
-        ("04", "ANALYTICAL & ML COMPUTATION", "#F472B6",
-         "Vectorized analytical engines calculate real-time indicators: the Herfindahl-Hirschman Index (HHI) for maritime chokepoints, currency pass-through regressions, affordability burdens against GDP per capita, and multi-horizon SARIMAX / XGBoost retail price forecasts."),
-        ("05", "MULTI-TIER CACHING HIERARCHY", "#A78BFA",
-         "A tiered caching engine with automatic TTL invalidation guarantees sub-50ms user responsiveness. Heavy TopoJSON geographic scatter layers, SQL aggregates, and ML model instances are kept warm in memory, preventing redundant recomputations on UI reruns."),
-        ("06", "PRESENTATION & EXPORT INTERFACES", "#F87171",
-         "Visual rendering is handled via Streamlit 1.40+ and Plotly, styled in an Editorial Dark design language. Interactive controls support instant drill-downs, CSV data exports, and direct integration with corporate Power BI reporting pipelines.")
+        ("01", t("how_stage_01_title", cur_lang), "#F5B942",
+         t("how_stage_01_desc", cur_lang)),
+        ("02", t("how_stage_02_title", cur_lang), "#60A5FA",
+         t("how_stage_02_desc", cur_lang)),
+        ("03", t("how_stage_03_title", cur_lang), "#34D399",
+         t("how_stage_03_desc", cur_lang)),
+        ("04", t("how_stage_04_title", cur_lang), "#F472B6",
+         t("how_stage_04_desc", cur_lang)),
+        ("05", t("how_stage_05_title", cur_lang), "#A78BFA",
+         t("how_stage_05_desc", cur_lang)),
+        ("06", t("how_stage_06_title", cur_lang), "#F87171",
+         t("how_stage_06_desc", cur_lang))
     ]
 
     for num, title, color, desc in stages:
@@ -85,9 +85,9 @@ def render_how_it_works_view(navigate_fn=None):
     c1, c2, c3 = st.columns(3)
 
     with c1:
-        render_html("""
+        render_html(f"""
         <div style="background: rgba(14, 21, 38, 0.65); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; padding: 16px; height: 100%;">
-            <div style="font-family: 'Space Grotesk', sans-serif; font-size: 0.78rem; font-weight: 800; color: #F5B942; margin-bottom: 6px;">CORE & DATABASE</div>
+            <div style="font-family: 'Space Grotesk', sans-serif; font-size: 0.78rem; font-weight: 800; color: #F5B942; margin-bottom: 6px;">{t('how_tech_core_title', cur_lang)}</div>
             <ul style="font-family: 'Inter', sans-serif; font-size: 0.83rem; line-height: 1.6; color: #94A3B8; margin: 0; padding-left: 18px;">
                 <li><b style="color: #F9FAFB;">Python 3.12+</b> (Async & Typing)</li>
                 <li><b style="color: #F9FAFB;">SQLAlchemy 2.0</b> (Unified ORM)</li>
@@ -98,9 +98,9 @@ def render_how_it_works_view(navigate_fn=None):
         """)
 
     with c2:
-        render_html("""
+        render_html(f"""
         <div style="background: rgba(14, 21, 38, 0.65); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; padding: 16px; height: 100%;">
-            <div style="font-family: 'Space Grotesk', sans-serif; font-size: 0.78rem; font-weight: 800; color: #60A5FA; margin-bottom: 6px;">ANALYTICS & ML</div>
+            <div style="font-family: 'Space Grotesk', sans-serif; font-size: 0.78rem; font-weight: 800; color: #60A5FA; margin-bottom: 6px;">{t('how_tech_analytics_title', cur_lang)}</div>
             <ul style="font-family: 'Inter', sans-serif; font-size: 0.83rem; line-height: 1.6; color: #94A3B8; margin: 0; padding-left: 18px;">
                 <li><b style="color: #F9FAFB;">Statsmodels</b> (SARIMAX Time-Series)</li>
                 <li><b style="color: #F9FAFB;">Scikit-learn & XGBoost</b> (Regression)</li>
@@ -111,9 +111,9 @@ def render_how_it_works_view(navigate_fn=None):
         """)
 
     with c3:
-        render_html("""
+        render_html(f"""
         <div style="background: rgba(14, 21, 38, 0.65); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; padding: 16px; height: 100%;">
-            <div style="font-family: 'Space Grotesk', sans-serif; font-size: 0.78rem; font-weight: 800; color: #34D399; margin-bottom: 6px;">FRONTEND & TESTING</div>
+            <div style="font-family: 'Space Grotesk', sans-serif; font-size: 0.78rem; font-weight: 800; color: #34D399; margin-bottom: 6px;">{t('how_tech_frontend_title', cur_lang)}</div>
             <ul style="font-family: 'Inter', sans-serif; font-size: 0.83rem; line-height: 1.6; color: #94A3B8; margin: 0; padding-left: 18px;">
                 <li><b style="color: #F9FAFB;">Streamlit 1.40+</b> (Websocket Compr.)</li>
                 <li><b style="color: #F9FAFB;">Plotly 5.24</b> (GPU WebGL Graphics)</li>
