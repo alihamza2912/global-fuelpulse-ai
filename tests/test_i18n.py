@@ -157,3 +157,59 @@ def test_expanded_9_languages_translations():
             assert val != t(k, "en"), f"Key {k} in {code} fell back to English"
 
 
+def test_top_header_and_navigation_translations():
+    """Verifies that universal top header buttons and two-tier nav headers/badges are fully localized."""
+    new_keys = [
+        "top_btn_ai", "top_btn_lang", "top_btn_news",
+        "nav_core_modules", "nav_tech_dossiers",
+        "badge_live", "badge_12_mod", "badge_docs"
+    ]
+    for lang in SUPPORTED_LANGUAGES:
+        for k in new_keys:
+            val = t(k, lang, rem=3, flag="🌐", count=12)
+            assert val != k, f"Key {k} missing for {lang}"
+            assert len(val) > 0
+
+    # Specific checks
+    assert "एआई" in t("top_btn_ai", "hi", rem=3)
+    assert "भाषा" in t("top_btn_lang", "hi", flag="🌐")
+    assert "समाचार" in t("top_btn_news", "hi", count=12)
+    assert t("nav_core_modules", "hi") == "मुख्य मॉड्यूल"
+    assert t("nav_tech_dossiers", "hi") == "तकनीकी डोजियर एवं दस्तावेज"
+    assert t("badge_live", "hi") == "लाइव"
+    assert t("badge_12_mod", "hi") == "12 मॉड्यूल"
+    assert t("badge_docs", "hi") == "दस्तावेज"
+
+    # Spanish checks
+    assert "IA" in t("top_btn_ai", "es", rem=3)
+    assert "Idioma" in t("top_btn_lang", "es", flag="🌐")
+    assert "Noticias" in t("top_btn_news", "es", count=12)
+    assert t("nav_core_modules", "es") == "MÓDULOS PRINCIPALES"
+    assert t("badge_live", "es") == "En vivo"
+
+
+def test_language_selection_persistence_override():
+    """Ensures that explicit user language choice persists and is never clobbered by stale query params."""
+    import streamlit as st
+    st.session_state.clear()
+    
+    # 1. User selects Hindi
+    set_language("hi")
+    assert st.session_state.get("_user_selected_lang") == "hi"
+    assert get_current_language() == "hi"
+
+    # 2. Simulate stale query param 'en'
+    try:
+        st.query_params["lang"] = "en"
+    except Exception:
+        pass
+    
+    # Authoritative selection MUST remain Hindi despite stale query param
+    assert get_current_language() == "hi"
+
+    # 3. User switches to French
+    set_language("fr")
+    assert get_current_language() == "fr"
+
+
+

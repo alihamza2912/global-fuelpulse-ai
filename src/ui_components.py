@@ -87,8 +87,11 @@ def get_logo_mark_svg(size: int = 36) -> str:
 </svg>"""
 
 
-def get_brand_logo_svg(width: int = 340, height: int = 54) -> str:
-    """Returns the full brand lockup: distinctive vector trade emblem + Global FuelPulse AI typography."""
+def get_brand_logo_svg(width: int = 340, height: int = 54, lang: Optional[str] = None) -> str:
+    """Returns the full brand lockup: distinctive vector trade emblem + Global FuelPulse AI typography with localized subtitle."""
+    from src.localization.i18n import t, get_current_language
+    active_lang = lang or get_current_language()
+    sub_text = t("brand_subtitle", active_lang).upper()
     return f"""<svg width="{width}" height="{height}" viewBox="0 0 340 54" fill="none" xmlns="http://www.w3.org/2000/svg">
   <!-- Droplet & Trade Route Orbit Emblem -->
   <g transform="translate(4, 6)">
@@ -109,19 +112,30 @@ def get_brand_logo_svg(width: int = 340, height: int = 54) -> str:
   <text x="56" y="27" fill="#F9FAFB" font-family="'Space Grotesk', -apple-system, sans-serif" font-weight="800" font-size="18" letter-spacing="0.04em">GLOBAL FUELPULSE</text>
   <rect x="256" y="13" width="28" height="18" rx="4" fill="rgba(245, 185, 66, 0.22)" stroke="#F5B942" stroke-width="1.2"/>
   <text x="270" y="26" fill="#F5B942" font-family="'Space Grotesk', sans-serif" font-weight="800" font-size="11.5" text-anchor="middle">AI</text>
-  <text x="56" y="44" fill="#94A3B8" font-family="'Inter', sans-serif" font-weight="700" font-size="11.5" letter-spacing="0.05em">ENERGY INTELLIGENCE PLATFORM</text>
+  <text x="56" y="44" fill="#94A3B8" font-family="'Inter', sans-serif" font-weight="700" font-size="11" letter-spacing="0.04em">{sub_text}</text>
 </svg>"""
 
 
 # ==============================================================================
 # 3b. NEWS GLOBE ICON (BROADCAST-STYLE VECTOR EMBLEM)
 # ==============================================================================
-def get_news_globe_icon_svg(size: int = 24) -> str:
+def get_news_globe_icon_svg(size: int = 24, lang: Optional[str] = None) -> str:
     """
     Returns the vector News Globe icon: vibrant cyan/sky-blue globe sphere with crisp
-    white coordinate grid lines and a horizontal red banner labeled 'NEWS' with folded
+    white coordinate grid lines and a horizontal red banner labeled with localized news text with folded
     crimson 3D tails. Matches the international broadcast news emblem aesthetic.
     """
+    from src.localization.i18n import get_current_language
+    active_lang = lang or get_current_language()
+    news_labels = {
+        "en": "NEWS", "hi": "समाचार", "ar": "أخبار", "es": "NOTICIAS",
+        "fr": "INFOS", "de": "NEWS", "zh": "快讯", "ru": "ВЕСТИ",
+        "ja": "速報", "pt": "NOTÍCIAS", "it": "NEWS", "ko": "뉴스",
+        "tr": "HABER", "nl": "NIEUWS", "id": "BERITA", "ur": "خبریں",
+        "bn": "সংবাদ", "ta": "செய்தி"
+    }
+    banner_text = news_labels.get(active_lang, "NEWS")
+    font_sz = 16 if len(banner_text) <= 4 else (12 if len(banner_text) <= 6 else 9.5)
     return f"""<svg width="{size}" height="{size}" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
   <!-- Left Ribbon Back Fold -->
   <path d="M 10 50 C 10 59 18 64 22 64 L 22 52 Z" fill="#9F1239" />
@@ -147,8 +161,8 @@ def get_news_globe_icon_svg(size: int = 24) -> str:
   <!-- Central Red NEWS Banner -->
   <rect x="14" y="37" width="72" height="26" rx="4" fill="#EF4444" />
 
-  <!-- Text: NEWS -->
-  <text x="50" y="55.5" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-weight="900" font-size="16" fill="#FFFFFF" text-anchor="middle" letter-spacing="0.5">NEWS</text>
+  <!-- Text: Localized NEWS -->
+  <text x="50" y="55.5" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-weight="900" font-size="{font_sz}" fill="#FFFFFF" text-anchor="middle" letter-spacing="0.5">{banner_text}</text>
 </svg>"""
 
 
@@ -285,22 +299,22 @@ def render_app_header_brand_html(current_lang: str, engine_name: str, live_text:
 
 def render_two_tier_nav_html(current_lang: str, active_canonical: str) -> str:
     """Renders the structured two-tier navigation system with Lucide vector icons."""
-    from src.localization.i18n import get_clean_nav_label
+    from src.localization.i18n import get_clean_nav_label, t
 
     tier_1_items = [
         {"tab": "home", "icon": "layout-dashboard", "label": get_clean_nav_label("home", current_lang)},
-        {"tab": "dashboard", "icon": "chart-no-axes-combined", "label": get_clean_nav_label("dashboard", current_lang), "badge": "Live"},
+        {"tab": "dashboard", "icon": "chart-no-axes-combined", "label": get_clean_nav_label("dashboard", current_lang), "badge": t("badge_live", current_lang)},
         {"tab": "india", "icon": "map-pinned", "label": get_clean_nav_label("india", current_lang), "badge": "MoPNG"},
         {"tab": "about", "icon": "info", "label": get_clean_nav_label("about", current_lang)},
         {"tab": "how_it_works", "icon": "workflow", "label": get_clean_nav_label("how_it_works", current_lang)},
     ]
 
     tier_2_items = [
-        {"tab": "features", "icon": "layers", "label": get_clean_nav_label("features", current_lang), "badge": "12 Mod"},
+        {"tab": "features", "icon": "layers", "label": get_clean_nav_label("features", current_lang), "badge": t("badge_12_mod", current_lang)},
         {"tab": "data_trust", "icon": "shield-check", "label": get_clean_nav_label("data_trust", current_lang), "badge": "SLA"},
         {"tab": "methodology", "icon": "flask-conical", "label": get_clean_nav_label("methodology", current_lang)},
         {"tab": "roadmap", "icon": "route", "label": get_clean_nav_label("roadmap", current_lang), "badge": "2026"},
-        {"tab": "faq", "icon": "book-open", "label": get_clean_nav_label("faq", current_lang), "badge": "Docs"},
+        {"tab": "faq", "icon": "book-open", "label": get_clean_nav_label("faq", current_lang), "badge": t("badge_docs", current_lang)},
     ]
 
     def render_tier_bar(items, tier_title):
@@ -322,8 +336,8 @@ def render_two_tier_nav_html(current_lang: str, active_canonical: str) -> str:
             f'</div>'
         )
 
-    t1 = render_tier_bar(tier_1_items, "CORE")
-    t2 = render_tier_bar(tier_2_items, "SPECS")
+    t1 = render_tier_bar(tier_1_items, t("nav_core_modules", current_lang))
+    t2 = render_tier_bar(tier_2_items, t("nav_tech_dossiers", current_lang))
     return f'<div class="fuelpulse-nav-shell">{t1}{t2}</div>'
 
 
@@ -332,29 +346,29 @@ def render_two_tier_navigation(current_lang: str, active_canonical: str, navigat
     Renders the structured two-tier navigation using reactive Streamlit buttons.
     Clicking any tab routes immediately in-memory (<30ms) without full browser page reload.
     """
-    from src.localization.i18n import get_clean_nav_label
+    from src.localization.i18n import get_clean_nav_label, t
 
     tier_1_items = [
         {"tab": "home", "icon": "🏠", "label": get_clean_nav_label("home", current_lang)},
-        {"tab": "dashboard", "icon": "⚡", "label": get_clean_nav_label("dashboard", current_lang), "badge": "Live"},
+        {"tab": "dashboard", "icon": "⚡", "label": get_clean_nav_label("dashboard", current_lang), "badge": t("badge_live", current_lang)},
         {"tab": "india", "icon": "🇮🇳", "label": get_clean_nav_label("india", current_lang), "badge": "MoPNG"},
         {"tab": "about", "icon": "📖", "label": get_clean_nav_label("about", current_lang)},
         {"tab": "how_it_works", "icon": "⚙️", "label": get_clean_nav_label("how_it_works", current_lang)},
     ]
 
     tier_2_items = [
-        {"tab": "features", "icon": "📋", "label": get_clean_nav_label("features", current_lang), "badge": "12 Mod"},
+        {"tab": "features", "icon": "📋", "label": get_clean_nav_label("features", current_lang), "badge": t("badge_12_mod", current_lang)},
         {"tab": "data_trust", "icon": "🔒", "label": get_clean_nav_label("data_trust", current_lang), "badge": "SLA"},
         {"tab": "methodology", "icon": "📐", "label": get_clean_nav_label("methodology", current_lang)},
         {"tab": "roadmap", "icon": "🗺️", "label": get_clean_nav_label("roadmap", current_lang), "badge": "2026"},
-        {"tab": "faq", "icon": "❓", "label": get_clean_nav_label("faq", current_lang), "badge": "Docs"},
+        {"tab": "faq", "icon": "❓", "label": get_clean_nav_label("faq", current_lang), "badge": t("badge_docs", current_lang)},
     ]
 
     # Container with custom CSS wrapper class
     st.markdown('<div class="fuelpulse-tnav-container">', unsafe_allow_html=True)
     
     # Tier 1 - CORE
-    st.markdown('<div style="font-size: 10px; font-weight: 800; color: #64748B; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 4px; margin-top: 2px;">CORE MODULES</div>', unsafe_allow_html=True)
+    st.markdown(f'<div style="font-size: 10px; font-weight: 800; color: #64748B; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 4px; margin-top: 2px;">{t("nav_core_modules", current_lang)}</div>', unsafe_allow_html=True)
     t1_cols = st.columns(len(tier_1_items))
     for col, it in zip(t1_cols, tier_1_items):
         is_active = (it["tab"] == active_canonical)
@@ -366,7 +380,7 @@ def render_two_tier_navigation(current_lang: str, active_canonical: str, navigat
                     navigate_fn(it["tab"])
 
     # Tier 2 - SPECS & DOCS
-    st.markdown('<div style="font-size: 10px; font-weight: 800; color: #64748B; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 4px; margin-top: 6px;">TECHNICAL DOSSIERS & DOCS</div>', unsafe_allow_html=True)
+    st.markdown(f'<div style="font-size: 10px; font-weight: 800; color: #64748B; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 4px; margin-top: 6px;">{t("nav_tech_dossiers", current_lang)}</div>', unsafe_allow_html=True)
     t2_cols = st.columns(len(tier_2_items))
     for col, it in zip(t2_cols, tier_2_items):
         is_active = (it["tab"] == active_canonical)
@@ -1354,7 +1368,8 @@ div[data-testid="stPopover"] > button,
 div[data-testid="stPopoverButton"] > button,
 button[key*="top_ai_assistant_btn"],
 div[data-testid="stHorizontalBlock"]:has(.fuelpulse-header-bar) button,
-div[data-testid="stHorizontalBlock"]:has(.fuelpulse-header-bar) [data-testid="stPopover"] > button {{
+div[data-testid="stHorizontalBlock"]:has(.fuelpulse-header-bar) [data-testid="stPopover"] > button,
+div[data-testid="stHorizontalBlock"]:has(.fuelpulse-header-bar) [data-testid="stPopoverButton"] > button {{
   background: rgba(14, 21, 38, 0.90) !important;
   background-color: rgba(14, 21, 38, 0.90) !important;
   color: #F9FAFB !important;
@@ -1365,16 +1380,19 @@ div[data-testid="stHorizontalBlock"]:has(.fuelpulse-header-bar) [data-testid="st
   min-height: 38px !important;
   max-height: 38px !important;
   line-height: 38px !important;
-  padding: 0 10px !important;
+  padding: 0 6px !important;
   font-family: 'Space Grotesk', -apple-system, sans-serif !important;
-  font-size: 12px !important;
+  font-size: 11.5px !important;
   font-weight: 700 !important;
   white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35) !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  gap: 6px !important;
+  text-align: center !important;
+  gap: 5px !important;
   transition: all 0.15s ease-in-out !important;
   cursor: pointer !important;
   width: 100% !important;
@@ -1392,12 +1410,15 @@ button[key*="top_ai_assistant_btn"] p,
 button[key*="top_ai_assistant_btn"] span {{
   color: #F9FAFB !important;
   -webkit-text-fill-color: #F9FAFB !important;
-  font-size: 12px !important;
+  font-size: 11.5px !important;
   font-weight: 700 !important;
   white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
   line-height: 1 !important;
   margin: 0 !important;
   padding: 0 !important;
+  text-align: center !important;
 }}
 
 /* AI Assistant Header Button: Subtle golden border and glowing indicator matching popover form */
@@ -1438,6 +1459,19 @@ div[data-testid="stPopover"] > button svg,
 div[data-testid="stPopoverButton"] > button svg {{
   fill: #F5B942 !important;
   color: #F5B942 !important;
+}}
+
+/* Hide popover chevron caret in header actions so all 3 buttons are identical in dimensions & centering */
+div[data-testid="stHorizontalBlock"]:has(.fuelpulse-header-bar) div[data-testid="stPopover"] > button svg,
+div[data-testid="stHorizontalBlock"]:has(.fuelpulse-header-bar) div[data-testid="stPopoverButton"] > button svg,
+div[data-testid="stHorizontalBlock"]:has(.fuelpulse-header-bar) svg[data-testid="stPopoverButtonArrow"],
+div[data-testid="stHorizontalBlock"]:has(.fuelpulse-header-bar) [data-testid="stPopover"] > button svg,
+div[data-testid="stHorizontalBlock"]:has(.fuelpulse-header-bar) [data-testid="stPopoverButton"] > button svg {{
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
 }}
 
 /* B. Popover Dropdown Container & Menu Items (Language selector & News Wire) */
@@ -2103,23 +2137,37 @@ button[data-testid*="primaryActive"] * {{
     grid-column: 1 / -1 !important;
   }}
 
-  /* F. Top Header Bar: 3-column mobile grid: Brand full width on Row 1, AI, Language & News side-by-side on Row 2 */
+  /* F. Top Header Bar: 2-row mobile structure: Brand full width on Row 1, 3 equal action buttons on Row 2 */
   [data-testid="stHorizontalBlock"]:has(.fuelpulse-header-bar) {{
-    display: grid !important;
-    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    display: flex !important;
+    flex-direction: column !important;
     gap: 6px !important;
     width: 100% !important;
   }}
 
-  [data-testid="stHorizontalBlock"]:has(.fuelpulse-header-bar) > [data-testid="column"]:first-child,
-  [data-testid="stHorizontalBlock"]:has(.fuelpulse-header-bar) > [data-testid="stColumn"]:first-child {{
-    grid-column: 1 / -1 !important;
+  [data-testid="stHorizontalBlock"]:has(.fuelpulse-header-bar) > [data-testid="column"],
+  [data-testid="stHorizontalBlock"]:has(.fuelpulse-header-bar) > [data-testid="stColumn"] {{
+    width: 100% !important;
+    flex: 1 1 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
   }}
 
-  [data-testid="stHorizontalBlock"]:has(.fuelpulse-header-bar) > [data-testid="column"]:not(:first-child),
-  [data-testid="stHorizontalBlock"]:has(.fuelpulse-header-bar) > [data-testid="stColumn"]:not(:first-child) {{
-    grid-column: span 1 !important;
+  /* Sub-columns container inside the actions column on Row 2 */
+  [data-testid="stHorizontalBlock"]:has(.fuelpulse-header-bar) > [data-testid="column"]:last-child [data-testid="stHorizontalBlock"],
+  [data-testid="stHorizontalBlock"]:has(.fuelpulse-header-bar) > [data-testid="stColumn"]:last-child [data-testid="stHorizontalBlock"] {{
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    gap: 6px !important;
     width: 100% !important;
+  }}
+
+  [data-testid="stHorizontalBlock"]:has(.fuelpulse-header-bar) > [data-testid="column"]:last-child [data-testid="column"],
+  [data-testid="stHorizontalBlock"]:has(.fuelpulse-header-bar) > [data-testid="stColumn"]:last-child [data-testid="stColumn"] {{
+    flex: 1 1 0% !important;
+    width: 33.333% !important;
+    max-width: 33.333% !important;
     min-width: 0 !important;
   }}
 
@@ -2147,19 +2195,33 @@ button[data-testid*="primaryActive"] * {{
   /* Compact button dimensions and font sizes on mobile to guarantee 1-line fit */
   [data-testid="stHorizontalBlock"]:has(.fuelpulse-header-bar) button,
   [data-testid="stHorizontalBlock"]:has(.fuelpulse-header-bar) [data-testid="stPopover"] > button,
+  [data-testid="stHorizontalBlock"]:has(.fuelpulse-header-bar) [data-testid="stPopoverButton"] > button,
   button[key*="top_ai_assistant_btn"] {{
     min-height: 35px !important;
     max-height: 35px !important;
     line-height: 35px !important;
+    height: 35px !important;
     padding: 0 4px !important;
-    font-size: 11px !important;
+    font-size: 10.5px !important;
     border-radius: 7px !important;
+    width: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
   }}
 
   [data-testid="stHorizontalBlock"]:has(.fuelpulse-header-bar) button *,
   [data-testid="stHorizontalBlock"]:has(.fuelpulse-header-bar) [data-testid="stPopover"] > button *,
+  [data-testid="stHorizontalBlock"]:has(.fuelpulse-header-bar) [data-testid="stPopoverButton"] > button *,
   button[key*="top_ai_assistant_btn"] * {{
-    font-size: 11px !important;
+    font-size: 10.5px !important;
+    line-height: 1 !important;
+    text-align: center !important;
+    white-space: nowrap !important;
   }}
 
   /* G. Compact Metric & Instrument Cards (Equal height flex container) */
@@ -2370,19 +2432,33 @@ button[data-testid*="primaryActive"] * {{
 
   [data-testid="stHorizontalBlock"]:has(.fuelpulse-header-bar) button,
   [data-testid="stHorizontalBlock"]:has(.fuelpulse-header-bar) [data-testid="stPopover"] > button,
+  [data-testid="stHorizontalBlock"]:has(.fuelpulse-header-bar) [data-testid="stPopoverButton"] > button,
   button[key*="top_ai_assistant_btn"] {{
-    min-height: 32px !important;
-    max-height: 32px !important;
-    line-height: 32px !important;
+    min-height: 33px !important;
+    max-height: 33px !important;
+    line-height: 33px !important;
+    height: 33px !important;
     padding: 0 2px !important;
-    font-size: 10px !important;
+    font-size: 9.5px !important;
     letter-spacing: -0.01em !important;
+    width: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
   }}
 
   [data-testid="stHorizontalBlock"]:has(.fuelpulse-header-bar) button *,
   [data-testid="stHorizontalBlock"]:has(.fuelpulse-header-bar) [data-testid="stPopover"] > button *,
+  [data-testid="stHorizontalBlock"]:has(.fuelpulse-header-bar) [data-testid="stPopoverButton"] > button *,
   button[key*="top_ai_assistant_btn"] * {{
-    font-size: 10px !important;
+    font-size: 9.5px !important;
+    line-height: 1 !important;
+    text-align: center !important;
+    white-space: nowrap !important;
   }}
 }}
 </style>"""
@@ -2432,96 +2508,98 @@ def render_universal_top_header(active_page_name: str = "Overview", key_prefix: 
     sess_status = session_protector.get_session_status(sess_id, has_custom_key=True, enforce_user_daily_limit=True)
     rem_q = st.session_state.get("top_ai_quota_rem", sess_status.get("daily_questions_remaining", 3))
 
-    col_brand, col_ai, col_lang, col_news = st.columns([5.5, 1.5, 1.5, 1.5], gap="small", vertical_alignment="center")
+    col_brand, col_actions = st.columns([5.2, 4.8], gap="small", vertical_alignment="center")
     with col_brand:
         render_html(render_app_header_brand_html(current_lang, engine_name, t('live_indicator', current_lang)))
 
-    with col_ai:
-        ai_btn_label = f"🤖 AI ({rem_q}/3)" if current_lang != "hi" else f"🤖 एआई ({rem_q}/3)"
-        if st.button(
-            ai_btn_label,
-            key=f"{pfx}_top_ai_assistant_btn",
-            use_container_width=True,
-            type="secondary",
-            help="Ask Antigravity AI Assistant (Text & Voice Note)"
-        ):
-            _show_ai_assistant_dialog(context_page=active_page_name)
+    with col_actions:
+        col_ai, col_lang, col_news = st.columns([1, 1, 1], gap="small", vertical_alignment="center")
+        with col_ai:
+            ai_btn_label = t("top_btn_ai", current_lang, rem=rem_q)
+            if st.button(
+                ai_btn_label,
+                key=f"{pfx}_top_ai_assistant_btn",
+                use_container_width=True,
+                type="secondary",
+                help="Ask Antigravity AI Assistant (Text & Voice Note)"
+            ):
+                _show_ai_assistant_dialog(context_page=active_page_name)
 
-    with col_lang:
-        all_langs = get_available_languages()
-        cur_data = all_langs.get(current_lang, all_langs.get("en", {"flag": "🌐", "native": "English", "name": "English"}))
-        cur_flag = cur_data.get("flag", "🌐")
-        lang_btn_label = f"🌐 Lang ({cur_flag})" if current_lang != "hi" else f"🌐 भाषा ({cur_flag})"
-        with st.popover(lang_btn_label, use_container_width=True):
-            st.markdown(f"#### 🌐 {t('select_language', current_lang)} ({len(all_langs)} World Languages)")
-            st.caption(t("lang_modal_sub", current_lang))
-            with st.container(height=340):
-                for code, data in all_langs.items():
-                    is_selected = (code == current_lang)
-                    active_mark = "✓ " if is_selected else ""
-                    item_label = f"{active_mark}{data['flag']}  {data['native']}  ({data['name']})"
-                    if st.button(
-                        item_label,
-                        key=f"{pfx}_lang_btn_{code}",
-                        use_container_width=True,
-                        type="primary" if is_selected else "secondary"
-                    ):
-                        if code != current_lang:
-                            set_language(code)
-                            st.rerun()
+        with col_lang:
+            all_langs = get_available_languages()
+            cur_data = all_langs.get(current_lang, all_langs.get("en", {"flag": "🌐", "native": "English", "name": "English"}))
+            cur_flag = cur_data.get("flag", "🌐")
+            lang_btn_label = t("top_btn_lang", current_lang, flag=cur_flag)
+            with st.popover(lang_btn_label, use_container_width=True):
+                st.markdown(f"#### 🌐 {t('select_language', current_lang)} ({len(all_langs)} World Languages)")
+                st.caption(t("lang_modal_sub", current_lang))
+                with st.container(height=340):
+                    for code, data in all_langs.items():
+                        is_selected = (code == current_lang)
+                        active_mark = "✓ " if is_selected else ""
+                        item_label = f"{active_mark}{data['flag']}  {data['native']}  ({data['name']})"
+                        if st.button(
+                            item_label,
+                            key=f"{pfx}_lang_btn_{code}",
+                            use_container_width=True,
+                            type="primary" if is_selected else "secondary"
+                        ):
+                            if code != current_lang:
+                                set_language(code)
+                                st.rerun()
 
-    with col_news:
-        alerts_count = GlobalNewsEngine.get_active_alerts_count()
-        news_btn_label = f"📰 News ({alerts_count})"
-        with st.popover(news_btn_label, use_container_width=True):
-            render_html(f"""
-            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid rgba(255, 255, 255, 0.12);">
-                {get_news_globe_icon_svg(size=36)}
-                <div>
-                    <div style="font-family: 'Space Grotesk', -apple-system, sans-serif; font-size: 1.15rem; font-weight: 800; color: #F9FAFB; letter-spacing: -0.01em;">
-                        {t('brand_title', current_lang)} — Global Wire
-                    </div>
-                    <div style="font-size: 0.72rem; color: #94A3B8; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; margin-top: 2px;">
-                        {t('news_wire_title', current_lang)}
-                    </div>
-                </div>
-            </div>
-            """)
-            
-            render_html(f"""
-            <div style="background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.35); border-radius: 6px; padding: 7px 12px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-                <div style="display: flex; align-items: center; gap: 8px;">
-                    <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #10B981; box-shadow: 0 0 6px #10B981;"></span>
-                    <span style="font-size: 0.76rem; font-weight: 700; color: #34D399;">{t('news_live_status', current_lang)}</span>
-                </div>
-                <div style="font-size: 0.70rem; color: #94A3B8; font-family: monospace;">{GlobalNewsEngine.get_last_refresh_timestamp()}</div>
-            </div>
-            """)
-
-            tab_hormuz, tab_trade, tab_rates, tab_all = st.tabs([
-                f"🚨 {t('nav_trade', current_lang)}",
-                f"🚢 {t('chapter_03_title', current_lang)}",
-                f"⛽ {t('chapter_05_title', current_lang)}",
-                f"📰 {t('live_news_button', current_lang)}"
-            ])
-            
-            with tab_hormuz:
-                st.markdown(f"#### 🔴 {t('news_maritime_monitor', current_lang)}")
-                for chk in GlobalNewsEngine.get_chokepoint_telemetry(current_lang):
-                    st.markdown(f"""
-                    <div style="background: rgba(14, 21, 38, 0.9); border: 1px solid rgba(255, 255, 255, 0.12); border-left: 4px solid {chk['status_color']}; border-radius: 6px; padding: 10px 12px; margin-bottom: 8px;">
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <b style="color: #F9FAFB; font-size: 0.9rem;">{chk['name']}</b>
-                            <span style="background: rgba(239, 68, 68, 0.2); color: {chk['status_color']}; font-size: 0.7rem; font-weight: 800; padding: 2px 6px; border-radius: 4px;">{chk['status']}</span>
+        with col_news:
+            alerts_count = GlobalNewsEngine.get_active_alerts_count()
+            news_btn_label = t("top_btn_news", current_lang, count=alerts_count)
+            with st.popover(news_btn_label, use_container_width=True):
+                render_html(f"""
+                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid rgba(255, 255, 255, 0.12);">
+                    {get_news_globe_icon_svg(size=36, lang=current_lang)}
+                    <div>
+                        <div style="font-family: 'Space Grotesk', -apple-system, sans-serif; font-size: 1.15rem; font-weight: 800; color: #F9FAFB; letter-spacing: -0.01em;">
+                            {t('brand_title', current_lang)} — Global Wire
                         </div>
-                        <div style="font-size: 0.78rem; color: #94A3B8; margin-top: 4px;">Throughput: <b style="color: #F5B942;">{chk['throughput']}</b> ({chk['global_share']})</div>
-                        <div style="font-size: 0.74rem; color: #CBD5E1; margin-top: 4px;"><b>Risk:</b> {chk['key_risk']}</div>
-                        <div style="font-size: 0.72rem; color: #34D399; margin-top: 3px;"><b>Contingency:</b> {chk['contingency']}</div>
+                        <div style="font-size: 0.72rem; color: #94A3B8; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; margin-top: 2px;">
+                            {t('news_wire_title', current_lang)}
+                        </div>
                     </div>
-                    """, unsafe_allow_html=True)
-                    
-            with tab_trade:
-                st.markdown("#### 🚢 Global Petroleum Import & Export")
+                </div>
+                """)
+                
+                render_html(f"""
+                <div style="background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.35); border-radius: 6px; padding: 7px 12px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #10B981; box-shadow: 0 0 6px #10B981;"></span>
+                        <span style="font-size: 0.76rem; font-weight: 700; color: #34D399;">{t('news_live_status', current_lang)}</span>
+                    </div>
+                    <div style="font-size: 0.70rem; color: #94A3B8; font-family: monospace;">{GlobalNewsEngine.get_last_refresh_timestamp()}</div>
+                </div>
+                """)
+
+                tab_hormuz, tab_trade, tab_rates, tab_all = st.tabs([
+                    f"🚨 {t('nav_trade', current_lang)}",
+                    f"🚢 {t('chapter_03_title', current_lang)}",
+                    f"⛽ {t('chapter_05_title', current_lang)}",
+                    f"📰 {t('live_news_button', current_lang)}"
+                ])
+                
+                with tab_hormuz:
+                    st.markdown(f"#### 🔴 {t('news_maritime_monitor', current_lang)}")
+                    for chk in GlobalNewsEngine.get_chokepoint_telemetry(current_lang):
+                        st.markdown(f"""
+                        <div style="background: rgba(14, 21, 38, 0.9); border: 1px solid rgba(255, 255, 255, 0.12); border-left: 4px solid {chk['status_color']}; border-radius: 6px; padding: 10px 12px; margin-bottom: 8px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <b style="color: #F9FAFB; font-size: 0.9rem;">{chk['name']}</b>
+                                <span style="background: rgba(239, 68, 68, 0.2); color: {chk['status_color']}; font-size: 0.7rem; font-weight: 800; padding: 2px 6px; border-radius: 4px;">{chk['status']}</span>
+                            </div>
+                            <div style="font-size: 0.78rem; color: #94A3B8; margin-top: 4px;">Throughput: <b style="color: #F5B942;">{chk['throughput']}</b> ({chk['global_share']})</div>
+                            <div style="font-size: 0.74rem; color: #CBD5E1; margin-top: 4px;"><b>Risk:</b> {chk['key_risk']}</div>
+                            <div style="font-size: 0.72rem; color: #34D399; margin-top: 3px;"><b>Contingency:</b> {chk['contingency']}</div>
+                        </div>
+                        """, unsafe_allow_html=True)
+                        
+                with tab_trade:
+                    st.markdown(f"#### 🚢 {t('chapter_03_title', current_lang)}")
                 for item in GlobalNewsEngine.get_live_news_feed(category="TRADE_FLOWS", lang=current_lang):
                     metrics_html = " ".join([f"<span style='background: rgba(59,130,246,0.18); color: #60A5FA; padding: 2px 6px; border-radius: 4px; font-size: 0.68rem;'><b>{k}:</b> {v}</span>" for k, v in item['metrics'].items()])
                     st.markdown(f"""

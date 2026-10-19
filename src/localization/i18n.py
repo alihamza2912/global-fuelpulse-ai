@@ -2352,6 +2352,18 @@ def get_current_language() -> str:
     except Exception:
         qp_lang = None
 
+    # 1. Explicit user selection in current session is highest authority
+    user_lang = st.session_state.get("_user_selected_lang")
+    if user_lang and user_lang in SUPPORTED_LANGUAGES:
+        st.session_state["app_language"] = user_lang
+        try:
+            if qp_lang != user_lang:
+                st.query_params["lang"] = user_lang
+        except Exception:
+            pass
+        return user_lang
+
+    # 2. URL query param or initial session state fallback
     if "app_language" not in st.session_state:
         if qp_lang and qp_lang in SUPPORTED_LANGUAGES:
             st.session_state["app_language"] = qp_lang
@@ -2368,6 +2380,7 @@ def get_current_language() -> str:
 def set_language(lang_code: str) -> None:
     """Updates the active application language in session state and query parameters."""
     if lang_code in SUPPORTED_LANGUAGES:
+        st.session_state["_user_selected_lang"] = lang_code
         st.session_state["app_language"] = lang_code
         st.session_state["_last_synced_qp_lang"] = lang_code
         try:

@@ -1,8 +1,8 @@
-# ⚡ Global FuelPulse AI — Global Fuel Price, Petroleum Trade, Maritime Intelligence & AI Analyst Platform (v3.4.0)
+# ⚡ Global FuelPulse AI — Global Fuel Price, Petroleum Trade, Maritime Intelligence & AI Analyst Platform (v3.4.1)
 
 [![GitHub Repository](https://img.shields.io/badge/GitHub-Repository-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/alihamza2912/global-fuelpulse-ai)
 [![Live App](https://img.shields.io/badge/Live_App-Streamlit_Cloud-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white)](https://global-fuelpulse-ai-jqsi5ngrigi4hm4gtmcghn.streamlit.app)
-[![Tests](https://img.shields.io/badge/Tests-88%20Passed%20(100%25)-brightgreen.svg)]()
+[![Tests](https://img.shields.io/badge/Tests-90%20Passed%20(100%25)-brightgreen.svg)]()
 [![AI Analyst](https://img.shields.io/badge/AI_Analyst-Real--Time_Web_Research_%7C_Personal_API_Keys-F5B942.svg)]()
 [![Deep Research](https://img.shields.io/badge/Deep_Research-Live_DuckDuckGo_%26_Wikipedia_Grounding-10B981.svg)]()
 [![Security Shield](https://img.shields.io/badge/Security_Shield-Enterprise_Anti--Abuse_Active-10B981.svg)]()
@@ -22,11 +22,29 @@
 > 
 > *Access real-time retail motor fuel intelligence, international trade matrices, live maritime chokepoints, MoPNG price waterfall breakdown, Holt-Winters price forecasting, and the grounded AI Energy Market Analyst directly in your browser on desktop or mobile.*
 
-**Global FuelPulse AI (v3.4.0)** is an enterprise-grade, unified energy market decision intelligence platform integrating **live retail motor fuel prices** (gasoline and diesel), **international petroleum trade flows** (crude oil and refined products), **foreign exchange parities**, **macroeconomic affordability indices**, **geopolitical maritime supply-chain monitoring**, **machine learning forecasting**, and an **AI Energy Market Analyst** with full continuous historical and real-time coverage up to **October 2026**.
+**Global FuelPulse AI (v3.4.1)** is an enterprise-grade, unified energy market decision intelligence platform integrating **live retail motor fuel prices** (gasoline and diesel), **international petroleum trade flows** (crude oil and refined products), **foreign exchange parities**, **macroeconomic affordability indices**, **geopolitical maritime supply-chain monitoring**, **machine learning forecasting**, and an **AI Energy Market Analyst** with full continuous historical and real-time coverage up to **October 2026**.
 
 ---
 
-## 🌟 What's New in Latest Release (v3.4.0)
+## 🌟 What's New in Latest Release (v3.4.1)
+
+- 📱 **Symmetrical Top Header Actions & Zero Mobile Squeeze (`src/ui_components.py`):**
+  - **Balanced 2-Column Action Bar Grid**: Migrated from a 4-column flex block (`[5.5, 1.5, 1.5, 1.5]`) to a 2-column parent (`[5.2, 4.8]`) containing an equal 3-column action sub-grid (`st.columns([1, 1, 1])`).
+  - **Equal 33.333% Sizing Across Mobile Viewports**: On mobile screens (`max-width: 768px` and `480px`), Row 1 houses the full-width brand lockup, while Row 2 displays the three action buttons (`🤖 AI`, `🌐 Lang`, `📰 News`) with 100% equal width (33.333% each), identical heights (35px/33px), unified font sizing, and flexbox vertical centering.
+  - **Eliminated Chevron Discrepancy**: Completely hid the internal popover caret arrow SVG (`svg[data-testid="stPopoverButtonArrow"]`) inside header popovers, removing asymmetric padding and preventing the `AI` button from being squeezed.
+- 🔒 **Authoritative Language Persistence & Query Parameter Lag Protection (`src/localization/i18n.py`):**
+  - **Session State Source of Truth**: Added `st.session_state["_user_selected_lang"]` as the authoritative language reference.
+  - **Streamlit Cloud Query Lag Immunity**: Prevented transient websocket query parameter delays (`qp_lang != _last_synced_qp_lang`) from overwriting user selections back to English upon rerun. Active language remains permanently locked across page reloads and tab navigations.
+- 🌍 **Deep Universal Localization & SVG Image Text Translation (`src/localization/`, `src/ui_components.py`):**
+  - **Top Header Buttons**: Added localized templates `top_btn_ai`, `top_btn_lang`, and `top_btn_news` across all 18 supported languages.
+  - **Two-Tier Navigation Headers & Badges**: Localized `CORE MODULES` (`nav_core_modules`) and `TECHNICAL DOSSIERS & DOCS` (`nav_tech_dossiers`), as well as badges `Live` (`badge_live`), `12 Mod` (`badge_12_mod`), and `Docs` (`badge_docs`).
+  - **SVG Vector Graphic Translation**: Parameterized `get_news_globe_icon_svg` and `get_brand_logo_svg` to dynamically render translated words directly inside vector graphics (`NEWS`, `समाचार`, `أخبار`, `NOTICIAS`, `INFOS`, `快讯`, `ВЕСТИ`, `速報`, etc.), fulfilling complete image/vector text localization.
+- 🧪 **Expanded 90-Test Automated Test Suite (100% Pass Rate):**
+  - Added test coverage in [`tests/test_i18n.py`](tests/test_i18n.py) verifying 18-language resolution of header buttons, navigation titles, badges, and query parameter override persistence.
+
+---
+
+## 🌟 Previous Features in v3.4.0
 
 - 🌐 **Platform-Wide Dynamic Multi-Language Localization (`src/localization/`, `src/views/`, `src/ui_components.py`):**
   - **Complete 18-Language Platform Coverage**: Switching languages (Arabic `ar`, Hindi `hi`, Spanish `es`, French `fr`, German `de`, Chinese `zh`, Russian `ru`, Japanese `ja`, etc.) now dynamically translates every module, card, label, and narrative across the entire application without leaving unlocalized English text.

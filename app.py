@@ -287,15 +287,15 @@ render_html(
 # 21st.dev Authentic TreeNav Sidebar Component
 TREE_NAV_ITEMS = [
     {"label": t("nav_overview", current_lang), "tab": "home", "canonical": "🏠 Overview", "badge": None},
-    {"label": t("nav_dashboard", current_lang), "tab": "dashboard", "canonical": "⚡ Intelligence Dashboard", "badge": "Live"},
+    {"label": t("nav_dashboard", current_lang), "tab": "dashboard", "canonical": "⚡ Intelligence Dashboard", "badge": t("badge_live", current_lang)},
     {"label": t("nav_india", current_lang), "tab": "india", "canonical": "🇮🇳 India Fuel Center", "badge": "MoPNG"},
     {"label": t("nav_about", current_lang), "tab": "about", "canonical": "📖 About Project", "badge": "v2.0"},
     {"label": t("nav_how_it_works", current_lang), "tab": "how_it_works", "canonical": "⚙️ How It Works", "badge": None},
-    {"label": t("nav_features", current_lang), "tab": "features", "canonical": "📋 Features", "badge": "12 Mod"},
+    {"label": t("nav_features", current_lang), "tab": "features", "canonical": "📋 Features", "badge": t("badge_12_mod", current_lang)},
     {"label": t("nav_data_trust", current_lang), "tab": "data_trust", "canonical": "🔒 Data Trust", "badge": "SLA"},
     {"label": t("nav_methodology", current_lang), "tab": "methodology", "canonical": "📐 Methodology", "badge": None},
     {"label": t("nav_roadmap", current_lang), "tab": "roadmap", "canonical": "🗺️ Roadmap", "badge": "New"},
-    {"label": t("nav_faq", current_lang), "tab": "faq", "canonical": "❓ Docs & FAQ", "badge": "Docs"},
+    {"label": t("nav_faq", current_lang), "tab": "faq", "canonical": "❓ Docs & FAQ", "badge": t("badge_docs", current_lang)},
 ]
 
 st.sidebar.markdown(f"""
