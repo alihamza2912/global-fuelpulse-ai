@@ -435,26 +435,15 @@ class AIEnergyMarketAnalyst:
             question_cache.set(question, resp)
             return resp
 
-        # Route S: Sovereign Petroleum Suppliers & National Oil Companies (e.g. "who is the main supplier of fuel from saudi", "who supplies oil in UAE")
-        if (
-            any(w in q_lower for w in [
-                "main supplier", "supplier of fuel", "supplier of oil", "supplier from", "who is the supplier",
-                "who supplies fuel", "who supplies oil", "who supplies petroleum", "who supply fuel",
-                "national oil company", "aramco", "adnoc", "enoc",
-                "who produces fuel", "who produces oil in", "refinery operator in", "fuel provider"
-            ])
-            or (
-                any(w in q_lower for w in ["supplier", "suppliers", "supply", "supplies"])
-                and any(w in q_lower for w in ["saudi", "ksa", "uae", "dubai", "india", "usa", "russia", "kuwait", "iraq", "qatar"])
-            )
-            or (
-                any(w in q_lower for w in ["who", "which company", "company", "companies"])
-                and any(w in q_lower for w in ["fuel from", "oil from", "petrol from"])
-            )
-        ) and not any(w in q_lower for w in ["where import", "where does ... import", "who buys", "destination", "forecast", "owner", "ownership", "who owns", "who founded", "founder", "ceo", "chairman"]):
+        # Route S: Sovereign Petroleum Suppliers & National Oil Companies
+        # Only intercept for specific Saudi or UAE sovereign supplier presets
+        is_saudi_supplier = any(w in q_lower for w in ["saudi", "ksa", "aramco"]) and any(w in q_lower for w in ["supplier", "main supplier", "who supplies", "export"])
+        is_uae_supplier = any(w in q_lower for w in ["uae", "dubai", "adnoc", "enoc"]) and any(w in q_lower for w in ["supplier", "main supplier", "who supplies"])
+        if (is_saudi_supplier or is_uae_supplier) and not any(w in q_lower for w in ["where import", "where does ... import", "who buys", "destination", "forecast", "owner", "ownership", "who owns", "who founded", "founder", "ceo", "chairman"]):
             resp = cls._handle_sovereign_supplier_query(question)
-            question_cache.set(question, resp)
-            return resp
+            if resp:
+                question_cache.set(question, resp)
+                return resp
 
         # Route IND_SAU_COMP: Indian energy company vs Saudi company (e.g. "which India company can easily beat Saudi company")
         if (
@@ -1854,38 +1843,9 @@ class AIEnergyMarketAnalyst:
             ]
             fig = None
 
-        # 3. Default / General Sovereign Supplier Overview
+        # 3. If neither Saudi nor UAE, return None so query is routed to live AI research engine
         else:
-            flag = "🌐"
-            topic = "Global Sovereign Petroleum Suppliers & National Oil Champions"
-            lines = [
-                f"### {flag} Global Sovereign Petroleum Suppliers & National Champions\n",
-                f"**Query**: *\"{question}\"*\n",
-                "⚡ *Answered directly using integrated Antigravity Energy Intelligence (0 External Quota Used)*\n",
-                "Global petroleum supply is dominated by sovereign **National Oil Companies (NOCs)** and international energy supermajors that extract and refine the world's **102 million barrels per day** of oil.\n",
-                "### 📊 Visual Diagram Explanation",
-                "```mermaid",
-                "flowchart LR",
-                "    Aramco[\"🇸🇦 Saudi Aramco (9.02 mbpd)\"] --> GlobalSupply[\"🌐 102 mbpd Global Supply\"]\n",
-                "    US_Majors[\"🇺🇸 US Majors (Exxon/Chevron - 13.2 mbpd)\"] --> GlobalSupply\n",
-                "    Rosneft[\"🇷🇺 Rosneft & Russian NOCs (9.15 mbpd)\"] --> GlobalSupply\n",
-                "    ADNOC[\"🇦🇪 ADNOC / OPEC Gulf (3.2 mbpd)\"] --> GlobalSupply\n",
-                "    OMCs[\"🇮🇳 Indian OMCs & RIL (5.2 mbpd Refined)\"] --> GlobalSupply\n",
-                "```\n",
-                "#### 1. Preeminent Sovereign Fuel Suppliers",
-                "- **Saudi Aramco (Saudi Arabia):** World's largest crude exporter and fuel producer (9.02 mbpd).",
-                "- **ADNOC (UAE):** Operates Ruwais refinery (817k bpd) and exports via Fujairah.",
-                "- **Indian PSU OMCs (IOCL, BPCL, HPCL) & Reliance:** Control 5.2 mbpd refining capacity and Jamnagar super-refinery.",
-                "- **Rosneft & Lukoil (Russia):** Major suppliers of Urals and ESPO crude.",
-                "- **ExxonMobil & Chevron (USA):** Anchor 13.20 mbpd US crude extraction and Gulf Coast refining."
-            ]
-            data_records = [
-                {"Supplier": "Saudi Aramco (Saudi Arabia)", "Crude Extraction": "9.02 mbpd", "Role": "World Top Exporter"},
-                {"Supplier": "US Energy Majors (Exxon/Chevron)", "Crude Extraction": "13.20 mbpd", "Role": "World #1 Producer"},
-                {"Supplier": "Rosneft (Russia)", "Crude Extraction": "9.15 mbpd", "Role": "Eurasian Supply Hub"},
-                {"Supplier": "ADNOC (UAE)", "Crude Extraction": "3.20 mbpd", "Role": "Gulf Strategic Producer"}
-            ]
-            fig = None
+            return None
 
         return {
             "question": question,

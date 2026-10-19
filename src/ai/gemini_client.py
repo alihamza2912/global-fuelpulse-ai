@@ -151,16 +151,16 @@ class GeminiFreeTierClient:
         if context_data:
             sys_text += f"\n\nContext Data from Database:\n{json.dumps(context_data, default=str)}"
 
-        # Enrich with live web research grounding only when temporal or live data is needed
+        # Enrich with live web research grounding
         try:
-            from src.ai.deep_research_engine import DeepOnlineResearchEngine, should_perform_web_search
-            if should_perform_web_search(prompt):
-                web_items = DeepOnlineResearchEngine.search_web(prompt, max_results=3)
-                if web_items:
-                    snippets_text = "\n".join(f"- {it['title']}: {it['snippet']}" for it in web_items)
-                    sys_text += f"\n\nLive Web Research Grounding (Real-Time Current Web Findings):\n{snippets_text}"
+            from src.ai.deep_research_engine import DeepOnlineResearchEngine
+            web_items = DeepOnlineResearchEngine.search_web(prompt, max_results=4)
+            if web_items:
+                snippets_text = "\n".join(f"- [{it['title']}]({it['url']}): {it['snippet']}" for it in web_items)
+                sys_text += f"\n\nLive External Web Research Grounding (Real-Time Current Web Findings):\n{snippets_text}\n"
+                sys_text += "Always incorporate these live search findings and cite the sources as clickable markdown links [Source Title](URL)."
         except Exception as e:
-            logger.debug(f"Web research grounding bypassed: {e}")
+            logger.debug(f"Web research grounding notice: {e}")
 
         payload["system_instruction"] = {
             "parts": [{"text": sys_text}]
