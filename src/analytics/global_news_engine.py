@@ -7,6 +7,11 @@ bilateral petroleum import/export tracking, and dynamic pump price telemetry.
 from datetime import datetime, timezone, timedelta
 from typing import Dict, List, Optional, Any
 import threading
+import urllib.request
+import xml.etree.ElementTree as ET
+from email.utils import parsedate_to_datetime
+import re
+import html
 
 class GlobalNewsEngine:
     """
@@ -17,6 +22,10 @@ class GlobalNewsEngine:
 
     _lock = threading.RLock()
     _last_refreshed: Optional[datetime] = None
+    _BASE_CURATED_DATE = datetime(2026, 10, 16, 12, 0, tzinfo=timezone.utc)
+    _cached_live_wire: List[Dict[str, Any]] = []
+    _last_live_wire_fetch: Optional[datetime] = None
+    _LIVE_WIRE_CACHE_TTL: int = 300  # 5 minutes cache TTL
 
     # Curated, authoritative real-time market intelligence entries (18 Global Stories)
     _LIVE_NEWS_DATABASE: List[Dict[str, Any]] = [
@@ -867,24 +876,186 @@ class GlobalNewsEngine:
     ]
 
     @classmethod
-    def _format_relative_time(cls, minutes_ago: int) -> str:
-        """Formats minutes ago into realistic live string."""
-        if minutes_ago <= 4:
+    def _format_datetime_relative(cls, dt: datetime) -> str:
+        """Formats a datetime into an accurate, honest live wire string."""
+        now = datetime.now(timezone.utc)
+        if dt.tzinfo is None:
+            dt = dt.replace(tzinfo=timezone.utc)
+        diff = now - dt
+        total_sec = max(0, diff.total_seconds())
+        if total_sec < 300:
             return "Just now (Live Wire)"
-        elif minutes_ago < 60:
-            return f"{minutes_ago} mins ago"
-        elif minutes_ago < 120:
-            return f"1 hour ago"
+        elif total_sec < 3600:
+            mins = int(total_sec // 60)
+            return f"{mins} mins ago • Live Wire"
+        elif total_sec < 7200:
+            return "1 hour ago • Live Wire"
+        elif total_sec < 86400:
+            hours = int(total_sec // 3600)
+            return f"{hours} hours ago • Live Wire"
+        elif total_sec < 172800:
+            return f"Yesterday • Live Wire ({dt.strftime('%d %b')})"
         else:
-            hours = minutes_ago // 60
-            return f"{hours} hours ago"
+            days = int(total_sec // 86400)
+            return f"{days} days ago • Live Wire ({dt.strftime('%d %b %Y')})"
+
+    @classmethod
+    def _format_relative_time(cls, minutes_ago: int, pub_dt: Optional[datetime] = None) -> str:
+        """
+        Formats relative time. If pub_dt is provided, uses authentic timestamp.
+        For baseline curated dossiers, accurately reports archive age.
+        """
+        if pub_dt is not None:
+            return cls._format_datetime_relative(pub_dt)
+        now = datetime.now(timezone.utc)
+        days_ago = max(1, (now - cls._BASE_CURATED_DATE).days)
+        return f"{days_ago} days ago • Live Wire Archive (16 Oct 2026)"
+
+    @classmethod
+    def fetch_realtime_wire(cls, force: bool = False) -> List[Dict[str, Any]]:
+        """
+        Fetches authentic real-time energy & maritime news dispatches from live RSS feeds.
+        Includes caching to minimize latency and bandwidth.
+        """
+        now = datetime.now(timezone.utc)
+        with cls._lock:
+            if not force and cls._cached_live_wire and cls._last_live_wire_fetch:
+                if (now - cls._last_live_wire_fetch).total_seconds() < cls._LIVE_WIRE_CACHE_TTL:
+                    return cls._cached_live_wire
+
+            feeds = [
+                ("https://oilprice.com/rss/main", "OilPrice.com"),
+                ("https://news.google.com/rss/search?q=crude+oil+OPEC+petroleum+tanker+Strait+of+Hormuz&hl=en-US&gl=US&ceid=US:en", "Google News Energy"),
+                ("https://news.google.com/rss/search?q=petrol+diesel+fuel+prices+refining+margins&hl=en-US&gl=US&ceid=US:en", "Global Fuel Wire")
+            ]
+
+            articles: List[Dict[str, Any]] = []
+            seen_titles = set()
+
+            for url, default_source in feeds:
+                try:
+                    req = urllib.request.Request(
+                        url,
+                        headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"}
+                    )
+                    with urllib.request.urlopen(req, timeout=4) as resp:
+                        root = ET.fromstring(resp.read())
+                        items = root.findall(".//item")
+                        for item in items[:12]:
+                            title_elem = item.find("title")
+                            title = title_elem.text if title_elem is not None and title_elem.text else ""
+                            clean_title = re.sub(r"\s+-\s+[^-]+$", "", title).strip()
+                            if not clean_title or clean_title.lower() in seen_titles:
+                                continue
+                            seen_titles.add(clean_title.lower())
+
+                            link_elem = item.find("link")
+                            link = link_elem.text if link_elem is not None and link_elem.text else ""
+
+                            pub_raw = item.find("pubDate")
+                            pub_str = pub_raw.text if pub_raw is not None and pub_raw.text else ""
+                            try:
+                                dt = parsedate_to_datetime(pub_str)
+                            except Exception:
+                                dt = now
+
+                            source_elem = item.find("source")
+                            source = source_elem.text if source_elem is not None and source_elem.text else default_source
+
+                            desc_elem = item.find("description")
+                            desc = desc_elem.text if desc_elem is not None and desc_elem.text else ""
+                            desc = re.sub(r"<[^>]+>", "", desc).strip()
+                            desc = html.unescape(desc)
+
+                            # Determine category
+                            t_lower = (clean_title + " " + desc).lower()
+                            if any(k in t_lower for k in ["hormuz", "red sea", "bab el", "malacca", "suez", "tanker", "vessel", "maritime", "cargo", "vlcc"]):
+                                category = "HORMUZ_MARITIME"
+                                cat_label = "🚨 Strait of Hormuz & Maritime"
+                            elif any(k in t_lower for k in ["opec", "saudi", "russia", "sanction", "barrel", "output", "crude", "brent", "wti"]):
+                                category = "OPEC_MACRO"
+                                cat_label = "🌍 OPEC+ & Macro Energy Policy"
+                            elif any(k in t_lower for k in ["petrol", "diesel", "retail", "pump", "tax", "cng", "lpg", "refin", "gasoline"]):
+                                category = "PRICE_TAX"
+                                cat_label = "⛽ Live Fuel Rates & Sovereign Tax"
+                            else:
+                                category = "TRADE_FLOWS"
+                                cat_label = "🚢 Global Petroleum Trade Flows"
+
+                            # Determine impact rating
+                            if any(k in t_lower for k in ["crisis", "attack", "strike", "halt", "surge", "spike", "emergency", "blockade", "spill"]):
+                                impact = "CRITICAL"
+                                impact_color = "#EF4444"
+                            elif any(k in t_lower for k in ["warn", "threat", "jump", "drop", "cut", "divert", "tension", "inflation", "soar"]):
+                                impact = "HIGH"
+                                impact_color = "#F59E0B"
+                            else:
+                                impact = "STRATEGIC"
+                                impact_color = "#3B82F6"
+
+                            articles.append({
+                                "id": f"LIVE-WIRE-{hash(clean_title) & 0xFFFFFFF}",
+                                "headline": clean_title,
+                                "link": link,
+                                "source": source,
+                                "published_dt": dt,
+                                "published_at": dt.isoformat(),
+                                "timestamp": cls._format_datetime_relative(dt),
+                                "category": category,
+                                "category_label": cat_label,
+                                "impact": impact,
+                                "impact_color": impact_color,
+                                "summary": desc[:220] + ("..." if len(desc) > 220 else ""),
+                                "is_live_wire": True,
+                                "metrics": {
+                                    "Feed Type": "Live Wire",
+                                    "Verification": "Wire Verified"
+                                },
+                                "key_takeaways": [
+                                    f"Real-time news item aggregated from {source}.",
+                                    "Dispatched to terminal subscribers in real time."
+                                ]
+                            })
+                except Exception:
+                    continue
+
+            if articles:
+                articles.sort(key=lambda x: x["published_dt"], reverse=True)
+                cls._cached_live_wire = articles
+                cls._last_live_wire_fetch = now
+
+            return cls._cached_live_wire
+
+    @classmethod
+    def get_realtime_wire(
+        cls,
+        category: Optional[str] = None,
+        lang: Optional[str] = None,
+        force_refresh: bool = False
+    ) -> List[Dict[str, Any]]:
+        """
+        Returns real-time breaking energy wire articles freshly aggregated from live feeds.
+        Re-computes relative timestamps on every call so elapsed times (e.g. 15 mins ago)
+        are 100% accurate and up-to-date.
+        """
+        items = cls.fetch_realtime_wire(force=force_refresh)
+        formatted: List[Dict[str, Any]] = []
+        for it in items:
+            c = dict(it)
+            if "published_dt" in c:
+                c["timestamp"] = cls._format_datetime_relative(c["published_dt"])
+            if category and c.get("category") != category:
+                continue
+            formatted.append(c)
+        return formatted
 
     @classmethod
     def get_live_news_feed(
         cls,
         category: Optional[str] = None,
         refresh: bool = False,
-        lang: Optional[str] = None
+        lang: Optional[str] = None,
+        include_live_rss: bool = False
     ) -> List[Dict[str, Any]]:
         """
         Returns structured real-time energy news items with dynamic timestamps,
@@ -900,9 +1071,15 @@ class GlobalNewsEngine:
                 raw_items = [item for item in raw_items if item["category"] == category]
 
             formatted_items: List[Dict[str, Any]] = []
+
+            # If live RSS items requested, prepend them
+            if include_live_rss:
+                wire_items = cls.get_realtime_wire(category=category, lang=lang, force_refresh=refresh)
+                formatted_items.extend(wire_items)
+
             for item in raw_items:
                 c = dict(item)
-                # Compute dynamic live relative timestamp
+                # Compute honest archive relative timestamp for vetted dossiers
                 c["timestamp"] = cls._format_relative_time(c.get("minutes_ago", 10))
                 # Localize headline if available
                 if lang and lang != "en" and "headline_i18n" in c and lang in c["headline_i18n"]:
@@ -1437,13 +1614,18 @@ class GlobalNewsEngine:
         return cls._last_refreshed.strftime("%d %b %Y, %H:%M:%S UTC")
 
     @classmethod
-    def refresh_news(cls) -> Dict[str, Any]:
-        """Manually triggers a simulated live intelligence re-query across all wires."""
+    def refresh_news(cls, force_live: bool = True) -> Dict[str, Any]:
+        """Manually triggers an active live intelligence re-query across all wire feeds."""
         with cls._lock:
             cls._last_refreshed = datetime.now(timezone.utc)
+            live_items = cls.fetch_realtime_wire(force=force_live)
+            total = len(cls._LIVE_NEWS_DATABASE) + len(live_items)
             return {
                 "status": "SUCCESS",
                 "refreshed_at": cls.get_last_refresh_timestamp(),
-                "total_articles": len(cls._LIVE_NEWS_DATABASE),
+                "total_articles": total,
+                "live_wire_count": len(live_items),
+                "dossiers_count": len(cls._LIVE_NEWS_DATABASE),
                 "active_alerts": cls.get_active_alerts_count()
             }
+

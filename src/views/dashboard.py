@@ -1252,8 +1252,11 @@ def render_dashboard_view(navigate_fn=None):
             )
 
     with st.expander(t("maritime_alerts_expander", cur_lang), expanded=False):
-        m_news = GlobalNewsEngine.get_live_news_feed(category="HORMUZ_MARITIME", lang=cur_lang) + GlobalNewsEngine.get_live_news_feed(category="TRADE_FLOWS", lang=cur_lang)
-        for item in m_news[:4]:
+        realtime_m = GlobalNewsEngine.get_realtime_wire(category="HORMUZ_MARITIME", lang=cur_lang)
+        dossier_m = GlobalNewsEngine.get_live_news_feed(category="HORMUZ_MARITIME", lang=cur_lang)
+        combined_m = (realtime_m + dossier_m)[:5]
+        for item in combined_m:
+            link_html = f" • <a href='{item['link']}' target='_blank' style='color: #60A5FA; font-size: 11px; text-decoration: none;'>View Source ↗</a>" if item.get("link") else ""
             st.markdown(
                 f"""
                 <div style="background: rgba(14, 21, 38, 0.6); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 6px; padding: 12px; margin-bottom: 8px;">
@@ -1261,7 +1264,7 @@ def render_dashboard_view(navigate_fn=None):
                         <span style="font-weight: 700; color: #F9FAFB; font-size: 13px;">{item['headline']}</span>
                         <span style="background: {item['impact_color']}20; color: {item['impact_color']}; border: 1px solid {item['impact_color']}50; padding: 1px 6px; border-radius: 4px; font-size: 10px; font-weight: 800;">{item['impact']}</span>
                     </div>
-                    <div style="font-size: 11px; color: #94A3B8; margin-bottom: 6px;">{item['timestamp']} • Source: {item['source']}</div>
+                    <div style="font-size: 11px; color: #94A3B8; margin-bottom: 6px;">⏱️ {item['timestamp']} • Source: {item['source']}{link_html}</div>
                     <div style="font-size: 12px; color: #CBD5E1; line-height: 1.4;">{item['summary']}</div>
                 </div>
                 """,

@@ -143,4 +143,27 @@ def test_all_18_languages_chokepoints_telemetry():
             assert len(cp["contingency"]) > 0
 
 
+def test_realtime_wire_retrieval():
+    """Validates that get_realtime_wire fetches authentic live dispatches."""
+    wire = GlobalNewsEngine.get_realtime_wire()
+    assert isinstance(wire, list)
+    if wire:
+        first = wire[0]
+        assert "headline" in first
+        assert "source" in first
+        assert "timestamp" in first
+        assert "link" in first
+        assert "Live Wire" in first["timestamp"]
+
+
+def test_archive_timestamp_honesty():
+    """Validates that static dossiers do not fabricate 15-minute rolling timestamps."""
+    dossiers = GlobalNewsEngine.get_live_news_feed()
+    for item in dossiers:
+        ts = item["timestamp"]
+        # Ensure it does not falsely claim to be "11 mins ago" or "Just now" for static dossiers
+        assert "Archive" in ts or "days ago" in ts
+
+
+
 

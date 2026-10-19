@@ -2568,15 +2568,21 @@ def render_universal_top_header(active_page_name: str = "Overview", key_prefix: 
                 </div>
                 """)
                 
-                render_html(f"""
-                <div style="background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.35); border-radius: 6px; padding: 7px 12px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-                    <div style="display: flex; align-items: center; gap: 8px;">
-                        <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #10B981; box-shadow: 0 0 6px #10B981;"></span>
-                        <span style="font-size: 0.76rem; font-weight: 700; color: #34D399;">{t('news_live_status', current_lang)}</span>
+                col_sync_status, col_sync_btn = st.columns([3, 1])
+                with col_sync_status:
+                    render_html(f"""
+                    <div style="background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.35); border-radius: 6px; padding: 7px 12px; display: flex; justify-content: space-between; align-items: center;">
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #10B981; box-shadow: 0 0 6px #10B981;"></span>
+                            <span style="font-size: 0.76rem; font-weight: 700; color: #34D399;">{t('news_live_status', current_lang)}</span>
+                        </div>
+                        <div style="font-size: 0.70rem; color: #94A3B8; font-family: monospace;">{GlobalNewsEngine.get_last_refresh_timestamp()}</div>
                     </div>
-                    <div style="font-size: 0.70rem; color: #94A3B8; font-family: monospace;">{GlobalNewsEngine.get_last_refresh_timestamp()}</div>
-                </div>
-                """)
+                    """)
+                with col_sync_btn:
+                    if st.button("🔄 Sync Wire", key="sync_live_wire_popover_btn", use_container_width=True):
+                        GlobalNewsEngine.refresh_news(force_live=True)
+                        st.rerun()
 
                 tab_hormuz, tab_trade, tab_rates, tab_all = st.tabs([
                     f"🚨 {t('nav_trade', current_lang)}",
@@ -2602,80 +2608,99 @@ def render_universal_top_header(active_page_name: str = "Overview", key_prefix: 
                         
                 with tab_trade:
                     st.markdown(f"#### 🚢 {t('chapter_03_title', current_lang)}")
-                for item in GlobalNewsEngine.get_live_news_feed(category="TRADE_FLOWS", lang=current_lang):
-                    metrics_html = " ".join([f"<span style='background: rgba(59,130,246,0.18); color: #60A5FA; padding: 2px 6px; border-radius: 4px; font-size: 0.68rem;'><b>{k}:</b> {v}</span>" for k, v in item['metrics'].items()])
-                    st.markdown(f"""
-                    <div style="background: rgba(14, 21, 38, 0.9); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 6px; padding: 10px 12px; margin-bottom: 8px;">
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <b style="color: #F9FAFB; font-size: 0.85rem;">{item['headline']}</b>
+                    for item in GlobalNewsEngine.get_live_news_feed(category="TRADE_FLOWS", lang=current_lang):
+                        metrics_html = " ".join([f"<span style='background: rgba(59,130,246,0.18); color: #60A5FA; padding: 2px 6px; border-radius: 4px; font-size: 0.68rem;'><b>{k}:</b> {v}</span>" for k, v in item['metrics'].items()])
+                        st.markdown(f"""
+                        <div style="background: rgba(14, 21, 38, 0.9); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 6px; padding: 10px 12px; margin-bottom: 8px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <b style="color: #F9FAFB; font-size: 0.85rem;">{item['headline']}</b>
+                            </div>
+                            <div style="font-size: 0.74rem; color: #94A3B8; margin: 4px 0;">{item['timestamp']} • Source: <i>{item['source']}</i></div>
+                            <p style="font-size: 0.78rem; color: #CBD5E1; line-height: 1.4; margin-bottom: 6px;">{item['summary']}</p>
+                            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                                {metrics_html}
+                            </div>
                         </div>
-                        <div style="font-size: 0.74rem; color: #94A3B8; margin: 4px 0;">{item['timestamp']} • Source: <i>{item['source']}</i></div>
-                        <p style="font-size: 0.78rem; color: #CBD5E1; line-height: 1.4; margin-bottom: 6px;">{item['summary']}</p>
-                        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-                            {metrics_html}
+                        """, unsafe_allow_html=True)
+                    
+                with tab_rates:
+                    st.markdown("#### ⛽ Verified Live Retail Rates Today (17 Oct 2026)")
+                    benchmarks = GlobalNewsEngine.get_live_delhi_and_metro_benchmarks()
+                    d = benchmarks["delhi"]
+                    st.markdown(f"""
+                    <div style="background: rgba(234, 179, 8, 0.12); border: 1.5px solid #CA8A04; border-radius: 8px; padding: 12px; margin-bottom: 10px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span style="font-weight: 800; color: #EAB308; font-size: 0.92rem;">🇮🇳 DELHI (LIVE TODAY)</span>
+                            <span style="background: #EAB308; color: #070A12; font-weight: 800; font-size: 0.68rem; padding: 2px 6px; border-radius: 4px;">PPAC VERIFIED</span>
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px;">
+                            <div style="background: rgba(0,0,0,0.4); padding: 8px; border-radius: 6px;">
+                                <div style="font-size: 0.72rem; color: #94A3B8;">Petrol RSP</div>
+                                <div style="font-size: 1.25rem; font-weight: 800; color: #F9FAFB;">₹{d['petrol']:.2f}/L</div>
+                            </div>
+                            <div style="background: rgba(0,0,0,0.4); padding: 8px; border-radius: 6px;">
+                                <div style="font-size: 0.72rem; color: #94A3B8;">Diesel RSP</div>
+                                <div style="font-size: 1.25rem; font-weight: 800; color: #F9FAFB;">₹{d['diesel']:.2f}/L</div>
+                            </div>
+                        </div>
+                        <div style="font-size: 0.74rem; color: #CBD5E1; margin-top: 8px; line-height: 1.4;">
+                            • <b>Base Refinery Transfer:</b> ₹{d['base_petrol']:.2f}/L<br/>
+                            • <b>Central Excise:</b> ₹{d['central_tax']:.2f}/L<br/>
+                            • <b>Delhi State VAT (19.40%):</b> ₹{d['state_vat']:.2f}/L<br/>
+                            • <b>Combined Tax Wedge:</b> ₹40.40/L ({d['tax_share_pct']}% of pump price)
                         </div>
                     </div>
                     """, unsafe_allow_html=True)
                     
-            with tab_rates:
-                st.markdown("#### ⛽ Verified Live Retail Rates Today (17 Oct 2026)")
-                benchmarks = GlobalNewsEngine.get_live_delhi_and_metro_benchmarks()
-                d = benchmarks["delhi"]
-                st.markdown(f"""
-                <div style="background: rgba(234, 179, 8, 0.12); border: 1.5px solid #CA8A04; border-radius: 8px; padding: 12px; margin-bottom: 10px;">
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <span style="font-weight: 800; color: #EAB308; font-size: 0.92rem;">🇮🇳 DELHI (LIVE TODAY)</span>
-                        <span style="background: #EAB308; color: #070A12; font-weight: 800; font-size: 0.68rem; padding: 2px 6px; border-radius: 4px;">PPAC VERIFIED</span>
-                    </div>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px;">
-                        <div style="background: rgba(0,0,0,0.4); padding: 8px; border-radius: 6px;">
-                            <div style="font-size: 0.72rem; color: #94A3B8;">Petrol RSP</div>
-                            <div style="font-size: 1.25rem; font-weight: 800; color: #F9FAFB;">₹{d['petrol']:.2f}/L</div>
-                        </div>
-                        <div style="background: rgba(0,0,0,0.4); padding: 8px; border-radius: 6px;">
-                            <div style="font-size: 0.72rem; color: #94A3B8;">Diesel RSP</div>
-                            <div style="font-size: 1.25rem; font-weight: 800; color: #F9FAFB;">₹{d['diesel']:.2f}/L</div>
-                        </div>
-                    </div>
-                    <div style="font-size: 0.74rem; color: #CBD5E1; margin-top: 8px; line-height: 1.4;">
-                        • <b>Base Refinery Transfer:</b> ₹{d['base_petrol']:.2f}/L<br/>
-                        • <b>Central Excise:</b> ₹{d['central_tax']:.2f}/L<br/>
-                        • <b>Delhi State VAT (19.40%):</b> ₹{d['state_vat']:.2f}/L<br/>
-                        • <b>Combined Tax Wedge:</b> ₹40.40/L ({d['tax_share_pct']}% of pump price)
-                    </div>
-                </div>
-                """, unsafe_allow_html=True)
-                
-                st.markdown("**Other Indian Metros & Global:**")
-                m = benchmarks["mumbai"]
-                c = benchmarks["kolkata"]
-                ch = benchmarks["chennai"]
-                st.markdown(f"""
-                <div style="font-size: 0.78rem; color: #94A3B8; line-height: 1.6;">
-                    • <b>Mumbai:</b> Petrol ₹{m['petrol']:.2f}/L | Diesel ₹{m['diesel']:.2f}/L (Tax: {m['tax_share_pct']}%)<br/>
-                    • <b>Kolkata:</b> Petrol ₹{c['petrol']:.2f}/L | Diesel ₹{c['diesel']:.2f}/L (Tax: {c['tax_share_pct']}%)<br/>
-                    • <b>Chennai:</b> Petrol ₹{ch['petrol']:.2f}/L | Diesel ₹{ch['diesel']:.2f}/L (Tax: {ch['tax_share_pct']}%)<br/>
-                    • <b>United States:</b> $3.24 / gal ($0.86/L)<br/>
-                    • <b>Germany (EU):</b> €1.78 / L ($1.94/L)<br/>
-                    • <b>United Kingdom:</b> £1.42 / L ($1.85/L)<br/>
-                    • <b>UAE:</b> AED 3.03 / L ($0.82/L)
-                </div>
-                """, unsafe_allow_html=True)
-                
-            with tab_all:
-                st.markdown("#### 📰 Complete Real-Time Intelligence Chronology")
-                for item in GlobalNewsEngine.get_live_news_feed(lang=current_lang):
+                    st.markdown("**Other Indian Metros & Global:**")
+                    m = benchmarks["mumbai"]
+                    c = benchmarks["kolkata"]
+                    ch = benchmarks["chennai"]
                     st.markdown(f"""
-                    <div style="background: rgba(14, 21, 38, 0.9); border: 1px solid rgba(255, 255, 255, 0.12); border-left: 3px solid {item['impact_color']}; border-radius: 6px; padding: 10px 12px; margin-bottom: 8px;">
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <span style="font-size: 0.7rem; font-weight: 700; color: #F5B942;">{item['category_label']}</span>
-                            <span style="font-size: 0.65rem; background: rgba(255,255,255,0.08); color: {item['impact_color']}; padding: 1px 6px; border-radius: 4px; font-weight: 700;">{item['impact']}</span>
-                        </div>
-                        <b style="color: #F9FAFB; font-size: 0.84rem; display: block; margin: 4px 0;">{item['headline']}</b>
-                        <div style="font-size: 0.72rem; color: #94A3B8; margin-bottom: 4px;">{item['timestamp']} • <i>{item['source']}</i></div>
-                        <p style="font-size: 0.76rem; color: #CBD5E1; line-height: 1.4; margin-bottom: 6px;">{item['summary']}</p>
+                    <div style="font-size: 0.78rem; color: #94A3B8; line-height: 1.6;">
+                        • <b>Mumbai:</b> Petrol ₹{m['petrol']:.2f}/L | Diesel ₹{m['diesel']:.2f}/L (Tax: {m['tax_share_pct']}%)<br/>
+                        • <b>Kolkata:</b> Petrol ₹{c['petrol']:.2f}/L | Diesel ₹{c['diesel']:.2f}/L (Tax: {c['tax_share_pct']}%)<br/>
+                        • <b>Chennai:</b> Petrol ₹{ch['petrol']:.2f}/L | Diesel ₹{ch['diesel']:.2f}/L (Tax: {ch['tax_share_pct']}%)<br/>
+                        • <b>United States:</b> $3.24 / gal ($0.86/L)<br/>
+                        • <b>Germany (EU):</b> €1.78 / L ($1.94/L)<br/>
+                        • <b>United Kingdom:</b> £1.42 / L ($1.85/L)<br/>
+                        • <b>UAE:</b> AED 3.03 / L ($0.82/L)
                     </div>
                     """, unsafe_allow_html=True)
+                    
+                with tab_all:
+                    live_wire_items = GlobalNewsEngine.get_realtime_wire(lang=current_lang)
+                    if live_wire_items:
+                        st.markdown(f"#### 🔴 Real-Time Breaking Wire ({len(live_wire_items)} Live Dispatches Today)")
+                        for item in live_wire_items:
+                            link_elem = f"<a href='{item['link']}' target='_blank' style='color: #60A5FA; font-size: 0.70rem; text-decoration: none; font-weight: 600;'>🔗 Read original source on {item['source']} ↗</a>" if item.get("link") else ""
+                            st.markdown(f"""
+                            <div style="background: rgba(14, 21, 38, 0.95); border: 1px solid rgba(255, 255, 255, 0.14); border-left: 3px solid {item['impact_color']}; border-radius: 6px; padding: 10px 12px; margin-bottom: 8px;">
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <span style="font-size: 0.7rem; font-weight: 700; color: #F5B942;">{item['category_label']}</span>
+                                    <span style="font-size: 0.65rem; background: rgba(255,255,255,0.08); color: {item['impact_color']}; padding: 1px 6px; border-radius: 4px; font-weight: 700;">{item['impact']}</span>
+                                </div>
+                                <b style="color: #F9FAFB; font-size: 0.85rem; display: block; margin: 4px 0;">{item['headline']}</b>
+                                <div style="font-size: 0.72rem; color: #34D399; margin-bottom: 4px; font-weight: 600;">⏱️ {item['timestamp']} • <i style="color: #94A3B8;">{item['source']}</i></div>
+                                <p style="font-size: 0.76rem; color: #CBD5E1; line-height: 1.4; margin-bottom: 6px;">{item['summary']}</p>
+                                <div style="text-align: right;">{link_elem}</div>
+                            </div>
+                            """, unsafe_allow_html=True)
+                        st.markdown("---")
+
+                    st.markdown("#### 📋 Verified Sector Analysis & Strategic Dossiers (16 Oct Archive)")
+                    for item in GlobalNewsEngine.get_live_news_feed(lang=current_lang):
+                        st.markdown(f"""
+                        <div style="background: rgba(14, 21, 38, 0.75); border: 1px solid rgba(255, 255, 255, 0.08); border-left: 3px solid {item['impact_color']}; border-radius: 6px; padding: 10px 12px; margin-bottom: 8px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <span style="font-size: 0.7rem; font-weight: 700; color: #94A3B8;">{item['category_label']}</span>
+                                <span style="font-size: 0.65rem; background: rgba(255,255,255,0.08); color: {item['impact_color']}; padding: 1px 6px; border-radius: 4px; font-weight: 700;">{item['impact']}</span>
+                            </div>
+                            <b style="color: #F9FAFB; font-size: 0.84rem; display: block; margin: 4px 0;">{item['headline']}</b>
+                            <div style="font-size: 0.72rem; color: #64748B; margin-bottom: 4px;">📅 {item['timestamp']} • <i>{item['source']}</i></div>
+                            <p style="font-size: 0.76rem; color: #CBD5E1; line-height: 1.4; margin-bottom: 6px;">{item['summary']}</p>
+                        </div>
+                        """, unsafe_allow_html=True)
 
 
 # ==============================================================================
