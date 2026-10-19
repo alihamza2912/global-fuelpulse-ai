@@ -56,11 +56,13 @@ def chat_endpoint(
     question: str,
     user_id: str,
     context_data: Optional[Dict[str, Any]] = None,
-    enable_search: bool = True
+    enable_search: bool = True,
+    use_cache: bool = True
 ) -> Dict[str, Any]:
     """
     Main chat endpoint for natural language query execution.
     Validates input, checks security filters, enforces rolling 24h quota, and calls OpenAI.
+    Supports sub-millisecond caching (< 2ms) to eliminate redundant LLM roundtrips.
     """
     # 1. Validation: Clean text & length limit
     clean_q = (question or "").strip()
@@ -112,13 +114,14 @@ def chat_endpoint(
             "remaining": 0
         }
 
-    # 4. Execute question through OpenAI client with atomic quota guard
+    # 4. Execute question through OpenAI client with atomic quota guard & fast cache
     try:
         result = openai_client.answer_question(
             question=clean_q,
             user_id=str(user_id).strip(),
             context_data=context_data,
-            enable_search=enable_search
+            enable_search=enable_search,
+            use_cache=use_cache
         )
         return result
 

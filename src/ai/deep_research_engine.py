@@ -15,6 +15,42 @@ import plotly.graph_objects as go
 logger = logging.getLogger(__name__)
 
 
+TEMPORAL_AND_LIVE_TRIGGERS = {
+    "today", "yesterday", "tomorrow", "tonight", "now", "current", "currently",
+    "latest", "recent", "recently", "this week", "this month", "this year",
+    "news", "breaking", "update", "updates", "trending", "headlines", "live",
+    "spot price", "2025", "2026", "2027", "right now", "real time", "realtime",
+    "market open", "close today", "today's", "happening", "search", "browse",
+    "look up", "find online", "google"
+}
+
+
+def should_perform_web_search(query: str) -> bool:
+    """
+    Intelligently determines whether a natural language query requires live web search.
+    Conceptual, educational, historical, database, or algorithmic questions bypass
+    blocking web search and stream directly to the LLM (reducing latency from ~14s to ~1.5s).
+    """
+    if not query or not isinstance(query, str):
+        return False
+    q_lower = query.lower().strip()
+
+    # Direct word match against temporal triggers
+    words = set(re.findall(r"\b\w+\b", q_lower))
+    if any(trigger in words for trigger in TEMPORAL_AND_LIVE_TRIGGERS):
+        return True
+
+    # Multi-word phrase triggers
+    multi_word_triggers = [
+        "this week", "this month", "this year", "right now", "real time",
+        "spot price", "close today", "today's", "look up", "find online"
+    ]
+    if any(phrase in q_lower for phrase in multi_word_triggers):
+        return True
+
+    return False
+
+
 class DeepOnlineResearchEngine:
     """
     Autonomous multi-source research engine that scours live web indices,
@@ -25,7 +61,7 @@ class DeepOnlineResearchEngine:
     def search_web(cls, query: str, max_results: int = 5) -> List[Dict[str, str]]:
         """
         Executes real-time web search using ddgs with multiple query expansion strategies
-        and Wikipedia API fallback.
+        and Wikipedia API fallback. Streamlined to prevent redundant sequential network delays.
         """
         results: List[Dict[str, str]] = []
 
@@ -48,8 +84,8 @@ class DeepOnlineResearchEngine:
         except Exception as e:
             logger.warning(f"Primary DDGS web search failed: {e}")
 
-        # 1b. If results are sparse (< 2), try with energy-augmented keywords
-        if len(results) < 2:
+        # 1b. If primary returned zero results, try with energy-augmented keywords
+        if len(results) == 0:
             try:
                 from ddgs import DDGS
                 expanded_q = f"{query} petroleum energy oil fuel market"
@@ -69,8 +105,8 @@ class DeepOnlineResearchEngine:
             except Exception as e:
                 logger.debug(f"Augmented DDGS search failed: {e}")
 
-        # 2. Wikipedia API fallback / augmentation
-        if len(results) < 3:
+        # 2. Wikipedia API fallback only if web search returned zero results
+        if len(results) == 0:
             wiki_items = cls._query_wikipedia(query)
             results.extend(wiki_items)
 

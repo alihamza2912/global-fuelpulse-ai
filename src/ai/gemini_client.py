@@ -150,13 +150,14 @@ class GeminiFreeTierClient:
         if context_data:
             sys_text += f"\n\nContext Data from Database:\n{json.dumps(context_data, default=str)}"
 
-        # Enrich with live web research grounding
+        # Enrich with live web research grounding only when temporal or live data is needed
         try:
-            from src.ai.deep_research_engine import DeepOnlineResearchEngine
-            web_items = DeepOnlineResearchEngine.search_web(prompt, max_results=3)
-            if web_items:
-                snippets_text = "\n".join(f"- {it['title']}: {it['snippet']}" for it in web_items)
-                sys_text += f"\n\nLive Web Research Grounding (Real-Time Current Web Findings):\n{snippets_text}"
+            from src.ai.deep_research_engine import DeepOnlineResearchEngine, should_perform_web_search
+            if should_perform_web_search(prompt):
+                web_items = DeepOnlineResearchEngine.search_web(prompt, max_results=3)
+                if web_items:
+                    snippets_text = "\n".join(f"- {it['title']}: {it['snippet']}" for it in web_items)
+                    sys_text += f"\n\nLive Web Research Grounding (Real-Time Current Web Findings):\n{snippets_text}"
         except Exception as e:
             logger.debug(f"Web research grounding bypassed: {e}")
 
@@ -170,10 +171,10 @@ class GeminiFreeTierClient:
             }
         ]
 
-        # Generation config (strict free tier parameters, low temperature for analytical precision)
+        # Generation config (strict free tier parameters, low temperature & bounded tokens for fast response)
         payload["generationConfig"] = {
-            "temperature": 0.2,
-            "maxOutputTokens": 800,
+            "temperature": 0.1,
+            "maxOutputTokens": 600,
             "topP": 0.8,
         }
 
