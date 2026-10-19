@@ -18,14 +18,17 @@ logger = logging.getLogger(__name__)
 
 # Allowed free-tier models (protects user from paid model calls)
 ALLOWED_FREE_MODELS = {
-    "gemini-2.0-flash",
-    "gemini-1.5-flash",
+    "gemini-3.5-flash",
+    "gemini-3.5-flash-lite",
+    "gemini-3.8-flash",
     "gemini-2.5-flash",
     "gemini-2.5-flash-lite",
+    "gemini-2.0-flash",
+    "gemini-1.5-flash",
     "gemini-1.5-flash-8b",
 }
 
-DEFAULT_FREE_MODEL = "gemini-2.0-flash"
+DEFAULT_FREE_MODEL = "gemini-3.5-flash"
 
 
 class AIQuotaExhaustedError(Exception):
@@ -47,10 +50,12 @@ def sanitize_sensitive_text(text: str) -> str:
     """Removes API keys or secret tokens from strings to prevent logging leaks."""
     if not text:
         return ""
-    # Mask URL query param keys: key=AIza...
+    # Mask URL query param keys: key=AIza... or key=AQ...
     sanitized = re.sub(r"key=[a-zA-Z0-9_\-]+", "key=REDACTED_API_KEY", str(text))
     # Mask raw AIza keys:
     sanitized = re.sub(r"AIza[0-9A-Za-z\-_]{35}", "AIza...REDACTED", sanitized)
+    # Mask raw AQ keys:
+    sanitized = re.sub(r"AQ\.[0-9A-Za-z\-_]{30,}", "AQ...REDACTED", sanitized)
     return sanitized
 
 
@@ -90,7 +95,10 @@ class GeminiFreeTierClient:
         k = (self.api_key or "").strip()
         if not k:
             return False
-        return not k.startswith("AIza")
+        # External Google API keys or OAuth tokens
+        if k.startswith("AIza") or k.startswith("AQ.") or k.startswith("ya29."):
+            return False
+        return k.startswith("agy_") or "antigravity" in k.lower()
 
     def generate_intelligence(
         self,
@@ -118,8 +126,7 @@ class GeminiFreeTierClient:
             quota_manager.record_call_success()
             return resp_dict.get("answer_text", "")
 
-        # 2. Google Gemini REST API routing (for Google AI Studio AIza... keys or OAuth tokens)
-        endpoint = f"https://generativelanguage.googleapis.com/v1beta/models/{self.model}:generateContent"
+        # 2. Google Gemini REST API routing (for Google AI Studio / Gemini API keys or OAuth tokens)
         headers = {"Content-Type": "application/json"}
         if self.api_key.startswith("ya29."):
             headers["Authorization"] = f"Bearer {self.api_key}"
@@ -170,31 +177,61 @@ class GeminiFreeTierClient:
             "topP": 0.8,
         }
 
-        try:
-            response = requests.post(
-                endpoint,
-                params=params,
-                json=payload,
-                timeout=settings.api.timeout_seconds,
-                headers=headers
-            )
-        except requests.exceptions.RequestException as req_err:
-            sanitized_err = sanitize_sensitive_text(str(req_err))
-            logger.error(f"Gemini API request failed: {sanitized_err}")
-            raise AIServiceUnavailableError(
-                "Unable to connect to the energy AI service at this moment. "
-                "Please check your internet connection."
-            )
+        # Multi-model resilience: try primary model, fall back to lightweight companion model if Google returns 503/500/504
+        models_to_try = [self.model]
+        if self.model != "gemini-3.5-flash-lite" and "gemini-3.5-flash-lite" in ALLOWED_FREE_MODELS:
+            models_to_try.append("gemini-3.5-flash-lite")
 
-        # Provider quota error check (HTTP 429, 403 quota exhaustion, 503 capacity)
-        if response.status_code == 429:
-            quota_manager.record_provider_quota_error("HTTP 429: Too Many Requests / Free Quota Exceeded")
-            reset_str = quota_manager.get_formatted_reset_time()
-            raise AIQuotaExhaustedError(
-                f"The free AI quota for today is finished. The AI assistant will be available "
-                f"again after {reset_str}. Meanwhile you can still use the charts, tables and "
-                f"forecasts on the dashboard."
-            )
+        last_response = None
+        for candidate_model in models_to_try:
+            endpoint = f"https://generativelanguage.googleapis.com/v1beta/models/{candidate_model}:generateContent"
+            try:
+                response = requests.post(
+                    endpoint,
+                    params=params,
+                    json=payload,
+                    timeout=settings.api.timeout_seconds,
+                    headers=headers
+                )
+                last_response = response
+            except requests.exceptions.RequestException as req_err:
+                sanitized_err = sanitize_sensitive_text(str(req_err))
+                logger.error(f"Gemini API request failed for {candidate_model}: {sanitized_err}")
+                if candidate_model == models_to_try[-1]:
+                    raise AIServiceUnavailableError(
+                        "Unable to connect to the energy AI service at this moment. "
+                        "Please check your internet connection."
+                    )
+                continue
+
+            # Provider quota error check (HTTP 429)
+            if response.status_code == 429:
+                quota_manager.record_provider_quota_error("HTTP 429: Too Many Requests / Free Quota Exceeded")
+                reset_str = quota_manager.get_formatted_reset_time()
+                raise AIQuotaExhaustedError(
+                    f"The free AI quota for today is finished. The AI assistant will be available "
+                    f"again after {reset_str}. Meanwhile you can still use the charts, tables and "
+                    f"forecasts on the dashboard."
+                )
+
+            # Success
+            if response.status_code == 200:
+                break
+
+            # Transient capacity / high demand spikes (500, 502, 503, 504) -> try fallback model
+            if response.status_code in (500, 502, 503, 504) and candidate_model != models_to_try[-1]:
+                logger.warning(
+                    f"Gemini model '{candidate_model}' returned {response.status_code} (capacity spike). "
+                    f"Attempting fallback to companion model..."
+                )
+                continue
+
+            # Non-transient or final attempt failure
+            break
+
+        response = last_response
+        if response is None:
+            raise AIServiceUnavailableError("The AI assistant is temporarily unavailable. Please try again shortly.")
 
         if response.status_code != 200:
             resp_text = sanitize_sensitive_text(response.text)
@@ -220,10 +257,23 @@ class GeminiFreeTierClient:
             candidates = data.get("candidates", [])
             if candidates:
                 parts = candidates[0].get("content", {}).get("parts", [])
-                if parts and "text" in parts[0]:
-                    # Successfully received content -> increment our quota tracker
-                    quota_manager.record_call_success()
-                    return parts[0]["text"].strip()
+                text_pieces = [
+                    p.get("text", "")
+                    for p in parts
+                    if isinstance(p, dict) and "text" in p and not p.get("thought", False)
+                ]
+                if not text_pieces:
+                    # Fallback to any part with text
+                    text_pieces = [
+                        p.get("text", "")
+                        for p in parts
+                        if isinstance(p, dict) and "text" in p
+                    ]
+                if text_pieces:
+                    full_text = "\n".join(t.strip() for t in text_pieces if t.strip())
+                    if full_text:
+                        quota_manager.record_call_success()
+                        return full_text
 
             return "No narrative response generated by the AI model."
         except Exception as e:

@@ -11,7 +11,23 @@ from unittest.mock import patch, MagicMock
 import pytest
 from src.ai.deep_research_engine import DeepOnlineResearchEngine
 from src.ai.nl_query_engine import AIEnergyMarketAnalyst
+from src.ai.quota_manager import quota_manager
+from src.ai.cache_manager import question_cache
 from config.settings import get_gemini_api_key
+
+
+@pytest.fixture(autouse=True)
+def clean_test_state(tmp_path):
+    """Resets quota and cache state for each test in this module."""
+    test_quota_file = tmp_path / "test_deep_quota.json"
+    test_cache_file = tmp_path / "test_deep_cache.json"
+    quota_manager.state_file_path = test_quota_file
+    quota_manager.reset_state()
+    question_cache.cache_file_path = test_cache_file
+    question_cache.clear()
+    yield
+    quota_manager.reset_state()
+    question_cache.clear()
 
 
 def test_deep_research_search_web():

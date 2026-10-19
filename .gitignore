@@ -32,6 +32,7 @@ wheels/
 *.pem
 *.key
 *.secret
+.streamlit/secrets.toml
 
 # Database local caches
 *.db

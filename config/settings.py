@@ -47,10 +47,10 @@ class DatabaseSettings:
         return f"sqlite:///{self.sqlite_fallback_path}"
 
 
-def reload_env() -> None:
-    """Forces reloading environment variables from absolute .env path."""
+def reload_env(override: bool = False) -> None:
+    """Reloads environment variables from absolute .env path without clobbering in-process overrides."""
     if ENV_PATH.exists():
-        load_dotenv(dotenv_path=ENV_PATH, override=True)
+        load_dotenv(dotenv_path=ENV_PATH, override=override)
 
 
 def get_gemini_api_key() -> str:
@@ -205,7 +205,7 @@ class APISettings:
     def ai_model(self) -> str:
         """Dynamic getter for AI_MODEL from .env."""
         reload_env()
-        return os.getenv("AI_MODEL", "gemini-2.0-flash").strip()
+        return os.getenv("AI_MODEL", "gemini-3.5-flash").strip()
 
 
 
