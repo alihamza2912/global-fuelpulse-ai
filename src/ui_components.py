@@ -2500,13 +2500,15 @@ def render_universal_top_header(active_page_name: str = "Overview", key_prefix: 
     
     pfx = (key_prefix or active_page_name or "nav").lower().replace(" ", "_").replace(".", "_").replace("•", "_")
 
-    from src.ai.nl_query_engine import session_protector
-    if "ai_session_id" not in st.session_state:
-        import uuid
-        st.session_state.ai_session_id = str(uuid.uuid4())
-    sess_id = st.session_state.ai_session_id
-    sess_status = session_protector.get_session_status(sess_id, has_custom_key=True, enforce_user_daily_limit=True)
-    rem_q = st.session_state.get("top_ai_quota_rem", sess_status.get("daily_questions_remaining", 3))
+    # Retrieve persistent database quota for authenticated user
+    try:
+        from src.auth.auth_service import AuthService
+        from src.ai.openai_quota_manager import openai_quota_manager
+        u = AuthService.get_or_create_streamlit_user()
+        q_st = openai_quota_manager.get_user_quota_status(u.get("user_id"))
+        rem_q = q_st.get("remaining", 3)
+    except Exception:
+        rem_q = 3
 
     col_brand, col_actions = st.columns([5.2, 4.8], gap="small", vertical_alignment="center")
     with col_brand:

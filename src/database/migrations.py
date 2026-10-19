@@ -32,6 +32,13 @@ def init_database(seed_if_empty: bool = True) -> bool:
             with db_manager.get_session() as session:
                 seed_database(session, force=False)
 
+        # 3. Ensure default demo analyst user exists
+        try:
+            from src.auth.auth_service import AuthService
+            AuthService.ensure_default_demo_user()
+        except Exception as e:
+            logger.debug("Demo user ensure notice: %s", e)
+
 
         # 3. Create or replace analytical SQL views (if supported)
         views_file = SQL_DIR / "views.sql"

@@ -40,7 +40,7 @@ class DatabaseManager:
                 self._engine = test_engine
                 self._active_dialect = "mysql"
                 logger.info("Successfully connected to MySQL database: %s", settings.db.name)
-                self._session_factory = sessionmaker(bind=self._engine, autocommit=False, autoflush=False)
+                self._session_factory = sessionmaker(bind=self._engine, autocommit=False, autoflush=False, expire_on_commit=False)
                 return
             except Exception as e:
                 logger.warning("Could not connect to MySQL at %s:%s (%s). Falling back to SQLite local storage.",
@@ -56,7 +56,8 @@ class DatabaseManager:
         self._session_factory = sessionmaker(
             bind=self._engine,
             autocommit=False,
-            autoflush=False
+            autoflush=False,
+            expire_on_commit=False
         )
 
     @property

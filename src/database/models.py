@@ -271,3 +271,45 @@ class EtlRunLog(Base):
     error_message = Column(Text, nullable=True)
     started_at = Column(DateTime, default=datetime.utcnow)
     completed_at = Column(DateTime, nullable=True)
+
+
+class User(Base):
+    __tablename__ = "users"
+
+    user_id = Column(String(36), primary_key=True)
+    username = Column(String(100), unique=True, nullable=False, index=True)
+    email = Column(String(255), unique=True, nullable=False, index=True)
+    password_hash = Column(String(255), nullable=False)
+    full_name = Column(String(150), nullable=True)
+    is_active = Column(Boolean, default=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+    sessions = relationship("UserSession", back_populates="user", cascade="all, delete-orphan")
+    ai_usages = relationship("AIQuestionUsage", back_populates="user", cascade="all, delete-orphan")
+
+
+class UserSession(Base):
+    __tablename__ = "user_sessions"
+
+    session_token = Column(String(64), primary_key=True)
+    user_id = Column(String(36), ForeignKey("users.user_id", ondelete="CASCADE"), nullable=False, index=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    expires_at = Column(DateTime, nullable=False)
+    is_revoked = Column(Boolean, default=False)
+
+    user = relationship("User", back_populates="sessions")
+
+
+class AIQuestionUsage(Base):
+    __tablename__ = "ai_question_usages"
+
+    usage_id = Column(BigInteger().with_variant(Integer, "sqlite"), primary_key=True, autoincrement=True)
+    user_id = Column(String(36), ForeignKey("users.user_id", ondelete="CASCADE"), nullable=False, index=True)
+    question_text = Column(Text, nullable=False)
+    question_hash = Column(String(64), nullable=False, index=True)
+    created_at = Column(DateTime, default=datetime.utcnow, index=True)
+    status = Column(String(20), default="completed", index=True)  # "completed", "failed", "pending"
+    model_used = Column(String(50), nullable=True)
+    tokens_used = Column(Integer, nullable=True)
+
+    user = relationship("User", back_populates="ai_usages")

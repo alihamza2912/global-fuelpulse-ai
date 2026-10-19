@@ -207,6 +207,37 @@ class APISettings:
         reload_env()
         return os.getenv("AI_MODEL", "gemini-3.5-flash").strip()
 
+    @property
+    def openai_api_key(self) -> str:
+        """Dynamic getter for OPENAI_API_KEY."""
+        reload_env()
+        # 1. Streamlit session state
+        try:
+            import streamlit as st
+            if hasattr(st, "session_state"):
+                val = st.session_state.get("openai_api_key")
+                if val and str(val).strip():
+                    return str(val).strip()
+        except Exception:
+            pass
+        # 2. Environment variable
+        k = os.getenv("OPENAI_API_KEY", "")
+        if not k:
+            # 3. Streamlit Cloud secrets
+            try:
+                import streamlit as st
+                if hasattr(st, "secrets"):
+                    k = st.secrets.get("OPENAI_API_KEY", "")
+            except Exception:
+                pass
+        return (k or "").strip()
+
+    @property
+    def openai_model(self) -> str:
+        """Configurable OpenAI model from environment."""
+        reload_env()
+        return os.getenv("OPENAI_MODEL", "gpt-4o-mini").strip()
+
 
 
 @dataclass
