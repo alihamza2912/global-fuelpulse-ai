@@ -76,6 +76,7 @@ class SessionAbuseProtector:
 
     def __init__(self, store_path: Optional[Path] = None):
         self._sessions: Dict[str, Dict[str, Any]] = {}
+        self._device_map: Dict[str, str] = {}
         self._lock = threading.RLock()
         self._compiled_regexes = [re.compile(p, re.IGNORECASE) for p in self.ILLEGAL_PATTERNS]
         if store_path is not None:
@@ -86,33 +87,83 @@ class SessionAbuseProtector:
 
     def _resolve_client_identifier(self, session_id: str) -> str:
         """
-        Determines the persistent client key.
-        In Streamlit runtime, attempts to get client IP address so browser refreshes
-        cannot circumvent the 24-hour rate limit.
+        Determines the persistent, anti-abuse client key.
+        1. Checks Streamlit URL query parameter `st.query_params["uid"]`.
+        2. Inspects client network and device headers (IP, User-Agent, Accept-Language, Sec-CH-UA).
+        3. Computes a deterministic SHA-256 fingerprint `dev_<hash>`.
+        4. Links device fingerprints and query param UIDs to a single canonical client identity
+           persisted on disk so browser refreshes, URL clearing, or new tabs cannot evade the 3-question quota.
         """
         try:
+            import hashlib
             import streamlit as st
             if hasattr(st, "context"):
-                ip = getattr(st.context, "ip_address", None)
-                if ip and str(ip).strip() and str(ip) not in ("127.0.0.1", "::1", "localhost"):
-                    return f"ip_{ip}"
                 headers = getattr(st.context, "headers", None)
-                if headers and isinstance(headers, dict):
+                # Only perform browser/network fingerprinting when running inside a real HTTP request
+                if headers and isinstance(headers, dict) and (headers.get("user-agent") or headers.get("host")):
+                    ip = getattr(st.context, "ip_address", None) or "127.0.0.1"
                     xfwd = headers.get("x-forwarded-for") or headers.get("x-real-ip")
                     if xfwd and str(xfwd).strip():
-                        return f"ip_{xfwd.split(',')[0].strip()}"
+                        ip = str(xfwd).split(",")[0].strip()
+                    ua = headers.get("user-agent", "")
+                    lang = headers.get("accept-language", "")
+                    sec_ua = headers.get("sec-ch-ua", "")
+                    sec_plat = headers.get("sec-ch-ua-platform", "")
+
+                    raw_dev_sig = f"{ip}:{ua}:{lang}:{sec_ua}:{sec_plat}"
+                    dev_id = f"dev_{hashlib.sha256(raw_dev_sig.encode('utf-8')).hexdigest()[:16]}"
+
+                    query_uid = None
+                    if hasattr(st, "query_params") and "uid" in st.query_params:
+                        q_val = st.query_params.get("uid")
+                        if q_val and str(q_val).strip():
+                            query_uid = str(q_val).strip()
+
+                    with self._lock:
+                        # 1. Known device signature bound to existing canonical user
+                        if dev_id in self._device_map:
+                            canonical_uid = self._device_map[dev_id]
+                            if query_uid and query_uid != canonical_uid:
+                                self._device_map[query_uid] = canonical_uid
+                            return canonical_uid
+
+                        # 2. Known query_uid bound to existing canonical user
+                        if query_uid and query_uid in self._device_map:
+                            canonical_uid = self._device_map[query_uid]
+                            self._device_map[dev_id] = canonical_uid
+                            return canonical_uid
+
+                        # 3. New client registration
+                        canonical_uid = query_uid or (session_id if (session_id and session_id != "default_session") else dev_id)
+                        self._device_map[dev_id] = canonical_uid
+                        self._device_map[canonical_uid] = canonical_uid
+                        if hasattr(st, "query_params") and not query_uid:
+                            try:
+                                st.query_params["uid"] = canonical_uid
+                            except Exception:
+                                pass
+                        self._save_to_disk()
+                        return canonical_uid
         except Exception:
             pass
+
         return session_id
 
     def _load_from_disk(self):
         try:
             if self._store_file and self._store_file.exists():
                 with open(self._store_file, "r", encoding="utf-8") as f:
-                    data = json.load(f)
-                    if isinstance(data, dict):
+                    raw_data = json.load(f)
+                    if isinstance(raw_data, dict):
                         now = time.time()
-                        for k, v in data.items():
+                        if "sessions" in raw_data and isinstance(raw_data["sessions"], dict):
+                            sessions_data = raw_data["sessions"]
+                            self._device_map = raw_data.get("device_map", {}) if isinstance(raw_data.get("device_map"), dict) else {}
+                        else:
+                            sessions_data = raw_data
+                            self._device_map = {}
+
+                        for k, v in sessions_data.items():
                             if isinstance(v, dict):
                                 daily = [ts for ts in v.get("daily_timestamps", []) if (now - ts) < 86400.0]
                                 v["daily_timestamps"] = daily
@@ -125,7 +176,11 @@ class SessionAbuseProtector:
             if self._store_file:
                 self._store_file.parent.mkdir(parents=True, exist_ok=True)
                 with open(self._store_file, "w", encoding="utf-8") as f:
-                    json.dump(self._sessions, f)
+                    payload = {
+                        "sessions": self._sessions,
+                        "device_map": self._device_map
+                    }
+                    json.dump(payload, f, indent=2)
         except Exception as e:
             logger.debug(f"Quota disk save notice: {e}")
 
@@ -312,6 +367,7 @@ class SessionAbuseProtector:
         """Clears session tracking state."""
         with self._lock:
             self._sessions.clear()
+            self._device_map.clear()
             try:
                 if self._store_file and self._store_file.exists():
                     self._store_file.unlink()
@@ -343,7 +399,8 @@ class AIEnergyMarketAnalyst:
         session_id: str = "default_session",
         bypass_session_limits: bool = False,
         allow_free_autonomous: bool = False,
-        enforce_user_daily_limit: bool = False
+        enforce_user_daily_limit: bool = False,
+        prefer_live_gemini: bool = False
     ) -> Dict[str, Any]:
         """
         Processes natural language energy market questions through an optimized pipeline:
@@ -402,6 +459,151 @@ class AIEnergyMarketAnalyst:
 
         # 3. Check for Direct Database Routing (Simple Price/Trade/Production Questions)
         q_lower = question.lower().strip()
+
+        # Route A: Top Exporters Query (Direct SQL)
+        if any(w in q_lower for w in ["export", "exporter", "exporting"]) and any(w in q_lower for w in ["most", "top", "lead", "largest"]):
+            sql = """
+            SELECT 
+                t.exporter_iso3,
+                c.country_name,
+                c.is_opec,
+                t.product_category,
+                t.reporting_period,
+                t.quantity,
+                t.quantity_unit,
+                t.value_usd,
+                ds.name AS source_name
+            FROM fact_petroleum_trade t
+            JOIN dim_country c ON t.exporter_iso3 = c.country_iso3
+            JOIN data_sources ds ON t.source_id = ds.source_id
+            WHERE t.trade_direction = 'export' AND t.product_category = 'crude_oil'
+            ORDER BY t.quantity DESC
+            LIMIT 5
+            """
+            resp = cls._execute_and_format(sql, question, topic="Top Crude Oil Exporters")
+            resp["quota_used"] = False
+            resp["served_from_db"] = True
+            question_cache.set(question, resp)
+            return resp
+
+        # Route B: Simple Retail Price Comparison (Direct SQL)
+        if (
+            any(w in q_lower for w in ["compare", "comparison", "cheapest", "most expensive"])
+            or (
+                any(w in q_lower for w in ["compare", "comparison"])
+                and any(w in q_lower for w in ["india", "germany", "united states", "usa", "delhi", "mumbai"])
+            )
+        ) and not any(w in q_lower for w in ["increase", "decrease", "forecast", "future", "month", "predict", "trend", "after", "will", "why", "how", "tax", "vat", "excise", "or not", "is petrol", "does petrol"]):
+            sql = """
+            SELECT 
+                fp.country_iso3,
+                c.country_name,
+                fp.fuel_type,
+                fp.price_local,
+                fp.currency_local,
+                fp.price_usd_per_litre,
+                fp.observation_date,
+                ds.name AS source_name
+            FROM fuel_prices fp
+            JOIN dim_country c ON fp.country_iso3 = c.country_iso3
+            JOIN data_sources ds ON fp.source_id = ds.source_id
+            ORDER BY fp.observation_date DESC, fp.price_usd_per_litre ASC
+            LIMIT 10
+            """
+            resp = cls._execute_and_format(sql, question, topic="Global Retail Fuel Price Comparison")
+            resp["quota_used"] = False
+            resp["served_from_db"] = True
+            question_cache.set(question, resp)
+            return resp
+
+        # Route C: Import Dependence (Direct SQL)
+        if (
+            any(w in q_lower for w in ["depend", "importer", "vulnerable"])
+            or (any(w in q_lower for w in ["import", "imports"]) and any(w in q_lower for w in ["top", "most", "largest", "ranking", "lead"]))
+        ) and not any(w in q_lower for w in ["why", "how", "forecast", "increase", "decrease", "after", "month", "will", "or not"]):
+            sql = """
+            SELECT 
+                t.importer_iso3,
+                c.country_name,
+                c.income_group,
+                t.product_category,
+                t.reporting_period,
+                t.quantity AS import_volume_bpd,
+                t.value_usd AS import_value_usd,
+                ds.name AS source_name
+            FROM fact_petroleum_trade t
+            JOIN dim_country c ON t.importer_iso3 = c.country_iso3
+            JOIN data_sources ds ON t.source_id = ds.source_id
+            WHERE t.trade_direction = 'import'
+            ORDER BY t.quantity DESC
+            LIMIT 8
+            """
+            resp = cls._execute_and_format(sql, question, topic="Petroleum Import Dependence")
+            resp["quota_used"] = False
+            resp["served_from_db"] = True
+            question_cache.set(question, resp)
+            return resp
+
+        # Live Google Gemini Intelligence with Real-Time Web Research Grounding
+        # When Gemini API Key is configured, prioritize calling Google Gemini with active tokens
+        if (prefer_live_gemini or enforce_user_daily_limit) and gemini_client.is_key_configured():
+            can_call, reason, quota_msg = quota_manager.check_quota()
+            if not can_call:
+                if allow_free_autonomous:
+                    resp = cls._generate_autonomous_free_ai_answer(question)
+                    question_cache.set(question, resp)
+                    return resp
+                return {
+                    "question": question,
+                    "topic": "Free Quota Notice",
+                    "answer_text": quota_msg,
+                    "data_records": [],
+                    "sources_cited": [],
+                    "is_fallback": True,
+                    "quota_used": False
+                }
+
+            db_context = cls._get_grounding_context()
+            try:
+                ai_narrative = gemini_client.generate_intelligence(
+                    prompt=question,
+                    context_data=db_context
+                )
+                is_agy = getattr(gemini_client, "is_antigravity_token", lambda: False)()
+                model_src = "Google Antigravity Energy Intelligence" if is_agy else f"Google Gemini ({settings.api.ai_model})"
+                model_id = "antigravity-analyst-enterprise" if is_agy else settings.api.ai_model
+                resp = {
+                    "question": question,
+                    "topic": "AI Market Intelligence Briefing",
+                    "answer_text": ai_narrative,
+                    "data_records": [],
+                    "sources_cited": [model_src, "Real-Time Web Research", "Global FuelPulse Database"],
+                    "is_fallback": False,
+                    "quota_used": True,
+                    "model_used": model_id
+                }
+                question_cache.set(question, resp)
+                return resp
+            except AIQuotaExhaustedError as quota_err:
+                if allow_free_autonomous:
+                    resp = cls._generate_autonomous_free_ai_answer(question)
+                    question_cache.set(question, resp)
+                    return resp
+                return {
+                    "question": question,
+                    "topic": "Free Quota Finished",
+                    "answer_text": str(quota_err),
+                    "data_records": [],
+                    "sources_cited": [],
+                    "is_fallback": True,
+                    "quota_used": False
+                }
+            except Exception as e:
+                logger.warning(f"Google Gemini live call failed: {e}, falling back to autonomous mode")
+                if allow_free_autonomous:
+                    resp = cls._generate_autonomous_free_ai_answer(question)
+                    question_cache.set(question, resp)
+                    return resp
 
         # Route AFR: African Petroleum Supply, Import Sourcing & Dangote Transformation
         # Handles queries like "who give fuel to africa", "who supplies fuel to africa", "where does africa get petrol from"
@@ -664,136 +866,69 @@ class AIEnergyMarketAnalyst:
             question_cache.set(question, resp)
             return resp
 
-        # 4. General / Complex Intelligence Question -> Gated Gemini Free-Tier Invocation
-        can_call, reason, quota_msg = quota_manager.check_quota()
-        if not can_call:
-            if allow_free_autonomous:
-                resp = cls._generate_autonomous_free_ai_answer(question)
+        # General Intelligence Question -> Gated Gemini Free-Tier Invocation
+        if gemini_client.is_key_configured():
+            can_call, reason, quota_msg = quota_manager.check_quota()
+            if not can_call:
+                if allow_free_autonomous:
+                    resp = cls._generate_autonomous_free_ai_answer(question)
+                    question_cache.set(question, resp)
+                    return resp
+                return {
+                    "question": question,
+                    "topic": "Free Quota Notice",
+                    "answer_text": quota_msg,
+                    "data_records": [],
+                    "sources_cited": [],
+                    "is_fallback": True,
+                    "quota_used": False
+                }
+
+            db_context = cls._get_grounding_context()
+            try:
+                ai_narrative = gemini_client.generate_intelligence(
+                    prompt=question,
+                    context_data=db_context
+                )
+                is_agy = getattr(gemini_client, "is_antigravity_token", lambda: False)()
+                model_src = "Google Antigravity Energy Intelligence" if is_agy else f"Google Gemini ({settings.api.ai_model})"
+                model_id = "antigravity-analyst-enterprise" if is_agy else settings.api.ai_model
+                resp = {
+                    "question": question,
+                    "topic": "AI Market Intelligence Briefing",
+                    "answer_text": ai_narrative,
+                    "data_records": [],
+                    "sources_cited": [model_src, "Real-Time Web Research", "Global FuelPulse Database"],
+                    "is_fallback": False,
+                    "quota_used": True,
+                    "model_used": model_id
+                }
                 question_cache.set(question, resp)
                 return resp
-            return {
-                "question": question,
-                "topic": "Free Quota Notice",
-                "answer_text": quota_msg,
-                "data_records": [],
-                "sources_cited": [],
-                "is_fallback": True,
-                "quota_used": False
-            }
+            except Exception as e:
+                logger.warning(f"Gemini general call exception: {e}")
 
-        # If key is missing, check if free autonomous mode is active
-        if not gemini_client.is_key_configured():
-            if allow_free_autonomous:
-                resp = cls._generate_autonomous_free_ai_answer(question)
-                question_cache.set(question, resp)
-                return resp
-            msg = (
-                "The AI assistant requires a free Gemini API key to generate custom intelligence. "
-                "Please configure `GEMINI_API_KEY` in your `.env` file to enable live AI analysis.\n\n"
-                "Meanwhile, you can still use the suggested query buttons above, or explore the interactive charts, "
-                "tables, and forecasts throughout the dashboard."
-            )
-            return {
-                "question": question,
-                "topic": "API Key Required",
-                "answer_text": msg,
-                "data_records": [],
-                "sources_cited": [],
-                "is_fallback": True,
-                "quota_used": False
-            }
-
-        # Fetch recent database context for grounding
-        db_context = cls._get_grounding_context()
-
-        # Call Gemini Free-Tier Model
-        try:
-            ai_narrative = gemini_client.generate_intelligence(
-                prompt=question,
-                context_data=db_context
-            )
-            is_agy = getattr(gemini_client, "is_antigravity_token", lambda: False)()
-            model_src = "Google Antigravity Energy Intelligence" if is_agy else f"Google Gemini Free-Tier ({settings.api.ai_model})"
-            model_id = "antigravity-analyst-enterprise" if is_agy else settings.api.ai_model
-            resp = {
-                "question": question,
-                "topic": "AI Market Intelligence Briefing",
-                "answer_text": ai_narrative,
-                "data_records": [],
-                "sources_cited": [model_src, "Global FuelPulse Database"],
-                "is_fallback": False,
-                "quota_used": True,
-                "model_used": model_id
-            }
+        # Fallback: Autonomous Free AI Answer or API Key Required Notice
+        if allow_free_autonomous:
+            resp = cls._generate_autonomous_free_ai_answer(question)
             question_cache.set(question, resp)
             return resp
 
-        except AIQuotaExhaustedError as quota_err:
-            if allow_free_autonomous:
-                resp = cls._generate_autonomous_free_ai_answer(question)
-                question_cache.set(question, resp)
-                return resp
-            return {
-                "question": question,
-                "topic": "Free Quota Finished",
-                "answer_text": str(quota_err),
-                "data_records": [],
-                "sources_cited": [],
-                "is_fallback": True,
-                "quota_used": False
-            }
-
-        except AIMissingKeyError as key_err:
-            if allow_free_autonomous:
-                resp = cls._generate_autonomous_free_ai_answer(question)
-                question_cache.set(question, resp)
-                return resp
-            return {
-                "question": question,
-                "topic": "API Key Notice",
-                "answer_text": (
-                    "Please configure `GEMINI_API_KEY` in your `.env` file. "
-                    "Meanwhile you can still use the charts, tables and forecasts on the dashboard."
-                ),
-                "data_records": [],
-                "sources_cited": [],
-                "is_fallback": True,
-                "quota_used": False
-            }
-
-        except AIServiceUnavailableError as svc_err:
-            if allow_free_autonomous:
-                resp = cls._generate_autonomous_free_ai_answer(question)
-                question_cache.set(question, resp)
-                return resp
-            return {
-                "question": question,
-                "topic": "Service Notice",
-                "answer_text": str(svc_err),
-                "data_records": [],
-                "sources_cited": [],
-                "is_fallback": True,
-                "quota_used": False
-            }
-
-        except Exception as unk_err:
-            logger.error(f"Unexpected AI error: {sanitize_sensitive_text(str(unk_err))}")
-            if allow_free_autonomous:
-                resp = cls._generate_autonomous_free_ai_answer(question)
-                question_cache.set(question, resp)
-                return resp
-            return {
-                "question": question,
-                "topic": "Notice",
-                "answer_text": (
-                    "The AI assistant is temporarily unable to process this request. "
-                    "Please try asking again shortly, or explore the interactive charts on the dashboard."
-                ),
-                "data_records": [],
-                "sources_cited": [],
-                "is_fallback": True,
-                "quota_used": False
-            }
+        msg = (
+            "The AI assistant requires a free Gemini API key to generate custom intelligence. "
+            "Please configure `GEMINI_API_KEY` in your `.env` file to enable live AI analysis.\n\n"
+            "Meanwhile, you can still use the suggested query buttons above, or explore the interactive charts, "
+            "tables, and forecasts throughout the dashboard."
+        )
+        return {
+            "question": question,
+            "topic": "API Key Required",
+            "answer_text": msg,
+            "data_records": [],
+            "sources_cited": [],
+            "is_fallback": True,
+            "quota_used": False
+        }
 
     @classmethod
     def _handle_petroleum_contribution_query(cls, question: str) -> Dict[str, Any]:

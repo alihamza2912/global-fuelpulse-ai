@@ -2502,11 +2502,15 @@ def render_universal_top_header(active_page_name: str = "Overview", key_prefix: 
 
     # Retrieve persistent database quota for authenticated user
     try:
-        from src.auth.auth_service import AuthService
-        from src.ai.openai_quota_manager import openai_quota_manager
-        u = AuthService.get_or_create_streamlit_user()
-        q_st = openai_quota_manager.get_user_quota_status(u.get("user_id"))
-        rem_q = q_st.get("remaining", 3)
+        from src.ai.nl_query_engine import session_protector
+        if "top_ai_quota_rem" in st.session_state:
+            rem_q = st.session_state["top_ai_quota_rem"]
+        else:
+            cur_uid = st.query_params.get("uid") if hasattr(st, "query_params") else None
+            if not cur_uid:
+                cur_uid = st.session_state.get("ai_session_id", "default_session")
+            status = session_protector.get_session_status(cur_uid, has_custom_key=True, enforce_user_daily_limit=True)
+            rem_q = status.get("daily_questions_remaining", 3)
     except Exception:
         rem_q = 3
 
@@ -2790,7 +2794,17 @@ def _show_ai_assistant_dialog(context_page: str = "Overview"):
     pfx = ("dlg_" + context_page).lower().replace(" ", "_").replace(".", "_").replace("•", "_")
 
     if "ai_session_id" not in st.session_state:
-        st.session_state.ai_session_id = str(uuid.uuid4())
+        try:
+            qp_uid = st.query_params.get("uid") if hasattr(st, "query_params") else None
+            if qp_uid and str(qp_uid).strip():
+                st.session_state.ai_session_id = str(qp_uid).strip()
+            else:
+                new_uid = f"usr_{uuid.uuid4().hex[:12]}"
+                st.session_state.ai_session_id = new_uid
+                if hasattr(st, "query_params"):
+                    st.query_params["uid"] = new_uid
+        except Exception:
+            st.session_state.ai_session_id = str(uuid.uuid4())
     sess_id = st.session_state.ai_session_id
 
     sess_status = session_protector.get_session_status(sess_id, has_custom_key=True, enforce_user_daily_limit=True)
@@ -2938,7 +2952,8 @@ def _show_ai_assistant_dialog(context_page: str = "Overview"):
                 question=active_run_q,
                 session_id=sess_id,
                 allow_free_autonomous=True,
-                enforce_user_daily_limit=True
+                enforce_user_daily_limit=True,
+                prefer_live_gemini=True
             )
             st.session_state[resp_key] = ans
             st.session_state[f"{pfx}_active_q"] = ""
