@@ -21,6 +21,8 @@ from src.ai.openai_client import (
 from src.ai.openai_quota_manager import openai_quota_manager, MAX_QUESTIONS_PER_24H
 from src.auth.auth_service import AuthService
 from src.ai.nl_query_engine import session_protector
+from src.ai.gemini_client import gemini_client
+from config.settings import settings
 
 logger = logging.getLogger(__name__)
 
@@ -57,7 +59,8 @@ def chat_endpoint(
     user_id: str,
     context_data: Optional[Dict[str, Any]] = None,
     enable_search: bool = True,
-    use_cache: bool = True
+    use_cache: bool = True,
+    preferred_provider: Optional[str] = None
 ) -> Dict[str, Any]:
     """
     Main chat endpoint for natural language query execution.
@@ -114,7 +117,109 @@ def chat_endpoint(
             "remaining": 0
         }
 
-    # 4. Execute question through OpenAI client with atomic quota guard & fast cache
+    # 4. Check providers: OpenAI or Google Gemini/Antigravity
+    use_gemini = (
+        preferred_provider == "gemini"
+        or (not openai_client.is_key_configured() and gemini_client.is_key_configured())
+    )
+
+    if use_gemini:
+        # Enforce rolling 24-hour quota BEFORE making LLM call
+        can_call, quota_msg, quota_status = openai_quota_manager.check_quota(user_id)
+        if not can_call:
+            return {
+                "status": "error",
+                "status_code": 429,
+                "error": "Quota Exhausted",
+                "message": quota_msg or "Daily quota exhausted.",
+                "answer_text": quota_msg or "Daily quota exhausted.",
+                "sources": [],
+                "remaining": 0,
+                "reset_time_str": quota_status["reset_time_str"],
+                "reset_timestamp": quota_status["reset_timestamp"].isoformat() if quota_status.get("reset_timestamp") else None
+            }
+
+        # Sub-millisecond cache retrieval (< 2ms)
+        if use_cache:
+            try:
+                from src.ai.cache_manager import question_cache
+                cached = question_cache.get(clean_q)
+                if cached and isinstance(cached, dict) and cached.get("status") == "success":
+                    status = openai_quota_manager.get_user_quota_status(user_id)
+                    cached_copy = cached.copy()
+                    cached_copy.update({
+                        "user_id": user_id,
+                        "remaining_questions": status["remaining"],
+                        "used_questions": status["used_count"],
+                        "reset_time_str": status["reset_time_str"],
+                        "quota_used": False,
+                        "served_from_cache": True
+                    })
+                    return cached_copy
+            except Exception as cache_err:
+                logger.debug(f"Cache check bypass: {cache_err}")
+
+        try:
+            from src.ai.nl_query_engine import AIEnergyMarketAnalyst
+            ans_dict = AIEnergyMarketAnalyst.answer_question(
+                question=clean_q,
+                session_id=str(user_id).strip(),
+                allow_free_autonomous=True,
+                enforce_user_daily_limit=False
+            )
+
+            # Record usage atomically
+            openai_quota_manager.record_usage_atomic(
+                user_id=str(user_id).strip(),
+                question=clean_q,
+                model_used=ans_dict.get("model_used") or settings.api.ai_model
+            )
+
+            new_status = openai_quota_manager.get_user_quota_status(user_id)
+            sources_raw = ans_dict.get("sources_cited", [])
+            sources = []
+            for s in sources_raw:
+                if isinstance(s, dict):
+                    sources.append(s)
+                else:
+                    sources.append({"title": str(s), "url": "https://fuelpulse.ai"})
+
+            result = {
+                "status": "success",
+                "status_code": 200,
+                "question": clean_q,
+                "answer_text": ans_dict.get("answer_text", ""),
+                "sources": sources,
+                "model_used": ans_dict.get("model_used") or settings.api.ai_model,
+                "user_id": user_id,
+                "remaining_questions": new_status["remaining"],
+                "used_questions": new_status["used_count"],
+                "reset_time_str": new_status["reset_time_str"],
+                "quota_used": True
+            }
+
+            if use_cache:
+                try:
+                    from src.ai.cache_manager import question_cache
+                    question_cache.set(clean_q, result)
+                except Exception:
+                    pass
+
+            return result
+
+        except Exception as gemini_err:
+            logger.error(f"Gemini execution error: {gemini_err}")
+            return {
+                "status": "error",
+                "status_code": 500,
+                "error": "Service Error",
+                "message": "The AI assistant is temporarily unavailable. Please try again shortly.",
+                "answer_text": "The AI assistant is temporarily unavailable. Please try again shortly.",
+                "sources": [],
+                "remaining": 0
+            }
+
+    # 4b. Execute question through OpenAI client with atomic quota guard & fast cache
     try:
         result = openai_client.answer_question(
             question=clean_q,

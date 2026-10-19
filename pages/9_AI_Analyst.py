@@ -45,6 +45,7 @@ from src.ai.openai_client import (
 )
 from src.ai.openai_quota_manager import openai_quota_manager
 from src.ai.chat_service import chat_endpoint, get_user_quota_endpoint
+from src.ai.gemini_client import gemini_client
 from config.settings import settings
 
 apply_theme()
@@ -82,6 +83,19 @@ def _render_quota_pill(user_info, q_status):
     exhausted = q_status.get("is_exhausted", False)
     r_time = q_status.get("reset_time_str", "24 hours")
 
+    has_openai = openai_client.is_key_configured()
+    has_gemini = gemini_client.is_key_configured()
+
+    if has_openai:
+        engine_name = "OpenAI GPT"
+        model_name = settings.api.openai_model
+    elif has_gemini:
+        engine_name = "Google Gemini"
+        model_name = settings.api.ai_model
+    else:
+        engine_name = "AI Engine"
+        model_name = "No Key"
+
     if exhausted:
         status_icon = "⏳"
         status_color = "#F5B942"
@@ -90,7 +104,7 @@ def _render_quota_pill(user_info, q_status):
     else:
         status_icon = "🟢"
         status_color = "#10B981"
-        status_label = f"OpenAI Ready • {rem} / 3 Free Questions Left"
+        status_label = f"{engine_name} Ready • {rem} / 3 Free Questions Left"
         status_detail = f"Rolling 24-hour quota • Account: {u_name} ({u_email})"
 
     return f"""
@@ -101,8 +115,8 @@ def _render_quota_pill(user_info, q_status):
             <span style="color:#94A3B8;font-weight:500;">{status_detail}</span>
         </div>
         <div style="display:flex;align-items:center;gap:8px;">
-            <span style="background:rgba(255, 255, 255, 0.08);padding:3px 8px;border-radius:4px;font-size:11.5px;color:#CBD5E1;">Model: <strong>{settings.api.openai_model}</strong></span>
-            <span style="background:rgba(255, 255, 255, 0.08);padding:3px 8px;border-radius:4px;font-size:11.5px;color:#CBD5E1;">Web Search: <strong>Active</strong></span>
+            <span style="background:rgba(255, 255, 255, 0.08);padding:3px 8px;border-radius:4px;font-size:11.5px;color:#CBD5E1;">Model: <strong>{model_name}</strong></span>
+            <span style="background:rgba(255, 255, 255, 0.08);padding:3px 8px;border-radius:4px;font-size:11.5px;color:#CBD5E1;">Research: <strong>Active</strong></span>
         </div>
     </div>
     """
@@ -217,30 +231,63 @@ with tab_account:
     )
 
     st.markdown("---")
-    st.markdown("#### ⚙️ OpenAI Model & Credentials")
+    st.markdown("#### ⚙️ AI Engine & API Credentials")
     cfg_col1, cfg_col2 = st.columns([3.5, 2.5])
     with cfg_col1:
+        # Gemini / Antigravity Key
+        gem_k = st.session_state.get("gemini_api_key") or st.session_state.get("user_api_key") or settings.api.gemini_api_key
+        has_gem = bool(gem_k and len(gem_k) > 10)
+        gem_status = "🟢 Connected" if has_gem else "⚪ Not Set"
+        st.markdown(f"**Google Gemini API Key**: `{gem_status}`")
+        new_gem_input = st.text_input(
+            "GEMINI_API_KEY (Session Override):",
+            value=st.session_state.get("gemini_api_key", ""),
+            type="password",
+            placeholder="AQ... or AIza...",
+            help="Free-tier Google Gemini key from Google AI Studio. Used for live energy research."
+        )
+        if st.button("Update Gemini Key", key="save_gemini_key_btn"):
+            if new_gem_input.strip():
+                st.session_state["gemini_api_key"] = new_gem_input.strip()
+                st.session_state["user_api_key"] = new_gem_input.strip()
+                st.success("Session Gemini API Key updated.")
+            else:
+                st.session_state.pop("gemini_api_key", None)
+                st.session_state.pop("user_api_key", None)
+                st.info("Session Gemini key reset to default.")
+            st.rerun()
+
+        st.markdown("<br/>", unsafe_allow_html=True)
+
+        # OpenAI Key
+        oai_k = st.session_state.get("openai_api_key") or settings.api.openai_api_key
+        has_oai = bool(oai_k and len(oai_k) > 10 and not oai_k.startswith("sk-placeholder"))
+        oai_status = "🟢 Connected" if has_oai else "⚪ Not Set"
+        st.markdown(f"**OpenAI API Key**: `{oai_status}`")
         custom_key_input = st.text_input(
-            "OPENAI_API_KEY (optional override):",
+            "OPENAI_API_KEY (Session Override):",
             value=st.session_state.get("openai_api_key", ""),
             type="password",
             placeholder="sk-proj-...",
             help="Server-side key loads from .env by default. You can override it for your session here."
         )
-        if st.button("Update Session Key", key="save_openai_key_btn"):
+        if st.button("Update OpenAI Key", key="save_openai_key_btn"):
             if custom_key_input.strip():
                 st.session_state["openai_api_key"] = custom_key_input.strip()
                 st.success("Session OpenAI API Key updated.")
             else:
                 st.session_state.pop("openai_api_key", None)
-                st.info("Session OpenAI key reset to .env default.")
+                st.info("Session OpenAI key reset to default.")
             st.rerun()
 
     with cfg_col2:
-        model_options = ["gpt-4o-mini", "gpt-4o", "gpt-4.5-preview", "o3-mini"]
-        current_m = settings.api.openai_model
-        sel_idx = model_options.index(current_m) if current_m in model_options else 0
-        new_model = st.selectbox("OpenAI Model", model_options, index=sel_idx)
+        st.markdown("**Engine Settings**")
+        st.info(
+            f"**Active Model**: `{settings.api.ai_model if not openai_client.is_key_configured() else settings.api.openai_model}`\n\n"
+            f"**Autonomous Deep Research**: `Enabled`\n\n"
+            f"**Diagram Generator**: `Mermaid SVG & Flowcharts`\n\n"
+            f"**Token Usage**: Bounded to fast, crisp 600-token analytical outputs."
+        )
 
     st.markdown("---")
     # Quick Switch / Register Account

@@ -18,17 +18,17 @@ logger = logging.getLogger(__name__)
 
 # Allowed free-tier models (protects user from paid model calls)
 ALLOWED_FREE_MODELS = {
-    "gemini-3.5-flash",
     "gemini-3.5-flash-lite",
+    "gemini-3.5-flash",
     "gemini-3.8-flash",
-    "gemini-2.5-flash",
     "gemini-2.5-flash-lite",
+    "gemini-2.5-flash",
     "gemini-2.0-flash",
     "gemini-1.5-flash",
     "gemini-1.5-flash-8b",
 }
 
-DEFAULT_FREE_MODEL = "gemini-3.5-flash"
+DEFAULT_FREE_MODEL = "gemini-3.5-flash-lite"
 
 
 class AIQuotaExhaustedError(Exception):
@@ -178,10 +178,11 @@ class GeminiFreeTierClient:
             "topP": 0.8,
         }
 
-        # Multi-model resilience: try primary model, fall back to lightweight companion model if Google returns 503/500/504
+        # Multi-model resilience: try primary model, fall back to companion models if Google returns 429/404/503/500
         models_to_try = [self.model]
-        if self.model != "gemini-3.5-flash-lite" and "gemini-3.5-flash-lite" in ALLOWED_FREE_MODELS:
-            models_to_try.append("gemini-3.5-flash-lite")
+        for companion in ["gemini-3.5-flash-lite", "gemini-2.5-flash-lite", "gemini-3.5-flash"]:
+            if companion not in models_to_try and companion in ALLOWED_FREE_MODELS:
+                models_to_try.append(companion)
 
         last_response = None
         for candidate_model in models_to_try:
@@ -205,7 +206,19 @@ class GeminiFreeTierClient:
                     )
                 continue
 
-            # Provider quota error check (HTTP 429)
+            # Success
+            if response.status_code == 200:
+                break
+
+            # If quota exceeded, model not found, or capacity spike, try fallback model if available
+            if response.status_code in (429, 404, 500, 502, 503, 504) and candidate_model != models_to_try[-1]:
+                logger.warning(
+                    f"Gemini model '{candidate_model}' returned status {response.status_code}. "
+                    f"Attempting fallback to companion model..."
+                )
+                continue
+
+            # Provider quota error on final candidate model
             if response.status_code == 429:
                 quota_manager.record_provider_quota_error("HTTP 429: Too Many Requests / Free Quota Exceeded")
                 reset_str = quota_manager.get_formatted_reset_time()
@@ -214,18 +227,6 @@ class GeminiFreeTierClient:
                     f"again after {reset_str}. Meanwhile you can still use the charts, tables and "
                     f"forecasts on the dashboard."
                 )
-
-            # Success
-            if response.status_code == 200:
-                break
-
-            # Transient capacity / high demand spikes (500, 502, 503, 504) -> try fallback model
-            if response.status_code in (500, 502, 503, 504) and candidate_model != models_to_try[-1]:
-                logger.warning(
-                    f"Gemini model '{candidate_model}' returned {response.status_code} (capacity spike). "
-                    f"Attempting fallback to companion model..."
-                )
-                continue
 
             # Non-transient or final attempt failure
             break
