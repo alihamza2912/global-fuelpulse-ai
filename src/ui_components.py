@@ -2529,7 +2529,11 @@ def render_universal_top_header(active_page_name: str = "Overview", key_prefix: 
                 type="secondary",
                 help="Ask Antigravity AI Assistant (Text & Voice Note)"
             ):
-                _show_ai_assistant_dialog(context_page=active_page_name)
+                from src.auth.auth_service import AuthService
+                if not AuthService.get_active_user():
+                    _show_sign_in_dialog()
+                else:
+                    _show_ai_assistant_dialog(context_page=active_page_name)
 
         with col_lang:
             all_langs = get_available_languages()
@@ -2825,7 +2829,7 @@ def _show_sign_in_dialog():
     </div>
     """, unsafe_allow_html=True)
 
-    tab_signin, tab_register = st.tabs(["Sign In", "Create Account"])
+    tab_signin, tab_register, tab_supabase = st.tabs(["Sign In", "Create Account", "⚡ Supabase Cloud"])
 
     with tab_signin:
         with st.form("signin_form", clear_on_submit=False):
@@ -2847,7 +2851,7 @@ def _show_sign_in_dialog():
                 if ok:
                     st.session_state["auth_user"] = udict
                     st.session_state["auth_token"] = token
-                    st.success("Signed in successfully!")
+                    st.success("Signed in successfully! 3 free questions are active.")
                     st.rerun()
                 else:
                     st.error(msg)
@@ -2895,24 +2899,46 @@ def _show_sign_in_dialog():
             reg_user = st.text_input("Username", placeholder="e.g. avance", key="auth_reg_user")
             reg_email = st.text_input("Email", placeholder="you@company.com", key="auth_reg_email")
             reg_pwd = st.text_input("Password", type="password", placeholder="At least 6 characters", key="auth_reg_pwd")
-            submit_reg = st.form_submit_button("Create Account", type="primary", use_container_width=True)
+            submit_reg = st.form_submit_button("Create Account & Unlock 3 Questions", type="primary", use_container_width=True)
 
         if submit_reg:
             ok, msg, new_u = AuthService.register_user(reg_user, reg_email, reg_pwd, reg_name)
             if ok:
                 _, _, token, udict = AuthService.login_user(reg_email, reg_pwd)
-                st.session_state["auth_user"] = udict
-                st.session_state["auth_token"] = token
-                st.success("Account created and signed in!")
-                st.rerun()
+                if udict:
+                    st.session_state["auth_user"] = udict
+                    st.session_state["auth_token"] = token
+                    st.success("Account created and signed in! 3 free questions unlocked.")
+                    st.rerun()
             else:
                 st.error(msg)
 
+    with tab_supabase:
+        import os
+        from src.auth.supabase_client import supabase_auth_client
+        if supabase_auth_client.is_configured():
+            st.success(f"🟢 **Supabase Connected**: `{supabase_auth_client.url}`\n\nAll registered accounts and 3-question usage are synced automatically with your Supabase PostgreSQL project.")
+        else:
+            st.info("🟡 Currently using local secure SQLite database (`fuelx_local.db`). To connect your Supabase account, enter your project details below:")
+
+        with st.form("supabase_credentials_connect_form", clear_on_submit=False):
+            cur_sb_url = os.getenv("SUPABASE_URL", "")
+            cur_sb_key = os.getenv("SUPABASE_KEY", "")
+            sb_url_val = st.text_input("Supabase Project URL", value=cur_sb_url, placeholder="https://xyzcompany.supabase.co")
+            sb_key_val = st.text_input("Supabase Anon Public API Key", value=cur_sb_key, type="password", placeholder="eyJhbGciOi...")
+            save_sb = st.form_submit_button("Save & Connect Supabase", type="primary", use_container_width=True)
+
+        if save_sb:
+            s_ok, s_msg = AuthService.save_supabase_credentials(sb_url_val, sb_key_val)
+            if s_ok:
+                st.success(s_msg)
+                st.rerun()
+            else:
+                st.error(s_msg)
+
     st.markdown("""
     <div style="text-align: center; margin-top: 20px; padding-top: 14px; border-top: 1px solid rgba(255, 255, 255, 0.08); font-size: 0.8rem; color: #71717A;">
-        New to Dali? <a href="#" style="color: #F9FAFB; text-decoration: underline;">Start with one agent</a>
-        <br>
-        <a href="https://daliagents.com" target="_blank" style="color: #52525B; font-size: 0.72rem; text-decoration: none; margin-top: 6px; display: inline-block;">daliagents.com</a>
+        Global FuelPulse AI Enterprise Console
     </div>
     """, unsafe_allow_html=True)
 
@@ -2924,35 +2950,75 @@ show_sign_in_dialog = _show_sign_in_dialog
 def _show_ai_assistant_dialog(context_page: str = "Overview"):
     """
     Renders the responsive modal AI Assistant dialog.
-    - Zero meta-labels like 'Simple English Explanation'
-    - Answers the exact question asked with grounded energy intelligence
-    - Enforces 24-hour daily quota (3 questions/24h per user) with tamper-resistant server persistence
-    - Direct Plain Language: Zero meta-labels like 'Simple English Explanation'
-    - Answers the exact question asked with grounded energy intelligence
-    - Enforces 24-hour daily quota (3 questions/24h per user) with tamper-resistant server persistence
-    - Dual input: Text typing + Voice note recording with automatic speech transcription
-    - Renders visual Mermaid diagrams and Plotly figures (dragmode=False)
+    Enforces strict requirement: Users MUST sign in to ask questions.
+    Every signed-in user receives 3 free questions per rolling 24 hours.
     """
     import uuid
+    from src.auth.auth_service import AuthService
     from src.ai.nl_query_engine import AIEnergyMarketAnalyst, session_protector
     from src.localization.i18n import t, get_current_language
 
     current_lang = get_current_language()
     pfx = ("dlg_" + context_page).lower().replace(" ", "_").replace(".", "_").replace("•", "_")
 
-    if "ai_session_id" not in st.session_state:
-        try:
-            qp_uid = st.query_params.get("uid") if hasattr(st, "query_params") else None
-            if qp_uid and str(qp_uid).strip():
-                st.session_state.ai_session_id = str(qp_uid).strip()
-            else:
-                new_uid = f"usr_{uuid.uuid4().hex[:12]}"
-                st.session_state.ai_session_id = new_uid
-                if hasattr(st, "query_params"):
-                    st.query_params["uid"] = new_uid
-        except Exception:
-            st.session_state.ai_session_id = str(uuid.uuid4())
-    sess_id = st.session_state.ai_session_id
+    # STRICT GATE: User must be signed in to ask questions
+    active_user = AuthService.get_active_user()
+    if not active_user:
+        st.markdown("""
+        <div style="background: rgba(245, 185, 66, 0.08); border: 1.5px solid rgba(245, 185, 66, 0.35); border-radius: 12px; padding: 20px 24px; margin-bottom: 20px; text-align: center;">
+            <div style="font-size: 2.2rem; margin-bottom: 8px;">🔐</div>
+            <h3 style="margin: 0 0 6px 0; color: #F9FAFB; font-family: 'Space Grotesk', sans-serif; font-size: 1.3rem;">Sign In Required to Ask Questions</h3>
+            <p style="margin: 0 auto; color: #94A3B8; font-size: 0.9rem; line-height: 1.5; max-width: 580px;">
+                Every registered user receives <b>3 free questions every 24 hours</b>.<br>
+                Please sign in or create an account below to activate your quota and query the AI assistant.
+            </p>
+        </div>
+        """, unsafe_allow_html=True)
+
+        gate_tab_in, gate_tab_reg = st.tabs(["Sign In", "Create Account"])
+        with gate_tab_in:
+            with st.form(f"{pfx}_gate_signin", clear_on_submit=False):
+                in_email = st.text_input("Email", placeholder="you@company.com", key=f"{pfx}_gate_signin_email")
+                in_pwd = st.text_input("Password", type="password", placeholder="••••••••", key=f"{pfx}_gate_signin_pwd")
+                submit_in = st.form_submit_button("Sign In & Start Asking", type="primary", use_container_width=True)
+            if submit_in:
+                ok, msg, token, udict = AuthService.login_user(in_email, in_pwd)
+                if ok and udict:
+                    st.session_state["auth_user"] = udict
+                    st.session_state["auth_token"] = token
+                    st.success("Signed in successfully! Your 3 free questions are active.")
+                    st.rerun()
+                else:
+                    st.error(msg)
+            if st.button("⚡ Quick 1-Click Demo Login (analyst@fuelpulse.ai)", use_container_width=True, type="secondary", key=f"{pfx}_gate_demo_login_btn"):
+                AuthService.ensure_default_demo_user()
+                ok, msg, token, udict = AuthService.login_user("analyst@fuelpulse.ai", "FuelPulse2026!")
+                if ok and udict:
+                    st.session_state["auth_user"] = udict
+                    st.session_state["auth_token"] = token
+                    st.success("Signed in as Senior Analyst!")
+                    st.rerun()
+        with gate_tab_reg:
+            with st.form(f"{pfx}_gate_register", clear_on_submit=False):
+                reg_name = st.text_input("Full Name", placeholder="e.g. Alexander Vance", key=f"{pfx}_gate_reg_name")
+                reg_user = st.text_input("Username", placeholder="e.g. avance", key=f"{pfx}_gate_reg_user")
+                reg_email = st.text_input("Email", placeholder="you@company.com", key=f"{pfx}_gate_reg_email")
+                reg_pwd = st.text_input("Password", type="password", placeholder="At least 6 characters", key=f"{pfx}_gate_reg_pwd")
+                submit_reg = st.form_submit_button("Create Account & Get 3 Free Questions", type="primary", use_container_width=True)
+            if submit_reg:
+                ok, msg, new_u = AuthService.register_user(reg_user, reg_email, reg_pwd, reg_name)
+                if ok:
+                    _, _, token, udict = AuthService.login_user(reg_email, reg_pwd)
+                    if udict:
+                        st.session_state["auth_user"] = udict
+                        st.session_state["auth_token"] = token
+                        st.success("Account created and signed in! 3 free questions unlocked.")
+                        st.rerun()
+                else:
+                    st.error(msg)
+        return
+    sess_id = f"usr_{active_user['user_id']}"
+    st.session_state.ai_session_id = sess_id
 
     sess_status = session_protector.get_session_status(sess_id, has_custom_key=True, enforce_user_daily_limit=True)
     rem_q = sess_status.get("daily_questions_remaining", 3)

@@ -54,8 +54,64 @@ current_lang = get_current_language()
 # Ensure default database tables and default demo analyst exist
 AuthService.ensure_default_demo_user()
 
-# Retrieve or initialize authenticated user
-current_user = AuthService.get_or_create_streamlit_user()
+# Retrieve active authenticated user (strict gate: users MUST sign in to ask questions)
+current_user = AuthService.get_active_user()
+
+if not current_user:
+    st.markdown("""
+    <div style="background: rgba(245, 185, 66, 0.08); border: 1.5px solid rgba(245, 185, 66, 0.35); border-radius: 12px; padding: 20px 24px; margin: 16px 0 20px 0; text-align: center;">
+        <div style="font-size: 2.2rem; margin-bottom: 8px;">🔐</div>
+        <h3 style="margin: 0 0 6px 0; color: #F9FAFB; font-family: 'Space Grotesk', sans-serif;">Sign In Required to Ask Questions</h3>
+        <p style="margin: 0 auto; color: #94A3B8; font-size: 0.92rem; line-height: 1.5; max-width: 620px;">
+            Every registered user receives <b>3 free questions every 24 hours</b>. Unauthenticated visitors cannot ask questions.<br>
+            Please sign in or create an account to start asking questions.
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
+
+    tab_in, tab_reg = st.tabs(["Sign In", "Create Account"])
+    with tab_in:
+        with st.form("page9_gate_signin", clear_on_submit=False):
+            in_email = st.text_input("Email", placeholder="you@company.com", key="p9_gate_signin_email")
+            in_pwd = st.text_input("Password", type="password", placeholder="••••••••", key="p9_gate_signin_pwd")
+            submit_in = st.form_submit_button("Sign In & Unlock 3 Questions", type="primary", use_container_width=True)
+        if submit_in:
+            ok, msg, token, udict = AuthService.login_user(in_email, in_pwd)
+            if ok and udict:
+                st.session_state["auth_user"] = udict
+                st.session_state["auth_token"] = token
+                st.success("Signed in successfully! Your 3 free questions are active.")
+                st.rerun()
+            else:
+                st.error(msg)
+        if st.button("⚡ Quick 1-Click Demo Login (analyst@fuelpulse.ai)", use_container_width=True, type="secondary", key="p9_demo_login_btn"):
+            AuthService.ensure_default_demo_user()
+            ok, msg, token, udict = AuthService.login_user(DEFAULT_DEMO_USERNAME, DEFAULT_DEMO_PASSWORD)
+            if ok and udict:
+                st.session_state["auth_user"] = udict
+                st.session_state["auth_token"] = token
+                st.success("Signed in as Senior Analyst!")
+                st.rerun()
+    with tab_reg:
+        with st.form("page9_gate_register", clear_on_submit=False):
+            reg_name = st.text_input("Full Name", placeholder="e.g. Alexander Vance", key="p9_gate_reg_name")
+            reg_user = st.text_input("Username", placeholder="e.g. avance", key="p9_gate_reg_user")
+            reg_email = st.text_input("Email", placeholder="you@company.com", key="p9_gate_reg_email")
+            reg_pwd = st.text_input("Password", type="password", placeholder="At least 6 characters", key="p9_gate_reg_pwd")
+            submit_reg = st.form_submit_button("Create Account & Get 3 Free Questions", type="primary", use_container_width=True)
+        if submit_reg:
+            ok, msg, new_u = AuthService.register_user(reg_user, reg_email, reg_pwd, reg_name)
+            if ok:
+                _, _, token, udict = AuthService.login_user(reg_email, reg_pwd)
+                if udict:
+                    st.session_state["auth_user"] = udict
+                    st.session_state["auth_token"] = token
+                    st.success("Account created and signed in! 3 free questions unlocked.")
+                    st.rerun()
+            else:
+                st.error(msg)
+    st.stop()
+
 user_id = current_user.get("user_id")
 
 # Fetch persistent database quota status for this user

@@ -302,35 +302,117 @@ class AuthService:
         return False
 
     @classmethod
-    def get_or_create_streamlit_user(cls) -> Dict[str, Any]:
+    def get_active_user(cls) -> Optional[Dict[str, Any]]:
         """
         Retrieves the authenticated user from Streamlit session_state.
-        If no session token is stored, automatically initializes the session
-        with the default seeded demo analyst account so immediate functionality is guaranteed.
+        Returns None if the user is an unauthenticated visitor.
         """
         try:
             import streamlit as st
             if hasattr(st, "session_state"):
-                token = st.session_state.get("auth_session_token")
-                user = cls.validate_session(token)
-                if user:
-                    return user
+                u = st.session_state.get("auth_user")
+                if u and isinstance(u, dict) and u.get("user_id"):
+                    return u
 
-                # If no valid token, authenticate as default demo analyst
-                cls.ensure_default_demo_user()
-                ok, msg, new_tok, user_dict = cls.login_user(DEFAULT_DEMO_USERNAME, DEFAULT_DEMO_PASSWORD)
-                if ok and new_tok:
-                    st.session_state["auth_session_token"] = new_tok
-                    st.session_state["auth_user"] = user_dict
-                    return user_dict
+                token = st.session_state.get("auth_token") or st.session_state.get("auth_session_token")
+                if token:
+                    user = cls.validate_session(token)
+                    if user:
+                        st.session_state["auth_user"] = user
+                        st.session_state["auth_token"] = token
+                        return user
         except Exception as e:
-            logger.debug(f"Streamlit auth resolution notice: {e}")
+            logger.debug(f"Auth resolution check: {e}")
+        return None
 
-        # Fallback to direct DB demo user
-        demo = cls.ensure_default_demo_user()
-        return {
-            "user_id": demo.user_id,
-            "username": demo.username,
-            "email": demo.email,
-            "full_name": demo.full_name
-        }
+    @classmethod
+    def get_or_create_streamlit_user(cls, allow_demo_fallback: bool = False) -> Optional[Dict[str, Any]]:
+        """
+        Retrieves the authenticated user.
+        If allow_demo_fallback=True (used in automated tests), falls back to seeded demo analyst.
+        Otherwise returns None so users must explicitly sign in to unlock 3 daily questions.
+        """
+        active = cls.get_active_user()
+        if active:
+            return active
+
+        if allow_demo_fallback:
+            cls.ensure_default_demo_user()
+            ok, msg, new_tok, user_dict = cls.login_user(DEFAULT_DEMO_USERNAME, DEFAULT_DEMO_PASSWORD)
+            if ok and user_dict:
+                try:
+                    import streamlit as st
+                    if hasattr(st, "session_state"):
+                        st.session_state["auth_token"] = new_tok
+                        st.session_state["auth_user"] = user_dict
+                except Exception:
+                    pass
+                return user_dict
+
+        return None
+
+    @classmethod
+    def save_supabase_credentials(
+        cls,
+        supabase_url: str,
+        supabase_key: str,
+        service_role_key: str = ""
+    ) -> Tuple[bool, str]:
+        """
+        Saves Supabase project credentials to environment variables and .env file.
+        Enables immediate cloud user sync without restarting the server.
+        """
+        clean_url = (supabase_url or "").strip().rstrip("/")
+        clean_key = (supabase_key or "").strip()
+        clean_srv = (service_role_key or "").strip()
+
+        if not clean_url or not clean_url.startswith("http"):
+            return False, "Please provide a valid Supabase project URL (e.g. https://xxxx.supabase.co)."
+        if not clean_key or len(clean_key) < 10:
+            return False, "Please provide a valid Supabase anon public API key."
+
+        # Set in-memory environment variables
+        os.environ["SUPABASE_URL"] = clean_url
+        os.environ["SUPABASE_KEY"] = clean_key
+        if clean_srv:
+            os.environ["SUPABASE_SERVICE_ROLE_KEY"] = clean_srv
+
+        # Update singleton client
+        supabase_auth_client._custom_url = clean_url
+        supabase_auth_client._custom_key = clean_key
+        if clean_srv:
+            supabase_auth_client._custom_service_key = clean_srv
+
+        # Persist to .env file
+        env_file = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), ".env")
+        try:
+            content = ""
+            if os.path.exists(env_file):
+                with open(env_file, "r", encoding="utf-8") as f:
+                    content = f.read()
+
+            import re
+            if "SUPABASE_URL=" in content:
+                content = re.sub(r'SUPABASE_URL=.*', f'SUPABASE_URL="{clean_url}"', content)
+            else:
+                content += f'\nSUPABASE_URL="{clean_url}"'
+
+            if "SUPABASE_KEY=" in content:
+                content = re.sub(r'SUPABASE_KEY=.*', f'SUPABASE_KEY="{clean_key}"', content)
+            else:
+                content += f'\nSUPABASE_KEY="{clean_key}"'
+
+            if clean_srv:
+                if "SUPABASE_SERVICE_ROLE_KEY=" in content:
+                    content = re.sub(r'SUPABASE_SERVICE_ROLE_KEY=.*', f'SUPABASE_SERVICE_ROLE_KEY="{clean_srv}"', content)
+                else:
+                    content += f'\nSUPABASE_SERVICE_ROLE_KEY="{clean_srv}"'
+
+            with open(env_file, "w", encoding="utf-8") as f:
+                f.write(content.strip() + "\n")
+
+            logger.info("Successfully persisted Supabase credentials to .env")
+            return True, "Supabase credentials connected and saved successfully!"
+        except Exception as e:
+            logger.error(f"Failed to persist Supabase credentials to .env: {e}")
+            return True, "Supabase credentials connected for active session (could not write to .env)."
