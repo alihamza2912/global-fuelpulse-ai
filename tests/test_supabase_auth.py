@@ -125,3 +125,69 @@ def test_auth_service_demo_login_always_works_locally():
     sess_user = AuthService.validate_session(token)
     assert sess_user is not None
     assert sess_user["email"] == "analyst@fuelpulse.ai"
+
+
+def test_supabase_test_connection_mocked():
+    client = SupabaseAuthClient(
+        supabase_url="https://xyzcompany.supabase.co",
+        supabase_key="anon-key-1234567890abcdef"
+    )
+    mock_resp = MagicMock()
+    mock_resp.status_code = 200
+    with patch("requests.get", return_value=mock_resp):
+        ok, msg, details = client.test_connection()
+        assert ok
+        assert "Connected" in msg
+        assert details["status_code"] == 200
+
+
+def test_supabase_table_and_profile_methods():
+    client = SupabaseAuthClient(
+        supabase_url="https://xyzcompany.supabase.co",
+        supabase_key="anon-key-1234567890abcdef"
+    )
+
+    # 1. select_table
+    mock_resp_sel = MagicMock()
+    mock_resp_sel.status_code = 200
+    mock_resp_sel.json.return_value = [{"country_iso3": "IND", "country_name": "India"}]
+    with patch("requests.get", return_value=mock_resp_sel):
+        ok, rows, msg = client.select_table("dim_country")
+        assert ok
+        assert len(rows) == 1
+        assert rows[0]["country_iso3"] == "IND"
+
+    # 2. get_profile
+    mock_resp_prof = MagicMock()
+    mock_resp_prof.status_code = 200
+    mock_resp_prof.json.return_value = [{"id": "uuid-1", "username": "analyst", "preferences": {"theme": "dark"}}]
+    with patch("requests.get", return_value=mock_resp_prof):
+        prof = client.get_profile("uuid-1")
+        assert prof is not None
+        assert prof["username"] == "analyst"
+        assert prof["preferences"]["theme"] == "dark"
+
+    # 3. create_conversation & save_chat_message
+    mock_resp_conv = MagicMock()
+    mock_resp_conv.status_code = 201
+    mock_resp_conv.json.return_value = [{"conversation_id": "conv-123"}]
+    with patch("requests.post", return_value=mock_resp_conv):
+        conv_id = client.create_conversation("uuid-1", "Crude Analysis")
+        assert conv_id == "conv-123"
+
+    mock_resp_msg = MagicMock()
+    mock_resp_msg.status_code = 201
+    with patch("requests.post", return_value=mock_resp_msg):
+        saved = client.save_chat_message("conv-123", "uuid-1", "user", "What is petrol price?")
+        assert saved is True
+
+    # 4. check_and_consume_quota
+    mock_resp_quota = MagicMock()
+    mock_resp_quota.status_code = 200
+    mock_resp_quota.content = b'{"allowed": true, "remaining": 1, "used_count": 2}'
+    mock_resp_quota.json.return_value = {"allowed": True, "remaining": 1, "used_count": 2}
+    with patch("requests.post", return_value=mock_resp_quota):
+        allowed, res = client.check_and_consume_quota("uuid-1", "What is diesel rate?", "hash123")
+        assert allowed is True
+        assert res["remaining"] == 1
+

@@ -250,6 +250,29 @@ class APISettings:
 
 
 @dataclass
+class SupabaseSettings:
+    """Supabase Cloud Authentication and Database settings."""
+    @property
+    def url(self) -> str:
+        reload_env()
+        return (os.getenv("SUPABASE_URL") or os.getenv("NEXT_PUBLIC_SUPABASE_URL") or "").strip()
+
+    @property
+    def anon_key(self) -> str:
+        reload_env()
+        return (os.getenv("SUPABASE_KEY") or os.getenv("SUPABASE_ANON_KEY") or os.getenv("NEXT_PUBLIC_SUPABASE_ANON_KEY") or "").strip()
+
+    @property
+    def service_role_key(self) -> str:
+        reload_env()
+        return (os.getenv("SUPABASE_SERVICE_ROLE_KEY") or os.getenv("SUPABASE_SERVICE_KEY") or "").strip()
+
+    @property
+    def is_configured(self) -> bool:
+        return bool(self.url and self.anon_key and self.url.startswith("http") and len(self.anon_key) > 10)
+
+
+@dataclass
 class AppSettings:
     """Master application configuration."""
     app_name: str = "Global FuelPulse AI"
@@ -261,6 +284,7 @@ class AppSettings:
     
     db: DatabaseSettings = field(default_factory=DatabaseSettings)
     api: APISettings = field(default_factory=APISettings)
+    supabase: SupabaseSettings = field(default_factory=SupabaseSettings)
 
     @property
     def is_real_mode(self) -> bool:

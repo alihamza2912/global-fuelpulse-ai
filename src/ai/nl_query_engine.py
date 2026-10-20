@@ -444,6 +444,56 @@ class AIEnergyMarketAnalyst:
                 "is_security_blocked": "Security Violation" in (err_topic or "")
             }
 
+        # Check Supabase Cloud atomic quota if user is authenticated and Supabase is configured
+        from src.auth.supabase_client import supabase_auth_client
+        auth_user_id = None
+        try:
+            import streamlit as st
+            if hasattr(st, "session_state"):
+                u = st.session_state.get("auth_user")
+                if u and isinstance(u, dict) and u.get("user_id"):
+                    auth_user_id = u.get("user_id")
+        except Exception:
+            pass
+
+        if supabase_auth_client.is_configured() and auth_user_id and enforce_daily:
+            import hashlib
+            q_hash = hashlib.sha256(question.strip().lower().encode("utf-8")).hexdigest()[:32]
+            sb_allowed, sb_res = supabase_auth_client.check_and_consume_quota(
+                user_id=auth_user_id,
+                question_text=question.strip(),
+                question_hash=q_hash,
+                model_used="gemini-2.0-flash",
+                max_questions=3,
+                window_hours=24
+            )
+            if not sb_allowed:
+                reset_time_str = "24 hours"
+                if isinstance(sb_res, dict) and sb_res.get("reset_timestamp"):
+                    try:
+                        from datetime import datetime, timezone
+                        reset_dt = datetime.fromisoformat(str(sb_res["reset_timestamp"]).replace("Z", "+00:00"))
+                        mins_left = max(1, int((reset_dt - datetime.now(timezone.utc)).total_seconds() / 60))
+                        hrs = mins_left // 60
+                        mins = mins_left % 60
+                        reset_time_str = f"{hrs}h {mins}m" if hrs > 0 else f"{mins}m"
+                    except Exception:
+                        pass
+                return {
+                    "question": question,
+                    "topic": "⏳ Daily Free Quota Finished (3/3 Questions Used)",
+                    "answer_text": (
+                        f"### ⏳ Daily Free Quota Finished (3/3 Questions Used)\n\n"
+                        f"You have reached your 24-hour limit of **3 free AI analyst questions**.\n\n"
+                        f"🕒 **Reset Schedule:** Your quota will reset in **{reset_time_str}**.\n\n"
+                        f"To ask unlimited questions without daily quotas, enter your custom **Gemini / Antigravity API key** in settings."
+                    ),
+                    "data_records": [],
+                    "sources_cited": [],
+                    "is_fallback": True,
+                    "quota_used": False
+                }
+
         # 2. Check Question Cache (Saves 100% of Quota on repeated queries)
         cached_resp = question_cache.get(question)
         if cached_resp is not None:

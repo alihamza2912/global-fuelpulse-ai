@@ -38,6 +38,8 @@ wheels/
 *.db
 *.sqlite
 *.sqlite3
+*.bak
+*.backup*
 !fuelx_local.db
 
 # IDE and OS

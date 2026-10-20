@@ -10,7 +10,7 @@ Provides:
 import os
 import json
 import logging
-from typing import Optional, Dict, Any, Tuple
+from typing import Optional, Dict, Any, Tuple, List
 import requests
 
 logger = logging.getLogger(__name__)
@@ -298,6 +298,204 @@ class SupabaseAuthClient:
             logger.error(f"Supabase RPC {function_name} error: {e}")
             return False, str(e)
 
+    def test_connection(self) -> Tuple[bool, str, Dict[str, Any]]:
+        """
+        Tests the connection to the configured Supabase project.
+        Returns (is_connected, message, details_dict).
+        """
+        if not self.is_configured():
+            return False, "Supabase is not configured (missing SUPABASE_URL or SUPABASE_KEY).", {}
+
+        import time
+        start = time.time()
+        url = f"{self.url}/rest/v1/"
+        try:
+            resp = requests.get(url, headers=self._headers(), timeout=5.0)
+            latency_ms = round((time.time() - start) * 1000, 1)
+            if resp.status_code in (200, 204):
+                return True, f"Connected to Supabase ({latency_ms}ms).", {
+                    "url": self.url,
+                    "latency_ms": latency_ms,
+                    "status_code": resp.status_code
+                }
+            return False, f"Supabase responded with HTTP {resp.status_code}.", {"status_code": resp.status_code}
+        except Exception as e:
+            return False, f"Supabase connection test failed: {e}", {"error": str(e)}
+
+    def select_table(
+        self,
+        table_name: str,
+        params: Optional[Dict[str, Any]] = None,
+        access_token: Optional[str] = None
+    ) -> Tuple[bool, List[Dict[str, Any]], str]:
+        """Queries records from a Supabase table via PostgREST."""
+        if not self.is_configured():
+            return False, [], "Supabase credentials are not configured."
+
+        url = f"{self.url}/rest/v1/{table_name}"
+        try:
+            resp = requests.get(
+                url,
+                headers=self._headers(token=access_token),
+                params=params or {},
+                timeout=DEFAULT_TIMEOUT
+            )
+            if resp.status_code == 200:
+                return True, resp.json(), "Success"
+            return False, [], f"HTTP {resp.status_code}: {resp.text[:200]}"
+        except Exception as e:
+            return False, [], str(e)
+
+    def upsert_table(
+        self,
+        table_name: str,
+        records: List[Dict[str, Any]],
+        access_token: Optional[str] = None
+    ) -> Tuple[bool, int, str]:
+        """Upserts records into a Supabase table with merge-duplicates."""
+        if not self.is_configured():
+            return False, 0, "Supabase credentials are not configured."
+
+        url = f"{self.url}/rest/v1/{table_name}"
+        headers = self._headers(token=access_token)
+        headers["Prefer"] = "resolution=merge-duplicates,return=minimal"
+
+        try:
+            resp = requests.post(url, headers=headers, json=records, timeout=DEFAULT_TIMEOUT)
+            if resp.status_code in (200, 201, 204):
+                return True, len(records), "Success"
+            return False, 0, f"HTTP {resp.status_code}: {resp.text[:200]}"
+        except Exception as e:
+            return False, 0, str(e)
+
+    def get_profile(self, user_id: str, access_token: Optional[str] = None) -> Optional[Dict[str, Any]]:
+        """Retrieves user profile and preferences from public.profiles."""
+        ok, rows, _ = self.select_table("profiles", {"id": f"eq.{user_id}", "limit": 1}, access_token)
+        if ok and rows:
+            return rows[0]
+        return None
+
+    def update_profile_preferences(
+        self,
+        user_id: str,
+        preferences: Dict[str, Any],
+        access_token: Optional[str] = None
+    ) -> bool:
+        """Updates user preferences in public.profiles."""
+        if not self.is_configured():
+            return False
+
+        url = f"{self.url}/rest/v1/profiles?id=eq.{user_id}"
+        headers = self._headers(token=access_token)
+        headers["Prefer"] = "return=minimal"
+        try:
+            resp = requests.patch(
+                url,
+                headers=headers,
+                json={"preferences": preferences, "updated_at": "now()"},
+                timeout=DEFAULT_TIMEOUT
+            )
+            return resp.status_code in (200, 204)
+        except Exception as e:
+            logger.error(f"Update preferences error: {e}")
+            return False
+
+    def create_conversation(
+        self,
+        user_id: str,
+        title: str = "New Energy Consultation",
+        access_token: Optional[str] = None
+    ) -> Optional[str]:
+        """Creates a new conversation record in public.chat_conversations."""
+        if not self.is_configured():
+            return None
+
+        url = f"{self.url}/rest/v1/chat_conversations"
+        headers = self._headers(token=access_token)
+        headers["Prefer"] = "return=representation"
+        try:
+            resp = requests.post(
+                url,
+                headers=headers,
+                json={"user_id": user_id, "title": title},
+                timeout=DEFAULT_TIMEOUT
+            )
+            if resp.status_code in (200, 201):
+                data = resp.json()
+                if isinstance(data, list) and data:
+                    return data[0].get("conversation_id")
+            return None
+        except Exception as e:
+            logger.error(f"Create conversation error: {e}")
+            return None
+
+    def save_chat_message(
+        self,
+        conversation_id: str,
+        user_id: str,
+        role: str,
+        content: str,
+        sources_cited: Optional[List[str]] = None,
+        tokens_used: int = 0,
+        access_token: Optional[str] = None
+    ) -> bool:
+        """Persists a chat message in public.chat_messages."""
+        if not self.is_configured():
+            return False
+
+        url = f"{self.url}/rest/v1/chat_messages"
+        headers = self._headers(token=access_token)
+        headers["Prefer"] = "return=minimal"
+        try:
+            resp = requests.post(
+                url,
+                headers=headers,
+                json={
+                    "conversation_id": conversation_id,
+                    "user_id": user_id,
+                    "role": role,
+                    "content": content,
+                    "sources_cited": sources_cited or [],
+                    "tokens_used": tokens_used
+                },
+                timeout=DEFAULT_TIMEOUT
+            )
+            return resp.status_code in (200, 201, 204)
+        except Exception as e:
+            logger.error(f"Save chat message error: {e}")
+            return False
+
+    def check_and_consume_quota(
+        self,
+        user_id: str,
+        question_text: str,
+        question_hash: str,
+        model_used: str = "gemini-2.0-flash",
+        max_questions: int = 3,
+        window_hours: int = 24,
+        access_token: Optional[str] = None
+    ) -> Tuple[bool, Dict[str, Any]]:
+        """
+        Invokes check_and_consume_ai_quota stored procedure atomically.
+        Returns (is_allowed, details_dict).
+        """
+        ok, res = self.call_rpc(
+            "check_and_consume_ai_quota",
+            {
+                "p_user_id": user_id,
+                "p_question_text": question_text,
+                "p_question_hash": question_hash,
+                "p_model": model_used,
+                "p_max_questions": max_questions,
+                "p_window_hours": window_hours
+            },
+            access_token=access_token
+        )
+        if ok and isinstance(res, dict):
+            return res.get("allowed", False), res
+        return False, {"allowed": False, "message": str(res)}
+
 
 # Global singleton instance
 supabase_auth_client = SupabaseAuthClient()
+

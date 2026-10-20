@@ -2832,7 +2832,7 @@ def _show_sign_in_dialog():
     </div>
     """, unsafe_allow_html=True)
 
-    tab_signin, tab_register, tab_supabase = st.tabs(["Sign In", "Create Account", "⚡ Supabase Cloud"])
+    tab_signin, tab_register = st.tabs(["Sign In", "Create Account"])
 
     with tab_signin:
         with st.form("signin_form", clear_on_submit=False):
@@ -2915,29 +2915,6 @@ def _show_sign_in_dialog():
                     st.rerun()
             else:
                 st.error(msg)
-
-    with tab_supabase:
-        import os
-        from src.auth.supabase_client import supabase_auth_client
-        if supabase_auth_client.is_configured():
-            st.success(f"🟢 **Supabase Connected**: `{supabase_auth_client.url}`\n\nAll registered accounts and 3-question usage are synced automatically with your Supabase PostgreSQL project.")
-        else:
-            st.info("🟡 Currently using local secure SQLite database (`fuelx_local.db`). To connect your Supabase account, enter your project details below:")
-
-        with st.form("supabase_credentials_connect_form", clear_on_submit=False):
-            cur_sb_url = os.getenv("SUPABASE_URL", "")
-            cur_sb_key = os.getenv("SUPABASE_KEY", "")
-            sb_url_val = st.text_input("Supabase Project URL", value=cur_sb_url, placeholder="https://xyzcompany.supabase.co")
-            sb_key_val = st.text_input("Supabase Anon Public API Key", value=cur_sb_key, type="password", placeholder="eyJhbGciOi...")
-            save_sb = st.form_submit_button("Save & Connect Supabase", type="primary", use_container_width=True)
-
-        if save_sb:
-            s_ok, s_msg = AuthService.save_supabase_credentials(sb_url_val, sb_key_val)
-            if s_ok:
-                st.success(s_msg)
-                st.rerun()
-            else:
-                st.error(s_msg)
 
     st.markdown("""
     <div style="text-align: center; margin-top: 20px; padding-top: 14px; border-top: 1px solid rgba(255, 255, 255, 0.08); font-size: 0.8rem; color: #71717A;">
