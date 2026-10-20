@@ -181,7 +181,7 @@ class GeminiFreeTierClient:
 
         # Multi-model resilience: try primary model, fall back to companion models if Google returns 429/404/503/500
         models_to_try = [self.model]
-        for companion in ["gemini-3.5-flash-lite", "gemini-2.5-flash-lite", "gemini-3.5-flash"]:
+        for companion in ["gemini-3.5-flash-lite", "gemini-3.5-flash", "gemini-3.8-flash"]:
             if companion not in models_to_try and companion in ALLOWED_FREE_MODELS:
                 models_to_try.append(companion)
 

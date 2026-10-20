@@ -355,10 +355,41 @@ class DeepOnlineResearchEngine:
         # 6. Build interactive Plotly chart
         fig = cls.build_plotly_visualization(data_records, q)
 
+        # 6b. If Google Gemini API is configured, use Gemini to synthesize the live findings with active tokens
+        try:
+            from src.ai.gemini_client import gemini_client
+            if gemini_client.is_key_configured():
+                snippets_grounding = "\n".join(f"- [{it.get('title','')}]({it.get('url','')}): {it.get('snippet','')}" for it in search_items[:4])
+                ai_narrative = gemini_client.generate_intelligence(
+                    prompt=q,
+                    context_data={"live_web_snippets": snippets_grounding}
+                )
+                if ai_narrative and len(ai_narrative.strip()) > 60:
+                    sources = [f"Google Gemini ({gemini_client.model})", "Live Real-Time Web Research"]
+                    for it in search_items[:3]:
+                        if it.get("url"):
+                            sources.append(f"{it.get('title','')} ({it.get('url')})")
+                    return {
+                        "question": q,
+                        "topic": f"Live Market Intelligence: {q[:35]}",
+                        "answer_text": ai_narrative,
+                        "data_records": data_records,
+                        "visualization_fig": fig,
+                        "sources_cited": sources,
+                        "is_fallback": False,
+                        "quota_used": True,
+                        "model_used": gemini_client.model,
+                        "served_from_db": False,
+                        "autonomous_free_mode": False,
+                        "deep_research_active": True
+                    }
+        except Exception as gem_e:
+            logger.warning(f"Live Gemini synthesis inside research_and_answer failed: {gem_e}")
+
         # 7. Assemble narrative
         lines = [
             f"### 🌐 Real-Time Market Intelligence: {q}\n",
-            "⚡ *Live online research conducted across verified industry sources (0 external LLM quota consumed)*\n",
+            "⚡ *Live online research synthesized across verified industry sources*\n",
             f"{direct_answer}\n",
             "### 📊 Visual Diagram Explanation",
             mermaid_diag,
