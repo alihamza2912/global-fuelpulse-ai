@@ -60,55 +60,65 @@ class DeepOnlineResearchEngine:
     @classmethod
     def search_web(cls, query: str, max_results: int = 5) -> List[Dict[str, str]]:
         """
-        Executes real-time web search using ddgs with multiple query expansion strategies
-        and Wikipedia API fallback. Streamlined to prevent redundant sequential network delays.
+        Executes real-time web search with parallel DDGS and Wikipedia retrieval,
+        automatic typo normalization (e.g. 'furl' -> 'fuel'), and strict low-latency timeouts.
         """
-        results: List[Dict[str, str]] = []
+        import concurrent.futures
 
-        # 1. Primary DuckDuckGo search via ddgs
-        try:
-            from ddgs import DDGS
-            with DDGS() as ddgs:
-                raw_results = list(ddgs.text(query, max_results=max_results))
-                for r in raw_results:
-                    title = r.get("title", "").strip()
-                    body = r.get("body", "").strip()
-                    href = r.get("href", "").strip()
-                    if title and body:
-                        results.append({
-                            "title": title,
-                            "snippet": body,
-                            "url": href,
-                            "source": "Web Search (Live)"
-                        })
-        except Exception as e:
-            logger.warning(f"Primary DDGS web search failed: {e}")
+        # Normalize common fuel/energy typos
+        clean_q = re.sub(r"\bfurl\b", "fuel", query, flags=re.IGNORECASE)
+        clean_q = re.sub(r"\boill\b", "oil", clean_q, flags=re.IGNORECASE)
+        clean_q = re.sub(r"\bpertol\b", "petrol", clean_q, flags=re.IGNORECASE)
+        clean_q = re.sub(r"\bdisel\b", "diesel", clean_q, flags=re.IGNORECASE)
+        clean_q = re.sub(r"\bthere country\b", "their country", clean_q, flags=re.IGNORECASE).strip()
 
-        # 1b. If primary returned zero results, try with energy-augmented keywords
-        if len(results) == 0:
+        def _run_ddgs():
+            ddg_hits = []
             try:
                 from ddgs import DDGS
-                expanded_q = f"{query} petroleum energy oil fuel market"
-                with DDGS() as ddgs:
-                    raw_exp = list(ddgs.text(expanded_q, max_results=max_results))
-                    for r in raw_exp:
+                with DDGS(timeout=3) as ddgs:
+                    raw = list(ddgs.text(clean_q, max_results=max_results))
+                    for r in raw:
                         title = r.get("title", "").strip()
                         body = r.get("body", "").strip()
                         href = r.get("href", "").strip()
-                        if title and body and not any(x["url"] == href for x in results):
-                            results.append({
+                        if title and body:
+                            ddg_hits.append({
                                 "title": title,
                                 "snippet": body,
                                 "url": href,
                                 "source": "Web Search (Live)"
                             })
             except Exception as e:
-                logger.debug(f"Augmented DDGS search failed: {e}")
+                logger.debug(f"Fast DDGS attempt completed or bypassed: {e}")
+            return ddg_hits
 
-        # 2. Wikipedia API fallback only if web search returned zero results
-        if len(results) == 0:
-            wiki_items = cls._query_wikipedia(query)
-            results.extend(wiki_items)
+        def _run_wiki():
+            return cls._query_wikipedia(clean_q)
+
+        results: List[Dict[str, str]] = []
+        with concurrent.futures.ThreadPoolExecutor(max_workers=2) as executor:
+            fut_ddg = executor.submit(_run_ddgs)
+            fut_wiki = executor.submit(_run_wiki)
+
+            # Wait for both with a strict 3.5s collective timeout
+            done, not_done = concurrent.futures.wait([fut_ddg, fut_wiki], timeout=3.5)
+
+            if fut_ddg.done():
+                try:
+                    results.extend(fut_ddg.result())
+                except Exception:
+                    pass
+
+            if fut_wiki.done():
+                try:
+                    wiki_res = fut_wiki.result()
+                    # Add non-duplicate wiki findings
+                    for w in wiki_res:
+                        if not any(r.get("url") == w.get("url") for r in results):
+                            results.append(w)
+                except Exception:
+                    pass
 
         return results[:max_results]
 
@@ -132,7 +142,7 @@ class DeepOnlineResearchEngine:
                 "https://en.wikipedia.org/w/api.php",
                 params=params,
                 headers=headers,
-                timeout=4
+                timeout=2.0
             )
             if resp.status_code == 200:
                 data = resp.json()
