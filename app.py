@@ -53,6 +53,7 @@ try:
         render_universal_ai_assistant,
         render_two_tier_nav_html,
         render_two_tier_navigation,
+        show_sign_in_dialog,
         get_lucide_icon_svg,
         COLOR_AMBER,
         COLOR_WHITE,
@@ -73,6 +74,7 @@ except (ImportError, ModuleNotFoundError):
         render_universal_ai_assistant,
         render_two_tier_nav_html,
         render_two_tier_navigation,
+        show_sign_in_dialog,
         get_lucide_icon_svg,
         COLOR_AMBER,
         COLOR_WHITE,
@@ -283,6 +285,44 @@ render_html(
     """,
     container=st.sidebar
 )
+
+# User Account & Sign In Console in Sidebar
+auth_user = st.session_state.get("auth_user")
+if auth_user:
+    disp_name = (auth_user.get("full_name") or auth_user.get("username") or "Analyst")
+    user_email = auth_user.get("email", "")
+    render_html(
+        f"""
+        <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: 8px; padding: 10px 12px; margin-bottom: 8px;">
+            <div style="font-size: 0.72rem; color: #10B981; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;">● Active Analyst Session</div>
+            <div style="font-size: 0.88rem; font-weight: 700; color: #F9FAFB; margin-top: 2px;">{disp_name}</div>
+            <div style="font-size: 0.74rem; color: #94A3B8;">{user_email}</div>
+        </div>
+        """,
+        container=st.sidebar
+    )
+    if st.sidebar.button("👤 Manage Account / Logout", key="sb_manage_account_btn", use_container_width=True):
+        show_sign_in_dialog()
+else:
+    render_html(
+        """
+        <div style="background: rgba(245, 185, 66, 0.08); border: 1px solid rgba(245, 185, 66, 0.25); border-radius: 8px; padding: 10px 12px; margin-bottom: 8px;">
+            <div style="font-size: 0.72rem; color: #F5B942; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;">🔐 Client Access</div>
+            <div style="font-size: 0.78rem; color: #E2E8F0; margin-top: 2px;">3 free AI questions every 24 hours</div>
+        </div>
+        """,
+        container=st.sidebar
+    )
+    if st.sidebar.button("🔐 Sign In / Create Account", key="sb_signin_btn", type="primary", use_container_width=True):
+        show_sign_in_dialog()
+
+st.sidebar.markdown("<div style='margin-bottom: 12px;'></div>", unsafe_allow_html=True)
+
+# Auto-open sign-in dialog if query parameter ?login=1 or ?auth=1 is present
+if st.query_params.get("login") in ("1", "true") or st.query_params.get("auth") in ("1", "true"):
+    st.query_params.pop("login", None)
+    st.query_params.pop("auth", None)
+    show_sign_in_dialog()
 
 # 21st.dev Authentic TreeNav Sidebar Component
 TREE_NAV_ITEMS = [

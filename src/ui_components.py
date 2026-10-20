@@ -2917,6 +2917,9 @@ def _show_sign_in_dialog():
     """, unsafe_allow_html=True)
 
 
+show_sign_in_dialog = _show_sign_in_dialog
+
+
 @st.dialog("🤖 Antigravity AI — Energy Market Intelligence", width="large")
 def _show_ai_assistant_dialog(context_page: str = "Overview"):
     """
