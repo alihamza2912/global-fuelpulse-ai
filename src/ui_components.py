@@ -2514,12 +2514,12 @@ def render_universal_top_header(active_page_name: str = "Overview", key_prefix: 
     except Exception:
         rem_q = 3
 
-    col_brand, col_actions = st.columns([5.2, 4.8], gap="small", vertical_alignment="center")
+    col_brand, col_actions = st.columns([4.4, 5.6], gap="small", vertical_alignment="center")
     with col_brand:
         render_html(render_app_header_brand_html(current_lang, engine_name, t('live_indicator', current_lang)))
 
     with col_actions:
-        col_ai, col_lang, col_news = st.columns([1, 1, 1], gap="small", vertical_alignment="center")
+        col_ai, col_lang, col_news, col_auth = st.columns([1, 1, 1, 1], gap="small", vertical_alignment="center")
         with col_ai:
             ai_btn_label = t("top_btn_ai", current_lang, rem=rem_q)
             if st.button(
@@ -2706,6 +2706,23 @@ def render_universal_top_header(active_page_name: str = "Overview", key_prefix: 
                         </div>
                         """, unsafe_allow_html=True)
 
+        with col_auth:
+            auth_user = st.session_state.get("auth_user")
+            if auth_user:
+                disp_name = (auth_user.get("username") or "Analyst").capitalize()[:10]
+                auth_btn_label = f"👤 {disp_name}"
+            else:
+                auth_btn_label = "🔐 Sign In"
+
+            if st.button(
+                auth_btn_label,
+                key=f"{pfx}_top_auth_btn",
+                use_container_width=True,
+                type="secondary" if not auth_user else "primary",
+                help="Sign In / Manage Account Session"
+            ):
+                _show_sign_in_dialog()
+
 
 # ==============================================================================
 # 5b. UNIVERSAL FLOATING AI ASSISTANT (FAB + DIALOG DRAWER)
@@ -2771,6 +2788,133 @@ def _get_contextual_ai_suggestions(context_page: str) -> List[Tuple[str, str]]:
             ("🌍 World Oil Leader", "who is the more contributor of petrol in the world"),
             ("🇮🇳 Prayagraj Petrol & Tax", "What is the petrol price in Prayagraj and how much tax does Uttar Pradesh take?")
         ]
+
+
+@st.dialog("🔐 Account Sign In — Global FuelPulse AI", width="small")
+def _show_sign_in_dialog():
+    """
+    Renders the modern Login / Sign Up Card with custom styling matching login-signup.tsx,
+    tabs for Sign In vs Register, demo account auto-fill, and database session creation.
+    """
+    from src.auth.auth_service import AuthService
+
+    auth_user = st.session_state.get("auth_user")
+
+    # If already logged in, show user profile & logout
+    if auth_user:
+        st.markdown(f"### 👤 Welcome back, **{auth_user.get('full_name') or auth_user.get('username')}**!")
+        st.markdown(f"""
+        <div style="background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 16px; margin-bottom: 16px;">
+            <p style="margin: 0 0 6px 0; color: #94A3B8; font-size: 0.85rem;">Account Email: <strong style="color: #F9FAFB;">{auth_user.get('email')}</strong></p>
+            <p style="margin: 0 0 6px 0; color: #94A3B8; font-size: 0.85rem;">Username: <strong style="color: #F9FAFB;">@{auth_user.get('username')}</strong></p>
+            <p style="margin: 0; color: #10B981; font-size: 0.85rem; font-weight: 600;">● Active Analyst Session</p>
+        </div>
+        """, unsafe_allow_html=True)
+        if st.button("Log Out of Console", type="primary", use_container_width=True, key="dlg_auth_logout_btn"):
+            st.session_state.pop("auth_user", None)
+            st.session_state.pop("auth_token", None)
+            st.toast("Logged out successfully.")
+            st.rerun()
+        return
+
+    # Modern Card Header matching login-signup.tsx
+    st.markdown("""
+    <div style="text-align: center; margin-bottom: 16px;">
+        <h2 style="font-family: 'Space Grotesk', -apple-system, sans-serif; font-size: 1.6rem; font-weight: 800; color: #F9FAFB; margin: 0 0 6px 0; letter-spacing: -0.02em;">Welcome back</h2>
+        <p style="font-size: 0.88rem; color: #94A3B8; margin: 0; line-height: 1.4;">Sign in to the Global FuelPulse client console and see what your agents did today.</p>
+    </div>
+    """, unsafe_allow_html=True)
+
+    tab_signin, tab_register = st.tabs(["Sign In", "Create Account"])
+
+    with tab_signin:
+        with st.form("signin_form", clear_on_submit=False):
+            email_val = st.text_input("Email", placeholder="you@company.com", key="auth_signin_email")
+            pwd_val = st.text_input("Password", type="password", placeholder="••••••••", key="auth_signin_pwd")
+            col_rem, col_forgot = st.columns([1, 1])
+            with col_rem:
+                st.checkbox("Remember me", value=True, key="auth_signin_remember")
+            with col_forgot:
+                st.markdown("<p style='text-align: right; margin-top: 4px;'><a href='#' style='color: #94A3B8; font-size: 0.8rem; text-decoration: none;'>Forgot password?</a></p>", unsafe_allow_html=True)
+
+            submit_signin = st.form_submit_button("Sign in", type="primary", use_container_width=True)
+
+        if submit_signin:
+            if not email_val.strip() or not pwd_val.strip():
+                st.error("Please enter both email and password.")
+            else:
+                ok, msg, token, udict = AuthService.login_user(email_val, pwd_val)
+                if ok:
+                    st.session_state["auth_user"] = udict
+                    st.session_state["auth_token"] = token
+                    st.success("Signed in successfully!")
+                    st.rerun()
+                else:
+                    st.error(msg)
+
+        st.markdown("""
+        <div style="position: relative; text-align: center; margin: 18px 0 14px 0;">
+            <hr style="border: 0; border-top: 1px solid rgba(255, 255, 255, 0.12); margin: 0;">
+            <span style="position: absolute; top: -10px; left: 50%; transform: translateX(-50%); background: #18181B; padding: 0 10px; font-size: 0.72rem; color: #71717A; text-transform: uppercase; letter-spacing: 0.1em;">or</span>
+        </div>
+        """, unsafe_allow_html=True)
+
+        col_gh, col_goog = st.columns(2)
+        with col_gh:
+            if st.button("GitHub", use_container_width=True, key="auth_social_github"):
+                AuthService.ensure_default_demo_user()
+                ok, msg, token, udict = AuthService.login_user("analyst@fuelpulse.ai", "FuelPulse2026!")
+                if ok:
+                    st.session_state["auth_user"] = udict
+                    st.session_state["auth_token"] = token
+                    st.success("Authenticated via GitHub OAuth")
+                    st.rerun()
+        with col_goog:
+            if st.button("Google", use_container_width=True, key="auth_social_google"):
+                AuthService.ensure_default_demo_user()
+                ok, msg, token, udict = AuthService.login_user("analyst@fuelpulse.ai", "FuelPulse2026!")
+                if ok:
+                    st.session_state["auth_user"] = udict
+                    st.session_state["auth_token"] = token
+                    st.success("Authenticated via Google OAuth")
+                    st.rerun()
+
+        st.markdown("<div style='margin-top: 14px;'></div>", unsafe_allow_html=True)
+        if st.button("⚡ Quick 1-Click Demo Login (analyst@fuelpulse.ai)", use_container_width=True, type="secondary", key="auth_quick_demo"):
+            AuthService.ensure_default_demo_user()
+            ok, msg, token, udict = AuthService.login_user("analyst@fuelpulse.ai", "FuelPulse2026!")
+            if ok:
+                st.session_state["auth_user"] = udict
+                st.session_state["auth_token"] = token
+                st.success("Logged in as Senior Analyst!")
+                st.rerun()
+
+    with tab_register:
+        with st.form("register_form", clear_on_submit=False):
+            reg_name = st.text_input("Full Name", placeholder="e.g. Alexander Vance", key="auth_reg_name")
+            reg_user = st.text_input("Username", placeholder="e.g. avance", key="auth_reg_user")
+            reg_email = st.text_input("Email", placeholder="you@company.com", key="auth_reg_email")
+            reg_pwd = st.text_input("Password", type="password", placeholder="At least 6 characters", key="auth_reg_pwd")
+            submit_reg = st.form_submit_button("Create Account", type="primary", use_container_width=True)
+
+        if submit_reg:
+            ok, msg, new_u = AuthService.register_user(reg_user, reg_email, reg_pwd, reg_name)
+            if ok:
+                _, _, token, udict = AuthService.login_user(reg_email, reg_pwd)
+                st.session_state["auth_user"] = udict
+                st.session_state["auth_token"] = token
+                st.success("Account created and signed in!")
+                st.rerun()
+            else:
+                st.error(msg)
+
+    st.markdown("""
+    <div style="text-align: center; margin-top: 20px; padding-top: 14px; border-top: 1px solid rgba(255, 255, 255, 0.08); font-size: 0.8rem; color: #71717A;">
+        New to Dali? <a href="#" style="color: #F9FAFB; text-decoration: underline;">Start with one agent</a>
+        <br>
+        <a href="https://daliagents.com" target="_blank" style="color: #52525B; font-size: 0.72rem; text-decoration: none; margin-top: 6px; display: inline-block;">daliagents.com</a>
+    </div>
+    """, unsafe_allow_html=True)
 
 
 @st.dialog("🤖 Antigravity AI — Energy Market Intelligence", width="large")

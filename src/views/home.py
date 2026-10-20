@@ -18,7 +18,8 @@ from src.ui_components import (
     COLOR_AMBER,
     COLOR_WHITE,
     COLOR_INK,
-    COLOR_GRAY_MUTED
+    COLOR_GRAY_MUTED,
+    _show_sign_in_dialog
 )
 from src.database.connection import db_manager
 from src.localization.i18n import t, get_current_language
@@ -57,9 +58,9 @@ def render_home_view(navigate_fn=None):
     </div>
     """)
 
-    # 2. Hero Action Buttons (Balanced 2-CTA Grid)
+    # 2. Hero Action Buttons (Balanced 3-CTA Grid)
     render_html('<div class="fuelpulse-hero-actions">')
-    c2, c3 = st.columns([1, 1], gap="medium")
+    c2, c3, c4 = st.columns([1, 1, 1], gap="medium")
     with c2:
         if st.button(t('home_cta_dashboard', cur_lang), type="primary", use_container_width=True, key="hero_cta_dash"):
             if navigate_fn:
@@ -74,6 +75,11 @@ def render_home_view(navigate_fn=None):
             else:
                 st.session_state.active_nav = "🇮🇳 India Fuel Center"
                 st.rerun()
+    with c4:
+        auth_user = st.session_state.get("auth_user")
+        auth_cta_label = f"👤 {auth_user.get('username', 'Analyst')}" if auth_user else "🔐 Sign In / Console"
+        if st.button(auth_cta_label, type="secondary", use_container_width=True, key="hero_cta_signin"):
+            _show_sign_in_dialog()
     render_html('</div>')
 
     st.write("")
