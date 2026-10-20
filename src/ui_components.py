@@ -261,7 +261,7 @@ def render_app_header_brand_html(current_lang: str, engine_name: str, live_text:
     brand_sub = t('brand_subtitle', current_lang)
     db_icon = get_lucide_icon_svg("database", size=11, color="#34D399")
     act_icon = get_lucide_icon_svg("activity", size=11, color="#F5B942")
-    logo_svg = get_logo_mark_svg(size=36)
+    logo_svg = get_logo_mark_svg(size=38)
     return f"""
     <div class="fuelpulse-header-bar">
         <div class="fuelpulse-header-brand-wrap">
@@ -279,19 +279,19 @@ def render_app_header_brand_html(current_lang: str, engine_name: str, live_text:
                     <span class="fuelpulse-brand-sub">
                         {brand_sub}
                     </span>
-                    <span class="fuelpulse-brand-dot">•</span>
-                    <div class="fuelpulse-header-status-cluster">
-                        <span class="fuelpulse-status-pill fuelpulse-status-emerald">
-                            {db_icon}
-                            <span>{engine_name}</span>
-                        </span>
-                        <span class="fuelpulse-status-pill fuelpulse-status-amber">
-                            {act_icon}
-                            <span>{live_text}</span>
-                        </span>
-                    </div>
                 </div>
             </div>
+        </div>
+        <div class="fuelpulse-header-v-divider"></div>
+        <div class="fuelpulse-header-status-cluster">
+            <span class="fuelpulse-status-pill fuelpulse-status-emerald">
+                {db_icon}
+                <span>{engine_name}</span>
+            </span>
+            <span class="fuelpulse-status-pill fuelpulse-status-amber">
+                {act_icon}
+                <span>{live_text}</span>
+            </span>
         </div>
     </div>
     """
@@ -718,11 +718,11 @@ div[data-testid*="global_fuelpulse_fab"] button:active {{
   border-radius: 10px !important;
   padding: 6px 14px !important;
   margin-top: 0 !important;
-  margin-bottom: 12px !important;
+  margin-bottom: 0 !important;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4) !important;
   gap: 12px !important;
   flex-wrap: nowrap !important;
-  overflow: visible !important;
+  overflow: hidden !important;
   box-sizing: border-box !important;
   width: 100% !important;
   min-height: 48px !important;
@@ -744,13 +744,13 @@ div[data-testid*="global_fuelpulse_fab"] button:active {{
 .fuelpulse-header-title-row {{
   display: flex !important;
   align-items: center !important;
-  gap: 7px !important;
+  gap: 8px !important;
   line-height: 1.2 !important;
 }}
 
 .fuelpulse-brand-title {{
   font-family: 'Space Grotesk', -apple-system, sans-serif !important;
-  font-size: 1.16rem !important;
+  font-size: 1.28rem !important;
   font-weight: 800 !important;
   letter-spacing: -0.01em !important;
   color: #FFFFFF !important;
@@ -762,50 +762,52 @@ div[data-testid*="global_fuelpulse_fab"] button:active {{
   background: #EAB308 !important;
   color: #070A12 !important;
   font-family: 'Space Grotesk', sans-serif !important;
-  font-size: 0.68rem !important;
+  font-size: 0.72rem !important;
   font-weight: 900 !important;
-  padding: 2px 6px !important;
+  padding: 2px 7px !important;
   border-radius: 4px !important;
   letter-spacing: 0.05em !important;
-  display: inline-block !important;
-  line-height: 1 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  line-height: 1.1 !important;
+  margin-left: 2px !important;
 }}
 
 .fuelpulse-header-sub-row {{
   display: flex !important;
   align-items: center !important;
-  gap: 7px !important;
   margin-top: 2px !important;
-  flex-wrap: wrap !important;
 }}
 
 .fuelpulse-brand-sub {{
   font-family: 'Space Grotesk', -apple-system, sans-serif !important;
-  font-size: 0.63rem !important;
-  font-weight: 700 !important;
+  font-size: 0.64rem !important;
+  font-weight: 600 !important;
   color: #94A3B8 !important;
   letter-spacing: 0.10em !important;
   text-transform: uppercase !important;
   white-space: nowrap !important;
 }}
 
-.fuelpulse-brand-dot {{
-  color: rgba(255, 255, 255, 0.25) !important;
-  font-size: 9px !important;
-  line-height: 1 !important;
+.fuelpulse-header-v-divider {{
+  width: 1px !important;
+  height: 26px !important;
+  background: rgba(255, 255, 255, 0.14) !important;
+  flex-shrink: 0 !important;
 }}
 
 .fuelpulse-header-status-cluster {{
   display: inline-flex !important;
   align-items: center !important;
-  gap: 6px !important;
+  gap: 8px !important;
+  flex-shrink: 0 !important;
 }}
 
 .fuelpulse-status-pill {{
   display: inline-flex !important;
   align-items: center !important;
   gap: 5px !important;
-  padding: 2px 7px !important;
+  padding: 3px 8px !important;
   border-radius: 999px !important;
   font-family: 'Space Grotesk', sans-serif !important;
   font-size: 10px !important;
@@ -2166,8 +2168,8 @@ button[data-testid*="primaryActive"] * {{
   [data-testid="stHorizontalBlock"]:has(.fuelpulse-header-bar) > [data-testid="column"]:last-child [data-testid="column"],
   [data-testid="stHorizontalBlock"]:has(.fuelpulse-header-bar) > [data-testid="stColumn"]:last-child [data-testid="stColumn"] {{
     flex: 1 1 0% !important;
-    width: 33.333% !important;
-    max-width: 33.333% !important;
+    width: 25% !important;
+    max-width: 25% !important;
     min-width: 0 !important;
   }}
 
@@ -2514,14 +2516,14 @@ def render_universal_top_header(active_page_name: str = "Overview", key_prefix: 
     except Exception:
         rem_q = 3
 
-    col_brand, col_actions = st.columns([4.4, 5.6], gap="small", vertical_alignment="center")
+    col_brand, col_actions = st.columns([5.5, 4.5], gap="small", vertical_alignment="center")
     with col_brand:
         render_html(render_app_header_brand_html(current_lang, engine_name, t('live_indicator', current_lang)))
 
     with col_actions:
-        col_ai, col_lang, col_news, col_auth = st.columns([1, 1, 1, 1], gap="small", vertical_alignment="center")
+        col_ai, col_lang, col_news, col_auth = st.columns([1.0, 1.15, 1.1, 0.95], gap="small", vertical_alignment="center")
         with col_ai:
-            ai_btn_label = t("top_btn_ai", current_lang, rem=rem_q)
+            ai_btn_label = f"🤖 AI ({rem_q}/3)" if current_lang == "en" else t("top_btn_ai", current_lang, rem=rem_q)
             if st.button(
                 ai_btn_label,
                 key=f"{pfx}_top_ai_assistant_btn",
@@ -2537,9 +2539,10 @@ def render_universal_top_header(active_page_name: str = "Overview", key_prefix: 
 
         with col_lang:
             all_langs = get_available_languages()
-            cur_data = all_langs.get(current_lang, all_langs.get("en", {"flag": "🌐", "native": "English", "name": "English"}))
-            cur_flag = cur_data.get("flag", "🌐")
-            lang_btn_label = t("top_btn_lang", current_lang, flag=cur_flag)
+            cur_data = all_langs.get(current_lang, all_langs.get("en", {"flag": "🇬🇧", "native": "English", "name": "English"}))
+            cur_flag = cur_data.get("flag", "🇬🇧" if current_lang == "en" else "🌐")
+            lang_name = cur_data.get("name", "English")
+            lang_btn_label = f"🌐 {cur_flag} {lang_name} ▾"
             with st.popover(lang_btn_label, use_container_width=True):
                 st.markdown(f"#### 🌐 {t('select_language', current_lang)} ({len(all_langs)} World Languages)")
                 st.caption(t("lang_modal_sub", current_lang))
@@ -2560,7 +2563,7 @@ def render_universal_top_header(active_page_name: str = "Overview", key_prefix: 
 
         with col_news:
             alerts_count = GlobalNewsEngine.get_active_alerts_count()
-            news_btn_label = t("top_btn_news", current_lang, count=alerts_count)
+            news_btn_label = f"📰 News ({alerts_count}) ▾" if current_lang == "en" else f"{t('top_btn_news', current_lang, count=alerts_count)} ▾"
             with st.popover(news_btn_label, use_container_width=True):
                 render_html(f"""
                 <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid rgba(255, 255, 255, 0.12);">
