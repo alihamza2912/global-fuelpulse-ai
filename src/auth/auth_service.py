@@ -20,6 +20,7 @@ from sqlalchemy import select
 
 from src.database.connection import db_manager
 from src.database.models import User, UserSession
+from src.auth.supabase_client import supabase_auth_client
 
 logger = logging.getLogger(__name__)
 
@@ -122,6 +123,36 @@ class AuthService:
         if not password or len(password) < 6:
             return False, "Password must be at least 6 characters long.", None
 
+        # Supabase Integration: attempt cloud registration if configured
+        if supabase_auth_client.is_configured():
+            meta = {"username": username_clean, "full_name": (full_name or "").strip() or username_clean.capitalize()}
+            sb_ok, sb_msg, sb_user = supabase_auth_client.sign_up(email_clean, password, meta)
+            if sb_ok and sb_user:
+                user_id = (sb_user.get("id") if isinstance(sb_user, dict) else None) or str(uuid.uuid4())
+                with db_manager.get_session() as session:
+                    existing = session.query(User).filter(
+                        (User.username == username_clean) | (User.email == email_clean) | (User.user_id == user_id)
+                    ).first()
+                    if not existing:
+                        new_user = User(
+                            user_id=user_id,
+                            username=username_clean,
+                            email=email_clean,
+                            password_hash=hash_password(password),
+                            full_name=(full_name or "").strip() or username_clean.capitalize(),
+                            is_active=True,
+                            created_at=utc_now()
+                        )
+                        session.add(new_user)
+                        session.commit()
+                        session.refresh(new_user)
+                        session.expunge(new_user)
+                        return True, "User registered successfully via Supabase.", new_user
+                    session.expunge(existing)
+                    return True, "User registered successfully via Supabase.", existing
+            elif not sb_ok and "already registered" in sb_msg.lower():
+                return False, "An account with this email already exists.", None
+
         with db_manager.get_session() as session:
             # Check existing username or email
             existing = session.query(User).filter(
@@ -160,6 +191,29 @@ class AuthService:
         ident = (username_or_email or "").strip().lower()
         if not ident or not password:
             return False, "Please provide username/email and password.", None, None
+
+        # Supabase Integration: attempt cloud login if configured and email is provided
+        if supabase_auth_client.is_configured() and "@" in ident and ident != DEFAULT_DEMO_EMAIL:
+            sb_ok, sb_msg, sb_token, sb_user = supabase_auth_client.sign_in_with_password(ident, password)
+            if sb_ok and sb_token and sb_user:
+                # Mirror user in local database to guarantee foreign-key constraints for local tables
+                with db_manager.get_session() as session:
+                    local_user = session.query(User).filter(
+                        (User.user_id == sb_user["user_id"]) | (User.email == sb_user["email"])
+                    ).first()
+                    if not local_user:
+                        local_user = User(
+                            user_id=sb_user["user_id"],
+                            username=sb_user["username"],
+                            email=sb_user["email"],
+                            password_hash=hash_password(password),
+                            full_name=sb_user["full_name"],
+                            is_active=True,
+                            created_at=utc_now()
+                        )
+                        session.add(local_user)
+                        session.commit()
+                return True, "Login successful via Supabase.", sb_token, sb_user
 
         with db_manager.get_session() as session:
             user = session.query(User).filter(
@@ -202,6 +256,13 @@ class AuthService:
             return None
 
         clean_token = str(token).strip()
+
+        # Check Supabase session if configured
+        if supabase_auth_client.is_configured():
+            sb_user = supabase_auth_client.get_user(clean_token)
+            if sb_user:
+                return sb_user
+
         with db_manager.get_session() as session:
             user_session = session.query(UserSession).filter(
                 UserSession.session_token == clean_token,
@@ -226,6 +287,10 @@ class AuthService:
         """Revokes an active session token."""
         if not token:
             return False
+
+        if supabase_auth_client.is_configured():
+            supabase_auth_client.sign_out(token)
+
         with db_manager.get_session() as session:
             sess = session.query(UserSession).filter(
                 UserSession.session_token == str(token).strip()
