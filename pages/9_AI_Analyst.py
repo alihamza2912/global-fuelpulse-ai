@@ -72,22 +72,18 @@ if not current_user:
     tab_in, tab_reg = st.tabs(["Sign In", "Create Account"])
     with tab_in:
         with st.form("page9_gate_signin", clear_on_submit=False):
-            in_email = st.text_input("Email or Username", placeholder="you@company.com or username", key="p9_gate_signin_email")
+            in_email = st.text_input("Email", placeholder="you@company.com", key="p9_gate_signin_email")
             in_pwd = st.text_input("Password", type="password", placeholder="••••••••", key="p9_gate_signin_pwd")
             submit_in = st.form_submit_button("Sign In & Unlock 3 Questions", type="primary", use_container_width=True)
         if submit_in:
-            if not in_email.strip() or not in_pwd.strip():
-                st.error("Please enter your email/username and password.")
+            ok, msg, token, udict = AuthService.login_user(in_email, in_pwd)
+            if ok and udict:
+                st.session_state["auth_user"] = udict
+                st.session_state["auth_token"] = token
+                st.success("Signed in successfully! Your 3 free questions are active.")
+                st.rerun()
             else:
-                with st.spinner("Authenticating session..."):
-                    ok, msg, token, udict = AuthService.login_user(in_email, in_pwd)
-                    if ok and udict:
-                        st.session_state["auth_user"] = udict
-                        st.session_state["auth_token"] = token
-                        st.success("Signed in successfully! Your 3 free questions are active.")
-                        st.rerun()
-                    else:
-                        st.error(msg)
+                st.error(msg)
         if st.button("⚡ Quick 1-Click Demo Login (analyst@fuelpulse.ai)", use_container_width=True, type="secondary", key="p9_demo_login_btn"):
             AuthService.ensure_default_demo_user()
             ok, msg, token, udict = AuthService.login_user(DEFAULT_DEMO_USERNAME, DEFAULT_DEMO_PASSWORD)
@@ -104,20 +100,19 @@ if not current_user:
             reg_pwd = st.text_input("Password", type="password", placeholder="At least 6 characters", key="p9_gate_reg_pwd")
             submit_reg = st.form_submit_button("Create Account & Get 3 Free Questions", type="primary", use_container_width=True)
         if submit_reg:
-            with st.spinner("Creating account & provisioning profile..."):
-                ok, msg, new_u = AuthService.register_user(reg_user, reg_email, reg_pwd, reg_name)
-                if ok:
-                    _, _, token, udict = AuthService.login_user(reg_email, reg_pwd)
-                    if udict:
-                        st.session_state["auth_user"] = udict
-                        st.session_state["auth_token"] = token
-                        st.success("Account created and signed in! 3 free questions unlocked.")
-                        st.rerun()
-                else:
-                    st.error(msg)
+            ok, msg, new_u = AuthService.register_user(reg_user, reg_email, reg_pwd, reg_name)
+            if ok:
+                _, _, token, udict = AuthService.login_user(reg_email, reg_pwd)
+                if udict:
+                    st.session_state["auth_user"] = udict
+                    st.session_state["auth_token"] = token
+                    st.success("Account created and signed in! 3 free questions unlocked.")
+                    st.rerun()
+            else:
+                st.error(msg)
     st.stop()
 
-user_id = current_user.get("user_id") if current_user else "demo_analyst"
+user_id = current_user.get("user_id")
 
 # Fetch persistent database quota status for this user
 quota_status = openai_quota_manager.get_user_quota_status(user_id)
@@ -140,9 +135,8 @@ render_page_header(
 def _render_quota_pill(user_info, q_status):
     u_name = user_info.get("full_name") or user_info.get("username") or "Analyst"
     u_email = user_info.get("email", "")
-    used = q_status.get("used", q_status.get("used_count", 0))
-    rem = q_status.get("remaining", 3)
-    exhausted = q_status.get("is_exhausted", (rem <= 0))
+    rem = q_status.get("remaining", 0)
+    exhausted = q_status.get("is_exhausted", False)
     r_time = q_status.get("reset_time_str", "24 hours")
 
     has_openai = openai_client.is_key_configured()
@@ -161,12 +155,12 @@ def _render_quota_pill(user_info, q_status):
     if exhausted:
         status_icon = "⏳"
         status_color = "#F5B942"
-        status_label = f"Daily Limit Reached • 3/3 used · 0 remaining"
-        status_detail = f"Resets in {r_time} • 3 free questions per rolling 24 hours"
+        status_label = f"Daily Limit Reached (0 / 3 Left)"
+        status_detail = f"Resets in {r_time} • 3 questions allowed per rolling 24 hours"
     else:
         status_icon = "🟢"
         status_color = "#10B981"
-        status_label = f"{engine_name} Ready • {used}/3 used · {rem} remaining"
+        status_label = f"{engine_name} Ready • {rem} / 3 Free Questions Left"
         status_detail = f"Rolling 24-hour quota • Account: {u_name} ({u_email})"
 
     return f"""
@@ -233,32 +227,11 @@ with chat_container:
                         st.markdown(f"- [{src.get('title', 'Web Source')}]({src.get('url', '#')})")
 
 # 4. Message Input: Typing + Voice Input
-st.markdown("""
-<style>
-div[data-testid="InputInstructions"],
-span[data-testid="InputInstructions"],
-div.stTextInput div[data-testid="InputInstructions"],
-div.stTextInput [data-testid="InputInstructions"],
-div[data-testid="stTextInput"] [data-testid="InputInstructions"] {
-    display: none !important;
-    visibility: hidden !important;
-    height: 0 !important;
-    width: 0 !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    pointer-events: none !important;
-    opacity: 0 !important;
-}
-</style>
-""", unsafe_allow_html=True)
-
 tab_type, tab_voice, tab_account = st.tabs([
     t("ai_tab_type", current_lang),
     t("ai_tab_voice", current_lang),
-    "👤 Account & Quota Profile"
+    "👤 Account & OpenAI Settings"
 ])
-
-is_submit_disabled = is_exhausted
 
 submitted_question = None
 
@@ -273,14 +246,11 @@ with tab_type:
                 label_visibility="collapsed"
             )
         with c_btn:
-            send_btn = st.form_submit_button("Send ➔", use_container_width=True, type="primary", disabled=is_submit_disabled)
+            send_btn = st.form_submit_button("Send ➔", use_container_width=True, type="primary")
         with c_clear:
             clear_btn = st.form_submit_button("Clear", use_container_width=True)
 
-        if is_submit_disabled:
-            st.warning(f"⏳ **Daily Quota Reached (3/3 used · 0 remaining)**: Your daily quota resets in **{reset_time_str}**.")
-
-        if send_btn and text_input_val.strip() and not is_submit_disabled:
+        if send_btn and text_input_val.strip():
             submitted_question = text_input_val.strip()
         elif clear_btn:
             st.session_state["openai_chat_history"] = []
@@ -298,7 +268,7 @@ with tab_voice:
                 audio_data = r.record(source)
                 voice_transcribed = r.recognize_google(audio_data)
                 st.success(f"🗣️ Transcribed Voice Note: **\"{voice_transcribed}\"**")
-                if st.button("Ask Voice Question", key="openai_submit_voice", type="primary", disabled=is_submit_disabled):
+                if st.button("Ask Voice Question", key="openai_submit_voice", type="primary"):
                     submitted_question = voice_transcribed.strip()
         except sr.UnknownValueError:
             st.info("💡 Audio captured. You can also type your question directly in the Type Question tab.")
@@ -306,25 +276,74 @@ with tab_voice:
             st.info("💡 Audio captured. If faint, you can type your question directly.")
 
 with tab_account:
-    st.markdown("#### 👤 Authenticated User & Quota Profile")
+    st.markdown("#### 👤 Authenticated User & Limits")
     st.markdown(
         f"""
         - **Current User**: **{current_user.get('full_name')}** (`{current_user.get('email')}`)
         - **Stable User ID**: `{user_id}`
-        - **Authoritative Quota**: **{used_q}/3 used · {remaining_q} remaining**
         - **24-Hour Allowance**: **3 questions per user per rolling 24 hours** (persists in database across devices & refreshes).
-        - **Reset Countdown**: **{reset_time_str}**
+        - **Questions Remaining**: **{remaining_q} / 3**
         """
     )
 
     st.markdown("---")
-    st.markdown("#### ⚙️ Verified Engine Status")
-    st.info(
-        f"**Active Model**: `{settings.api.ai_model if not openai_client.is_key_configured() else settings.api.openai_model}`\n\n"
-        f"**Online Web Research**: `Active (Real-Time Grounding)`\n\n"
-        f"**Source Evidence**: `Live citations verified and cited with clickable links`\n\n"
-        f"**Security**: `All API keys are securely managed server-side and never exposed to the client`"
-    )
+    st.markdown("#### ⚙️ AI Engine & API Credentials")
+    cfg_col1, cfg_col2 = st.columns([3.5, 2.5])
+    with cfg_col1:
+        # Gemini / Antigravity Key
+        gem_k = st.session_state.get("gemini_api_key") or st.session_state.get("user_api_key") or settings.api.gemini_api_key
+        has_gem = bool(gem_k and len(gem_k) > 10)
+        gem_status = "🟢 Connected" if has_gem else "⚪ Not Set"
+        st.markdown(f"**Google Gemini API Key**: `{gem_status}`")
+        new_gem_input = st.text_input(
+            "GEMINI_API_KEY (Session Override):",
+            value=st.session_state.get("gemini_api_key", ""),
+            type="password",
+            placeholder="AQ... or AIza...",
+            help="Free-tier Google Gemini key from Google AI Studio. Used for live energy research."
+        )
+        if st.button("Update Gemini Key", key="save_gemini_key_btn"):
+            if new_gem_input.strip():
+                st.session_state["gemini_api_key"] = new_gem_input.strip()
+                st.session_state["user_api_key"] = new_gem_input.strip()
+                st.success("Session Gemini API Key updated.")
+            else:
+                st.session_state.pop("gemini_api_key", None)
+                st.session_state.pop("user_api_key", None)
+                st.info("Session Gemini key reset to default.")
+            st.rerun()
+
+        st.markdown("<br/>", unsafe_allow_html=True)
+
+        # OpenAI Key
+        oai_k = st.session_state.get("openai_api_key") or settings.api.openai_api_key
+        has_oai = bool(oai_k and len(oai_k) > 10 and not oai_k.startswith("sk-placeholder"))
+        oai_status = "🟢 Connected" if has_oai else "⚪ Not Set"
+        st.markdown(f"**OpenAI API Key**: `{oai_status}`")
+        custom_key_input = st.text_input(
+            "OPENAI_API_KEY (Session Override):",
+            value=st.session_state.get("openai_api_key", ""),
+            type="password",
+            placeholder="sk-proj-...",
+            help="Server-side key loads from .env by default. You can override it for your session here."
+        )
+        if st.button("Update OpenAI Key", key="save_openai_key_btn"):
+            if custom_key_input.strip():
+                st.session_state["openai_api_key"] = custom_key_input.strip()
+                st.success("Session OpenAI API Key updated.")
+            else:
+                st.session_state.pop("openai_api_key", None)
+                st.info("Session OpenAI key reset to default.")
+            st.rerun()
+
+    with cfg_col2:
+        st.markdown("**Engine Settings**")
+        st.info(
+            f"**Active Model**: `{settings.api.ai_model if not openai_client.is_key_configured() else settings.api.openai_model}`\n\n"
+            f"**Autonomous Deep Research**: `Enabled`\n\n"
+            f"**Diagram Generator**: `Mermaid SVG & Flowcharts`\n\n"
+            f"**Token Usage**: Bounded to fast, crisp 600-token analytical outputs."
+        )
 
     st.markdown("---")
     # Quick Switch / Register Account
@@ -361,7 +380,7 @@ with tab_account:
                     st.error(msg)
 
 # 5. Process Question Submission
-if submitted_question and not is_submit_disabled:
+if submitted_question:
     # Append user question to history
     st.session_state["openai_chat_history"].append({
         "role": "user",

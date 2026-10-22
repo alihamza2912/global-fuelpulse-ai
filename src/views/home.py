@@ -25,39 +25,19 @@ from src.database.connection import db_manager
 from src.localization.i18n import t, get_current_language
 
 
-@st.cache_data(ttl=300, show_spinner=False)
-def _get_home_headline_benchmarks():
-    brent = "$84.20 / bbl"
-    delhi = "₹95.20 / L"
-    try:
-        with db_manager.engine.connect() as conn:
-            r_brent = conn.execute(db_manager.safe_sql(
-                "SELECT value FROM fact_energy_indicator WHERE indicator_code='BRENT_CRUDE_SPOT' ORDER BY period DESC LIMIT 1"
-            )).fetchone()
-            if r_brent:
-                brent = f"${float(r_brent[0]):.2f} / bbl"
-
-            r_delhi = conn.execute(db_manager.safe_sql(
-                "SELECT price_local FROM fuel_prices WHERE country_iso3='IND' AND location_id='IND_DEL' AND fuel_type='diesel' ORDER BY observation_date DESC LIMIT 1"
-            )).fetchone()
-            if r_delhi:
-                delhi = f"₹{float(r_delhi[0]):.2f} / L"
-    except Exception:
-        pass
-    return brent, delhi
-
 def render_home_view(navigate_fn=None):
     """Renders the modern Hero With Mockup Product Overview."""
     cur_lang = get_current_language()
-    brent_val, delhi_diesel_val = _get_home_headline_benchmarks()
 
     # 1. Hero Section with Glow, Gradient Text & Eyebrow Badge
     render_html(f"""
     <div style="position: relative; overflow: hidden; padding: 20px 0 10px 0; text-align: center;">
+        
         <!-- Ambient Background Radial Glow -->
         <div style="position: absolute; top: -100px; left: 50%; transform: translateX(-50%); width: 850px; height: 320px; background: radial-gradient(ellipse at center, rgba(245, 185, 66, 0.22) 0%, rgba(96, 165, 250, 0.14) 50%, transparent 75%); filter: blur(80px); pointer-events: none; z-index: 0;"></div>
 
         <div style="position: relative; z-index: 2; max-width: 950px; margin: 0 auto;">
+            
             <!-- Category Eyebrow Pill -->
             <div style="display: inline-flex; align-items: center; gap: 8px; background: rgba(245, 185, 66, 0.12); border: 1px solid rgba(245, 185, 66, 0.35); padding: 5px 14px; border-radius: 9999px; font-family: 'Space Grotesk', sans-serif; font-size: 0.74rem; font-weight: 800; color: #F5B942; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 12px; box-shadow: 0 0 16px rgba(245, 185, 66, 0.2);">
                 <span style="width: 8px; height: 8px; border-radius: 50%; background: #10B981; display: inline-block;"></span>
@@ -73,6 +53,7 @@ def render_home_view(navigate_fn=None):
             <p class="fuelpulse-hero-desc" style="font-family: 'Inter', sans-serif; font-size: 1.12rem; color: #94A3B8; max-width: 640px; margin: 0 auto 20px auto; line-height: 1.6; font-weight: 400;">
                 {t('home_hero_subtitle', cur_lang)}
             </p>
+
         </div>
     </div>
     """)
@@ -102,6 +83,25 @@ def render_home_view(navigate_fn=None):
     render_html('</div>')
 
     st.write("")
+
+    # Fetch live headline benchmarks from database with current benchmarks
+    brent_val = "$84.20 / bbl"
+    delhi_diesel_val = "₹95.20 / L"
+    try:
+        with db_manager.engine.connect() as conn:
+            r_brent = conn.execute(db_manager.safe_sql(
+                "SELECT value FROM fact_energy_indicator WHERE indicator_code='BRENT_CRUDE_SPOT' ORDER BY period DESC LIMIT 1"
+            )).fetchone()
+            if r_brent:
+                brent_val = f"${float(r_brent[0]):.2f} / bbl"
+
+            r_delhi = conn.execute(db_manager.safe_sql(
+                "SELECT price_local FROM fuel_prices WHERE country_iso3='IND' AND location_id='IND_DEL' AND fuel_type='diesel' ORDER BY observation_date DESC LIMIT 1"
+            )).fetchone()
+            if r_delhi:
+                delhi_diesel_val = f"₹{float(r_delhi[0]):.2f} / L"
+    except Exception:
+        pass
 
     # 3. The Interactive Browser Mockup Container
     render_html(f"""

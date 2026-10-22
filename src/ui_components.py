@@ -282,8 +282,8 @@ def render_app_header_brand_html(current_lang: str, engine_name: str, live_text:
                 </div>
             </div>
         </div>
-        <div class="fuelpulse-header-v-divider" style="display: none;"></div>
-        <div class="fuelpulse-header-status-cluster" style="display: none;">
+        <div class="fuelpulse-header-v-divider"></div>
+        <div class="fuelpulse-header-status-cluster">
             <span class="fuelpulse-status-pill fuelpulse-status-emerald">
                 {db_icon}
                 <span>{engine_name}</span>
@@ -460,185 +460,13 @@ def get_animated_grid_css(container_class: str = "fuelpulse-hero-backdrop") -> s
 # 4. EDITORIAL THEME INJECTOR
 # ==============================================================================
 def apply_theme():
-    """Injects high-contrast modern dark obsidian or crisp editorial light mode styling."""
-    active_theme = "dark"
-    try:
-        if hasattr(st, "session_state"):
-            active_theme = st.session_state.get("app_theme", "dark")
-    except Exception:
-        active_theme = "dark"
-
-    is_light = (active_theme == "light")
-
-    theme_vars = """
-:root {
-  --bg-app: #070A12;
-  --bg-card: rgba(14, 21, 38, 0.85);
-  --bg-card-hover: rgba(18, 28, 50, 0.95);
-  --text-main: #F9FAFB;
-  --text-muted: #94A3B8;
-  --text-dim: #64748B;
-  --border-card: rgba(255, 255, 255, 0.12);
-  --border-card-hover: rgba(245, 185, 66, 0.45);
-  --accent-amber: #F5B942;
-  --accent-glow: rgba(245, 185, 66, 0.16);
-  --header-bg: rgba(14, 21, 38, 0.90);
-  --nav-bg: rgba(11, 17, 32, 0.8);
-  --sidebar-bg: #0B101E;
-  --popover-bg: #0E1526;
-}
-""" if not is_light else """
-:root, .stApp {
-  --bg-app: #F8FAFC;
-  --bg-card: #FFFFFF;
-  --bg-card-hover: #F1F5F9;
-  --text-main: #0F172A;
-  --text-muted: #475569;
-  --text-dim: #64748B;
-  --border-card: rgba(0, 0, 0, 0.10);
-  --border-card-hover: rgba(217, 119, 6, 0.45);
-  --accent-amber: #D97706;
-  --accent-glow: rgba(217, 119, 6, 0.14);
-  --header-bg: rgba(255, 255, 255, 0.95);
-  --nav-bg: rgba(241, 245, 249, 0.95);
-  --sidebar-bg: #FFFFFF;
-  --popover-bg: #FFFFFF;
-}
-"""
-
-    light_mode_css = """
-/* Light Theme Editorial Overrides */
-.stApp {
-  background-color: #F8FAFC !important;
-  background-image:
-    radial-gradient(at 0% 0%, rgba(217, 119, 6, 0.05) 0px, transparent 50%),
-    radial-gradient(at 100% 0%, rgba(37, 99, 235, 0.05) 0px, transparent 50%),
-    linear-gradient(to right, rgba(0, 0, 0, 0.04) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(0, 0, 0, 0.04) 1px, transparent 1px) !important;
-  background-size: 100% 100%, 100% 100%, 48px 48px, 48px 48px !important;
-  color: #0F172A !important;
-}
-h1, h2, h3, h4, h5, h6 {
-  color: #0F172A !important;
-}
-p, span, label, div {
-  color: #1E293B;
-}
-section[data-testid="stSidebar"] {
-  background-color: #FFFFFF !important;
-  border-right: 1px solid rgba(0, 0, 0, 0.08) !important;
-}
-section[data-testid="stSidebar"] * {
-  color: #0F172A !important;
-}
-div[data-testid="stSidebar"] div.stButton > button[kind="secondary"] {
-  background: #F1F5F9 !important;
-  color: #334155 !important;
-  border: 1px solid rgba(0, 0, 0, 0.08) !important;
-}
-div[data-testid="stSidebar"] div.stButton > button[kind="secondary"]:hover {
-  background: #E2E8F0 !important;
-  color: #0F172A !important;
-}
-.fuelpulse-header-bar {
-  background: rgba(255, 255, 255, 0.95) !important;
-  border: 1px solid rgba(0, 0, 0, 0.12) !important;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06) !important;
-}
-.fuelpulse-brand-title {
-  color: #0F172A !important;
-}
-.fuelpulse-brand-sub {
-  color: #475569 !important;
-}
-.fuelpulse-header-v-divider {
-  background: rgba(0, 0, 0, 0.12) !important;
-}
-div[data-testid="stHorizontalBlock"]:has(.fuelpulse-header-bar) button,
-div[data-testid="stHorizontalBlock"]:has(.fuelpulse-header-bar) [data-testid="stPopover"] > button,
-div[data-testid="stHorizontalBlock"]:has(.fuelpulse-header-bar) [data-testid="stPopoverButton"] > button {
-  background: #FFFFFF !important;
-  background-color: #FFFFFF !important;
-  color: #0F172A !important;
-  -webkit-text-fill-color: #0F172A !important;
-  border: 1px solid rgba(0, 0, 0, 0.12) !important;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05) !important;
-}
-div[data-testid="stHorizontalBlock"]:has(.fuelpulse-header-bar) button *,
-div[data-testid="stHorizontalBlock"]:has(.fuelpulse-header-bar) [data-testid="stPopover"] > button *,
-div[data-testid="stHorizontalBlock"]:has(.fuelpulse-header-bar) [data-testid="stPopoverButton"] > button * {
-  color: #0F172A !important;
-  -webkit-text-fill-color: #0F172A !important;
-}
-.editorial-card, .instrument-card {
-  background: #FFFFFF !important;
-  border: 1px solid rgba(0, 0, 0, 0.10) !important;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06) !important;
-}
-.editorial-card:hover, .instrument-card:hover {
-  border-color: rgba(217, 119, 6, 0.45) !important;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.10) !important;
-}
-.instrument-val {
-  color: #0F172A !important;
-}
-.instrument-tag, .instrument-sub {
-  color: #475569 !important;
-}
-div[data-baseweb="popover"], div[data-baseweb="popover"] > div, div[data-baseweb="menu"], ul[data-baseweb="menu"], ul[role="listbox"] {
-  background-color: #FFFFFF !important;
-  color: #0F172A !important;
-  border: 1px solid rgba(0, 0, 0, 0.12) !important;
-  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.12) !important;
-}
-li[role="option"], div[role="option"], ul[role="listbox"] li, ul[data-baseweb="menu"] li {
-  background-color: #FFFFFF !important;
-  color: #0F172A !important;
-}
-div[data-baseweb="input"] {
-  background-color: #FFFFFF !important;
-  border: 1.5px solid rgba(0, 0, 0, 0.15) !important;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05) !important;
-}
-div[data-baseweb="input"] input {
-  color: #0F172A !important;
-}
-div[data-baseweb="input"]:focus-within {
-  border-color: #D97706 !important;
-  box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.18) !important;
-}
-div[data-testid="stTextInput"] label,
-div[data-testid="stWidgetLabel"] {
-  color: #334155 !important;
-}
-div[data-baseweb="base-input"] > button,
-div[data-testid="stTextInput"] button[aria-label*="password" i] {
-  color: #64748B !important;
-}
-div[data-baseweb="base-input"] > button:hover,
-div[data-testid="stTextInput"] button[aria-label*="password" i]:hover {
-  color: #D97706 !important;
-  background-color: rgba(0, 0, 0, 0.05) !important;
-}
-""" if is_light else ""
-
+    """Injects high-contrast modern dark obsidian and glassmorphic styling."""
     custom_css = f"""<style>
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&family=Space+Grotesk:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap');
-
-{theme_vars}
-
-{light_mode_css}
 
 @keyframes stapp-grid-drift {{
   from {{ background-position: 0 0, 0 0, 0 0, 0 0; }}
   to   {{ background-position: 144px 144px, 144px 144px, 144px 144px, 144px 144px; }}
-}}
-
-/* Universal root zero-overflow enforcement across all 7 viewports */
-html, body, .stApp, .block-container, [data-testid="stAppViewContainer"] {{
-  overflow-x: hidden !important;
-  max-width: 100vw !important;
-  box-sizing: border-box !important;
 }}
 
 /* 0. Responsive Centered Layout Container (1360px max-width, zero horizontal overflow) */
@@ -1141,28 +969,11 @@ p, span, label {{
 
 /* 3. Sidebar Styling */
 section[data-testid="stSidebar"] {{
-  background-color: #070A12 !important;
-  border-right: 1px solid rgba(255, 255, 255, 0.08) !important;
+  background-color: #0B101E !important;
+  border-right: 1px solid rgba(255, 255, 255, 0.10) !important;
 }}
 section[data-testid="stSidebar"] * {{
   color: #F9FAFB !important;
-}}
-
-/* Sidebar toggle button (expand/collapse) */
-div[data-testid="collapsedControl"] {{
-  top: 14px !important;
-  left: 14px !important;
-  z-index: 1001 !important;
-}}
-div[data-testid="collapsedControl"] button {{
-  background: rgba(14, 21, 38, 0.9) !important;
-  border: 1px solid rgba(255, 255, 255, 0.12) !important;
-  color: #F9FAFB !important;
-  border-radius: 6px !important;
-}}
-div[data-testid="collapsedControl"] button:hover {{
-  border-color: #F5B942 !important;
-  color: #F5B942 !important;
 }}
 
 /* 4. BaseWeb Popover & Dropdown Portals (Selectbox, Menus) */
@@ -1240,147 +1051,27 @@ div[data-baseweb="tag"] * {{
 div[data-testid="InputInstructions"],
 span[data-testid="InputInstructions"],
 div.stTextInput div[data-testid="InputInstructions"],
-div.stTextInput [data-testid="InputInstructions"] {{
+div.stTextInput [data-testid="InputInstructions"],
+div[data-testid="stTextInput"] [data-testid="InputInstructions"],
+div[data-testid="stTextArea"] [data-testid="InputInstructions"] {{
   display: none !important;
   visibility: hidden !important;
   height: 0 !important;
   width: 0 !important;
   margin: 0 !important;
-  padding: 0 !important;
-  pointer-events: none !important;
 }}
-
-div[data-testid="stTextInput"] {{
-  margin-bottom: 12px !important;
-  position: relative !important;
-}}
-
-div[data-testid="stTextInput"] label,
-div[data-testid="stWidgetLabel"] {{
-  display: block !important;
-  font-family: 'Space Grotesk', -apple-system, sans-serif !important;
-  font-size: 13px !important;
-  font-weight: 600 !important;
-  color: #CBD5E1 !important;
-  margin-bottom: 6px !important;
-  line-height: 1.3 !important;
-}}
-
-div[data-testid="stTextInputRootElement"] {{
-  position: relative !important;
-  width: 100% !important;
-}}
-
 div[data-baseweb="input"] {{
-  position: relative !important;
-  display: flex !important;
-  align-items: center !important;
   background-color: #0E1526 !important;
-  border: 1.5px solid rgba(255, 255, 255, 0.16) !important;
-  border-radius: 8px !important;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25) !important;
-  min-height: 44px !important;
-  height: 44px !important;
-  width: 100% !important;
-  box-sizing: border-box !important;
-  padding: 0 !important;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  border-radius: 6px !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25) !important;
 }}
-
-div[data-baseweb="input"]:focus-within {{
-  border-color: #F5B942 !important;
-  box-shadow: 0 0 0 3px rgba(245, 185, 66, 0.20) !important;
-}}
-
-div[data-baseweb="base-input"] {{
-  display: flex !important;
-  align-items: center !important;
-  width: 100% !important;
-  height: 100% !important;
-  position: relative !important;
-  padding: 0 !important;
-  margin: 0 !important;
-  box-sizing: border-box !important;
-}}
-
 div[data-baseweb="input"] input {{
-  height: 100% !important;
   background-color: transparent !important;
   color: #F9FAFB !important;
-  font-family: 'Space Grotesk', -apple-system, sans-serif !important;
+  font-family: 'Space Grotesk', sans-serif !important;
   font-size: 14px !important;
-  padding: 0 14px !important;
-  border: none !important;
-  outline: none !important;
-  box-sizing: border-box !important;
-  width: 100% !important;
-  line-height: normal !important;
 }}
-
-/* Dedicated right padding for password fields so typed characters never go under eye icon */
-div[data-testid="stTextInput"] input[type="password"],
-div[data-baseweb="base-input"]:has(button) input,
-div[data-baseweb="input"]:has(button) input {{
-  padding-right: 52px !important;
-}}
-
-/* Dedicated, correctly sized password visibility toggle area on the right */
-div[data-baseweb="base-input"] > button,
-div[data-testid="stTextInput"] button[aria-label*="password" i],
-div[data-testid="stTextInput"] button[aria-label*="Show" i],
-div[data-testid="stTextInput"] button[aria-label*="Hide" i],
-div[data-baseweb="input"] button {{
-  position: absolute !important;
-  right: 6px !important;
-  top: 50% !important;
-  transform: translateY(-50%) !important;
-  width: 32px !important;
-  height: 32px !important;
-  min-width: 32px !important;
-  max-width: 32px !important;
-  min-height: 32px !important;
-  max-height: 32px !important;
-  padding: 0 !important;
-  margin: 0 !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  background: transparent !important;
-  border: none !important;
-  border-radius: 6px !important;
-  color: #94A3B8 !important;
-  cursor: pointer !important;
-  z-index: 5 !important;
-  transition: color 0.15s ease, background-color 0.15s ease !important;
-  outline: none !important;
-}}
-
-div[data-baseweb="base-input"] > button:hover,
-div[data-testid="stTextInput"] button[aria-label*="password" i]:hover,
-div[data-testid="stTextInput"] button[aria-label*="Show" i]:hover,
-div[data-testid="stTextInput"] button[aria-label*="Hide" i]:hover,
-div[data-baseweb="input"] button:hover {{
-  color: #F5B942 !important;
-  background-color: rgba(255, 255, 255, 0.08) !important;
-}}
-
-div[data-baseweb="base-input"] > button svg,
-div[data-testid="stTextInput"] button[aria-label*="password" i] svg,
-div[data-testid="stTextInput"] button[aria-label*="Show" i] svg,
-div[data-testid="stTextInput"] button[aria-label*="Hide" i] svg,
-div[data-baseweb="input"] button svg {{
-  width: 18px !important;
-  height: 18px !important;
-  display: block !important;
-  fill: currentColor !important;
-  color: currentColor !important;
-}}
-
-/* Native browser autofill offset to prevent key-icon collision with eye button */
-input[type="password"]::-webkit-credentials-auto-fill-button {{
-  margin-right: 30px !important;
-}}
-
 input::placeholder, textarea::placeholder {{
   color: #64748B !important;
   opacity: 1 !important;
@@ -1690,7 +1381,6 @@ div[data-testid="stPopoverButton"] {{
 div[data-testid="stPopover"] > button,
 div[data-testid="stPopoverButton"] > button,
 button[key*="top_ai_assistant_btn"],
-button[key*="top_auth_btn"],
 div[data-testid="stHorizontalBlock"]:has(.fuelpulse-header-bar) button,
 div[data-testid="stHorizontalBlock"]:has(.fuelpulse-header-bar) [data-testid="stPopover"] > button,
 div[data-testid="stHorizontalBlock"]:has(.fuelpulse-header-bar) [data-testid="stPopoverButton"] > button {{
@@ -1700,14 +1390,14 @@ div[data-testid="stHorizontalBlock"]:has(.fuelpulse-header-bar) [data-testid="st
   -webkit-text-fill-color: #F9FAFB !important;
   border: 1px solid rgba(255, 255, 255, 0.16) !important;
   border-radius: 8px !important;
-  height: 40px !important;
-  min-height: 40px !important;
-  max-height: 40px !important;
-  line-height: 40px !important;
-  padding: 0 10px !important;
+  height: 38px !important;
+  min-height: 38px !important;
+  max-height: 38px !important;
+  line-height: 38px !important;
+  padding: 0 6px !important;
   font-family: 'Space Grotesk', -apple-system, sans-serif !important;
-  font-size: 12px !important;
-  font-weight: 600 !important;
+  font-size: 11.5px !important;
+  font-weight: 700 !important;
   white-space: nowrap !important;
   overflow: hidden !important;
   text-overflow: ellipsis !important;
@@ -1716,7 +1406,7 @@ div[data-testid="stHorizontalBlock"]:has(.fuelpulse-header-bar) [data-testid="st
   align-items: center !important;
   justify-content: center !important;
   text-align: center !important;
-  gap: 6px !important;
+  gap: 5px !important;
   transition: all 0.15s ease-in-out !important;
   cursor: pointer !important;
   width: 100% !important;
@@ -1731,14 +1421,11 @@ div[data-testid="stPopoverButton"] > button p,
 div[data-testid="stPopoverButton"] > button span,
 button[key*="top_ai_assistant_btn"] *,
 button[key*="top_ai_assistant_btn"] p,
-button[key*="top_ai_assistant_btn"] span,
-button[key*="top_auth_btn"] *,
-button[key*="top_auth_btn"] p,
-button[key*="top_auth_btn"] span {{
+button[key*="top_ai_assistant_btn"] span {{
   color: #F9FAFB !important;
   -webkit-text-fill-color: #F9FAFB !important;
-  font-size: 12px !important;
-  font-weight: 600 !important;
+  font-size: 11.5px !important;
+  font-weight: 700 !important;
   white-space: nowrap !important;
   overflow: hidden !important;
   text-overflow: ellipsis !important;
@@ -1748,7 +1435,7 @@ button[key*="top_auth_btn"] span {{
   text-align: center !important;
 }}
 
-/* 1. AI Assistant Button - Lucide Sparkles Vector Icon */
+/* AI Assistant Header Button: Subtle golden border and glowing indicator matching popover form */
 button[key*="top_ai_assistant_btn"] {{
   border: 1px solid rgba(245, 185, 66, 0.45) !important;
   background: rgba(245, 185, 66, 0.08) !important;
@@ -1763,113 +1450,6 @@ button[key*="top_ai_assistant_btn"] span {{
   -webkit-text-fill-color: #F5B942 !important;
 }}
 
-button[key*="top_ai_assistant_btn"]::before {{
-  content: "";
-  display: inline-block;
-  width: 16px;
-  height: 16px;
-  margin-right: 4px;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23F5B942' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: 16px 16px;
-  flex-shrink: 0;
-}}
-
-/* 2. News Popover Button - Lucide Newspaper Vector Icon */
-div[data-testid="stHorizontalBlock"]:has(.fuelpulse-header-bar) div[data-testid="column"]:nth-child(2) div[data-testid="stHorizontalBlock"] > div[data-testid="column"]:nth-child(2) [data-testid="stPopover"] > button,
-div[data-testid="stHorizontalBlock"]:has(.fuelpulse-header-bar) button[key*="top_news_popover"],
-div[data-testid="stHorizontalBlock"]:has(.fuelpulse-header-bar) [data-testid="stPopover"]:has(button[key*="top_news_popover"]) > button {{
-  border-color: rgba(56, 189, 248, 0.45) !important;
-  color: #38BDF8 !important;
-  -webkit-text-fill-color: #38BDF8 !important;
-}}
-
-div[data-testid="stHorizontalBlock"]:has(.fuelpulse-header-bar) div[data-testid="column"]:nth-child(2) div[data-testid="stHorizontalBlock"] > div[data-testid="column"]:nth-child(2) [data-testid="stPopover"] > button *,
-div[data-testid="stHorizontalBlock"]:has(.fuelpulse-header-bar) button[key*="top_news_popover"] * {{
-  color: #38BDF8 !important;
-  -webkit-text-fill-color: #38BDF8 !important;
-}}
-
-div[data-testid="stHorizontalBlock"]:has(.fuelpulse-header-bar) div[data-testid="column"]:nth-child(2) div[data-testid="stHorizontalBlock"] > div[data-testid="column"]:nth-child(2) [data-testid="stPopover"] > button::before,
-div[data-testid="stHorizontalBlock"]:has(.fuelpulse-header-bar) button[key*="top_news_popover"]::before,
-div[data-testid="stHorizontalBlock"]:has(.fuelpulse-header-bar) [data-testid="stPopover"]:has(button[key*="top_news_popover"]) > button::before {{
-  content: "";
-  display: inline-block;
-  width: 16px;
-  height: 16px;
-  margin-right: 4px;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2338BDF8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2'/%3E%3Cpath d='M18 14h-8'/%3E%3Cpath d='M15 18h-5'/%3E%3Cpath d='M10 6h8v4h-8V6Z'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: 16px 16px;
-  flex-shrink: 0;
-}}
-
-/* 3. Dedicated Sign In / User Profile Button - Lucide UserRound Vector Icon */
-button[key*="top_auth_btn"] {{
-  background: rgba(30, 41, 59, 0.9) !important;
-  border-color: rgba(96, 165, 250, 0.4) !important;
-  color: #93C5FD !important;
-  -webkit-text-fill-color: #93C5FD !important;
-}}
-
-button[key*="top_auth_btn"] * {{
-  color: #93C5FD !important;
-  -webkit-text-fill-color: #93C5FD !important;
-}}
-
-button[key*="top_auth_btn"]::before {{
-  content: "";
-  display: inline-block;
-  width: 16px;
-  height: 16px;
-  margin-right: 4px;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2393C5FD' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='8' r='5'/%3E%3Cpath d='M20 21a8 8 0 0 0-16 0'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: 16px 16px;
-  flex-shrink: 0;
-}}
-
-button[key*="top_auth_btn"]:hover {{
-  background: rgba(59, 130, 246, 0.22) !important;
-  border-color: rgba(96, 165, 250, 0.75) !important;
-  color: #BFDBFE !important;
-  -webkit-text-fill-color: #BFDBFE !important;
-}}
-
-/* 4. Language Popover Button - Lucide Languages Vector Icon */
-div[data-testid="stHorizontalBlock"]:has(.fuelpulse-header-bar) div[data-testid="column"]:nth-child(2) div[data-testid="stHorizontalBlock"] > div[data-testid="column"]:nth-child(4) [data-testid="stPopover"] > button,
-div[data-testid="stHorizontalBlock"]:has(.fuelpulse-header-bar) button[key*="top_lang_popover"],
-div[data-testid="stHorizontalBlock"]:has(.fuelpulse-header-bar) [data-testid="stPopover"]:has(button[key*="top_lang_popover"]) > button {{
-  border-color: rgba(167, 139, 250, 0.4) !important;
-  color: #C4B5FD !important;
-  -webkit-text-fill-color: #C4B5FD !important;
-}}
-
-div[data-testid="stHorizontalBlock"]:has(.fuelpulse-header-bar) div[data-testid="column"]:nth-child(2) div[data-testid="stHorizontalBlock"] > div[data-testid="column"]:nth-child(4) [data-testid="stPopover"] > button *,
-div[data-testid="stHorizontalBlock"]:has(.fuelpulse-header-bar) button[key*="top_lang_popover"] * {{
-  color: #C4B5FD !important;
-  -webkit-text-fill-color: #C4B5FD !important;
-}}
-
-div[data-testid="stHorizontalBlock"]:has(.fuelpulse-header-bar) div[data-testid="column"]:nth-child(2) div[data-testid="stHorizontalBlock"] > div[data-testid="column"]:nth-child(4) [data-testid="stPopover"] > button::before,
-div[data-testid="stHorizontalBlock"]:has(.fuelpulse-header-bar) button[key*="top_lang_popover"]::before,
-div[data-testid="stHorizontalBlock"]:has(.fuelpulse-header-bar) [data-testid="stPopover"]:has(button[key*="top_lang_popover"]) > button::before {{
-  content: "";
-  display: inline-block;
-  width: 16px;
-  height: 16px;
-  margin-right: 4px;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23A78BFA' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m5 8 6 6'/%3E%3Cpath d='m4 14 6-6 2-3'/%3E%3Cpath d='M2 5h12'/%3E%3Cpath d='M7 2h1'/%3E%3Cpath d='m22 22-5-10-5 10'/%3E%3Cpath d='M14 18h6'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: 16px 16px;
-  flex-shrink: 0;
-}}
-
-/* Hover & Focus States across all Header buttons */
 div[data-testid="stPopover"] > button:hover,
 div[data-testid="stPopoverButton"] > button:hover,
 button[key*="top_ai_assistant_btn"]:hover,
@@ -1880,7 +1460,6 @@ div[data-testid="stHorizontalBlock"]:has(.fuelpulse-header-bar) button:hover {{
   color: #F5B942 !important;
   -webkit-text-fill-color: #F5B942 !important;
   transform: translateY(-1px) !important;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.45) !important;
 }}
 
 div[data-testid="stPopover"] > button:hover *,
@@ -1892,37 +1471,22 @@ button[key*="top_ai_assistant_btn"]:hover * {{
 
 div[data-testid="stPopover"] > button svg,
 div[data-testid="stPopoverButton"] > button svg {{
-  fill: #CBD5E1 !important;
-  color: #CBD5E1 !important;
+  fill: #F5B942 !important;
+  color: #F5B942 !important;
 }}
 
-/* Dropdown chevron caret styling in header actions for Language and News controls */
+/* Hide popover chevron caret in header actions so all 3 buttons are identical in dimensions & centering */
+div[data-testid="stHorizontalBlock"]:has(.fuelpulse-header-bar) div[data-testid="stPopover"] > button svg,
+div[data-testid="stHorizontalBlock"]:has(.fuelpulse-header-bar) div[data-testid="stPopoverButton"] > button svg,
 div[data-testid="stHorizontalBlock"]:has(.fuelpulse-header-bar) svg[data-testid="stPopoverButtonArrow"],
-div[data-testid="stPopover"] > button svg[data-testid="stPopoverButtonArrow"],
-div[data-testid="stPopoverButton"] > button svg[data-testid="stPopoverButtonArrow"] {{
-  display: inline-block !important;
-  width: 13px !important;
-  height: 13px !important;
-  opacity: 0.85 !important;
-  margin-left: 4px !important;
-  vertical-align: middle !important;
-  fill: currentColor !important;
-  flex-shrink: 0 !important;
-}}
-
-/* Dedicated Theme Toggle Button Styling */
-button[key*="top_theme_btn"] {{
-  min-width: 40px !important;
-  max-width: 44px !important;
-  height: 40px !important;
-  min-height: 40px !important;
+div[data-testid="stHorizontalBlock"]:has(.fuelpulse-header-bar) [data-testid="stPopover"] > button svg,
+div[data-testid="stHorizontalBlock"]:has(.fuelpulse-header-bar) [data-testid="stPopoverButton"] > button svg {{
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  margin: 0 !important;
   padding: 0 !important;
-  font-size: 14px !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
 }}
-
 
 /* B. Popover Dropdown Container & Menu Items (Language selector & News Wire) */
 div[data-testid="stPopoverBody"],
@@ -2608,29 +2172,17 @@ button[data-testid*="primaryActive"] * {{
   [data-testid="stHorizontalBlock"]:has(.fuelpulse-header-bar) > [data-testid="stColumn"]:last-child [data-testid="stHorizontalBlock"] {{
     display: flex !important;
     flex-direction: row !important;
-    flex-wrap: wrap !important;
+    flex-wrap: nowrap !important;
     gap: 6px !important;
     width: 100% !important;
   }}
 
   [data-testid="stHorizontalBlock"]:has(.fuelpulse-header-bar) > [data-testid="column"]:last-child [data-testid="column"],
   [data-testid="stHorizontalBlock"]:has(.fuelpulse-header-bar) > [data-testid="stColumn"]:last-child [data-testid="stColumn"] {{
-    flex: 1 1 calc(33.333% - 6px) !important;
-    min-width: 85px !important;
-    max-width: 100% !important;
-  }}
-
-  [data-testid="stHorizontalBlock"]:has(.fuelpulse-header-bar) > [data-testid="column"]:last-child [data-testid="column"]:nth-child(4),
-  [data-testid="stHorizontalBlock"]:has(.fuelpulse-header-bar) > [data-testid="stColumn"]:last-child [data-testid="stColumn"]:nth-child(4) {{
-    flex: 0 0 44px !important;
-    min-width: 44px !important;
-    max-width: 44px !important;
-  }}
-
-  [data-testid="stHorizontalBlock"]:has(.fuelpulse-header-bar) > [data-testid="column"]:last-child [data-testid="column"]:nth-child(5),
-  [data-testid="stHorizontalBlock"]:has(.fuelpulse-header-bar) > [data-testid="stColumn"]:last-child [data-testid="stColumn"]:nth-child(5) {{
-    flex: 1 1 calc(100% - 56px) !important;
-    min-width: 130px !important;
+    flex: 1 1 0% !important;
+    width: 25% !important;
+    max-width: 25% !important;
+    min-width: 0 !important;
   }}
 
   .fuelpulse-header-bar {{
@@ -2654,16 +2206,16 @@ button[data-testid*="primaryActive"] * {{
     padding: 2px 6px !important;
   }}
 
-  /* Compact button dimensions and font sizes on mobile to guarantee 1-line fit and accessible touch targets */
+  /* Compact button dimensions and font sizes on mobile to guarantee 1-line fit */
   [data-testid="stHorizontalBlock"]:has(.fuelpulse-header-bar) button,
   [data-testid="stHorizontalBlock"]:has(.fuelpulse-header-bar) [data-testid="stPopover"] > button,
   [data-testid="stHorizontalBlock"]:has(.fuelpulse-header-bar) [data-testid="stPopoverButton"] > button,
   button[key*="top_ai_assistant_btn"] {{
-    min-height: 44px !important;
-    max-height: 44px !important;
-    line-height: 44px !important;
-    height: 44px !important;
-    padding: 0 3px !important;
+    min-height: 35px !important;
+    max-height: 35px !important;
+    line-height: 35px !important;
+    height: 35px !important;
+    padding: 0 4px !important;
     font-size: 10.5px !important;
     border-radius: 7px !important;
     width: 100% !important;
@@ -2896,12 +2448,12 @@ button[data-testid*="primaryActive"] * {{
   [data-testid="stHorizontalBlock"]:has(.fuelpulse-header-bar) [data-testid="stPopover"] > button,
   [data-testid="stHorizontalBlock"]:has(.fuelpulse-header-bar) [data-testid="stPopoverButton"] > button,
   button[key*="top_ai_assistant_btn"] {{
-    min-height: 44px !important;
-    max-height: 44px !important;
-    line-height: 44px !important;
-    height: 44px !important;
+    min-height: 33px !important;
+    max-height: 33px !important;
+    line-height: 33px !important;
+    height: 33px !important;
     padding: 0 2px !important;
-    font-size: 10px !important;
+    font-size: 9.5px !important;
     letter-spacing: -0.01em !important;
     width: 100% !important;
     display: flex !important;
@@ -2917,29 +2469,10 @@ button[data-testid*="primaryActive"] * {{
   [data-testid="stHorizontalBlock"]:has(.fuelpulse-header-bar) [data-testid="stPopover"] > button *,
   [data-testid="stHorizontalBlock"]:has(.fuelpulse-header-bar) [data-testid="stPopoverButton"] > button *,
   button[key*="top_ai_assistant_btn"] * {{
-    font-size: 10px !important;
+    font-size: 9.5px !important;
     line-height: 1 !important;
     text-align: center !important;
     white-space: nowrap !important;
-  }}
-}}
-
-@media (max-width: 360px) {{
-  .block-container {{
-    padding-left: 6px !important;
-    padding-right: 6px !important;
-  }}
-  .fuelpulse-brand-title {{
-    font-size: 0.88rem !important;
-  }}
-  .fuelpulse-header-bar .fuelpulse-status-pill {{
-    display: none !important;
-  }}
-  [data-testid="stHorizontalBlock"]:has(.fuelpulse-header-bar) button,
-  [data-testid="stHorizontalBlock"]:has(.fuelpulse-header-bar) [data-testid="stPopover"] > button,
-  [data-testid="stHorizontalBlock"]:has(.fuelpulse-header-bar) [data-testid="stPopoverButton"] > button {{
-    font-size: 9.5px !important;
-    padding: 0 1px !important;
   }}
 }}
 </style>"""
@@ -2971,97 +2504,79 @@ def render_universal_top_header(active_page_name: str = "Overview", key_prefix: 
     except Exception:
         health = {"dialect": "sqlite"}
 
-    try:
-        from src.auth.supabase_client import supabase_auth_client
-        if supabase_auth_client.is_configured():
-            engine_name = "SUPABASE CLOUD"
-        elif health.get("dialect") == "mysql":
-            engine_name = "MYSQL 8.4"
-        else:
-            raw_badge = t("db_verified", current_lang)
-            if not raw_badge or raw_badge == "db_verified":
-                raw_badge = t("sqlite_verified_badge", current_lang)
-            engine_name = raw_badge if (raw_badge and raw_badge not in ("sqlite_verified_badge", "db_verified")) else "SQLITE VERIFIED"
-    except Exception:
-        engine_name = "SQLITE VERIFIED"
+    if health.get("dialect") == "mysql":
+        engine_name = "MYSQL 8.4"
+    else:
+        raw_badge = t("db_verified", current_lang)
+        if not raw_badge or raw_badge == "db_verified":
+            raw_badge = t("sqlite_verified_badge", current_lang)
+        engine_name = raw_badge if (raw_badge and raw_badge not in ("sqlite_verified_badge", "db_verified")) else "SQLITE VERIFIED"
     
     pfx = (key_prefix or active_page_name or "nav").lower().replace(" ", "_").replace(".", "_").replace("•", "_")
 
-    # Retrieve authoritative quota for authenticated user
+    # Retrieve persistent database quota for authenticated user
     try:
-        from src.auth.auth_service import AuthService
-        from src.auth.quota_service import quota_service
-        auth_u = AuthService.get_active_user()
-        if auth_u and auth_u.get("user_id"):
-            u_id = auth_u["user_id"]
-            q_sum = quota_service.get_quota_summary(u_id)
-            used_q = q_sum.get("used", 0)
-            rem_q = q_sum.get("remaining", 3)
-            is_quota_exhausted = q_sum.get("quota_exhausted", (rem_q <= 0))
-            st.session_state["top_ai_quota_rem"] = rem_q
-            st.session_state["top_ai_quota_used"] = used_q
+        from src.ai.nl_query_engine import session_protector
+        if "top_ai_quota_rem" in st.session_state:
+            rem_q = st.session_state["top_ai_quota_rem"]
         else:
-            used_q = 0
-            rem_q = 3
-            is_quota_exhausted = False
+            cur_uid = st.query_params.get("uid") if hasattr(st, "query_params") else None
+            if not cur_uid:
+                cur_uid = st.session_state.get("ai_session_id", "default_session")
+            status = session_protector.get_session_status(cur_uid, has_custom_key=True, enforce_user_daily_limit=True)
+            rem_q = status.get("daily_questions_remaining", 3)
     except Exception:
-        used_q = 0
         rem_q = 3
-        is_quota_exhausted = False
 
-    col_brand, col_nav, col_actions = st.columns([2.7, 4.5, 2.8], gap="small", vertical_alignment="center")
+    col_brand, col_actions = st.columns([5.5, 4.5], gap="small", vertical_alignment="center")
     with col_brand:
         render_html(render_app_header_brand_html(current_lang, engine_name, t('live_indicator', current_lang)))
 
-    with col_nav:
-        # CWI Studio Center Navigation: Overview | Live Intelligence | Global Trade | Forecasts | News | AI Analyst
-        col_nav_home, col_nav_intel, col_nav_trade, col_nav_fc, col_news, col_ai = st.columns(
-            [0.85, 1.25, 1.05, 0.95, 0.85, 1.05], gap="small", vertical_alignment="center"
-        )
-        with col_nav_home:
-            is_home_active = active_page_name.lower() in ("home", "overview", "🏠 overview")
-            if st.button("Overview", key=f"{pfx}_nav_home_btn", type="primary" if is_home_active else "secondary", use_container_width=True, help="Product Overview & Key Metrics"):
-                st.session_state["active_canonical"] = "home"
-                st.query_params["tab"] = "home"
-                try:
-                    st.switch_page("app.py")
-                except Exception:
-                    st.rerun()
+    with col_actions:
+        col_ai, col_lang, col_news, col_auth = st.columns([1.0, 1.15, 1.1, 0.95], gap="small", vertical_alignment="center")
+        with col_ai:
+            ai_btn_label = f"🤖 AI ({rem_q}/3)" if current_lang == "en" else t("top_btn_ai", current_lang, rem=rem_q)
+            if st.button(
+                ai_btn_label,
+                key=f"{pfx}_top_ai_assistant_btn",
+                use_container_width=True,
+                type="secondary",
+                help="Ask Antigravity AI Assistant (Text & Voice Note)"
+            ):
+                from src.auth.auth_service import AuthService
+                if not AuthService.get_active_user():
+                    _show_sign_in_dialog()
+                else:
+                    _show_ai_assistant_dialog(context_page=active_page_name)
 
-        with col_nav_intel:
-            is_intel_active = active_page_name.lower() in ("dashboard", "live intelligence", "⚡ intelligence dashboard", "global_command_center", "global command center")
-            if st.button("Live Intelligence", key=f"{pfx}_nav_intel_btn", type="primary" if is_intel_active else "secondary", use_container_width=True, help="Live Intelligence Command Center"):
-                st.session_state["active_canonical"] = "dashboard"
-                st.query_params["tab"] = "dashboard"
-                try:
-                    st.switch_page("pages/1_Global_Command_Center.py")
-                except Exception:
-                    st.rerun()
-
-        with col_nav_trade:
-            is_trade_active = "trade" in active_page_name.lower() or "logistics" in active_page_name.lower()
-            if st.button("Global Trade", key=f"{pfx}_nav_trade_btn", type="primary" if is_trade_active else "secondary", use_container_width=True, help="Global Trade Flows"):
-                st.session_state["active_canonical"] = "features"
-                st.query_params["tab"] = "features"
-                try:
-                    st.switch_page("pages/3_Global_Trade.py")
-                except Exception:
-                    st.rerun()
-
-        with col_nav_fc:
-            is_fc_active = "forecast" in active_page_name.lower() or "methodology" in active_page_name.lower()
-            if st.button("Forecasts", key=f"{pfx}_nav_fc_btn", type="primary" if is_fc_active else "secondary", use_container_width=True, help="Econometric Forecasts"):
-                st.session_state["active_canonical"] = "methodology"
-                st.query_params["tab"] = "methodology"
-                try:
-                    st.switch_page("pages/7_Forecasting.py")
-                except Exception:
-                    st.rerun()
+        with col_lang:
+            all_langs = get_available_languages()
+            cur_data = all_langs.get(current_lang, all_langs.get("en", {"flag": "🇬🇧", "native": "English", "name": "English"}))
+            cur_flag = cur_data.get("flag", "🇬🇧" if current_lang == "en" else "🌐")
+            lang_name = cur_data.get("name", "English")
+            lang_btn_label = f"🌐 {cur_flag} {lang_name} ▾"
+            with st.popover(lang_btn_label, use_container_width=True):
+                st.markdown(f"#### 🌐 {t('select_language', current_lang)} ({len(all_langs)} World Languages)")
+                st.caption(t("lang_modal_sub", current_lang))
+                with st.container(height=340):
+                    for code, data in all_langs.items():
+                        is_selected = (code == current_lang)
+                        active_mark = "✓ " if is_selected else ""
+                        item_label = f"{active_mark}{data['flag']}  {data['native']}  ({data['name']})"
+                        if st.button(
+                            item_label,
+                            key=f"{pfx}_lang_btn_{code}",
+                            use_container_width=True,
+                            type="primary" if is_selected else "secondary"
+                        ):
+                            if code != current_lang:
+                                set_language(code)
+                                st.rerun()
 
         with col_news:
             alerts_count = GlobalNewsEngine.get_active_alerts_count()
-            news_btn_label = f"News ({alerts_count})" if current_lang == "en" else t("top_btn_news", current_lang, count=alerts_count)
-            with st.popover(news_btn_label, use_container_width=True, key=f"{pfx}_top_news_popover"):
+            news_btn_label = f"📰 News ({alerts_count}) ▾" if current_lang == "en" else f"{t('top_btn_news', current_lang, count=alerts_count)} ▾"
+            with st.popover(news_btn_label, use_container_width=True):
                 render_html(f"""
                 <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid rgba(255, 255, 255, 0.12);">
                     {get_news_globe_icon_svg(size=36, lang=current_lang)}
@@ -3075,6 +2590,7 @@ def render_universal_top_header(active_page_name: str = "Overview", key_prefix: 
                     </div>
                 </div>
                 """)
+                
                 col_sync_status, col_sync_btn = st.columns([3, 1])
                 with col_sync_status:
                     render_html(f"""
@@ -3209,97 +2725,22 @@ def render_universal_top_header(active_page_name: str = "Overview", key_prefix: 
                         </div>
                         """, unsafe_allow_html=True)
 
-        with col_ai:
-            is_ai_active = "ai" in active_page_name.lower() or "analyst" in active_page_name.lower()
-            if st.button(
-                "AI Analyst",
-                key=f"{pfx}_top_ai_assistant_btn",
-                use_container_width=True,
-                type="primary" if is_ai_active else "secondary",
-                help="Global FuelPulse AI Analyst"
-            ):
-                try:
-                    st.switch_page("pages/9_AI_Analyst.py")
-                except Exception:
-                    from src.auth.auth_service import AuthService
-                    if not AuthService.get_active_user():
-                        _show_sign_in_dialog()
-                    else:
-                        _show_ai_assistant_dialog(context_page=active_page_name)
-
-    with col_actions:
-        col_lang, col_theme, col_auth = st.columns(
-            [1.0, 0.45, 1.25], gap="small", vertical_alignment="center"
-        )
-        with col_lang:
-            all_langs = get_available_languages()
-            cur_data = all_langs.get(current_lang, all_langs.get("en", {"flag": "🇬🇧", "native": "English", "name": "English"}))
-            lang_name = cur_data.get("name", "English")
-            lang_btn_label = f"{lang_name}"
-            with st.popover(lang_btn_label, use_container_width=True, key=f"{pfx}_top_lang_popover"):
-                st.markdown(f"#### 🌐 {t('select_language', current_lang)} ({len(all_langs)} World Languages)")
-                st.caption(t("lang_modal_sub", current_lang))
-                with st.container(height=340):
-                    for code, data in all_langs.items():
-                        is_selected = (code == current_lang)
-                        active_mark = "✓ " if is_selected else ""
-                        item_label = f"{active_mark}{data['flag']}  {data['native']}  ({data['name']})"
-                        if st.button(
-                            item_label,
-                            key=f"{pfx}_lang_btn_{code}",
-                            use_container_width=True,
-                            type="primary" if is_selected else "secondary"
-                        ):
-                            if code != current_lang:
-                                set_language(code)
-                                st.rerun()
-
-        with col_theme:
-            current_theme = st.session_state.get("app_theme", "dark")
-            theme_icon = "☀️" if current_theme == "dark" else "🌙"
-            theme_tip = "Switch to Light Mode" if current_theme == "dark" else "Switch to Dark Mode"
-            if st.button(
-                theme_icon,
-                key=f"{pfx}_top_theme_btn",
-                use_container_width=True,
-                type="secondary",
-                help=theme_tip
-            ):
-                new_theme = "light" if current_theme == "dark" else "dark"
-                st.session_state["app_theme"] = new_theme
-                auth_user = st.session_state.get("auth_user")
-                if auth_user and auth_user.get("user_id"):
-                    try:
-                        from src.auth.supabase_client import supabase_auth_client
-                        token = st.session_state.get("auth_token")
-                        supabase_auth_client.update_profile_preferences(
-                            auth_user["user_id"],
-                            {"theme": new_theme},
-                            access_token=token
-                        )
-                    except Exception:
-                        pass
-                st.rerun()
-
         with col_auth:
             auth_user = st.session_state.get("auth_user")
             if auth_user:
                 disp_name = (auth_user.get("username") or "Analyst").capitalize()[:10]
                 auth_btn_label = f"👤 {disp_name}"
             else:
-                auth_btn_label = "Account"
+                auth_btn_label = "🔐 Sign In"
 
             if st.button(
                 auth_btn_label,
                 key=f"{pfx}_top_auth_btn",
                 use_container_width=True,
-                type="primary" if auth_user else "secondary",
-                help="User Account, Security & AI Quotas"
+                type="secondary" if not auth_user else "primary",
+                help="Sign In / Manage Account Session"
             ):
-                if auth_user:
-                    _show_account_profile_dialog(auth_user)
-                else:
-                    _show_sign_in_dialog()
+                _show_sign_in_dialog()
 
 
 # ==============================================================================
@@ -3376,17 +2817,6 @@ def _show_sign_in_dialog():
     """
     from src.auth.auth_service import AuthService
 
-    def _apply_saved_user_preferences(user_dict: dict, tok: Optional[str] = None):
-        try:
-            from src.auth.supabase_client import supabase_auth_client
-            prof = supabase_auth_client.get_profile(user_dict.get("user_id"), tok)
-            if prof and isinstance(prof.get("preferences"), dict):
-                p_theme = prof["preferences"].get("theme")
-                if p_theme in ("light", "dark"):
-                    st.session_state["app_theme"] = p_theme
-        except Exception:
-            pass
-
     auth_user = st.session_state.get("auth_user")
 
     # If already logged in, show user profile & logout
@@ -3400,8 +2830,6 @@ def _show_sign_in_dialog():
         </div>
         """, unsafe_allow_html=True)
         if st.button("Log Out of Console", type="primary", use_container_width=True, key="dlg_auth_logout_btn"):
-            token = st.session_state.get("auth_token")
-            AuthService.logout_user(token)
             st.session_state.pop("auth_user", None)
             st.session_state.pop("auth_token", None)
             st.toast("Logged out successfully.")
@@ -3416,35 +2844,32 @@ def _show_sign_in_dialog():
     </div>
     """, unsafe_allow_html=True)
 
-    tab_signin, tab_register, tab_reset = st.tabs(["Sign In", "Create Account", "Reset Password"])
+    tab_signin, tab_register = st.tabs(["Sign In", "Create Account"])
 
     with tab_signin:
-        show_signin_pwd = st.checkbox("Show password", value=False, key="auth_signin_show_pwd")
         with st.form("signin_form", clear_on_submit=False):
-            email_val = st.text_input("Email or Username", placeholder="you@company.com or username", key="auth_signin_email")
-            pwd_val = st.text_input("Password", type="default" if show_signin_pwd else "password", placeholder="••••••••", key="auth_signin_pwd")
-            col_rem, col_forgot_note = st.columns([1, 1])
+            email_val = st.text_input("Email", placeholder="you@company.com", key="auth_signin_email")
+            pwd_val = st.text_input("Password", type="password", placeholder="••••••••", key="auth_signin_pwd")
+            col_rem, col_forgot = st.columns([1, 1])
             with col_rem:
                 st.checkbox("Remember me", value=True, key="auth_signin_remember")
-            with col_forgot_note:
-                st.caption("Forgot password? Use the Reset Password tab above.")
+            with col_forgot:
+                st.markdown("<p style='text-align: right; margin-top: 4px;'><a href='#' style='color: #94A3B8; font-size: 0.8rem; text-decoration: none;'>Forgot password?</a></p>", unsafe_allow_html=True)
 
-            submit_signin = st.form_submit_button("Sign In to Analyst Console", type="primary", use_container_width=True)
+            submit_signin = st.form_submit_button("Sign in", type="primary", use_container_width=True)
 
         if submit_signin:
             if not email_val.strip() or not pwd_val.strip():
-                st.error("Please enter both email/username and password.")
+                st.error("Please enter both email and password.")
             else:
-                with st.spinner("Authenticating with Global FuelPulse..."):
-                    ok, msg, token, udict = AuthService.login_user(email_val, pwd_val)
-                    if ok:
-                        st.session_state["auth_user"] = udict
-                        st.session_state["auth_token"] = token
-                        _apply_saved_user_preferences(udict, token)
-                        st.toast("Signed in successfully! 3 free questions active.")
-                        st.rerun()
-                    else:
-                        st.error(msg)
+                ok, msg, token, udict = AuthService.login_user(email_val, pwd_val)
+                if ok:
+                    st.session_state["auth_user"] = udict
+                    st.session_state["auth_token"] = token
+                    st.success("Signed in successfully! 3 free questions are active.")
+                    st.rerun()
+                else:
+                    st.error(msg)
 
         st.markdown("""
         <div style="position: relative; text-align: center; margin: 18px 0 14px 0;">
@@ -3456,92 +2881,52 @@ def _show_sign_in_dialog():
         col_gh, col_goog = st.columns(2)
         with col_gh:
             if st.button("GitHub", use_container_width=True, key="auth_social_github"):
-                with st.spinner("Connecting via GitHub OAuth..."):
-                    AuthService.ensure_default_demo_user()
-                    ok, msg, token, udict = AuthService.login_user("analyst@fuelpulse.ai", "FuelPulse2026!")
-                    if ok:
-                        st.session_state["auth_user"] = udict
-                        st.session_state["auth_token"] = token
-                        _apply_saved_user_preferences(udict, token)
-                        st.toast("Authenticated via GitHub OAuth")
-                        st.rerun()
-        with col_goog:
-            if st.button("Google", use_container_width=True, key="auth_social_google"):
-                with st.spinner("Connecting via Google OAuth..."):
-                    AuthService.ensure_default_demo_user()
-                    ok, msg, token, udict = AuthService.login_user("analyst@fuelpulse.ai", "FuelPulse2026!")
-                    if ok:
-                        st.session_state["auth_user"] = udict
-                        st.session_state["auth_token"] = token
-                        _apply_saved_user_preferences(udict, token)
-                        st.toast("Authenticated via Google OAuth")
-                        st.rerun()
-
-        st.markdown("<div style='margin-top: 14px;'></div>", unsafe_allow_html=True)
-        if st.button("⚡ Quick 1-Click Demo Login (analyst@fuelpulse.ai)", use_container_width=True, type="secondary", key="auth_quick_demo"):
-            with st.spinner("Connecting demo analyst session..."):
                 AuthService.ensure_default_demo_user()
                 ok, msg, token, udict = AuthService.login_user("analyst@fuelpulse.ai", "FuelPulse2026!")
                 if ok:
                     st.session_state["auth_user"] = udict
                     st.session_state["auth_token"] = token
-                    _apply_saved_user_preferences(udict, token)
-                    st.toast("Logged in as Senior Analyst!")
+                    st.success("Authenticated via GitHub OAuth")
+                    st.rerun()
+        with col_goog:
+            if st.button("Google", use_container_width=True, key="auth_social_google"):
+                AuthService.ensure_default_demo_user()
+                ok, msg, token, udict = AuthService.login_user("analyst@fuelpulse.ai", "FuelPulse2026!")
+                if ok:
+                    st.session_state["auth_user"] = udict
+                    st.session_state["auth_token"] = token
+                    st.success("Authenticated via Google OAuth")
                     st.rerun()
 
+        st.markdown("<div style='margin-top: 14px;'></div>", unsafe_allow_html=True)
+        if st.button("⚡ Quick 1-Click Demo Login (analyst@fuelpulse.ai)", use_container_width=True, type="secondary", key="auth_quick_demo"):
+            AuthService.ensure_default_demo_user()
+            ok, msg, token, udict = AuthService.login_user("analyst@fuelpulse.ai", "FuelPulse2026!")
+            if ok:
+                st.session_state["auth_user"] = udict
+                st.session_state["auth_token"] = token
+                st.success("Logged in as Senior Analyst!")
+                st.rerun()
+
     with tab_register:
-        show_reg_pwd = st.checkbox("Show password", value=False, key="auth_reg_show_pwd")
         with st.form("register_form", clear_on_submit=False):
             reg_name = st.text_input("Full Name", placeholder="e.g. Alexander Vance", key="auth_reg_name")
             reg_user = st.text_input("Username", placeholder="e.g. avance", key="auth_reg_user")
             reg_email = st.text_input("Email", placeholder="you@company.com", key="auth_reg_email")
-            reg_pwd = st.text_input("Password", type="default" if show_reg_pwd else "password", placeholder="At least 6 characters", key="auth_reg_pwd")
+            reg_pwd = st.text_input("Password", type="password", placeholder="At least 6 characters", key="auth_reg_pwd")
             submit_reg = st.form_submit_button("Create Account & Unlock 3 Questions", type="primary", use_container_width=True)
 
         if submit_reg:
-            if not reg_email.strip() or not reg_pwd.strip():
-                st.error("Please provide both an email and a password.")
-            elif len(reg_pwd.strip()) < 6:
-                st.error("Password must be at least 6 characters.")
+            ok, msg, new_u = AuthService.register_user(reg_user, reg_email, reg_pwd, reg_name)
+            if ok:
+                _, _, token, udict = AuthService.login_user(reg_email, reg_pwd)
+                if udict:
+                    st.session_state["auth_user"] = udict
+                    st.session_state["auth_token"] = token
+                    st.success("Account created and signed in! 3 free questions unlocked.")
+                    st.rerun()
             else:
-                with st.spinner("Provisioning profile in Supabase & creating session..."):
-                    ok, msg, new_u = AuthService.register_user(reg_user, reg_email, reg_pwd, reg_name)
-                    if ok:
-                        if "confirm" in msg.lower() or "verification" in msg.lower():
-                            st.success(f"Account created! {msg}. Please check your inbox.")
-                        else:
-                            _, _, token, udict = AuthService.login_user(reg_email, reg_pwd)
-                            if udict:
-                                st.session_state["auth_user"] = udict
-                                st.session_state["auth_token"] = token
-                                _apply_saved_user_preferences(udict, token)
-                                st.toast("Account created and signed in! 3 free questions unlocked.")
-                                st.rerun()
-                            else:
-                                st.success("Account created successfully. You may now sign in.")
-                    else:
-                        st.error(msg)
-
-    with tab_reset:
-        with st.form("reset_pwd_form", clear_on_submit=False):
-            st.markdown("<p style='font-size: 0.85rem; color: #94A3B8;'>Enter your registered email address and we'll send a secure password recovery link.</p>", unsafe_allow_html=True)
-            reset_email = st.text_input("Registered Email", placeholder="you@company.com", key="auth_reset_email")
-            submit_reset = st.form_submit_button("Send Recovery Link", type="primary", use_container_width=True)
-
-        if submit_reset:
-            if not reset_email.strip():
-                st.error("Please enter your email address.")
-            else:
-                with st.spinner("Sending recovery email..."):
-                    from src.auth.supabase_client import supabase_auth_client
-                    if supabase_auth_client.is_configured():
-                        ok_rst, msg_rst = supabase_auth_client.reset_password_for_email(reset_email.strip())
-                        if ok_rst:
-                            st.success("If an account exists for this email, password reset instructions have been sent.")
-                        else:
-                            st.error(f"Password reset failed: {msg_rst}")
-                    else:
-                        st.info("Local environment: contact your administrator or use the demo login.")
+                st.error(msg)
 
     st.markdown("""
     <div style="text-align: center; margin-top: 20px; padding-top: 14px; border-top: 1px solid rgba(255, 255, 255, 0.08); font-size: 0.8rem; color: #71717A;">
@@ -3553,121 +2938,7 @@ def _show_sign_in_dialog():
 show_sign_in_dialog = _show_sign_in_dialog
 
 
-@st.dialog("👤 Analyst Account & Activity", width="large")
-def _show_account_profile_dialog(user: Dict[str, Any]):
-    """
-    Renders user profile overview, authoritative quota tracking, login audit trail,
-    and private question history with privacy disclosures.
-    """
-    from src.auth.quota_service import quota_service
-    from src.auth.supabase_client import supabase_auth_client
-    from src.auth.auth_service import AuthService
-    
-    uid = user.get("user_id")
-    uname = user.get("username", "Analyst")
-    email = user.get("email", "N/A")
-    full_name = user.get("full_name") or uname.capitalize()
-
-    summary = quota_service.get_quota_summary(uid)
-    used = summary.get("used", 0)
-    remaining = summary.get("remaining", 3)
-    resets_in = summary.get("reset_time_str", "24 hours")
-    hist_total = summary.get("total_historical", used)
-    is_ex = summary.get("quota_exhausted", False)
-    status_color = "#F5B942" if is_ex else "#34D399"
-    status_text = "Quota Exhausted" if is_ex else "Active • Available"
-
-    st.markdown(f"""
-    <div style="background: rgba(14, 21, 38, 0.95); border: 1.5px solid rgba(245, 185, 66, 0.35); border-radius: 12px; padding: 18px 22px; margin-bottom: 18px;">
-        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
-            <div style="display: flex; align-items: center; gap: 14px;">
-                <div style="width: 48px; height: 48px; border-radius: 50%; background: linear-gradient(135deg, #F5B942, #EAB308); color: #070A12; display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 800;">
-                    {uname[0].upper()}
-                </div>
-                <div>
-                    <div style="font-family: 'Space Grotesk', sans-serif; font-size: 1.2rem; font-weight: 800; color: #F9FAFB;">
-                        {full_name} <span style="font-size: 0.8rem; color: #94A3B8; font-weight: 500;">(@{uname})</span>
-                    </div>
-                    <div style="font-size: 0.8rem; color: #CBD5E1; margin-top: 2px;">
-                        📧 {email} • <span style="color: {status_color}; font-weight: 700;">● {status_text}</span>
-                    </div>
-                </div>
-            </div>
-            <div style="background: rgba(0,0,0,0.4); border: 1px solid rgba(255, 255, 255, 0.12); padding: 6px 14px; border-radius: 999px; font-size: 0.78rem; font-weight: 700; color: #F5B942;">
-                ⚡ Free Tier (3 Questions / 24h)
-            </div>
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
-
-    # 4 Metric Cards
-    c1, c2, c3, c4 = st.columns(4)
-    with c1:
-        st.metric("Questions Used (24h)", f"{used} / 3")
-    with c2:
-        st.metric("Questions Remaining", f"{remaining} / 3")
-    with c3:
-        st.metric("Quota Reset In", resets_in)
-    with c4:
-        st.metric("Lifetime Queries", str(hist_total))
-
-    st.markdown("---")
-
-    tab_usage, tab_logins, tab_privacy = st.tabs(["📋 Question History", "🔐 Login Activity", "🛡️ Privacy & Security"])
-    
-    with tab_usage:
-        st.markdown("#### 💬 Your Private AI Question History")
-        q_rows = supabase_auth_client.get_user_question_history(uid, limit=10)
-        if q_rows:
-            import pandas as pd
-            df_q = pd.DataFrame(q_rows)
-            cols_show = [c for c in ["created_at", "question_text", "status", "model_used"] if c in df_q.columns]
-            rename_map = {"created_at": "Timestamp", "question_text": "Question", "status": "Status", "model_used": "Model"}
-            st.dataframe(df_q[cols_show].rename(columns=rename_map), use_container_width=True, hide_index=True)
-        else:
-            st.info("No questions logged yet in this 24-hour cycle.")
-
-    with tab_logins:
-        st.markdown("#### 🕒 Recent Login & Security Audit Trail")
-        l_rows = supabase_auth_client.get_user_login_history(uid, limit=5)
-        if l_rows:
-            import pandas as pd
-            df_l = pd.DataFrame(l_rows)
-            cols_l = [c for c in ["login_timestamp", "event_type", "result", "session_id"] if c in df_l.columns]
-            rename_l = {"login_timestamp": "Timestamp", "event_type": "Event", "result": "Result", "session_id": "Session Ref"}
-            st.dataframe(df_l[cols_l].rename(columns=rename_l), use_container_width=True, hide_index=True)
-        else:
-            st.info("No external login history logged.")
-
-    with tab_privacy:
-        st.markdown("""
-        <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 8px; padding: 14px 18px; font-size: 0.85rem; line-height: 1.6; color: #CBD5E1;">
-            <b style="color: #34D399; font-size: 0.95rem;">🛡️ Enterprise Privacy Notice & Data Security</b><br>
-            • <b>User Isolation:</b> All question history and login events are bound to your Supabase Auth ID and guarded by PostgreSQL <b>Row Level Security (RLS)</b>.<br>
-            • <b>Zero Credential Leakage:</b> Your passwords, access tokens, and API keys are never stored in question logs or plaintext tables.<br>
-            • <b>Quota Integrity:</b> Rolling 24-hour question quotas are enforced atomically on the database server to prevent concurrent bypasses.<br>
-            • <b>No Third-Party Sharing:</b> Your energy intelligence queries are never exposed to other platform users.
-        </div>
-        """, unsafe_allow_html=True)
-
-    st.markdown("---")
-    col_out, _ = st.columns([1.5, 3.5])
-    with col_out:
-        if st.button("🚪 Sign Out", key="account_sign_out_btn", use_container_width=True, type="secondary"):
-            token = st.session_state.get("auth_token")
-            AuthService.logout(token)
-            st.session_state.pop("auth_user", None)
-            st.session_state.pop("auth_token", None)
-            st.session_state.pop("auth_session_token", None)
-            quota_service.invalidate_cache(uid)
-            st.toast("Signed out successfully.")
-            st.rerun()
-
-
-show_account_profile_dialog = _show_account_profile_dialog
-
-
-@st.dialog("⚡ FuelPulse AI Intelligence", width="large")
+@st.dialog("🤖 Antigravity AI — Energy Market Intelligence", width="large")
 def _show_ai_assistant_dialog(context_page: str = "Overview"):
     """
     Renders the responsive modal AI Assistant dialog.
@@ -3681,27 +2952,6 @@ def _show_ai_assistant_dialog(context_page: str = "Overview"):
 
     current_lang = get_current_language()
     pfx = ("dlg_" + context_page).lower().replace(" ", "_").replace(".", "_").replace("•", "_")
-
-    # Clean CSS: Eliminate Streamlit form instruction text overlap inside modal
-    st.markdown("""
-    <style>
-    div[data-testid="InputInstructions"],
-    span[data-testid="InputInstructions"],
-    div.stTextInput div[data-testid="InputInstructions"],
-    div.stTextInput [data-testid="InputInstructions"],
-    div[data-testid="stTextInput"] [data-testid="InputInstructions"],
-    div[data-testid="stTextArea"] [data-testid="InputInstructions"] {
-        display: none !important;
-        visibility: hidden !important;
-        height: 0 !important;
-        width: 0 !important;
-        margin: 0 !important;
-        padding: 0 !important;
-        pointer-events: none !important;
-        opacity: 0 !important;
-    }
-    </style>
-    """, unsafe_allow_html=True)
 
     # STRICT GATE: User must be signed in to ask questions
     active_user = AuthService.get_active_user()
@@ -3720,31 +2970,26 @@ def _show_ai_assistant_dialog(context_page: str = "Overview"):
         gate_tab_in, gate_tab_reg = st.tabs(["Sign In", "Create Account"])
         with gate_tab_in:
             with st.form(f"{pfx}_gate_signin", clear_on_submit=False):
-                in_email = st.text_input("Email or Username", placeholder="you@company.com or username", key=f"{pfx}_gate_signin_email")
+                in_email = st.text_input("Email", placeholder="you@company.com", key=f"{pfx}_gate_signin_email")
                 in_pwd = st.text_input("Password", type="password", placeholder="••••••••", key=f"{pfx}_gate_signin_pwd")
                 submit_in = st.form_submit_button("Sign In & Start Asking", type="primary", use_container_width=True)
             if submit_in:
-                if not in_email.strip() or not in_pwd.strip():
-                    st.error("Please enter both email/username and password.")
+                ok, msg, token, udict = AuthService.login_user(in_email, in_pwd)
+                if ok and udict:
+                    st.session_state["auth_user"] = udict
+                    st.session_state["auth_token"] = token
+                    st.success("Signed in successfully! Your 3 free questions are active.")
+                    st.rerun()
                 else:
-                    with st.spinner("Authenticating with Global FuelPulse..."):
-                        ok, msg, token, udict = AuthService.login_user(in_email, in_pwd)
-                        if ok and udict:
-                            st.session_state["auth_user"] = udict
-                            st.session_state["auth_token"] = token
-                            st.toast("Signed in successfully! Your 3 free questions are active.")
-                            st.rerun()
-                        else:
-                            st.error(msg)
+                    st.error(msg)
             if st.button("⚡ Quick 1-Click Demo Login (analyst@fuelpulse.ai)", use_container_width=True, type="secondary", key=f"{pfx}_gate_demo_login_btn"):
-                with st.spinner("Connecting demo analyst session..."):
-                    AuthService.ensure_default_demo_user()
-                    ok, msg, token, udict = AuthService.login_user("analyst@fuelpulse.ai", "FuelPulse2026!")
-                    if ok and udict:
-                        st.session_state["auth_user"] = udict
-                        st.session_state["auth_token"] = token
-                        st.toast("Signed in as Senior Analyst!")
-                        st.rerun()
+                AuthService.ensure_default_demo_user()
+                ok, msg, token, udict = AuthService.login_user("analyst@fuelpulse.ai", "FuelPulse2026!")
+                if ok and udict:
+                    st.session_state["auth_user"] = udict
+                    st.session_state["auth_token"] = token
+                    st.success("Signed in as Senior Analyst!")
+                    st.rerun()
         with gate_tab_reg:
             with st.form(f"{pfx}_gate_register", clear_on_submit=False):
                 reg_name = st.text_input("Full Name", placeholder="e.g. Alexander Vance", key=f"{pfx}_gate_reg_name")
@@ -3753,38 +2998,35 @@ def _show_ai_assistant_dialog(context_page: str = "Overview"):
                 reg_pwd = st.text_input("Password", type="password", placeholder="At least 6 characters", key=f"{pfx}_gate_reg_pwd")
                 submit_reg = st.form_submit_button("Create Account & Get 3 Free Questions", type="primary", use_container_width=True)
             if submit_reg:
-                with st.spinner("Creating account & provisioning profile in Supabase..."):
-                    ok, msg, new_u = AuthService.register_user(reg_user, reg_email, reg_pwd, reg_name)
-                    if ok:
-                        _, _, token, udict = AuthService.login_user(reg_email, reg_pwd)
-                        if udict:
-                            st.session_state["auth_user"] = udict
-                            st.session_state["auth_token"] = token
-                            st.toast("Account created and signed in! 3 free questions unlocked.")
-                            st.rerun()
-                    else:
-                        st.error(msg)
+                ok, msg, new_u = AuthService.register_user(reg_user, reg_email, reg_pwd, reg_name)
+                if ok:
+                    _, _, token, udict = AuthService.login_user(reg_email, reg_pwd)
+                    if udict:
+                        st.session_state["auth_user"] = udict
+                        st.session_state["auth_token"] = token
+                        st.success("Account created and signed in! 3 free questions unlocked.")
+                        st.rerun()
+                else:
+                    st.error(msg)
         return
     sess_id = f"usr_{active_user['user_id']}"
     st.session_state.ai_session_id = sess_id
 
-    from src.auth.quota_service import quota_service
-    summary = quota_service.get_quota_summary(active_user['user_id'])
-    used_q = summary.get("used", 0)
-    rem_q = summary.get("remaining", 3)
-    reset_str = summary.get("reset_time_str", "24 hours")
-    is_blocked = False
-    is_quota_finished = summary.get("quota_exhausted", (rem_q <= 0))
+    sess_status = session_protector.get_session_status(sess_id, has_custom_key=True, enforce_user_daily_limit=True)
+    rem_q = sess_status.get("daily_questions_remaining", 3)
+    reset_str = sess_status.get("reset_time_str", "24 hours")
+    is_blocked = sess_status.get("is_blocked", False)
+    is_quota_finished = sess_status.get("is_daily_quota_finished", False)
 
-    def _render_header_card_html(used: int, remaining: int, blocked: bool, finished: bool, rst_time: str) -> str:
+    def _render_header_card_html(remaining: int, blocked: bool, finished: bool, rst_time: str) -> str:
         if blocked:
-            status_text = "🚫 Security Restricted • Access Terminated"
+            status_text = t("ai_status_blocked", current_lang)
             status_color = "#EF4444"
         elif finished or remaining <= 0:
-            status_text = f"⏳ 3/3 used · 0 remaining (Resets in {rst_time})"
+            status_text = t("ai_status_quota_reached", current_lang, reset_str=rst_time)
             status_color = "#F5B942"
         else:
-            status_text = f"● Active • {used}/3 used · {remaining} remaining"
+            status_text = t("ai_status_active", current_lang, rem_q=remaining)
             status_color = "#34D399"
 
         card_title = t("ai_card_title", current_lang)
@@ -3814,24 +3056,20 @@ def _show_ai_assistant_dialog(context_page: str = "Overview"):
 
     # Reactive Header Card Slot (allows instantaneous quota decrement display)
     header_slot = st.empty()
-    header_slot.markdown(_render_header_card_html(used_q, rem_q, is_blocked, is_quota_finished, reset_str), unsafe_allow_html=True)
+    header_slot.markdown(_render_header_card_html(rem_q, is_blocked, is_quota_finished, reset_str), unsafe_allow_html=True)
 
     # Contextual Suggested Chips
     suggested = _get_contextual_ai_suggestions(context_page)
     st.markdown(f"<div style='font-family: \"Space Grotesk\", sans-serif; font-size: 0.78rem; font-weight: 700; color: #CBD5E1; margin-bottom: 6px;'>{t('ai_suggested_queries', current_lang)}</div>", unsafe_allow_html=True)
-    c_chip1, c_chip2 = st.columns(2, gap="small")
+    chip_cols = st.columns(len(suggested))
     selected_query = None
-    for idx, (label, query_str) in enumerate(suggested[:4]):
-        target_col = c_chip1 if (idx % 2 == 0) else c_chip2
-        with target_col:
+    for idx, (label, query_str) in enumerate(suggested):
+        with chip_cols[idx]:
             if st.button(label, key=f"{pfx}_chip_{idx}", use_container_width=True, type="secondary"):
                 selected_query = query_str
                 st.session_state[f"{pfx}_active_q"] = query_str
 
     current_val = selected_query or st.session_state.get(f"{pfx}_active_q", "")
-
-    # Strict rolling 24h allowance: 3 questions per user
-    is_submit_disabled = (rem_q <= 0)
 
     # Dual Input: Typing (with Enter to Submit) + Voice Note Recording
     tab_type, tab_voice = st.tabs([t("ai_tab_type", current_lang), t("ai_tab_voice", current_lang)])
@@ -3850,15 +3088,7 @@ def _show_ai_assistant_dialog(context_page: str = "Overview"):
                     label_visibility="collapsed"
                 )
             with c_btn:
-                ask_clicked = st.form_submit_button(
-                    t("ai_btn_ask", current_lang),
-                    use_container_width=True,
-                    type="primary",
-                    disabled=is_submit_disabled
-                )
-
-        if is_submit_disabled:
-            st.warning(f"⏳ **Daily Quota Finished (3/3 used · 0 remaining)**: Free tier allowance resets in **{reset_str}**. Please check back after your 24-hour quota resets.")
+                ask_clicked = st.form_submit_button(t("ai_btn_ask", current_lang), use_container_width=True, type="primary")
 
     with tab_voice:
         st.markdown(f"<div style='font-size:0.8rem; color:#94A3B8; margin-bottom:8px;'>{t('ai_voice_subtext', current_lang)}</div>", unsafe_allow_html=True)
@@ -3872,74 +3102,44 @@ def _show_ai_assistant_dialog(context_page: str = "Overview"):
                     audio_data = r.record(source)
                     transcribed = r.recognize_google(audio_data)
                     st.success(f"🗣️ Transcribed Voice Note: **\"{transcribed}\"**")
-                    if st.button(t("ai_btn_submit_voice", current_lang), key=f"{pfx}_voice_submit_btn", type="primary", use_container_width=True, disabled=is_submit_disabled):
+                    if st.button(t("ai_btn_submit_voice", current_lang), key=f"{pfx}_voice_submit_btn", type="primary", use_container_width=True):
                         selected_query = transcribed
             except sr.UnknownValueError:
                 st.info("💡 Audio captured. If speech was faint, you can also type your question directly in the Type tab.")
             except Exception:
                 st.info("💡 Audio captured. You can also type your question directly in the Type tab.")
 
+
+
     active_run_q = None
-    if ask_clicked and user_input.strip() and not is_submit_disabled:
+    if ask_clicked and user_input.strip():
         active_run_q = user_input.strip()
-    elif selected_query and not is_submit_disabled:
+    elif selected_query:
         active_run_q = selected_query
 
     resp_key = f"{pfx}_resp_cache"
     if active_run_q:
-        status_box = st.status("Analyzing energy intelligence...", expanded=True)
-        status_box.write("🔍 Searching sources & reviewing market data...")
-        status_box.write("📑 Reviewing evidence & cross-verifying facts...")
-        status_box.write("⚡ Preparing authoritative response...")
-        ans = AIEnergyMarketAnalyst.answer_question(
-            question=active_run_q,
-            session_id=sess_id,
-            allow_free_autonomous=True,
-            enforce_user_daily_limit=True,
-            prefer_live_gemini=True
-        )
-        status_box.update(label="Intelligence briefing generated", state="complete", expanded=False)
-        st.session_state[resp_key] = ans
-        st.session_state[f"{pfx}_active_q"] = ""
-
-        # Immediately invalidate cache and refresh authoritative quota
-        quota_service.invalidate_cache(active_user["user_id"])
-        new_status = quota_service.get_quota_summary(active_user["user_id"])
-        new_used = new_status.get("used", 0)
-        new_rem = new_status.get("remaining", 0)
-        new_reset = new_status.get("reset_time_str", "24 hours")
-        new_finished = new_status.get("quota_exhausted", (new_rem <= 0))
-        new_blocked = False
-
-        st.session_state["top_ai_quota_rem"] = new_rem
-        st.session_state["top_ai_quota_used"] = new_used
-        header_slot.markdown(_render_header_card_html(
-            new_used,
-            new_rem,
-            new_blocked,
-            new_finished,
-            new_reset
-        ), unsafe_allow_html=True)
-
-        # Persist conversation message under authenticated user
-        if active_user and active_user.get("user_id") and not ans.get("is_fallback") and not ans.get("is_security_blocked"):
-            try:
-                from src.auth.supabase_client import supabase_auth_client
-                supabase_auth_client.save_chat_message(
-                    conversation_id=sess_id,
-                    user_id=active_user["user_id"],
-                    role="user",
-                    content=active_run_q
-                )
-                supabase_auth_client.save_chat_message(
-                    conversation_id=sess_id,
-                    user_id=active_user["user_id"],
-                    role="assistant",
-                    content=ans.get("answer_text", ""),
-                    sources_cited=ans.get("sources_cited", [])
-                )
-            except Exception as e:
-                logger.debug(f"Save chat message notice: {e}")
+        with st.spinner("Analyzing energy intelligence marts & running Antigravity AI..."):
+            ans = AIEnergyMarketAnalyst.answer_question(
+                question=active_run_q,
+                session_id=sess_id,
+                allow_free_autonomous=True,
+                enforce_user_daily_limit=True,
+                prefer_live_gemini=True
+            )
+            st.session_state[resp_key] = ans
+            st.session_state[f"{pfx}_active_q"] = ""
+            
+            # Immediately re-read session quota from disk/memory and update reactive header slot
+            new_status = session_protector.get_session_status(sess_id, has_custom_key=True, enforce_user_daily_limit=True)
+            new_rem = new_status.get("daily_questions_remaining", 0)
+            st.session_state["top_ai_quota_rem"] = new_rem
+            header_slot.markdown(_render_header_card_html(
+                new_rem,
+                new_status.get("is_blocked", False),
+                new_status.get("is_daily_quota_finished", False),
+                new_status.get("reset_time_str", "24 hours")
+            ), unsafe_allow_html=True)
 
     if resp_key in st.session_state and st.session_state[resp_key]:
         resp = st.session_state[resp_key]
@@ -3947,8 +3147,7 @@ def _show_ai_assistant_dialog(context_page: str = "Overview"):
         if resp.get("is_security_blocked"):
             render_html("""<div style="padding:6px 14px;background:rgba(239, 68, 68, 0.2);color:#EF4444;font-weight:700;font-size:12.5px;border:1.5px solid #EF4444;border-radius:4px;margin-bottom:8px;">🚫 Security Alert • Access Blocked</div>""")
         elif "Daily Free Quota Finished" in resp.get("topic", "") or "Daily Quota Limit Reached" in resp.get("topic", ""):
-            r_str = locals().get("new_status", {}).get("reset_time_str") or summary.get("reset_time_str", "24 hours")
-            render_html(f"""<div style="padding:6px 14px;background:rgba(245, 185, 66, 0.2);color:#F5B942;font-weight:700;font-size:12.5px;border:1.5px solid #F5B942;border-radius:4px;margin-bottom:8px;">⏳ Daily Quota Reached (3/3 used · 0 remaining) • Resets in {r_str}</div>""")
+            render_html(f"""<div style="padding:6px 14px;background:rgba(245, 185, 66, 0.2);color:#F5B942;font-weight:700;font-size:12.5px;border:1.5px solid #F5B942;border-radius:4px;margin-bottom:8px;">⏳ Daily Quota Reached (3/3 Used) • Resets in {sess_status["reset_time_str"]}</div>""")
         else:
             ver_text = t("ai_engine_verified", current_lang)
             render_html(f"""<div style="padding:4px 12px;background:rgba(16, 185, 129, 0.2);color:#10B981;font-weight:700;font-size:12px;border:1px solid #10B981;border-radius:4px;display:inline-block;margin-bottom:8px;">{ver_text}</div>""")
@@ -4001,6 +3200,35 @@ def render_command_strip(
     apply_theme()
     if show_universal_header:
         render_universal_top_header(active_page_name=active_page, key_prefix=f"cs_{active_page}")
+
+    from src.localization.i18n import t, get_current_language
+    current_lang = get_current_language()
+
+    health = db_manager.check_health()
+    engine_name = "MYSQL 8.4" if health["dialect"] == "mysql" else "LOCAL CACHE"
+    logo_svg = get_brand_logo_svg(width=290, height=48)
+
+    nav_html = f"""<div style="background: rgba(14, 21, 38, 0.85); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.12); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); border-radius: 10px; padding: 12px 20px; margin: -0.5rem 0 1.75rem 0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px;">
+<div style="display: flex; align-items: center; gap: 14px;">{logo_svg}</div>
+<div style="display: flex; align-items: center; gap: 8px; font-family: 'Space Grotesk', sans-serif; font-size: 13px; font-weight: 700; flex-wrap: wrap;">
+<a href="#ch-01" style="color: #F9FAFB; text-decoration: none; padding: 4px 8px; border-radius: 4px; transition: color 0.15s ease;">{t('nav_overview', current_lang)}</a>
+<span style="color: rgba(255, 255, 255, 0.2);">•</span>
+<a href="#ch-02" style="color: #F9FAFB; text-decoration: none; padding: 4px 8px; border-radius: 4px;">{t('chapter_02_title', current_lang)[:12]}</a>
+<span style="color: rgba(255, 255, 255, 0.2);">•</span>
+<a href="#ch-03" style="color: #F9FAFB; text-decoration: none; padding: 4px 8px; border-radius: 4px;">{t('nav_trade', current_lang)}</a>
+<span style="color: rgba(255, 255, 255, 0.2);">•</span>
+<a href="#ch-04" style="color: #F9FAFB; text-decoration: none; padding: 4px 8px; border-radius: 4px;">{t('chapter_04_title', current_lang)[:14]}</a>
+<span style="color: rgba(255, 255, 255, 0.2);">•</span>
+<a href="#ch-05" style="color: #F9FAFB; text-decoration: none; padding: 4px 8px; border-radius: 4px;">{t('nav_india', current_lang)}</a>
+<span style="color: rgba(255, 255, 255, 0.2);">•</span>
+<a href="#ch-11" style="color: #F9FAFB; text-decoration: none; padding: 4px 8px; border-radius: 4px;">{t('nav_data_trust', current_lang)}</a>
+</div>
+<div style="display: flex; align-items: center; gap: 12px;">
+<span style="background: rgba(16, 185, 129, 0.18); color: #34D399; border: 1px solid rgba(16, 185, 129, 0.4); padding: 4px 12px; border-radius: 999px; font-family: 'Space Grotesk', sans-serif; font-size: 12px; font-weight: 700;">● {engine_name} VERIFIED</span>
+<a href="#ch-05" style="background: #EAB308; color: #070A12; border: 1px solid #CA8A04; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25); padding: 6px 14px; border-radius: 6px; font-family: 'Space Grotesk', sans-serif; font-size: 13px; font-weight: 800; text-decoration: none;">EXPLORE MARKETS ↗</a>
+</div>
+</div>"""
+    render_html(nav_html)
 
 
 # ==============================================================================
