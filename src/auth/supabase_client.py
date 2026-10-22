@@ -897,7 +897,118 @@ class SupabaseAuthClient:
             return resp.status_code in (200, 204)
         except Exception as e:
             logger.error(f"Failed to mark usage failed: {e}")
-            return False
+    def get_oauth_sign_in_url(
+        self,
+        provider: str,
+        redirect_to: Optional[str] = None,
+        scopes: Optional[str] = None
+    ) -> Tuple[bool, str, Optional[str]]:
+        """
+        Initiates OAuth authentication through Supabase Auth (GoTrue).
+        Returns (success, message_or_status, authorization_url).
+        When the provider is properly enabled in Supabase, returns (True, "Ready", oauth_url).
+        When the provider is not enabled, returns (False, error_explanation, None).
+        """
+        if not self.is_configured():
+            return False, "Supabase client is not configured.", None
+
+        provider_clean = (provider or "").strip().lower()
+        if provider_clean not in ("google", "github"):
+            return False, f"Provider '{provider}' is not supported. Use 'google' or 'github'.", None
+
+        redirect = redirect_to or "http://localhost:8501"
+        import urllib.parse
+        params = {
+            "provider": provider_clean,
+            "redirect_to": redirect
+        }
+        if scopes:
+            params["scopes"] = scopes
+
+        url = f"{self.url}/auth/v1/authorize?{urllib.parse.urlencode(params)}"
+        headers = self._headers()
+
+        try:
+            # Query the authorize endpoint with allow_redirects=False to verify provider readiness
+            resp = self._http.get(url, headers=headers, allow_redirects=False, timeout=DEFAULT_TIMEOUT)
+
+            # A 302, 303, or 307 redirect indicates Supabase recognized the provider and returned the consent URL
+            if resp.status_code in (301, 302, 303, 307, 308) and "Location" in resp.headers:
+                auth_url = resp.headers["Location"]
+                return True, "Redirect URL generated successfully.", auth_url
+
+            # If Supabase returns HTTP 400 with "provider is not enabled"
+            if resp.status_code == 400:
+                try:
+                    err_json = resp.json()
+                    msg = err_json.get("msg") or err_json.get("error_description") or "Provider is not enabled."
+                except Exception:
+                    msg = resp.text
+                return False, f"Supabase OAuth Provider Not Enabled: {msg}", None
+
+            # Fallback URL if Supabase returns 200 or unexpected status
+            return True, "Using direct Supabase OAuth authorize endpoint.", url
+
+        except Exception as e:
+            logger.error(f"Error querying Supabase OAuth authorize: {e}")
+            return False, f"Network error contacting Supabase Auth: {e}", None
+
+    def exchange_code_for_session(
+        self,
+        code: str
+    ) -> Tuple[bool, str, Optional[str], Optional[Dict[str, Any]]]:
+        """
+        Exchanges an OAuth authorization code or PKCE auth_code for a valid Supabase JWT session.
+        Returns (success, message, access_token, user_dict).
+        """
+        if not self.is_configured():
+            return False, "Supabase client is not configured.", None, None
+
+        if not code or not code.strip():
+            return False, "Missing authorization code.", None, None
+
+        clean_code = code.strip()
+        url = f"{self.url}/auth/v1/token?grant_type=pkce"
+        headers = self._headers()
+        payload = {"auth_code": clean_code}
+
+        try:
+            resp = self._http.post(url, headers=headers, json=payload, timeout=DEFAULT_TIMEOUT)
+            # If PKCE fails, try standard authorization_code grant
+            if resp.status_code not in (200, 201):
+                url_auth = f"{self.url}/auth/v1/token?grant_type=authorization_code"
+                resp = self._http.post(url_auth, headers=headers, json={"code": clean_code}, timeout=DEFAULT_TIMEOUT)
+
+            if resp.status_code in (200, 201):
+                data = resp.json()
+                token = data.get("access_token")
+                raw_user = data.get("user") or {}
+                meta = raw_user.get("user_metadata") or {}
+                email = raw_user.get("email") or meta.get("email") or ""
+                username = meta.get("username") or meta.get("user_name") or (email.split("@")[0] if email else "oauth_user")
+                full_name = meta.get("full_name") or meta.get("name") or username.capitalize()
+
+                user_dict = {
+                    "user_id": raw_user.get("id"),
+                    "email": email,
+                    "username": username,
+                    "full_name": full_name,
+                    "avatar_url": meta.get("avatar_url") or meta.get("picture"),
+                    "provider": raw_user.get("app_metadata", {}).get("provider") or "oauth",
+                    "created_at": raw_user.get("created_at")
+                }
+                return True, "OAuth session established.", token, user_dict
+            else:
+                try:
+                    err_data = resp.json()
+                    err_msg = err_data.get("msg") or err_data.get("error_description") or resp.text
+                except Exception:
+                    err_msg = resp.text
+                return False, f"Code exchange failed: {err_msg}", None, None
+
+        except Exception as e:
+            logger.error(f"Failed to exchange OAuth code: {e}")
+            return False, f"Network error during OAuth token exchange: {e}", None, None
 
 
 # Global singleton instance

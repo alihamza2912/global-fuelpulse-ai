@@ -1167,7 +1167,7 @@ VIEWS_TRANSLATIONS = {
         "ja": "🟢 Antigravity AI 稼働中 • {used_q}/3 使用済み · 残り {rem_q}"
     },
     "ai_status_quota_reached": {
-        "en": "⏳ Daily Quota Reached (3/3 used · 0 remaining) • Resets in {reset_str}",
+        "en": "⏳ Daily Quota Reached (3/3 used · 0 remaining · Quota exceeded) • Resets in {reset_str}",
         "hi": "⏳ दैनिक कोटा समाप्त (3/3 उपयोग · 0 शेष) • {reset_str} में रीसेट",
         "es": "⏳ Cuota Diaria Agotada (3/3 usadas · 0 restantes) • Se reinicia en {reset_str}",
         "fr": "⏳ Quota Quotidien Atteint (3/3 utilisés · 0 restants) • Réinitialisation dans {reset_str}",

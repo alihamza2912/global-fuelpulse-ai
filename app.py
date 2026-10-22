@@ -148,6 +148,52 @@ def ensure_database_ready():
 
 ensure_database_ready()
 
+# 2.5 Handle OAuth Return Callbacks (Supabase Google / GitHub)
+render_html("""
+<script>
+(function() {
+    if (window.location.hash && window.location.hash.includes('access_token=')) {
+        var hash = window.location.hash.substring(1);
+        var params = new URLSearchParams(hash);
+        var token = params.get('access_token');
+        if (token) {
+            var searchParams = new URLSearchParams(window.location.search);
+            searchParams.set('access_token', token);
+            window.location.replace(window.location.pathname + '?' + searchParams.toString());
+        }
+    }
+})();
+</script>
+""")
+
+if hasattr(st, "query_params"):
+    qp_code = st.query_params.get("code")
+    qp_token = st.query_params.get("access_token")
+    qp_err = st.query_params.get("error") or st.query_params.get("error_description")
+
+    if qp_err:
+        st.error(f"Authentication Error: {st.query_params.get('error_description') or qp_err}")
+        st.query_params.clear()
+    elif qp_code or qp_token:
+        try:
+            from src.auth.auth_service import AuthService
+            ok, msg, token, udict = AuthService.handle_oauth_callback(
+                code=qp_code,
+                access_token=qp_token,
+                user_agent="GlobalFuelPulse/2.0 Browser"
+            )
+            if ok and udict:
+                st.session_state["auth_user"] = udict
+                st.session_state["auth_token"] = token
+                st.toast(f"Signed in as {udict.get('full_name') or udict.get('username')} via {udict.get('provider', 'OAuth')}!")
+            else:
+                st.error(f"Sign In Notice: {msg}")
+        except Exception as e:
+            st.error(f"OAuth callback handling exception: {e}")
+        finally:
+            st.query_params.clear()
+            st.rerun()
+
 
 # 3. Navigation Structure & URL Routing
 current_lang = get_current_language()

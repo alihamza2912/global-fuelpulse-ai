@@ -125,14 +125,20 @@ def render_features_view(navigate_fn=None):
                 from src.ai.gemini_client import gemini_client
 
                 has_custom_key = is_user_custom_key_configured() or gemini_client.is_key_configured()
-                sess_status = session_protector.get_session_status(sess_id, has_custom_key=has_custom_key, enforce_user_daily_limit=True)
+                from src.auth.quota_service import quota_service
+                clean_uid_feat = sess_id.replace("usr_", "").replace("user_", "")
+                q_sum = quota_service.get_quota_summary(clean_uid_feat, bypass_cache=True)
+                used_feat = q_sum.get("used", 0)
+                rem_feat = q_sum.get("remaining", max(0, 3 - used_feat))
+                is_exh_feat = q_sum.get("quota_exhausted", (used_feat >= 3 or rem_feat <= 0))
+                rst_feat = q_sum.get("reset_time_str", "24 hours")
 
                 if sess_status.get("is_blocked"):
                     status_badge_html = '<div style="display:inline-block;padding:5px 12px;background:rgba(239, 68, 68, 0.2);color:#EF4444;font-weight:700;font-size:12px;border:1px solid #EF4444;border-radius:4px;margin-bottom:12px;">🚫 Security Violation: Session Terminated</div>'
-                elif sess_status.get("is_daily_quota_finished"):
-                    status_badge_html = f'<div style="display:inline-block;padding:5px 12px;background:rgba(245, 185, 66, 0.2);color:#F5B942;font-weight:700;font-size:12px;border:1px solid #F5B942;border-radius:4px;margin-bottom:12px;">⏳ Daily Quota Reached (3/3 Used) • Resets in {sess_status["reset_time_str"]}</div>'
+                elif is_exh_feat:
+                    status_badge_html = f'<div style="display:inline-block;padding:5px 12px;background:rgba(245, 185, 66, 0.2);color:#F5B942;font-weight:700;font-size:12px;border:1px solid #F5B942;border-radius:4px;margin-bottom:12px;">⏳ Daily Quota Reached (3/3 used · 0 remaining · Quota exceeded) • Resets in {rst_feat}</div>'
                 else:
-                    status_badge_html = f'<div style="display:inline-block;padding:5px 12px;background:rgba(16, 185, 129, 0.2);color:#10B981;font-weight:700;font-size:12px;border:1px solid #10B981;border-radius:4px;margin-bottom:12px;">🟢 Antigravity AI Active • {sess_status["daily_questions_remaining"]} / 3 Questions Remaining Today (24h Quota)</div>'
+                    status_badge_html = f'<div style="display:inline-block;padding:5px 12px;background:rgba(16, 185, 129, 0.2);color:#10B981;font-weight:700;font-size:12px;border:1px solid #10B981;border-radius:4px;margin-bottom:12px;">🟢 Antigravity AI Active • {used_feat}/3 used · {rem_feat} remaining</div>'
                 render_html(status_badge_html)
 
                 f9_col1, f9_col2, f9_col3, f9_col4, f9_col5 = st.columns(5)
@@ -170,7 +176,7 @@ def render_features_view(navigate_fn=None):
                         if ai_resp.get("is_security_blocked") or "Security Violation" in ai_resp.get("topic", ""):
                             render_html("""<div style="display:inline-block;padding:7px 14px;background:rgba(239, 68, 68, 0.2);color:#EF4444;font-weight:700;font-size:12.5px;border:1.5px solid #EF4444;margin-bottom:8px;border-radius:4px;">🚫 Enterprise Security Alert: Malicious activity detected. Session terminated.</div>""")
                         elif "Daily Free Quota Finished" in ai_resp.get("topic", "") or "Daily Quota Limit Reached" in ai_resp.get("topic", ""):
-                            render_html(f"""<div style="display:inline-block;padding:7px 14px;background:rgba(245, 185, 66, 0.2);color:#F5B942;font-weight:700;font-size:12.5px;border:1.5px solid #F5B942;margin-bottom:8px;border-radius:4px;">⏳ Daily Quota Reached (3/3 Questions Used) • Resets in {sess_status["reset_time_str"]}</div>""")
+                            render_html(f"""<div style="display:inline-block;padding:7px 14px;background:rgba(245, 185, 66, 0.2);color:#F5B942;font-weight:700;font-size:12.5px;border:1.5px solid #F5B942;margin-bottom:8px;border-radius:4px;">⏳ Daily Quota Reached (3/3 used · 0 remaining · Quota exceeded) • Resets in {rst_feat}</div>""")
                         elif ai_resp.get("autonomous_free_mode"):
                             render_html("""<div style="display:inline-block;padding:5px 12px;background:rgba(16, 185, 129, 0.2);color:#10B981;font-weight:700;font-size:12px;border:1.5px solid #10B981;margin-bottom:8px;border-radius:4px;">🟢 Antigravity AI Engine (3 Questions / 24h Quota)</div>""")
                         st.markdown(ai_resp["answer_text"])

@@ -2407,11 +2407,30 @@ def t(key: str, lang: Optional[str] = None, **kwargs) -> str:
     else:
         text = key
         
-    if kwargs:
+    # Format with kwargs, providing safe defaults for quota-related keys
+    if "{" in text or "[" in text:
+        safe_kwargs = dict(kwargs)
+        if "{used_q}" in text and "used_q" not in safe_kwargs:
+            safe_kwargs["used_q"] = 0
+        if "{rem_q}" in text and "rem_q" not in safe_kwargs:
+            safe_kwargs["rem_q"] = 3
+        if "{reset_str}" in text and "reset_str" not in safe_kwargs:
+            safe_kwargs["reset_str"] = "24 hours"
         try:
-            return text.format(**kwargs)
+            formatted = text.format(**safe_kwargs)
         except Exception:
-            return text
+            formatted = text
+        # Safeguard against any broken literal placeholders like [_used_q] or {_used_q}
+        for token, rep in [
+            ("[_used_q]", str(safe_kwargs.get("used_q", 0))),
+            ("[_rem_q]", str(safe_kwargs.get("rem_q", 3))),
+            ("{used_q}", str(safe_kwargs.get("used_q", 0))),
+            ("{rem_q}", str(safe_kwargs.get("rem_q", 3))),
+            ("{reset_str}", str(safe_kwargs.get("reset_str", "24 hours")))
+        ]:
+            if token in formatted:
+                formatted = formatted.replace(token, rep)
+        return formatted
     return text
 
 

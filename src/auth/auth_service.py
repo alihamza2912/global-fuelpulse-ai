@@ -559,3 +559,108 @@ class AuthService:
         except Exception as e:
             logger.debug(f"Local question history lookup notice: {e}")
             return []
+
+    @classmethod
+    def get_oauth_url(cls, provider: str, redirect_to: Optional[str] = None) -> Tuple[bool, str, Optional[str]]:
+        """
+        Retrieves real Supabase OAuth authorize URL for Google or GitHub.
+        Returns (success, message, url).
+        """
+        return supabase_auth_client.get_oauth_sign_in_url(provider, redirect_to=redirect_to)
+
+    @classmethod
+    def handle_oauth_callback(
+        cls,
+        code: Optional[str] = None,
+        access_token: Optional[str] = None,
+        request_ip: Optional[str] = None,
+        user_agent: Optional[str] = None
+    ) -> Tuple[bool, str, Optional[str], Optional[Dict[str, Any]]]:
+        """
+        Completes the OAuth flow when returning from Supabase OAuth redirect.
+        Validates token or exchanges code, creates/syncs profile, mirrors to local DB,
+        records login history, invalidates cache and loads quota.
+        Returns (success, message, session_token, user_dict).
+        """
+        token = None
+        user_dict = None
+
+        if code:
+            ok, msg, token, user_dict = supabase_auth_client.exchange_code_for_session(code)
+            if not ok or not user_dict:
+                return False, f"OAuth code exchange failed: {msg}", None, None
+        elif access_token:
+            token = access_token
+            sb_user = supabase_auth_client.get_user(access_token)
+            if not sb_user:
+                return False, "Invalid or expired OAuth access token.", None, None
+            meta = sb_user.get("user_metadata") or {}
+            email = sb_user.get("email") or meta.get("email") or ""
+            username = meta.get("username") or meta.get("user_name") or (email.split("@")[0] if email else "oauth_user")
+            full_name = meta.get("full_name") or meta.get("name") or username.capitalize()
+            user_dict = {
+                "user_id": sb_user.get("id"),
+                "email": email,
+                "username": username,
+                "full_name": full_name,
+                "avatar_url": meta.get("avatar_url") or meta.get("picture"),
+                "provider": sb_user.get("app_metadata", {}).get("provider") or "oauth",
+                "created_at": sb_user.get("created_at")
+            }
+        else:
+            return False, "No authorization code or access token provided.", None, None
+
+        user_id = user_dict["user_id"]
+        email = user_dict["email"]
+        username = user_dict["username"]
+        full_name = user_dict["full_name"]
+
+        # Ensure Supabase public.profiles row exists idempotently
+        supabase_auth_client.ensure_profile_exists(
+            user_id=user_id,
+            email=email,
+            username=username,
+            full_name=full_name
+        )
+
+        # Mirror into local SQLite User table for local relationship integrity
+        try:
+            with db_manager.get_session() as session:
+                local_user = session.query(User).filter(
+                    (User.user_id == user_id) | 
+                    (User.email == email) | 
+                    (User.username == username)
+                ).first()
+                if not local_user:
+                    local_user = User(
+                        user_id=user_id,
+                        username=username,
+                        email=email,
+                        password_hash=hash_password(secrets.token_urlsafe(24)),
+                        full_name=full_name,
+                        is_active=True,
+                        created_at=utc_now(),
+                        last_login_at=utc_now()
+                    )
+                    session.add(local_user)
+                else:
+                    local_user.last_login_at = utc_now()
+                session.commit()
+        except Exception as e:
+            logger.warning(f"Notice on local user mirror during OAuth: {e}")
+
+        # Record login history audit
+        supabase_auth_client.record_login(
+            user_id=user_id,
+            event_type=f"oauth_{user_dict.get('provider', 'social')}",
+            ip_address=request_ip,
+            user_agent=user_agent,
+            result="success"
+        )
+
+        # Invalidate quota cache and guarantee quota initialized
+        from src.auth.quota_service import quota_service
+        quota_service.invalidate_cache(user_id)
+        quota_service.get_quota_summary(user_id, bypass_cache=True)
+
+        return True, "Authenticated via OAuth successfully.", token, user_dict

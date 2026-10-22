@@ -160,6 +160,11 @@ class QuotaService:
                     )
                     total_hist = len(hist_rows) if (ok_hist and isinstance(hist_rows, list)) else used_count
 
+                    if is_exhausted or remaining <= 0 or used_count >= max_questions:
+                        badge_str = "3/3 used · 0 remaining · Quota exceeded"
+                    else:
+                        badge_str = f"{used_count}/{max_questions} used · {remaining} remaining"
+
                     summary = {
                         "user_id": clean_uid,
                         "used": used_count,
@@ -172,7 +177,7 @@ class QuotaService:
                         "total_historical": total_hist,
                         "is_authenticated": True,
                         "status_label": "Quota Exhausted" if is_exhausted else "Available",
-                        "badge_text": f"{used_count}/{max_questions} used · {remaining} remaining"
+                        "badge_text": badge_str
                     }
 
                     with cls._cache_lock:
@@ -217,6 +222,11 @@ class QuotaService:
                     AIQuestionUsage.user_id == clean_uid
                 ).count()
 
+                if is_exhausted or remaining <= 0 or used_count >= max_questions:
+                    badge_str = "3/3 used · 0 remaining · Quota exceeded"
+                else:
+                    badge_str = f"{used_count}/{max_questions} used · {remaining} remaining"
+
                 summary = {
                     "user_id": clean_uid,
                     "used": used_count,
@@ -229,7 +239,7 @@ class QuotaService:
                     "total_historical": total_hist,
                     "is_authenticated": True,
                     "status_label": "Quota Exhausted" if is_exhausted else "Available",
-                    "badge_text": f"{used_count}/{max_questions} used · {remaining} remaining"
+                    "badge_text": badge_str
                 }
 
                 with cls._cache_lock:
@@ -243,16 +253,38 @@ class QuotaService:
             "user_id": clean_uid,
             "used": 0,
             "limit": max_questions,
-            "remaining": max_questions,
+            "remaining": 0,
             "window_started_at": None,
             "resets_at": None,
-            "reset_time_str": f"{window_hours} hours",
+            "reset_time_str": "Error loading quota",
             "quota_exhausted": False,
+            "quota_error": True,
             "total_historical": 0,
             "is_authenticated": True,
-            "status_label": "Available",
-            "badge_text": f"0/{max_questions} Used • {max_questions} Left"
+            "status_label": "Quota Load Error",
+            "badge_text": "⚠️ Quota unavailable"
         }
+
+    @classmethod
+    def get_loading_badge(cls) -> Dict[str, Any]:
+        """Returns neutral loading state representation."""
+        return {
+            "used": 0,
+            "remaining": 0,
+            "quota_exhausted": False,
+            "is_loading": True,
+            "badge_text": "··· loading quota",
+            "status_color": "#94A3B8"
+        }
+
+    @classmethod
+    def format_badge_display(cls, used: int, remaining: int, is_exhausted: bool = False) -> Tuple[str, str]:
+        """Returns (badge_text, status_color) strictly matching convention."""
+        u = max(0, min(3, int(used)))
+        r = max(0, min(3, int(remaining)))
+        if u >= 3 or r <= 0 or is_exhausted:
+            return "3/3 used · 0 remaining · Quota exceeded", "#F5B942"
+        return f"{u}/3 used · {r} remaining", "#10B981"
 
     @classmethod
     def consume_quota(cls, user_id: str, question: str) -> Tuple[bool, str]:

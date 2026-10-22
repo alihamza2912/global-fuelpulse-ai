@@ -2516,17 +2516,30 @@ def render_universal_top_header(active_page_name: str = "Overview", key_prefix: 
 
     # Retrieve persistent database quota for authenticated user
     try:
-        from src.ai.nl_query_engine import session_protector
-        if "top_ai_quota_rem" in st.session_state:
-            rem_q = st.session_state["top_ai_quota_rem"]
+        from src.auth.quota_service import quota_service
+        cur_uid = None
+        auth_u = st.session_state.get("auth_user")
+        if auth_u and isinstance(auth_u, dict) and auth_u.get("user_id"):
+            cur_uid = auth_u.get("user_id")
+
+        if cur_uid:
+            summary = quota_service.get_quota_summary(cur_uid)
+            used_q = summary.get("used", 0)
+            rem_q = summary.get("remaining", max(0, 3 - used_q))
+            is_exh = summary.get("quota_exhausted", rem_q <= 0 or used_q >= 3)
+            if is_exh:
+                ai_btn_label = "🤖 AI (0/3 Left)"
+            else:
+                ai_btn_label = f"🤖 AI ({rem_q}/3)"
+            ai_btn_help = f"Antigravity AI ({used_q}/3 used · {rem_q} remaining)"
         else:
-            cur_uid = st.query_params.get("uid") if hasattr(st, "query_params") else None
-            if not cur_uid:
-                cur_uid = st.session_state.get("ai_session_id", "default_session")
-            status = session_protector.get_session_status(cur_uid, has_custom_key=True, enforce_user_daily_limit=True)
-            rem_q = status.get("daily_questions_remaining", 3)
+            rem_q = 3
+            ai_btn_label = "🤖 AI (3/3)"
+            ai_btn_help = "Ask Antigravity AI Assistant (Sign in to unlock 3 free daily questions)"
     except Exception:
         rem_q = 3
+        ai_btn_label = "🤖 AI (3/3)"
+        ai_btn_help = "Ask Antigravity AI Assistant"
 
     col_brand, col_actions = st.columns([5.5, 4.5], gap="small", vertical_alignment="center")
     with col_brand:
@@ -2535,13 +2548,12 @@ def render_universal_top_header(active_page_name: str = "Overview", key_prefix: 
     with col_actions:
         col_ai, col_lang, col_news, col_auth = st.columns([1.0, 1.15, 1.1, 0.95], gap="small", vertical_alignment="center")
         with col_ai:
-            ai_btn_label = f"🤖 AI ({rem_q}/3)" if current_lang == "en" else t("top_btn_ai", current_lang, rem=rem_q)
             if st.button(
                 ai_btn_label,
                 key=f"{pfx}_top_ai_assistant_btn",
                 use_container_width=True,
                 type="secondary",
-                help="Ask Antigravity AI Assistant (Text & Voice Note)"
+                help=ai_btn_help
             ):
                 from src.auth.auth_service import AuthService
                 if not AuthService.get_active_user():
@@ -2881,32 +2893,36 @@ def _show_sign_in_dialog():
         col_gh, col_goog = st.columns(2)
         with col_gh:
             if st.button("GitHub", use_container_width=True, key="auth_social_github"):
-                AuthService.ensure_default_demo_user()
-                ok, msg, token, udict = AuthService.login_user("analyst@fuelpulse.ai", "FuelPulse2026!")
-                if ok:
-                    st.session_state["auth_user"] = udict
-                    st.session_state["auth_token"] = token
-                    st.success("Authenticated via GitHub OAuth")
-                    st.rerun()
+                ok, msg, url = AuthService.get_oauth_url("github", redirect_to="http://localhost:8501")
+                if ok and url:
+                    st.link_button("👉 Continue with GitHub", url, type="primary", use_container_width=True)
+                else:
+                    st.error(
+                        "⚠️ **GitHub OAuth Not Enabled in Supabase**\n\n"
+                        "To complete GitHub authentication:\n"
+                        "1. Open [Supabase Dashboard](https://supabase.com/dashboard/project/jshykiyhdfydgceqiytq) > **Authentication** > **Providers** > **GitHub**\n"
+                        "2. Toggle **Enable GitHub provider** to ON\n"
+                        "3. Enter your GitHub **Client ID** & **Client Secret**\n"
+                        "4. Set GitHub Authorization callback URL to:\n"
+                        "   `https://jshykiyhdfydgceqiytq.supabase.co/auth/v1/callback`\n"
+                        "5. Ensure Site URL in Supabase is set to `http://localhost:8501`"
+                    )
         with col_goog:
             if st.button("Google", use_container_width=True, key="auth_social_google"):
-                AuthService.ensure_default_demo_user()
-                ok, msg, token, udict = AuthService.login_user("analyst@fuelpulse.ai", "FuelPulse2026!")
-                if ok:
-                    st.session_state["auth_user"] = udict
-                    st.session_state["auth_token"] = token
-                    st.success("Authenticated via Google OAuth")
-                    st.rerun()
-
-        st.markdown("<div style='margin-top: 14px;'></div>", unsafe_allow_html=True)
-        if st.button("⚡ Quick 1-Click Demo Login (analyst@fuelpulse.ai)", use_container_width=True, type="secondary", key="auth_quick_demo"):
-            AuthService.ensure_default_demo_user()
-            ok, msg, token, udict = AuthService.login_user("analyst@fuelpulse.ai", "FuelPulse2026!")
-            if ok:
-                st.session_state["auth_user"] = udict
-                st.session_state["auth_token"] = token
-                st.success("Logged in as Senior Analyst!")
-                st.rerun()
+                ok, msg, url = AuthService.get_oauth_url("google", redirect_to="http://localhost:8501")
+                if ok and url:
+                    st.link_button("👉 Continue with Google", url, type="primary", use_container_width=True)
+                else:
+                    st.error(
+                        "⚠️ **Google OAuth Not Enabled in Supabase**\n\n"
+                        "To complete Google authentication:\n"
+                        "1. Open [Supabase Dashboard](https://supabase.com/dashboard/project/jshykiyhdfydgceqiytq) > **Authentication** > **Providers** > **Google**\n"
+                        "2. Toggle **Enable Google provider** to ON\n"
+                        "3. Enter your Google **Client ID** & **Client Secret**\n"
+                        "4. Set Authorized redirect URI in Google Cloud Console to:\n"
+                        "   `https://jshykiyhdfydgceqiytq.supabase.co/auth/v1/callback`\n"
+                        "5. Ensure Site URL in Supabase is set to `http://localhost:8501`"
+                    )
 
     with tab_register:
         with st.form("register_form", clear_on_submit=False):
@@ -2982,14 +2998,6 @@ def _show_ai_assistant_dialog(context_page: str = "Overview"):
                     st.rerun()
                 else:
                     st.error(msg)
-            if st.button("⚡ Quick 1-Click Demo Login (analyst@fuelpulse.ai)", use_container_width=True, type="secondary", key=f"{pfx}_gate_demo_login_btn"):
-                AuthService.ensure_default_demo_user()
-                ok, msg, token, udict = AuthService.login_user("analyst@fuelpulse.ai", "FuelPulse2026!")
-                if ok and udict:
-                    st.session_state["auth_user"] = udict
-                    st.session_state["auth_token"] = token
-                    st.success("Signed in as Senior Analyst!")
-                    st.rerun()
         with gate_tab_reg:
             with st.form(f"{pfx}_gate_register", clear_on_submit=False):
                 reg_name = st.text_input("Full Name", placeholder="e.g. Alexander Vance", key=f"{pfx}_gate_reg_name")
@@ -3009,24 +3017,40 @@ def _show_ai_assistant_dialog(context_page: str = "Overview"):
                 else:
                     st.error(msg)
         return
-    sess_id = f"usr_{active_user['user_id']}"
+
+    from src.auth.quota_service import quota_service
+    u_id = str(active_user.get("user_id"))
+    sess_id = f"usr_{u_id}"
     st.session_state.ai_session_id = sess_id
 
-    sess_status = session_protector.get_session_status(sess_id, has_custom_key=True, enforce_user_daily_limit=True)
-    rem_q = sess_status.get("daily_questions_remaining", 3)
-    reset_str = sess_status.get("reset_time_str", "24 hours")
-    is_blocked = sess_status.get("is_blocked", False)
-    is_quota_finished = sess_status.get("is_daily_quota_finished", False)
+    # Retrieve authoritative quota summary from QuotaService
+    quota_summary = quota_service.get_quota_summary(u_id, bypass_cache=True)
+    used_q = quota_summary.get("used", 0)
+    rem_q = quota_summary.get("remaining", max(0, 3 - used_q))
+    reset_str = quota_summary.get("reset_time_str", "24 hours")
+    is_quota_finished = quota_summary.get("quota_exhausted", (used_q >= 3 or rem_q <= 0))
+    is_blocked = False
+    try:
+        sess_status = session_protector.get_session_status(sess_id, has_custom_key=True, enforce_user_daily_limit=True)
+        is_blocked = sess_status.get("is_blocked", False)
+    except Exception:
+        pass
 
-    def _render_header_card_html(remaining: int, blocked: bool, finished: bool, rst_time: str) -> str:
-        if blocked:
+    def _render_header_card_html(used: int, remaining: int, blocked: bool, finished: bool, rst_time: str, is_loading: bool = False, is_error: bool = False) -> str:
+        if is_loading:
+            status_text = "⏳ Loading Quota..."
+            status_color = "#94A3B8"
+        elif is_error:
+            status_text = "⚠️ Quota Load Error"
+            status_color = "#EF4444"
+        elif blocked:
             status_text = t("ai_status_blocked", current_lang)
             status_color = "#EF4444"
-        elif finished or remaining <= 0:
-            status_text = t("ai_status_quota_reached", current_lang, reset_str=rst_time)
+        elif finished or remaining <= 0 or used >= 3:
+            status_text = f"⏳ 3/3 used · 0 remaining · Quota exceeded • Resets in {rst_time}"
             status_color = "#F5B942"
         else:
-            status_text = t("ai_status_active", current_lang, rem_q=remaining)
+            status_text = f"🟢 {used}/3 used · {remaining} remaining"
             status_color = "#34D399"
 
         card_title = t("ai_card_title", current_lang)
@@ -3056,7 +3080,7 @@ def _show_ai_assistant_dialog(context_page: str = "Overview"):
 
     # Reactive Header Card Slot (allows instantaneous quota decrement display)
     header_slot = st.empty()
-    header_slot.markdown(_render_header_card_html(rem_q, is_blocked, is_quota_finished, reset_str), unsafe_allow_html=True)
+    header_slot.markdown(_render_header_card_html(used_q, rem_q, is_blocked, is_quota_finished, reset_str), unsafe_allow_html=True)
 
     # Contextual Suggested Chips
     suggested = _get_contextual_ai_suggestions(context_page)
@@ -3119,6 +3143,8 @@ def _show_ai_assistant_dialog(context_page: str = "Overview"):
 
     resp_key = f"{pfx}_resp_cache"
     if active_run_q:
+        # Show neutral loading state on reactive header slot while analyzing
+        header_slot.markdown(_render_header_card_html(used_q, rem_q, is_blocked, is_quota_finished, reset_str, is_loading=True), unsafe_allow_html=True)
         with st.spinner("Analyzing energy intelligence marts & running Antigravity AI..."):
             ans = AIEnergyMarketAnalyst.answer_question(
                 question=active_run_q,
@@ -3130,15 +3156,22 @@ def _show_ai_assistant_dialog(context_page: str = "Overview"):
             st.session_state[resp_key] = ans
             st.session_state[f"{pfx}_active_q"] = ""
             
-            # Immediately re-read session quota from disk/memory and update reactive header slot
-            new_status = session_protector.get_session_status(sess_id, has_custom_key=True, enforce_user_daily_limit=True)
-            new_rem = new_status.get("daily_questions_remaining", 0)
+            # Immediately re-read authoritative session quota from QuotaService and update reactive header slot
+            quota_service.invalidate_cache(u_id)
+            new_summary = quota_service.get_quota_summary(u_id, bypass_cache=True)
+            new_used = new_summary.get("used", 0)
+            new_rem = new_summary.get("remaining", max(0, 3 - new_used))
+            new_exh = new_summary.get("quota_exhausted", (new_used >= 3 or new_rem <= 0))
+            new_rst = new_summary.get("reset_time_str", "24 hours")
             st.session_state["top_ai_quota_rem"] = new_rem
+            st.session_state["top_ai_quota_used"] = new_used
+
             header_slot.markdown(_render_header_card_html(
+                new_used,
                 new_rem,
-                new_status.get("is_blocked", False),
-                new_status.get("is_daily_quota_finished", False),
-                new_status.get("reset_time_str", "24 hours")
+                is_blocked,
+                new_exh,
+                new_rst
             ), unsafe_allow_html=True)
 
     if resp_key in st.session_state and st.session_state[resp_key]:
@@ -3147,7 +3180,7 @@ def _show_ai_assistant_dialog(context_page: str = "Overview"):
         if resp.get("is_security_blocked"):
             render_html("""<div style="padding:6px 14px;background:rgba(239, 68, 68, 0.2);color:#EF4444;font-weight:700;font-size:12.5px;border:1.5px solid #EF4444;border-radius:4px;margin-bottom:8px;">🚫 Security Alert • Access Blocked</div>""")
         elif "Daily Free Quota Finished" in resp.get("topic", "") or "Daily Quota Limit Reached" in resp.get("topic", ""):
-            render_html(f"""<div style="padding:6px 14px;background:rgba(245, 185, 66, 0.2);color:#F5B942;font-weight:700;font-size:12.5px;border:1.5px solid #F5B942;border-radius:4px;margin-bottom:8px;">⏳ Daily Quota Reached (3/3 Used) • Resets in {sess_status["reset_time_str"]}</div>""")
+            render_html(f"""<div style="padding:6px 14px;background:rgba(245, 185, 66, 0.2);color:#F5B942;font-weight:700;font-size:12.5px;border:1.5px solid #F5B942;border-radius:4px;margin-bottom:8px;">⏳ Daily Quota Reached (3/3 used · 0 remaining · Quota exceeded) • Resets in {reset_str}</div>""")
         else:
             ver_text = t("ai_engine_verified", current_lang)
             render_html(f"""<div style="padding:4px 12px;background:rgba(16, 185, 129, 0.2);color:#10B981;font-weight:700;font-size:12px;border:1px solid #10B981;border-radius:4px;display:inline-block;margin-bottom:8px;">{ver_text}</div>""")

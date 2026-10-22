@@ -84,14 +84,6 @@ if not current_user:
                 st.rerun()
             else:
                 st.error(msg)
-        if st.button("⚡ Quick 1-Click Demo Login (analyst@fuelpulse.ai)", use_container_width=True, type="secondary", key="p9_demo_login_btn"):
-            AuthService.ensure_default_demo_user()
-            ok, msg, token, udict = AuthService.login_user(DEFAULT_DEMO_USERNAME, DEFAULT_DEMO_PASSWORD)
-            if ok and udict:
-                st.session_state["auth_user"] = udict
-                st.session_state["auth_token"] = token
-                st.success("Signed in as Senior Analyst!")
-                st.rerun()
     with tab_reg:
         with st.form("page9_gate_register", clear_on_submit=False):
             reg_name = st.text_input("Full Name", placeholder="e.g. Alexander Vance", key="p9_gate_reg_name")
@@ -114,10 +106,12 @@ if not current_user:
 
 user_id = current_user.get("user_id")
 
-# Fetch persistent database quota status for this user
-quota_status = openai_quota_manager.get_user_quota_status(user_id)
-remaining_q = quota_status.get("remaining", 0)
-is_exhausted = quota_status.get("is_exhausted", False)
+# Fetch persistent database quota status for this user from QuotaService
+from src.auth.quota_service import quota_service
+quota_status = quota_service.get_quota_summary(user_id, bypass_cache=True)
+used_q = quota_status.get("used", 0)
+remaining_q = quota_status.get("remaining", max(0, 3 - used_q))
+is_exhausted = quota_status.get("quota_exhausted", (used_q >= 3 or remaining_q <= 0))
 reset_time_str = quota_status.get("reset_time_str", "24 hours")
 
 # Initialize conversation history in session state
@@ -135,8 +129,9 @@ render_page_header(
 def _render_quota_pill(user_info, q_status):
     u_name = user_info.get("full_name") or user_info.get("username") or "Analyst"
     u_email = user_info.get("email", "")
-    rem = q_status.get("remaining", 0)
-    exhausted = q_status.get("is_exhausted", False)
+    used = q_status.get("used", 0)
+    rem = q_status.get("remaining", max(0, 3 - used))
+    exhausted = q_status.get("quota_exhausted", (used >= 3 or rem <= 0))
     r_time = q_status.get("reset_time_str", "24 hours")
 
     has_openai = openai_client.is_key_configured()
@@ -152,15 +147,15 @@ def _render_quota_pill(user_info, q_status):
         engine_name = "AI Engine"
         model_name = "No Key"
 
-    if exhausted:
+    if exhausted or rem <= 0 or used >= 3:
         status_icon = "⏳"
         status_color = "#F5B942"
-        status_label = f"Daily Limit Reached (0 / 3 Left)"
+        status_label = "3/3 used · 0 remaining · Quota exceeded"
         status_detail = f"Resets in {r_time} • 3 questions allowed per rolling 24 hours"
     else:
         status_icon = "🟢"
         status_color = "#10B981"
-        status_label = f"{engine_name} Ready • {rem} / 3 Free Questions Left"
+        status_label = f"{used}/3 used · {rem} remaining"
         status_detail = f"Rolling 24-hour quota • Account: {u_name} ({u_email})"
 
     return f"""
@@ -422,6 +417,7 @@ if submitted_question:
         })
 
     # Refresh user quota pill
-    updated_quota = openai_quota_manager.get_user_quota_status(user_id)
+    quota_service.invalidate_cache(user_id)
+    updated_quota = quota_service.get_quota_summary(user_id, bypass_cache=True)
     quota_pill_slot.markdown(_render_quota_pill(current_user, updated_quota), unsafe_allow_html=True)
     st.rerun()
