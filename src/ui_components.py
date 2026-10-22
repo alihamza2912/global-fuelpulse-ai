@@ -282,8 +282,8 @@ def render_app_header_brand_html(current_lang: str, engine_name: str, live_text:
                 </div>
             </div>
         </div>
-        <div class="fuelpulse-header-v-divider"></div>
-        <div class="fuelpulse-header-status-cluster">
+        <div class="fuelpulse-header-v-divider" style="display: none;"></div>
+        <div class="fuelpulse-header-status-cluster" style="display: none;">
             <span class="fuelpulse-status-pill fuelpulse-status-emerald">
                 {db_icon}
                 <span>{engine_name}</span>
@@ -1141,11 +1141,28 @@ p, span, label {{
 
 /* 3. Sidebar Styling */
 section[data-testid="stSidebar"] {{
-  background-color: #0B101E !important;
-  border-right: 1px solid rgba(255, 255, 255, 0.10) !important;
+  background-color: #070A12 !important;
+  border-right: 1px solid rgba(255, 255, 255, 0.08) !important;
 }}
 section[data-testid="stSidebar"] * {{
   color: #F9FAFB !important;
+}}
+
+/* Sidebar toggle button (expand/collapse) */
+div[data-testid="collapsedControl"] {{
+  top: 14px !important;
+  left: 14px !important;
+  z-index: 1001 !important;
+}}
+div[data-testid="collapsedControl"] button {{
+  background: rgba(14, 21, 38, 0.9) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  color: #F9FAFB !important;
+  border-radius: 6px !important;
+}}
+div[data-testid="collapsedControl"] button:hover {{
+  border-color: #F5B942 !important;
+  color: #F5B942 !important;
 }}
 
 /* 4. BaseWeb Popover & Dropdown Portals (Selectbox, Menus) */
@@ -2997,37 +3014,49 @@ def render_universal_top_header(active_page_name: str = "Overview", key_prefix: 
         render_html(render_app_header_brand_html(current_lang, engine_name, t('live_indicator', current_lang)))
 
     with col_nav:
-        # CWI Studio Center Navigation: Overview | Live Intel | Global Trade | Forecasts | News | AI Analyst
+        # CWI Studio Center Navigation: Overview | Live Intelligence | Global Trade | Forecasts | News | AI Analyst
         col_nav_home, col_nav_intel, col_nav_trade, col_nav_fc, col_news, col_ai = st.columns(
-            [0.95, 1.15, 1.05, 1.05, 1.0, 1.25], gap="small", vertical_alignment="center"
+            [0.85, 1.25, 1.05, 0.95, 0.85, 1.05], gap="small", vertical_alignment="center"
         )
         with col_nav_home:
             is_home_active = active_page_name.lower() in ("home", "overview", "🏠 overview")
             if st.button("Overview", key=f"{pfx}_nav_home_btn", type="primary" if is_home_active else "secondary", use_container_width=True, help="Product Overview & Key Metrics"):
                 st.session_state["active_canonical"] = "home"
                 st.query_params["tab"] = "home"
-                st.rerun()
+                try:
+                    st.switch_page("app.py")
+                except Exception:
+                    st.rerun()
 
         with col_nav_intel:
-            is_intel_active = active_page_name.lower() in ("dashboard", "live intelligence", "⚡ intelligence dashboard", "global_command_center")
-            if st.button("Live Intel", key=f"{pfx}_nav_intel_btn", type="primary" if is_intel_active else "secondary", use_container_width=True, help="Live Intelligence Command Center"):
+            is_intel_active = active_page_name.lower() in ("dashboard", "live intelligence", "⚡ intelligence dashboard", "global_command_center", "global command center")
+            if st.button("Live Intelligence", key=f"{pfx}_nav_intel_btn", type="primary" if is_intel_active else "secondary", use_container_width=True, help="Live Intelligence Command Center"):
                 st.session_state["active_canonical"] = "dashboard"
                 st.query_params["tab"] = "dashboard"
-                st.rerun()
+                try:
+                    st.switch_page("pages/1_Global_Command_Center.py")
+                except Exception:
+                    st.rerun()
 
         with col_nav_trade:
-            is_trade_active = "trade" in active_page_name.lower()
-            if st.button("Trade", key=f"{pfx}_nav_trade_btn", type="primary" if is_trade_active else "secondary", use_container_width=True, help="Global Trade Flows"):
+            is_trade_active = "trade" in active_page_name.lower() or "logistics" in active_page_name.lower()
+            if st.button("Global Trade", key=f"{pfx}_nav_trade_btn", type="primary" if is_trade_active else "secondary", use_container_width=True, help="Global Trade Flows"):
                 st.session_state["active_canonical"] = "features"
                 st.query_params["tab"] = "features"
-                st.rerun()
+                try:
+                    st.switch_page("pages/3_Global_Trade.py")
+                except Exception:
+                    st.rerun()
 
         with col_nav_fc:
             is_fc_active = "forecast" in active_page_name.lower() or "methodology" in active_page_name.lower()
             if st.button("Forecasts", key=f"{pfx}_nav_fc_btn", type="primary" if is_fc_active else "secondary", use_container_width=True, help="Econometric Forecasts"):
                 st.session_state["active_canonical"] = "methodology"
                 st.query_params["tab"] = "methodology"
-                st.rerun()
+                try:
+                    st.switch_page("pages/7_Forecasting.py")
+                except Exception:
+                    st.rerun()
 
         with col_news:
             alerts_count = GlobalNewsEngine.get_active_alerts_count()
@@ -3181,29 +3210,26 @@ def render_universal_top_header(active_page_name: str = "Overview", key_prefix: 
                         """, unsafe_allow_html=True)
 
         with col_ai:
-            if not auth_u:
-                ai_btn_label = "AI (3 Left)"
-            elif is_quota_exhausted or rem_q <= 0:
-                ai_btn_label = "AI (3/3 Used)"
-            else:
-                ai_btn_label = f"AI ({used_q}/3 Used)"
-
+            is_ai_active = "ai" in active_page_name.lower() or "analyst" in active_page_name.lower()
             if st.button(
-                ai_btn_label,
+                "AI Analyst",
                 key=f"{pfx}_top_ai_assistant_btn",
                 use_container_width=True,
-                type="primary" if (is_quota_exhausted or rem_q <= 0) else "secondary",
-                help="Ask Antigravity AI Assistant (Text & Voice Note)"
+                type="primary" if is_ai_active else "secondary",
+                help="Global FuelPulse AI Analyst"
             ):
-                from src.auth.auth_service import AuthService
-                if not AuthService.get_active_user():
-                    _show_sign_in_dialog()
-                else:
-                    _show_ai_assistant_dialog(context_page=active_page_name)
+                try:
+                    st.switch_page("pages/9_AI_Analyst.py")
+                except Exception:
+                    from src.auth.auth_service import AuthService
+                    if not AuthService.get_active_user():
+                        _show_sign_in_dialog()
+                    else:
+                        _show_ai_assistant_dialog(context_page=active_page_name)
 
     with col_actions:
         col_lang, col_theme, col_auth = st.columns(
-            [1.15, 0.45, 1.4], gap="small", vertical_alignment="center"
+            [1.0, 0.45, 1.25], gap="small", vertical_alignment="center"
         )
         with col_lang:
             all_langs = get_available_languages()
@@ -3261,14 +3287,14 @@ def render_universal_top_header(active_page_name: str = "Overview", key_prefix: 
                 disp_name = (auth_user.get("username") or "Analyst").capitalize()[:10]
                 auth_btn_label = f"👤 {disp_name}"
             else:
-                auth_btn_label = "Sign In"
+                auth_btn_label = "Account"
 
             if st.button(
                 auth_btn_label,
                 key=f"{pfx}_top_auth_btn",
                 use_container_width=True,
                 type="primary" if auth_user else "secondary",
-                help="Manage Account Profile & Question Quota" if auth_user else "Sign In / Register"
+                help="User Account, Security & AI Quotas"
             ):
                 if auth_user:
                     _show_account_profile_dialog(auth_user)
@@ -3975,35 +4001,6 @@ def render_command_strip(
     apply_theme()
     if show_universal_header:
         render_universal_top_header(active_page_name=active_page, key_prefix=f"cs_{active_page}")
-
-    from src.localization.i18n import t, get_current_language
-    current_lang = get_current_language()
-
-    health = db_manager.check_health()
-    engine_name = "MYSQL 8.4" if health["dialect"] == "mysql" else "LOCAL CACHE"
-    logo_svg = get_brand_logo_svg(width=290, height=48)
-
-    nav_html = f"""<div style="background: rgba(14, 21, 38, 0.85); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.12); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); border-radius: 10px; padding: 12px 20px; margin: -0.5rem 0 1.75rem 0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px;">
-<div style="display: flex; align-items: center; gap: 14px;">{logo_svg}</div>
-<div style="display: flex; align-items: center; gap: 8px; font-family: 'Space Grotesk', sans-serif; font-size: 13px; font-weight: 700; flex-wrap: wrap;">
-<a href="#ch-01" style="color: #F9FAFB; text-decoration: none; padding: 4px 8px; border-radius: 4px; transition: color 0.15s ease;">{t('nav_overview', current_lang)}</a>
-<span style="color: rgba(255, 255, 255, 0.2);">•</span>
-<a href="#ch-02" style="color: #F9FAFB; text-decoration: none; padding: 4px 8px; border-radius: 4px;">{t('chapter_02_title', current_lang)[:12]}</a>
-<span style="color: rgba(255, 255, 255, 0.2);">•</span>
-<a href="#ch-03" style="color: #F9FAFB; text-decoration: none; padding: 4px 8px; border-radius: 4px;">{t('nav_trade', current_lang)}</a>
-<span style="color: rgba(255, 255, 255, 0.2);">•</span>
-<a href="#ch-04" style="color: #F9FAFB; text-decoration: none; padding: 4px 8px; border-radius: 4px;">{t('chapter_04_title', current_lang)[:14]}</a>
-<span style="color: rgba(255, 255, 255, 0.2);">•</span>
-<a href="#ch-05" style="color: #F9FAFB; text-decoration: none; padding: 4px 8px; border-radius: 4px;">{t('nav_india', current_lang)}</a>
-<span style="color: rgba(255, 255, 255, 0.2);">•</span>
-<a href="#ch-11" style="color: #F9FAFB; text-decoration: none; padding: 4px 8px; border-radius: 4px;">{t('nav_data_trust', current_lang)}</a>
-</div>
-<div style="display: flex; align-items: center; gap: 12px;">
-<span style="background: rgba(16, 185, 129, 0.18); color: #34D399; border: 1px solid rgba(16, 185, 129, 0.4); padding: 4px 12px; border-radius: 999px; font-family: 'Space Grotesk', sans-serif; font-size: 12px; font-weight: 700;">● {engine_name} VERIFIED</span>
-<a href="#ch-05" style="background: #EAB308; color: #070A12; border: 1px solid #CA8A04; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25); padding: 6px 14px; border-radius: 6px; font-family: 'Space Grotesk', sans-serif; font-size: 13px; font-weight: 800; text-decoration: none;">EXPLORE MARKETS ↗</a>
-</div>
-</div>"""
-    render_html(nav_html)
 
 
 # ==============================================================================
