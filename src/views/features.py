@@ -133,6 +133,7 @@ def render_features_view(navigate_fn=None):
                 is_exh_feat = q_sum.get("quota_exhausted", (used_feat >= 3 or rem_feat <= 0))
                 rst_feat = q_sum.get("reset_time_str", "24 hours")
 
+                sess_status = session_protector.get_session_status(sess_id)
                 if sess_status.get("is_blocked"):
                     status_badge_html = '<div style="display:inline-block;padding:5px 12px;background:rgba(239, 68, 68, 0.2);color:#EF4444;font-weight:700;font-size:12px;border:1px solid #EF4444;border-radius:4px;margin-bottom:12px;">🚫 Security Violation: Session Terminated</div>'
                 elif is_exh_feat:

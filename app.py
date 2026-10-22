@@ -6,6 +6,7 @@ Architecture: Modular view routing, sub-50ms caching hierarchy, and unified edit
 
 import os
 import sys
+import re
 from pathlib import Path
 from dotenv import load_dotenv
 
@@ -304,21 +305,26 @@ def navigate_to(target: str):
     st.rerun()
 
 
-# 4. Sidebar Brand Lockup
-# 4. Sidebar Brand Lockup (WorkspaceSwitcher styling from dashboard-sidebar.tsx)
+# 4. Sidebar Workspace Switcher & Navigation System (dashboard-sidebar.tsx architecture)
+def clean_nav_title(title: str) -> str:
+    """Strip leading emoji symbols and whitespace for sleek SaaS styling."""
+    return re.sub(r'^[^\w\s\(\)]+\s*', '', title, flags=re.UNICODE).strip() or title
+
+
+# A. Top WorkspaceSwitcher (matching dashboard-sidebar.tsx)
 render_html(
     f"""
-    <div style="display: flex; align-items: center; justify-content: space-between; padding: 8px 10px; margin-bottom: 12px; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.08); background: rgba(255, 255, 255, 0.02); select-none;">
+    <div style="display: flex; align-items: center; justify-content: space-between; padding: 8px 10px; margin-bottom: 12px; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.08); background: rgba(255, 255, 255, 0.02); user-select: none;">
         <div style="display: flex; align-items: center; gap: 10px; min-width: 0;">
-            <div style="width: 32px; height: 32px; min-width: 32px; border-radius: 6px; background: #F5B942; color: #0B101E; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; box-shadow: 0 1px 3px rgba(0,0,0,0.3);">
+            <div style="width: 32px; height: 32px; min-width: 32px; border-radius: 6px; background: linear-gradient(135deg, #F5B942 0%, #D97706 100%); color: #0B101E; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; box-shadow: 0 1px 3px rgba(0,0,0,0.3);">
                 FP
             </div>
             <div style="display: flex; flex-direction: column; overflow: hidden; min-width: 0;">
                 <span style="font-size: 13px; font-weight: 600; line-height: 1.2; color: #F8FAFC; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{t('brand_title', current_lang)}</span>
-                <span style="font-size: 11px; color: #94A3B8; line-height: 1.2; margin-top: 2px;">{t('brand_subtitle', current_lang)} · Live v2.0</span>
+                <span style="font-size: 11px; color: #94A3B8; line-height: 1.2; margin-top: 2px;">Enterprise · Pro Plan</span>
             </div>
         </div>
-        <div style="color: rgba(148, 163, 184, 0.5); display: flex; align-items: center; shrink-0;">
+        <div style="color: rgba(148, 163, 184, 0.6); display: flex; align-items: center; flex-shrink: 0;">
             {get_lucide_icon_svg('chevron-down', size=15, color='#94A3B8')}
         </div>
     </div>
@@ -326,112 +332,128 @@ render_html(
     container=st.sidebar
 )
 
-# Engine Health Badge (Sleek minimalist card)
-health = db_manager.check_health()
-engine_sym = "🟢" if health["connected"] else "🔴"
-render_html(
-    f"""
-    <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 8px; padding: 8px 10px; margin-bottom: 10px; font-size: 11px; line-height: 1.5; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-            <span style="font-weight: 600; color: #71717A; text-transform: uppercase; letter-spacing: 0.05em; display: flex; align-items: center; gap: 6px;">
-                <span style="display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: {'#10B981' if health['connected'] else '#EF4444'};"></span>
-                Engine
-            </span>
-            <span style="font-family: monospace; color: #E2E8F0; font-weight: 500;">{health['dialect'].upper()} · {health['database']}</span>
-        </div>
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 3px;">
-            <span style="font-weight: 600; color: #71717A; text-transform: uppercase; letter-spacing: 0.05em;">Pipeline</span>
-            <span style="font-size: 10px; font-weight: 600; background: rgba(16, 185, 129, 0.12); color: #10B981; padding: 1px 6px; border-radius: 4px; border: 1px solid rgba(16, 185, 129, 0.25);">{'VERIFIED' if settings.is_demo_mode else 'LIVE 2026'}</span>
-        </div>
-    </div>
-    """,
-    container=st.sidebar
-)
+# B. Nav Group 1: PLATFORM (Tree Nav)
+render_html(f"""
+<div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 11px; font-weight: 600; color: #71717A; text-transform: uppercase; letter-spacing: 0.08em; padding: 6px 8px 4px 8px;">
+    {t('sidebar_tree_nav', current_lang)}
+</div>
+<!-- Tree Nav Architecture -->
+""", container=st.sidebar)
 
-# User Account & Sign In Console in Sidebar
+PLATFORM_NAV_ITEMS = [
+    {"label": clean_nav_title(t("nav_overview", current_lang)), "tab": "home", "icon": ":material/dashboard:", "badge": None},
+    {"label": clean_nav_title(t("nav_dashboard", current_lang)), "tab": "dashboard", "icon": ":material/analytics:", "badge": t("badge_live", current_lang)},
+    {"label": clean_nav_title(t("nav_india", current_lang)), "tab": "india", "icon": ":material/public:", "badge": "MoPNG"},
+    {"label": clean_nav_title(t("nav_about", current_lang)), "tab": "about", "icon": ":material/info:", "badge": "v2.0"},
+    {"label": clean_nav_title(t("nav_how_it_works", current_lang)), "tab": "how_it_works", "icon": ":material/tune:", "badge": None},
+]
+
+for item in PLATFORM_NAV_ITEMS:
+    is_active = (item["tab"] == st.session_state.active_canonical)
+    badge_str = f" · {item['badge']}" if item.get("badge") else ""
+    btn_label = f"{item['label']}{badge_str}"
+    if st.sidebar.button(
+        btn_label,
+        key=f"sb_nav_btn_{item['tab']}",
+        icon=item["icon"],
+        type="primary" if is_active else "secondary",
+        use_container_width=True
+    ):
+        navigate_to(item["tab"])
+
+# C. Nav Group 2: ANALYTICS DOSSIERS (Direct native multipage links)
+render_html(f"""
+<div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 11px; font-weight: 600; color: #71717A; text-transform: uppercase; letter-spacing: 0.08em; padding: 14px 8px 4px 8px;">
+    Analytics Dossiers
+</div>
+""", container=st.sidebar)
+
+st.sidebar.page_link("pages/1_Global_Command_Center.py", label=f"{clean_nav_title(t('sidebar_01_command', current_lang))} · Exec", icon=":material/terminal:", use_container_width=True)
+st.sidebar.page_link("pages/2_Fuel_Price_Explorer.py", label=f"{clean_nav_title(t('sidebar_02_explorer', current_lang))} · Daily", icon=":material/search:", use_container_width=True)
+st.sidebar.page_link("pages/3_Global_Trade.py", label=f"{clean_nav_title(t('sidebar_03_trade', current_lang))} · Flows", icon=":material/swap_horiz:", use_container_width=True)
+st.sidebar.page_link("pages/4_Affordability.py", label=f"{clean_nav_title(t('sidebar_04_afford', current_lang))} · Index", icon=":material/payments:", use_container_width=True)
+st.sidebar.page_link("pages/5_Supply_Risk.py", label=f"{clean_nav_title(t('sidebar_05_risk', current_lang))} · Radar", icon=":material/warning_amber:", use_container_width=True)
+st.sidebar.page_link("pages/6_Shock_Simulator.py", label=f"{clean_nav_title(t('sidebar_06_shock', current_lang))} · Sim", icon=":material/bolt:", use_container_width=True)
+st.sidebar.page_link("pages/7_Forecasting.py", label=f"{clean_nav_title(t('sidebar_07_forecast', current_lang))} · Model", icon=":material/trending_up:", use_container_width=True)
+st.sidebar.page_link("pages/9_AI_Analyst.py", label=f"{clean_nav_title(t('sidebar_09_ai', current_lang))} · Assistant", icon=":material/psychology:", use_container_width=True)
+
+# D. Nav Group 3: PLATFORM & DOCS
+render_html(f"""
+<div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 11px; font-weight: 600; color: #71717A; text-transform: uppercase; letter-spacing: 0.08em; padding: 14px 8px 4px 8px;">
+    Platform & Docs
+</div>
+""", container=st.sidebar)
+
+DOCS_NAV_ITEMS = [
+    {"label": clean_nav_title(t("nav_features", current_lang)), "tab": "features", "icon": ":material/apps:", "badge": t("badge_12_mod", current_lang)},
+    {"label": clean_nav_title(t("nav_data_trust", current_lang)), "tab": "data_trust", "icon": ":material/verified_user:", "badge": "SLA"},
+    {"label": clean_nav_title(t("nav_methodology", current_lang)), "tab": "methodology", "icon": ":material/architecture:", "badge": None},
+    {"label": clean_nav_title(t("nav_roadmap", current_lang)), "tab": "roadmap", "icon": ":material/map:", "badge": "2026"},
+    {"label": clean_nav_title(t("nav_faq", current_lang)), "tab": "faq", "icon": ":material/help_outline:", "badge": t("badge_docs", current_lang)},
+]
+
+for item in DOCS_NAV_ITEMS:
+    is_active = (item["tab"] == st.session_state.active_canonical)
+    badge_str = f" · {item['badge']}" if item.get("badge") else ""
+    btn_label = f"{item['label']}{badge_str}"
+    if st.sidebar.button(
+        btn_label,
+        key=f"sb_nav_btn_{item['tab']}",
+        icon=item["icon"],
+        type="primary" if is_active else "secondary",
+        use_container_width=True
+    ):
+        navigate_to(item["tab"])
+
+# E. Docked Bottom Section (User Account, Sync Feeds, System Status)
+st.sidebar.markdown("<div style='border-top: 1px solid rgba(255, 255, 255, 0.08); margin: 16px 0 12px 0;'></div>", unsafe_allow_html=True)
+
 auth_user = st.session_state.get("auth_user")
 if auth_user:
     disp_name = (auth_user.get("full_name") or auth_user.get("username") or "Analyst")
-    user_email = auth_user.get("email", "")
     initials = (disp_name[0] if disp_name else "A").upper()
     render_html(
         f"""
-        <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 8px; padding: 8px 10px; margin-bottom: 8px; display: flex; align-items: center; gap: 10px;">
-            <div style="width: 28px; height: 28px; border-radius: 6px; background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.3); color: #10B981; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700;">
-                {initials}
-            </div>
-            <div style="overflow: hidden; min-width: 0;">
-                <div style="font-size: 10px; color: #10B981; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;">● Active Session</div>
-                <div style="font-size: 12px; font-weight: 600; color: #F8FAFC; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{disp_name}</div>
+        <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 8px; padding: 8px 10px; margin-bottom: 6px; display: flex; align-items: center; justify-content: space-between;">
+            <div style="display: flex; align-items: center; gap: 8px; min-width: 0;">
+                <div style="width: 26px; height: 26px; min-width: 26px; border-radius: 6px; background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.3); color: #10B981; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700;">
+                    {initials}
+                </div>
+                <div style="overflow: hidden; min-width: 0;">
+                    <div style="font-size: 12px; font-weight: 600; color: #F8FAFC; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{disp_name}</div>
+                    <div style="font-size: 10px; color: #10B981; font-weight: 500;">Pro Analyst · Active</div>
+                </div>
             </div>
         </div>
         """,
         container=st.sidebar
     )
-    if st.sidebar.button("👤 Manage Account / Logout", key="sb_manage_account_btn", use_container_width=True):
+    if st.sidebar.button("Manage Account / Logout", key="sb_manage_account_btn", icon=":material/manage_accounts:", use_container_width=True):
         show_sign_in_dialog()
 else:
     render_html(
         """
-        <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 8px; padding: 8px 10px; margin-bottom: 8px; display: flex; align-items: center; gap: 10px;">
-            <div style="width: 28px; height: 28px; border-radius: 6px; background: rgba(245, 185, 66, 0.15); border: 1px solid rgba(245, 185, 66, 0.3); color: #F5B942; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700;">
-                🔐
+        <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 8px; padding: 8px 10px; margin-bottom: 6px; display: flex; align-items: center; justify-content: space-between;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <div style="width: 26px; height: 26px; min-width: 26px; border-radius: 6px; background: rgba(245, 185, 66, 0.12); border: 1px solid rgba(245, 185, 66, 0.25); color: #F5B942; display: flex; align-items: center; justify-content: center; font-size: 12px;">
+                    ⚡
+                </div>
+                <div>
+                    <div style="font-size: 11px; font-weight: 600; color: #F8FAFC;">Client Access</div>
+                    <div style="font-size: 10px; color: #94A3B8;">3 AI queries / 24h</div>
+                </div>
             </div>
-            <div>
-                <div style="font-size: 10px; color: #F5B942; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;">Client Access</div>
-                <div style="font-size: 11px; color: #94A3B8;">3 free AI questions / 24h</div>
-            </div>
+            <span style="font-size: 9px; font-weight: 600; color: #F5B942; background: rgba(245, 185, 66, 0.1); border: 1px solid rgba(245, 185, 66, 0.25); border-radius: 4px; padding: 1px 5px;">FREE</span>
         </div>
         """,
         container=st.sidebar
     )
-    if st.sidebar.button("🔐 Sign In / Create Account", key="sb_signin_btn", type="primary", use_container_width=True):
+    if st.sidebar.button("Sign In / Account", key="sb_signin_btn", icon=":material/lock:", use_container_width=True):
         show_sign_in_dialog()
 
-st.sidebar.markdown("<div style='margin-bottom: 8px;'></div>", unsafe_allow_html=True)
-
-# Auto-open sign-in dialog if query parameter ?login=1 or ?auth=1 is present
-if st.query_params.get("login") in ("1", "true") or st.query_params.get("auth") in ("1", "true"):
-    st.query_params.pop("login", None)
-    st.query_params.pop("auth", None)
-    show_sign_in_dialog()
-
-# Authentic Navigation Items matching dashboard-sidebar.tsx
-TREE_NAV_ITEMS = [
-    {"label": t("nav_overview", current_lang), "tab": "home", "canonical": "🏠 Overview", "badge": None},
-    {"label": t("nav_dashboard", current_lang), "tab": "dashboard", "canonical": "⚡ Intelligence Dashboard", "badge": t("badge_live", current_lang)},
-    {"label": t("nav_india", current_lang), "tab": "india", "canonical": "🇮🇳 India Fuel Center", "badge": "MoPNG"},
-    {"label": t("nav_about", current_lang), "tab": "about", "canonical": "📖 About Project", "badge": "v2.0"},
-    {"label": t("nav_how_it_works", current_lang), "tab": "how_it_works", "canonical": "⚙️ How It Works", "badge": None},
-    {"label": t("nav_features", current_lang), "tab": "features", "canonical": "📋 Features", "badge": t("badge_12_mod", current_lang)},
-    {"label": t("nav_data_trust", current_lang), "tab": "data_trust", "canonical": "🔒 Data Trust", "badge": "SLA"},
-    {"label": t("nav_methodology", current_lang), "tab": "methodology", "canonical": "📐 Methodology", "badge": None},
-    {"label": t("nav_roadmap", current_lang), "tab": "roadmap", "canonical": "🗺️ Roadmap", "badge": "New"},
-    {"label": t("nav_faq", current_lang), "tab": "faq", "canonical": "❓ Docs & FAQ", "badge": t("badge_docs", current_lang)},
-]
-
-render_html(f"""
-<div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 11px; font-weight: 600; color: #71717A; text-transform: uppercase; letter-spacing: 0.08em; padding: 4px 4px 6px 4px;">
-    {t('sidebar_tree_nav', current_lang)}
-</div>
-""", container=st.sidebar)
-
-for item in TREE_NAV_ITEMS:
-    is_active = (item["tab"] == st.session_state.active_canonical)
-    badge_str = f" · {item['badge']}" if item.get("badge") else ""
-    btn_label = f"{item['label']}{badge_str}"
-    if st.sidebar.button(btn_label, key=f"sb_nav_btn_{item['tab']}", type="primary" if is_active else "secondary", use_container_width=True):
-        navigate_to(item["tab"])
-
-
-# Live Pipeline Refresh Controls & Timestamps (Group Header styling from dashboard-sidebar.tsx)
-render_html(f"""
-<div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 11px; font-weight: 600; color: #71717A; text-transform: uppercase; letter-spacing: 0.08em; padding: 14px 4px 6px 4px;">
-    ⚡ {t('sidebar_sync_title', current_lang)}
-</div>
-""", container=st.sidebar)
-
-if st.sidebar.button(f"⚡ {t('sidebar_sync_btn', current_lang)}", key="sidebar_live_refresh_btn", use_container_width=True):
+# Live Sync Button
+sync_btn_label = t("sidebar_sync_btn", current_lang)
+if st.sidebar.button(sync_btn_label, key="sidebar_live_refresh_btn", icon=":material/sync:", use_container_width=True):
     with st.sidebar.status("Syncing live feeds (FRED, PPAC, EC, FX)..."):
         from src.ingestion.orchestrator import orchestrator
         orchestrator.run_live_refresh()
@@ -439,6 +461,7 @@ if st.sidebar.button(f"⚡ {t('sidebar_sync_btn', current_lang)}", key="sidebar_
         st.sidebar.success("Live data refreshed!")
         st.rerun()
 
+# System Engine & Provenance Pill at Bottom
 from src.ingestion.orchestrator import orchestrator
 sync_times = orchestrator.get_last_sync_timestamps()
 last_fx = sync_times.get("OPEN_ER_API") or "Today"
@@ -447,46 +470,28 @@ last_ppac = sync_times.get("INDIA_PPAC") or "Today"
 
 render_html(
     f"""
-    <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 11px; color: #94A3B8; margin-bottom: 14px; background: rgba(255, 255, 255, 0.02); padding: 8px 10px; border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 8px; line-height: 1.6;">
-        <div style="font-weight: 600; color: #CBD5E1; margin-bottom: 4px; display: flex; align-items: center; justify-content: space-between;">
-            <span>{t('sidebar_provenance_title', current_lang)}</span>
-            <span style="font-size: 9px; color: #64748B;">SYNCED</span>
+    <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 10.5px; color: #94A3B8; margin-top: 8px; margin-bottom: 12px; background: rgba(255, 255, 255, 0.02); padding: 7px 10px; border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 8px; line-height: 1.5;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 3px;">
+            <span style="display: flex; align-items: center; gap: 5px; font-weight: 600; color: #CBD5E1;">
+                <span style="display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #10B981;"></span>
+                SQLite Marts
+            </span>
+            <span style="font-size: 9px; font-weight: 600; color: #10B981; background: rgba(16, 185, 129, 0.12); padding: 0 5px; border-radius: 4px; border: 1px solid rgba(16, 185, 129, 0.25);">LIVE 2026</span>
         </div>
-        <div style="display: flex; justify-content: space-between; color: #94A3B8;"><span>• EIA & FRED</span><span style="font-weight: 600; color: #F5B942;">{last_eia}</span></div>
-        <div style="display: flex; justify-content: space-between; color: #94A3B8;"><span>• PPAC India</span><span style="font-weight: 600; color: #F5B942;">{last_ppac}</span></div>
-        <div style="display: flex; justify-content: space-between; color: #94A3B8;"><span>• FX Rates</span><span style="font-weight: 600; color: #F5B942;">{last_fx}</span></div>
+        <div style="display: flex; justify-content: space-between; color: #64748B; font-size: 10px;">
+            <span>EIA · PPAC · FX</span>
+            <span style="color: #94A3B8; font-weight: 500;">Synced Today</span>
+        </div>
     </div>
     """,
     container=st.sidebar
 )
 
-# Deep Drill-Down Pages in Sidebar rendered with Tree Rail hierarchy
-render_html(f"""
-<div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 11px; font-weight: 600; color: #71717A; text-transform: uppercase; letter-spacing: 0.08em; padding: 4px 4px 6px 4px;">
-    🌿 {t('sidebar_drilldown', current_lang)}
-</div>
-""", container=st.sidebar)
-
-render_html(
-    f"""
-    <div style="position: relative; padding-left: 12px; margin-left: 6px; border-left: 1px solid rgba(255, 255, 255, 0.08); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 12px; line-height: 2.1;">
-        <div style="position: absolute; bottom: 0; left: -3px; width: 5px; height: 5px; border-radius: 50%; background: #60A5FA;"></div>
-        <div><a href="/Global_Command_Center" style="color: #94A3B8; text-decoration: none; display: flex; justify-content: space-between; align-items: center; padding: 2px 6px; border-radius: 4px; transition: all 0.15s ease;" onmouseover="this.style.background='rgba(255,255,255,0.05)'; this.style.color='#FFFFFF';" onmouseout="this.style.background='transparent'; this.style.color='#94A3B8';"><span style="color: #CBD5E1;">{t('sidebar_01_command', current_lang)}</span><span style="font-size: 10px; font-weight: 500; background: rgba(59,130,246,0.12); color: #60A5FA; border: 1px solid rgba(59,130,246,0.25); padding: 0 6px; border-radius: 9999px;">Exec</span></a></div>
-        <div><a href="/Fuel_Price_Explorer" style="color: #94A3B8; text-decoration: none; display: flex; justify-content: space-between; align-items: center; padding: 2px 6px; border-radius: 4px; transition: all 0.15s ease;" onmouseover="this.style.background='rgba(255,255,255,0.05)'; this.style.color='#FFFFFF';" onmouseout="this.style.background='transparent'; this.style.color='#94A3B8';"><span style="color: #CBD5E1;">{t('sidebar_02_explorer', current_lang)}</span><span style="font-size: 10px; font-weight: 500; background: rgba(59,130,246,0.12); color: #60A5FA; border: 1px solid rgba(59,130,246,0.25); padding: 0 6px; border-radius: 9999px;">Daily</span></a></div>
-        <div><a href="/Global_Trade" style="color: #94A3B8; text-decoration: none; display: flex; justify-content: space-between; align-items: center; padding: 2px 6px; border-radius: 4px; transition: all 0.15s ease;" onmouseover="this.style.background='rgba(255,255,255,0.05)'; this.style.color='#FFFFFF';" onmouseout="this.style.background='transparent'; this.style.color='#94A3B8';"><span style="color: #CBD5E1;">{t('sidebar_03_trade', current_lang)}</span><span style="font-size: 10px; font-weight: 500; background: rgba(59,130,246,0.12); color: #60A5FA; border: 1px solid rgba(59,130,246,0.25); padding: 0 6px; border-radius: 9999px;">Comtrade</span></a></div>
-        <div><a href="/Affordability" style="color: #94A3B8; text-decoration: none; display: flex; justify-content: space-between; align-items: center; padding: 2px 6px; border-radius: 4px; transition: all 0.15s ease;" onmouseover="this.style.background='rgba(255,255,255,0.05)'; this.style.color='#FFFFFF';" onmouseout="this.style.background='transparent'; this.style.color='#94A3B8';"><span style="color: #CBD5E1;">{t('sidebar_04_afford', current_lang)}</span><span style="font-size: 10px; font-weight: 500; background: rgba(59,130,246,0.12); color: #60A5FA; border: 1px solid rgba(59,130,246,0.25); padding: 0 6px; border-radius: 9999px;">GDP/365</span></a></div>
-        <div><a href="/Supply_Risk" style="color: #94A3B8; text-decoration: none; display: flex; justify-content: space-between; align-items: center; padding: 2px 6px; border-radius: 4px; transition: all 0.15s ease;" onmouseover="this.style.background='rgba(255,255,255,0.05)'; this.style.color='#FFFFFF';" onmouseout="this.style.background='transparent'; this.style.color='#94A3B8';"><span style="color: #CBD5E1;">{t('sidebar_05_risk', current_lang)}</span><span style="font-size: 10px; font-weight: 500; background: rgba(59,130,246,0.12); color: #60A5FA; border: 1px solid rgba(59,130,246,0.25); padding: 0 6px; border-radius: 9999px;">HHI</span></a></div>
-        <div><a href="/Shock_Simulator" style="color: #94A3B8; text-decoration: none; display: flex; justify-content: space-between; align-items: center; padding: 2px 6px; border-radius: 4px; transition: all 0.15s ease;" onmouseover="this.style.background='rgba(255,255,255,0.05)'; this.style.color='#FFFFFF';" onmouseout="this.style.background='transparent'; this.style.color='#94A3B8';"><span style="color: #CBD5E1;">{t('sidebar_06_shock', current_lang)}</span><span style="font-size: 10px; font-weight: 500; background: rgba(59,130,246,0.12); color: #60A5FA; border: 1px solid rgba(59,130,246,0.25); padding: 0 6px; border-radius: 9999px;">Sens</span></a></div>
-        <div><a href="/Forecasting" style="color: #94A3B8; text-decoration: none; display: flex; justify-content: space-between; align-items: center; padding: 2px 6px; border-radius: 4px; transition: all 0.15s ease;" onmouseover="this.style.background='rgba(255,255,255,0.05)'; this.style.color='#FFFFFF';" onmouseout="this.style.background='transparent'; this.style.color='#94A3B8';"><span style="color: #CBD5E1;">{t('sidebar_07_forecast', current_lang)}</span><span style="font-size: 10px; font-weight: 500; background: rgba(59,130,246,0.12); color: #60A5FA; border: 1px solid rgba(59,130,246,0.25); padding: 0 6px; border-radius: 9999px;">Holt-W</span></a></div>
-        <div><a href="/Data_Trust" style="color: #94A3B8; text-decoration: none; display: flex; justify-content: space-between; align-items: center; padding: 2px 6px; border-radius: 4px; transition: all 0.15s ease;" onmouseover="this.style.background='rgba(255,255,255,0.05)'; this.style.color='#FFFFFF';" onmouseout="this.style.background='transparent'; this.style.color='#94A3B8';"><span style="color: #CBD5E1;">{t('sidebar_08_trust', current_lang)}</span><span style="font-size: 10px; font-weight: 500; background: rgba(59,130,246,0.12); color: #60A5FA; border: 1px solid rgba(59,130,246,0.25); padding: 0 6px; border-radius: 9999px;">Health</span></a></div>
-        <div><a href="/AI_Analyst" style="color: #94A3B8; text-decoration: none; display: flex; justify-content: space-between; align-items: center; padding: 2px 6px; border-radius: 4px; transition: all 0.15s ease;" onmouseover="this.style.background='rgba(255,255,255,0.05)'; this.style.color='#FFFFFF';" onmouseout="this.style.background='transparent'; this.style.color='#94A3B8';"><span style="color: #CBD5E1;">{t('sidebar_09_ai', current_lang)}</span><span style="font-size: 10px; font-weight: 500; background: rgba(59,130,246,0.12); color: #60A5FA; border: 1px solid rgba(59,130,246,0.25); padding: 0 6px; border-radius: 9999px;">Gemini</span></a></div>
-        <div><a href="/India_Intelligence" style="color: #94A3B8; text-decoration: none; display: flex; justify-content: space-between; align-items: center; padding: 2px 6px; border-radius: 4px; transition: all 0.15s ease;" onmouseover="this.style.background='rgba(255,255,255,0.05)'; this.style.color='#FFFFFF';" onmouseout="this.style.background='transparent'; this.style.color='#94A3B8';"><span style="color: #CBD5E1;">{t('sidebar_10_india', current_lang)}</span><span style="font-size: 10px; font-weight: 500; background: rgba(59,130,246,0.12); color: #60A5FA; border: 1px solid rgba(59,130,246,0.25); padding: 0 6px; border-radius: 9999px;">PPAC</span></a></div>
-        <div><a href="/Product_Guide" style="color: #94A3B8; text-decoration: none; display: flex; justify-content: space-between; align-items: center; padding: 2px 6px; border-radius: 4px; transition: all 0.15s ease;" onmouseover="this.style.background='rgba(255,255,255,0.05)'; this.style.color='#FFFFFF';" onmouseout="this.style.background='transparent'; this.style.color='#94A3B8';"><span style="color: #CBD5E1;">{t('sidebar_11_guide', current_lang)}</span><span style="font-size: 10px; font-weight: 500; background: rgba(59,130,246,0.12); color: #60A5FA; border: 1px solid rgba(59,130,246,0.25); padding: 0 6px; border-radius: 9999px;">Guide</span></a></div>
-    </div>
-    <div style="border-top: 1px solid rgba(255, 255, 255, 0.08); margin-top: 16px; padding-top: 8px;"></div>
-    """,
-    container=st.sidebar
-)
+# Auto-open sign-in dialog if query parameter ?login=1 or ?auth=1 is present
+if st.query_params.get("login") in ("1", "true") or st.query_params.get("auth") in ("1", "true"):
+    st.query_params.pop("login", None)
+    st.query_params.pop("auth", None)
+    show_sign_in_dialog()
 
 
 # 5. Top Brand Header Strip with Synchronized Multi-Language and Intelligence Center

@@ -502,11 +502,21 @@ def apply_theme():
   display: none !important;
 }}
 
-/* Sidebar navigation buttons styling (shadcn / Tailwind dashboard-sidebar.tsx design) */
-div[data-testid="stSidebar"] div.stButton > button {{
+/* Sidebar navigation buttons & page links styling (shadcn / Tailwind dashboard-sidebar.tsx design) */
+[data-testid="stSidebar"] div.stButton > button,
+section[data-testid="stSidebar"] div.stButton > button,
+section[data-testid="stSidebar"] button,
+[data-testid="stSidebar"] button,
+[data-testid="stSidebar"] [data-testid="stPageLink-NavLink"],
+[data-testid="stSidebar"] [data-testid="stPageLink"] a,
+section[data-testid="stSidebar"] [data-testid="stPageLink-NavLink"],
+section[data-testid="stSidebar"] [data-testid="stPageLink"] a {{
   border-radius: 6px !important;
+  display: flex !important;
+  flex-direction: row !important;
   text-align: left !important;
   justify-content: flex-start !important;
+  align-items: center !important;
   padding: 6px 10px !important;
   font-size: 13px !important;
   font-weight: 500 !important;
@@ -515,28 +525,120 @@ div[data-testid="stSidebar"] div.stButton > button {{
   margin-bottom: 2px !important;
   height: 34px !important;
   min-height: 34px !important;
+  max-height: 34px !important;
+  width: 100% !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  border: 1px solid transparent !important;
+  color: #94A3B8 !important;
+  -webkit-text-fill-color: #94A3B8 !important;
+  box-shadow: none !important;
+  text-decoration: none !important;
   transition: all 0.15s ease-in-out !important;
+  cursor: pointer !important;
 }}
 
-div[data-testid="stSidebar"] div.stButton > button[kind="primary"] {{
-  background: rgba(255, 255, 255, 0.08) !important;
+[data-testid="stSidebar"] div.stButton > button > div,
+section[data-testid="stSidebar"] div.stButton > button > div,
+[data-testid="stSidebar"] div.stButton > button [data-testid="stMarkdownContainer"],
+[data-testid="stSidebar"] [data-testid="stPageLink"] [data-testid="stMarkdownContainer"] {{
+  display: flex !important;
+  justify-content: flex-start !important;
+  align-items: center !important;
+  text-align: left !important;
+  width: 100% !important;
+}}
+
+[data-testid="stSidebar"] div.stButton > button p,
+[data-testid="stSidebar"] div.stButton > button span,
+[data-testid="stSidebar"] [data-testid="stPageLink"] p,
+[data-testid="stSidebar"] [data-testid="stPageLink"] span {{
+  text-align: left !important;
+  justify-content: flex-start !important;
+  align-items: center !important;
+  color: inherit !important;
+  -webkit-text-fill-color: inherit !important;
+  font-size: 13px !important;
+  font-weight: inherit !important;
+  line-height: 1 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}}
+
+[data-testid="stSidebar"] [data-testid="stIconMaterial"] {{
+  font-size: 16px !important;
+  line-height: 1 !important;
+  margin-right: 8px !important;
+  color: #94A3B8 !important;
+  -webkit-text-fill-color: #94A3B8 !important;
+  opacity: 0.85 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+}}
+
+[data-testid="stSidebar"] div.stButton > button:hover,
+section[data-testid="stSidebar"] div.stButton > button:hover,
+[data-testid="stSidebar"] [data-testid="stPageLink-NavLink"]:hover,
+[data-testid="stSidebar"] [data-testid="stPageLink"] a:hover {{
+  background: rgba(255, 255, 255, 0.05) !important;
+  background-color: rgba(255, 255, 255, 0.05) !important;
+  color: #F8FAFC !important;
+  -webkit-text-fill-color: #F8FAFC !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+  transform: none !important;
+}}
+
+[data-testid="stSidebar"] div.stButton > button:hover *,
+[data-testid="stSidebar"] [data-testid="stPageLink-NavLink"]:hover *,
+[data-testid="stSidebar"] [data-testid="stPageLink"] a:hover * {{
+  color: #F8FAFC !important;
+  -webkit-text-fill-color: #F8FAFC !important;
+}}
+
+/* Active item in sidebar: sleek shadcn dark:bg-white/10 text-white font-medium */
+[data-testid="stSidebar"] div.stButton > button[kind="primary"],
+[data-testid="stSidebar"] div.stButton > button[data-testid="stBaseButton-primary"],
+section[data-testid="stSidebar"] div.stButton > button[kind="primary"],
+section[data-testid="stSidebar"] div.stButton > button[data-testid="stBaseButton-primary"],
+[data-testid="stSidebar"] [data-testid="stPageLink-NavLink"][aria-current="page"],
+[data-testid="stSidebar"] [data-testid="stPageLink"] a[aria-current="page"] {{
+  background: rgba(255, 255, 255, 0.09) !important;
+  background-color: rgba(255, 255, 255, 0.09) !important;
   color: #FFFFFF !important;
-  border: 1px solid rgba(255, 255, 255, 0.16) !important;
+  -webkit-text-fill-color: #FFFFFF !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
   font-weight: 600 !important;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25) !important;
+  transform: none !important;
 }}
 
-div[data-testid="stSidebar"] div.stButton > button[kind="secondary"] {{
+[data-testid="stSidebar"] div.stButton > button[kind="primary"] *,
+[data-testid="stSidebar"] div.stButton > button[kind="primary"] p,
+[data-testid="stSidebar"] div.stButton > button[kind="primary"] span,
+[data-testid="stSidebar"] div.stButton > button[data-testid="stBaseButton-primary"] *,
+[data-testid="stSidebar"] [data-testid="stPageLink-NavLink"][aria-current="page"] *,
+[data-testid="stSidebar"] [data-testid="stPageLink"] a[aria-current="page"] * {{
+  color: #FFFFFF !important;
+  -webkit-text-fill-color: #FFFFFF !important;
+  font-weight: 600 !important;
+}}
+
+[data-testid="stSidebar"] div.stButton > button[kind="primary"] [data-testid="stIconMaterial"],
+[data-testid="stSidebar"] [data-testid="stPageLink-NavLink"][aria-current="page"] [data-testid="stIconMaterial"] {{
+  color: #FFFFFF !important;
+  -webkit-text-fill-color: #FFFFFF !important;
+  opacity: 1 !important;
+}}
+
+[data-testid="stSidebar"] div.stButton > button[kind="secondary"],
+[data-testid="stSidebar"] div.stButton > button[data-testid="stBaseButton-secondary"] {{
   background: transparent !important;
+  background-color: transparent !important;
   color: #94A3B8 !important;
+  -webkit-text-fill-color: #94A3B8 !important;
   border: 1px solid transparent !important;
   font-weight: 500 !important;
-}}
-
-div[data-testid="stSidebar"] div.stButton > button[kind="secondary"]:hover {{
-  background: rgba(255, 255, 255, 0.05) !important;
-  color: #F8FAFC !important;
-  border-color: rgba(255, 255, 255, 0.08) !important;
+  box-shadow: none !important;
 }}
 
 /* Main Top Two-Tier Navigation button styling */
@@ -1646,9 +1748,9 @@ div[data-testid="stPopoverContent"] div.stButton > button[kind="primary"] * {{
 }}
 
 /* C. Secondary Action Buttons & Suggested Query Chips */
-div:not([data-testid="stPopoverBody"]):not([data-baseweb="popover"]):not([data-testid="stPopoverContent"]) > div.stButton > button[kind="secondary"],
-div:not([data-testid="stPopoverBody"]):not([data-baseweb="popover"]):not([data-testid="stPopoverContent"]) > div.stButton > button[data-testid="stBaseButton-secondary"]:not([role="radio"]):not([role="checkbox"]):not([data-testid*="Active"]),
-button[kind="secondary"]:not([data-testid="stBaseButton-primary"]):not([role="radio"]):not([role="checkbox"]) {{
+section:not([data-testid="stSidebar"]) div:not([data-testid="stPopoverBody"]):not([data-baseweb="popover"]):not([data-testid="stPopoverContent"]) > div.stButton > button[kind="secondary"],
+section:not([data-testid="stSidebar"]) div:not([data-testid="stPopoverBody"]):not([data-baseweb="popover"]):not([data-testid="stPopoverContent"]) > div.stButton > button[data-testid="stBaseButton-secondary"]:not([role="radio"]):not([role="checkbox"]):not([data-testid*="Active"]),
+section:not([data-testid="stSidebar"]) button[kind="secondary"]:not([data-testid="stBaseButton-primary"]):not([role="radio"]):not([role="checkbox"]) {{
   background: rgba(14, 21, 38, 0.75) !important;
   background-color: rgba(14, 21, 38, 0.75) !important;
   color: #E2E8F0 !important;
@@ -1669,8 +1771,8 @@ button[kind="secondary"]:not([data-testid="stBaseButton-primary"]):not([role="ra
   cursor: pointer !important;
 }}
 
-div:not([data-testid*="Popover"]):not([data-baseweb="popover"]) > div.stButton > button[kind="secondary"] *,
-div:not([data-testid*="Popover"]):not([data-baseweb="popover"]) > div.stButton > button[data-testid="stBaseButton-secondary"] * {{
+section:not([data-testid="stSidebar"]) div:not([data-testid*="Popover"]):not([data-baseweb="popover"]) > div.stButton > button[kind="secondary"] *,
+section:not([data-testid="stSidebar"]) div:not([data-testid*="Popover"]):not([data-baseweb="popover"]) > div.stButton > button[data-testid="stBaseButton-secondary"] * {{
   color: #E2E8F0 !important;
   -webkit-text-fill-color: #E2E8F0 !important;
   font-size: 11.5px !important;
@@ -1678,8 +1780,8 @@ div:not([data-testid*="Popover"]):not([data-baseweb="popover"]) > div.stButton >
   white-space: nowrap !important;
 }}
 
-div:not([data-testid*="Popover"]):not([data-baseweb="popover"]) > div.stButton > button[kind="secondary"]:hover,
-div:not([data-testid*="Popover"]):not([data-baseweb="popover"]) > div.stButton > button[data-testid="stBaseButton-secondary"]:hover {{
+section:not([data-testid="stSidebar"]) div:not([data-testid*="Popover"]):not([data-baseweb="popover"]) > div.stButton > button[kind="secondary"]:hover,
+section:not([data-testid="stSidebar"]) div:not([data-testid*="Popover"]):not([data-baseweb="popover"]) > div.stButton > button[data-testid="stBaseButton-secondary"]:hover {{
   background: rgba(245, 185, 66, 0.12) !important;
   background-color: rgba(245, 185, 66, 0.12) !important;
   border-color: rgba(245, 185, 66, 0.45) !important;
@@ -1689,15 +1791,16 @@ div:not([data-testid*="Popover"]):not([data-baseweb="popover"]) > div.stButton >
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.35) !important;
 }}
 
-div:not([data-testid*="Popover"]):not([data-baseweb="popover"]) > div.stButton > button[kind="secondary"]:hover *,
-div:not([data-testid*="Popover"]):not([data-baseweb="popover"]) > div.stButton > button[data-testid="stBaseButton-secondary"]:hover * {{
+section:not([data-testid="stSidebar"]) div:not([data-testid*="Popover"]):not([data-baseweb="popover"]) > div.stButton > button[kind="secondary"]:hover *,
+section:not([data-testid="stSidebar"]) div:not([data-testid*="Popover"]):not([data-baseweb="popover"]) > div.stButton > button[data-testid="stBaseButton-secondary"]:hover * {{
   color: #F5B942 !important;
   -webkit-text-fill-color: #F5B942 !important;
 }}
 
 /* D. Primary Action Buttons (Key CTA & Ingestion Trigger Buttons) */
-div:not([data-testid*="Popover"]):not([data-baseweb="popover"]) > div.stButton > button[kind="primary"],
-div:not([data-testid*="Popover"]):not([data-baseweb="popover"]) > div.stButton > button[data-testid="stBaseButton-primary"],
+section:not([data-testid="stSidebar"]) div:not([data-testid*="Popover"]):not([data-baseweb="popover"]) > div.stButton > button[kind="primary"],
+section:not([data-testid="stSidebar"]) div:not([data-testid*="Popover"]):not([data-baseweb="popover"]) > div.stButton > button[data-testid="stBaseButton-primary"],
+div[data-testid="stMainBlockContainer"] div.stButton > button[kind="primary"],
 div.stDownloadButton > button,
 div.stFormSubmitButton > button {{
   background: #EAB308 !important;
@@ -1718,8 +1821,9 @@ div.stFormSubmitButton > button {{
   white-space: nowrap !important;
 }}
 
-div:not([data-testid*="Popover"]):not([data-baseweb="popover"]) > div.stButton > button[kind="primary"] *,
-div:not([data-testid*="Popover"]):not([data-baseweb="popover"]) > div.stButton > button[data-testid="stBaseButton-primary"] *,
+section:not([data-testid="stSidebar"]) div:not([data-testid*="Popover"]):not([data-baseweb="popover"]) > div.stButton > button[kind="primary"] *,
+section:not([data-testid="stSidebar"]) div:not([data-testid*="Popover"]):not([data-baseweb="popover"]) > div.stButton > button[data-testid="stBaseButton-primary"] *,
+div[data-testid="stMainBlockContainer"] div.stButton > button[kind="primary"] *,
 div.stDownloadButton > button *,
 div.stFormSubmitButton > button * {{
   color: #070A12 !important;
@@ -1729,8 +1833,9 @@ div.stFormSubmitButton > button * {{
   white-space: nowrap !important;
 }}
 
-div:not([data-testid*="Popover"]):not([data-baseweb="popover"]) > div.stButton > button[kind="primary"]:hover,
-div:not([data-testid*="Popover"]):not([data-baseweb="popover"]) > div.stButton > button[data-testid="stBaseButton-primary"]:hover,
+section:not([data-testid="stSidebar"]) div:not([data-testid*="Popover"]):not([data-baseweb="popover"]) > div.stButton > button[kind="primary"]:hover,
+section:not([data-testid="stSidebar"]) div:not([data-testid*="Popover"]):not([data-baseweb="popover"]) > div.stButton > button[data-testid="stBaseButton-primary"]:hover,
+div[data-testid="stMainBlockContainer"] div.stButton > button[kind="primary"]:hover,
 div.stDownloadButton > button:hover,
 div.stFormSubmitButton > button:hover {{
   transform: translateY(-1px) !important;
@@ -2371,9 +2476,9 @@ button[data-testid*="primaryActive"] * {{
   }}
 
   /* J. Touch-Friendly Compact Secondary & Action Buttons */
-  div:not([data-testid*="Popover"]):not([data-baseweb="popover"]) > div.stButton > button[kind="secondary"],
-  div:not([data-testid*="Popover"]):not([data-baseweb="popover"]) > div.stButton > button[data-testid="stBaseButton-secondary"]:not([role="radio"]):not([role="checkbox"]):not([data-testid*="Active"]),
-  button[kind="secondary"]:not([data-testid="stBaseButton-primary"]):not([role="radio"]):not([role="checkbox"]) {{
+  section:not([data-testid="stSidebar"]) div:not([data-testid*="Popover"]):not([data-baseweb="popover"]) > div.stButton > button[kind="secondary"],
+  section:not([data-testid="stSidebar"]) div:not([data-testid*="Popover"]):not([data-baseweb="popover"]) > div.stButton > button[data-testid="stBaseButton-secondary"]:not([role="radio"]):not([role="checkbox"]):not([data-testid*="Active"]),
+  section:not([data-testid="stSidebar"]) button[kind="secondary"]:not([data-testid="stBaseButton-primary"]):not([role="radio"]):not([role="checkbox"]) {{
     height: 36px !important;
     min-height: 36px !important;
     font-size: 11px !important;
@@ -2383,8 +2488,9 @@ button[data-testid*="primaryActive"] * {{
     line-height: 1.2 !important;
   }}
 
-  div:not([data-testid*="Popover"]):not([data-baseweb="popover"]) > div.stButton > button[kind="primary"],
-  div:not([data-testid*="Popover"]):not([data-baseweb="popover"]) > div.stButton > button[data-testid="stBaseButton-primary"],
+  section:not([data-testid="stSidebar"]) div:not([data-testid*="Popover"]):not([data-baseweb="popover"]) > div.stButton > button[kind="primary"],
+  section:not([data-testid="stSidebar"]) div:not([data-testid*="Popover"]):not([data-baseweb="popover"]) > div.stButton > button[data-testid="stBaseButton-primary"],
+  div[data-testid="stMainBlockContainer"] div.stButton > button[kind="primary"],
   div.stDownloadButton > button,
   div.stFormSubmitButton > button {{
     height: 36px !important;
@@ -2559,6 +2665,7 @@ def render_universal_top_header(active_page_name: str = "Overview", key_prefix: 
     - Vector Brand lockup with live database engine verification badge
     - Universal Language Selector Popover (synchronizes app_language and URL query params site-wide)
     - Live News Wire & Maritime Alert Center Popover
+    - Layout contract: col_brand -> col_nav_home -> col_nav_intel -> col_nav_trade -> col_nav_fc -> col_news -> col_ai -> col_lang -> col_theme -> col_auth
     """
     from src.localization.i18n import (
         t,
