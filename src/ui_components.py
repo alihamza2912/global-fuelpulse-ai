@@ -1386,69 +1386,80 @@ div[data-testid="stPopoverButton"] {{
   margin: 0 !important;
 }}
 
-div[data-testid="stPopover"] > button,
-div[data-testid="stPopoverButton"] > button,
+/* Tubelight Navbar Capsule Wrapper for AI, LANGUAGES, NEWS, USERNAME */
+div[data-testid="stHorizontalBlock"]:has(button[key*="top_ai_assistant_btn"]) {{
+  background: rgba(14, 21, 38, 0.75) !important;
+  background-color: rgba(14, 21, 38, 0.75) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  border-radius: 9999px !important;
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
+  padding: 3px 5px !important;
+  align-items: center !important;
+  gap: 4px !important;
+}}
+
+/* Tubelight Pill Items (AI, LANGUAGES, NEWS, USERNAME) */
+div[data-testid="stHorizontalBlock"]:has(button[key*="top_ai_assistant_btn"]) button,
+div[data-testid="stHorizontalBlock"]:has(button[key*="top_ai_assistant_btn"]) [data-testid="stPopover"] > button,
+div[data-testid="stHorizontalBlock"]:has(button[key*="top_ai_assistant_btn"]) [data-testid="stPopoverButton"] > button,
 button[key*="top_ai_assistant_btn"],
-div[data-testid="stHorizontalBlock"]:has(.fuelpulse-header-bar) button,
-div[data-testid="stHorizontalBlock"]:has(.fuelpulse-header-bar) [data-testid="stPopover"] > button,
-div[data-testid="stHorizontalBlock"]:has(.fuelpulse-header-bar) [data-testid="stPopoverButton"] > button {{
-  background: rgba(14, 21, 38, 0.90) !important;
-  background-color: rgba(14, 21, 38, 0.90) !important;
-  color: #F9FAFB !important;
-  -webkit-text-fill-color: #F9FAFB !important;
-  border: 1px solid rgba(255, 255, 255, 0.16) !important;
-  border-radius: 8px !important;
-  height: 38px !important;
-  min-height: 38px !important;
-  max-height: 38px !important;
-  line-height: 38px !important;
-  padding: 0 6px !important;
-  font-family: 'Space Grotesk', -apple-system, sans-serif !important;
+button[key*="top_auth_btn"] {{
+  background: transparent !important;
+  background-color: transparent !important;
+  color: #CBD5E1 !important;
+  -webkit-text-fill-color: #CBD5E1 !important;
+  border: 1px solid transparent !important;
+  border-radius: 9999px !important;
+  height: 32px !important;
+  min-height: 32px !important;
+  max-height: 32px !important;
+  line-height: 32px !important;
+  padding: 0 10px !important;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
   font-size: 11.5px !important;
-  font-weight: 700 !important;
+  font-weight: 600 !important;
+  letter-spacing: -0.01em !important;
   white-space: nowrap !important;
-  overflow: hidden !important;
-  text-overflow: ellipsis !important;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35) !important;
+  overflow: visible !important;
+  position: relative !important;
+  box-shadow: none !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
   text-align: center !important;
-  gap: 5px !important;
-  transition: all 0.15s ease-in-out !important;
+  gap: 4px !important;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
   cursor: pointer !important;
   width: 100% !important;
   box-sizing: border-box !important;
 }}
 
-div[data-testid="stPopover"] > button *,
-div[data-testid="stPopover"] > button p,
-div[data-testid="stPopover"] > button span,
-div[data-testid="stPopoverButton"] > button *,
-div[data-testid="stPopoverButton"] > button p,
-div[data-testid="stPopoverButton"] > button span,
+div[data-testid="stHorizontalBlock"]:has(button[key*="top_ai_assistant_btn"]) button *,
+div[data-testid="stHorizontalBlock"]:has(button[key*="top_ai_assistant_btn"]) [data-testid="stPopover"] > button *,
+div[data-testid="stHorizontalBlock"]:has(button[key*="top_ai_assistant_btn"]) [data-testid="stPopoverButton"] > button *,
 button[key*="top_ai_assistant_btn"] *,
-button[key*="top_ai_assistant_btn"] p,
-button[key*="top_ai_assistant_btn"] span {{
-  color: #F9FAFB !important;
-  -webkit-text-fill-color: #F9FAFB !important;
+button[key*="top_auth_btn"] * {{
+  color: #CBD5E1 !important;
+  -webkit-text-fill-color: #CBD5E1 !important;
   font-size: 11.5px !important;
-  font-weight: 700 !important;
+  font-weight: 600 !important;
   white-space: nowrap !important;
-  overflow: hidden !important;
-  text-overflow: ellipsis !important;
   line-height: 1 !important;
   margin: 0 !important;
   padding: 0 !important;
   text-align: center !important;
 }}
 
-/* AI Assistant Header Button: Subtle golden border and glowing indicator matching popover form */
+/* AI Assistant Active State: Tubelight Lamp with Glowing Filament and Radiant Beam */
 button[key*="top_ai_assistant_btn"] {{
-  border: 1px solid rgba(245, 185, 66, 0.45) !important;
-  background: rgba(245, 185, 66, 0.08) !important;
+  background: rgba(245, 185, 66, 0.10) !important;
+  background-color: rgba(245, 185, 66, 0.10) !important;
   color: #F5B942 !important;
   -webkit-text-fill-color: #F5B942 !important;
+  border: 1px solid rgba(245, 185, 66, 0.35) !important;
+  box-shadow: 0 0 14px rgba(245, 185, 66, 0.18) !important;
 }}
 
 button[key*="top_ai_assistant_btn"] *,
@@ -1458,23 +1469,74 @@ button[key*="top_ai_assistant_btn"] span {{
   -webkit-text-fill-color: #F5B942 !important;
 }}
 
-div[data-testid="stPopover"] > button:hover,
-div[data-testid="stPopoverButton"] > button:hover,
-button[key*="top_ai_assistant_btn"]:hover,
-div[data-testid="stHorizontalBlock"]:has(.fuelpulse-header-bar) button:hover {{
-  background: rgba(245, 185, 66, 0.14) !important;
-  background-color: rgba(245, 185, 66, 0.14) !important;
-  border-color: rgba(245, 185, 66, 0.6) !important;
-  color: #F5B942 !important;
-  -webkit-text-fill-color: #F5B942 !important;
-  transform: translateY(-1px) !important;
+/* Tubelight Top Lamp Filament on AI button */
+button[key*="top_ai_assistant_btn"]::before {{
+  content: "" !important;
+  position: absolute !important;
+  top: -2px !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  width: 24px !important;
+  height: 2px !important;
+  background: #F5B942 !important;
+  border-radius: 9999px 9999px 0 0 !important;
+  box-shadow: 0 -1px 6px #F5B942, 0 0 10px rgba(245, 185, 66, 0.9) !important;
+  z-index: 10 !important;
 }}
 
-div[data-testid="stPopover"] > button:hover *,
-div[data-testid="stPopoverButton"] > button:hover *,
-button[key*="top_ai_assistant_btn"]:hover * {{
-  color: #F5B942 !important;
-  -webkit-text-fill-color: #F5B942 !important;
+/* Tubelight Radiant Lamp Glow Aura on AI button */
+button[key*="top_ai_assistant_btn"]::after {{
+  content: "" !important;
+  position: absolute !important;
+  top: -5px !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  width: 36px !important;
+  height: 10px !important;
+  background: rgba(245, 185, 66, 0.40) !important;
+  border-radius: 9999px !important;
+  filter: blur(5px) !important;
+  pointer-events: none !important;
+  z-index: 5 !important;
+}}
+
+/* Tubelight Hover State for AI, LANGUAGES, NEWS, USERNAME */
+div[data-testid="stHorizontalBlock"]:has(button[key*="top_ai_assistant_btn"]) button:hover,
+div[data-testid="stHorizontalBlock"]:has(button[key*="top_ai_assistant_btn"]) [data-testid="stPopover"] > button:hover,
+div[data-testid="stHorizontalBlock"]:has(button[key*="top_ai_assistant_btn"]) [data-testid="stPopoverButton"] > button:hover,
+button[key*="top_ai_assistant_btn"]:hover,
+button[key*="top_auth_btn"]:hover {{
+  background: rgba(255, 255, 255, 0.08) !important;
+  background-color: rgba(255, 255, 255, 0.08) !important;
+  border-color: rgba(245, 185, 66, 0.45) !important;
+  color: #F8FAFC !important;
+  -webkit-text-fill-color: #F8FAFC !important;
+}}
+
+div[data-testid="stHorizontalBlock"]:has(button[key*="top_ai_assistant_btn"]) button:hover *,
+div[data-testid="stHorizontalBlock"]:has(button[key*="top_ai_assistant_btn"]) [data-testid="stPopover"] > button:hover *,
+div[data-testid="stHorizontalBlock"]:has(button[key*="top_ai_assistant_btn"]) [data-testid="stPopoverButton"] > button:hover *,
+button[key*="top_ai_assistant_btn"]:hover *,
+button[key*="top_auth_btn"]:hover * {{
+  color: #F8FAFC !important;
+  -webkit-text-fill-color: #F8FAFC !important;
+}}
+
+/* Hover Lamp Filament for Languages, News, and User */
+div[data-testid="stHorizontalBlock"]:has(button[key*="top_ai_assistant_btn"]) [data-testid="stPopover"] > button:hover::before,
+div[data-testid="stHorizontalBlock"]:has(button[key*="top_ai_assistant_btn"]) [data-testid="stPopoverButton"] > button:hover::before,
+button[key*="top_auth_btn"]:hover::before {{
+  content: "" !important;
+  position: absolute !important;
+  top: -2px !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  width: 20px !important;
+  height: 2px !important;
+  background: #F5B942 !important;
+  border-radius: 9999px 9999px 0 0 !important;
+  box-shadow: 0 -1px 5px #F5B942, 0 0 8px rgba(245, 185, 66, 0.7) !important;
+  z-index: 10 !important;
 }}
 
 div[data-testid="stPopover"] > button svg,
@@ -2219,13 +2281,13 @@ button[data-testid*="primaryActive"] * {{
   [data-testid="stHorizontalBlock"]:has(.fuelpulse-header-bar) [data-testid="stPopover"] > button,
   [data-testid="stHorizontalBlock"]:has(.fuelpulse-header-bar) [data-testid="stPopoverButton"] > button,
   button[key*="top_ai_assistant_btn"] {{
-    min-height: 35px !important;
-    max-height: 35px !important;
-    line-height: 35px !important;
-    height: 35px !important;
-    padding: 0 4px !important;
+    min-height: 33px !important;
+    max-height: 33px !important;
+    line-height: 33px !important;
+    height: 33px !important;
+    padding: 0 6px !important;
     font-size: 10.5px !important;
-    border-radius: 7px !important;
+    border-radius: 9999px !important;
     width: 100% !important;
     display: flex !important;
     align-items: center !important;
@@ -2463,6 +2525,7 @@ button[data-testid*="primaryActive"] * {{
     padding: 0 2px !important;
     font-size: 9.5px !important;
     letter-spacing: -0.01em !important;
+    border-radius: 9999px !important;
     width: 100% !important;
     display: flex !important;
     align-items: center !important;
