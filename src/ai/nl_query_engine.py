@@ -94,6 +94,10 @@ class SessionAbuseProtector:
         4. Links device fingerprints and query param UIDs to a single canonical client identity
            persisted on disk so browser refreshes, URL clearing, or new tabs cannot evade the 3-question quota.
         """
+        # If an authenticated or distinct user session identifier is provided, prioritize it directly
+        if session_id and (session_id.startswith("usr_") or session_id.startswith("user_") or session_id.startswith("auth_") or ("-" in session_id and len(session_id) >= 32)):
+            return session_id
+
         try:
             import hashlib
             import streamlit as st
@@ -319,14 +323,54 @@ class SessionAbuseProtector:
             sdata["last_timestamp"] = now
             recent.append(now)
             sdata["hourly_timestamps"] = recent
-            if "daily_timestamps" not in sdata:
-                sdata["daily_timestamps"] = []
-            sdata["daily_timestamps"].append(now)
+            if enforce_daily_free_limit or enforce_user_daily_limit:
+                if "daily_timestamps" not in sdata:
+                    sdata["daily_timestamps"] = []
+                sdata["daily_timestamps"].append(now)
             self._save_to_disk()
             return True, None, None
 
     def get_session_status(self, session_id: str, has_custom_key: bool = False, enforce_user_daily_limit: bool = False) -> Dict[str, Any]:
         """Returns the current user session quota and security status."""
+        # 1. Authoritative check via Supabase Cloud when user is authenticated
+        try:
+            import streamlit as st
+            from src.auth.supabase_client import supabase_auth_client
+            active_uid = None
+            if hasattr(st, "session_state"):
+                u = st.session_state.get("auth_user")
+                if u and isinstance(u, dict) and u.get("user_id"):
+                    active_uid = u.get("user_id")
+            if not active_uid and session_id:
+                for pfx in ("usr_", "user_"):
+                    if session_id.startswith(pfx):
+                        active_uid = session_id[len(pfx):]
+                        break
+                if not active_uid and "-" in session_id and len(session_id) >= 32:
+                    active_uid = session_id
+
+            if active_uid and supabase_auth_client.is_configured():
+                sb_st = supabase_auth_client.get_user_quota_status(active_uid)
+                if sb_st and ("remaining" in sb_st or "questions_remaining" in sb_st):
+                    used = sb_st.get("used_count", sb_st.get("questions_used", 0))
+                    rem = sb_st.get("remaining", sb_st.get("questions_remaining", 3))
+                    rst_str = sb_st.get("reset_time_str", "24 hours")
+                    return {
+                        "session_id": session_id,
+                        "is_blocked": False,
+                        "has_custom_key": has_custom_key,
+                        "daily_questions_used": used,
+                        "daily_questions_remaining": rem,
+                        "daily_free_limit": 3,
+                        "is_daily_quota_finished": (rem <= 0),
+                        "reset_seconds_remaining": sb_st.get("reset_seconds_remaining", 0.0),
+                        "reset_time_str": rst_str,
+                        "is_supabase_authoritative": True
+                    }
+        except Exception:
+            pass
+
+        # 2. Local fallback for unauthenticated guest sessions
         with self._lock:
             cid = self._resolve_client_identifier(session_id)
             sdata = self._sessions.get(cid) or self._sessions.get(session_id, {})
@@ -423,14 +467,39 @@ class AIEnergyMarketAnalyst:
         has_custom_key = gemini_client.is_key_configured() or bool(settings.api.gemini_api_key)
         enforce_daily = ((not has_custom_key) or enforce_user_daily_limit) and (not bypass_session_limits)
 
+        # Detect authenticated user via Streamlit session state or session_id
+        from src.auth.supabase_client import supabase_auth_client
+        auth_user_id = None
+        try:
+            import streamlit as st
+            if hasattr(st, "session_state"):
+                u = st.session_state.get("auth_user")
+                if u and isinstance(u, dict) and u.get("user_id"):
+                    auth_user_id = u.get("user_id")
+        except Exception:
+            pass
+
+        if not auth_user_id and session_id:
+            for pfx in ("usr_", "user_"):
+                if session_id.startswith(pfx):
+                    auth_user_id = session_id[len(pfx):]
+                    break
+            if not auth_user_id and "-" in session_id and len(session_id) >= 32:
+                auth_user_id = session_id
+
+        is_supabase_active = supabase_auth_client.is_configured() and auth_user_id is not None
+        is_auth_active = auth_user_id is not None
+
         # 1. Per-User Session & Enterprise Security Validation
+        # When user is authenticated, SessionAbuseProtector enforces security patterns,
+        # message length limit, and 3-second rapid spam cooldown, while delegating daily quota to QuotaService.
         valid, err_topic, err_msg = session_protector.validate_and_record(
             session_id=session_id,
             question=question,
             bypass=bypass_session_limits,
-            enforce_daily_free_limit=enforce_daily,
+            enforce_daily_free_limit=(enforce_daily and not is_auth_active),
             has_custom_key=has_custom_key,
-            enforce_user_daily_limit=enforce_user_daily_limit
+            enforce_user_daily_limit=(enforce_user_daily_limit and not is_auth_active)
         )
         if not valid:
             return {
@@ -444,49 +513,20 @@ class AIEnergyMarketAnalyst:
                 "is_security_blocked": "Security Violation" in (err_topic or "")
             }
 
-        # Check Supabase Cloud atomic quota if user is authenticated and Supabase is configured
-        from src.auth.supabase_client import supabase_auth_client
-        auth_user_id = None
-        try:
-            import streamlit as st
-            if hasattr(st, "session_state"):
-                u = st.session_state.get("auth_user")
-                if u and isinstance(u, dict) and u.get("user_id"):
-                    auth_user_id = u.get("user_id")
-        except Exception:
-            pass
-
-        if supabase_auth_client.is_configured() and auth_user_id and enforce_daily:
-            import hashlib
-            q_hash = hashlib.sha256(question.strip().lower().encode("utf-8")).hexdigest()[:32]
-            sb_allowed, sb_res = supabase_auth_client.check_and_consume_quota(
-                user_id=auth_user_id,
-                question_text=question.strip(),
-                question_hash=q_hash,
-                model_used="gemini-2.0-flash",
-                max_questions=3,
-                window_hours=24
-            )
-            if not sb_allowed:
-                reset_time_str = "24 hours"
-                if isinstance(sb_res, dict) and sb_res.get("reset_timestamp"):
-                    try:
-                        from datetime import datetime, timezone
-                        reset_dt = datetime.fromisoformat(str(sb_res["reset_timestamp"]).replace("Z", "+00:00"))
-                        mins_left = max(1, int((reset_dt - datetime.now(timezone.utc)).total_seconds() / 60))
-                        hrs = mins_left // 60
-                        mins = mins_left % 60
-                        reset_time_str = f"{hrs}h {mins}m" if hrs > 0 else f"{mins}m"
-                    except Exception:
-                        pass
+        # 2. Check Authoritative Quota before running queries
+        if is_auth_active and enforce_daily:
+            from src.auth.quota_service import quota_service
+            summary = quota_service.get_quota_summary(auth_user_id)
+            if summary.get("quota_exhausted"):
+                reset_time_str = summary.get("reset_time_str", "24 hours")
                 return {
                     "question": question,
-                    "topic": "⏳ Daily Free Quota Finished (3/3 Questions Used)",
+                    "topic": "⏳ Daily Free Quota Finished (3/3 used · 0 remaining)",
                     "answer_text": (
-                        f"### ⏳ Daily Free Quota Finished (3/3 Questions Used)\n\n"
-                        f"You have reached your 24-hour limit of **3 free AI analyst questions**.\n\n"
+                        f"### ⏳ Daily Free Quota Finished (3/3 used · 0 remaining)\n\n"
+                        f"You have used all **3 free AI analyst questions** for the rolling 24-hour period (3/3 used · 0 remaining).\n\n"
                         f"🕒 **Reset Schedule:** Your quota will reset in **{reset_time_str}**.\n\n"
-                        f"To ask unlimited questions without daily quotas, enter your custom **Gemini / Antigravity API key** in settings."
+                        f"Please check back after your rolling quota resets."
                     ),
                     "data_records": [],
                     "sources_cited": [],
@@ -614,6 +654,50 @@ class AIEnergyMarketAnalyst:
                 }
 
             db_context = cls._get_grounding_context()
+            usage_id = None
+            if is_auth_active and enforce_daily:
+                import hashlib
+                import uuid
+                q_hash = hashlib.sha256(question.strip().lower().encode("utf-8")).hexdigest()[:32]
+                req_id = str(uuid.uuid4())
+                sb_allowed, sb_res = supabase_auth_client.check_and_consume_quota(
+                    user_id=auth_user_id,
+                    question_text=question.strip(),
+                    question_hash=q_hash,
+                    model_used="gemini-2.0-flash",
+                    max_questions=3,
+                    window_hours=24,
+                    request_id=req_id
+                )
+                if not sb_allowed:
+                    rst_str = "24 hours"
+                    if isinstance(sb_res, dict) and sb_res.get("reset_timestamp"):
+                        try:
+                            from datetime import datetime, timezone
+                            reset_dt = datetime.fromisoformat(str(sb_res["reset_timestamp"]).replace("Z", "+00:00"))
+                            mins_left = max(1, int((reset_dt - datetime.now(timezone.utc)).total_seconds() / 60))
+                            hrs = mins_left // 60
+                            mins = mins_left % 60
+                            rst_str = f"{hrs}h {mins}m" if hrs > 0 else f"{mins}m"
+                        except Exception:
+                            pass
+                    return {
+                        "question": question,
+                        "topic": "⏳ Daily Free Quota Finished (3/3 used · 0 remaining)",
+                        "answer_text": (
+                            f"### ⏳ Daily Free Quota Finished (3/3 used · 0 remaining)\n\n"
+                            f"You have reached your 24-hour limit of **3 free AI analyst questions** (3/3 used · 0 remaining).\n\n"
+                            f"🕒 **Reset Schedule:** Your quota will reset in **{rst_str}**.\n\n"
+                            f"Please check back after your rolling quota resets."
+                        ),
+                        "data_records": [],
+                        "sources_cited": [],
+                        "is_fallback": True,
+                        "quota_used": False
+                    }
+                if isinstance(sb_res, dict):
+                    usage_id = sb_res.get("usage_id")
+
             try:
                 ai_narrative = gemini_client.generate_intelligence(
                     prompt=question,
@@ -635,6 +719,8 @@ class AIEnergyMarketAnalyst:
                 question_cache.set(question, resp)
                 return resp
             except AIQuotaExhaustedError as quota_err:
+                if usage_id and is_auth_active and auth_user_id:
+                    supabase_auth_client.refund_quota(auth_user_id, usage_id=usage_id, request_id=req_id)
                 if allow_free_autonomous:
                     resp = cls._generate_autonomous_free_ai_answer(question)
                     question_cache.set(question, resp)
@@ -650,6 +736,8 @@ class AIEnergyMarketAnalyst:
                 }
             except Exception as e:
                 logger.warning(f"Google Gemini live call failed: {e}, falling back to autonomous mode")
+                if usage_id and is_auth_active and auth_user_id:
+                    supabase_auth_client.refund_quota(auth_user_id, usage_id=usage_id, request_id=req_id)
                 if allow_free_autonomous:
                     resp = cls._generate_autonomous_free_ai_answer(question)
                     question_cache.set(question, resp)
@@ -953,6 +1041,18 @@ class AIEnergyMarketAnalyst:
                     "quota_used": True,
                     "model_used": model_id
                 }
+                if is_supabase_active and auth_user_id and enforce_daily:
+                    try:
+                        import hashlib
+                        q_hash = hashlib.sha256((question or "").strip().encode("utf-8")).hexdigest()
+                        supabase_auth_client.check_and_consume_quota(
+                            user_id=auth_user_id,
+                            question_text=question[:500],
+                            question_hash=q_hash,
+                            model_used=model_id
+                        )
+                    except Exception as q_err:
+                        logger.debug(f"Supabase quota recording notice: {q_err}")
                 question_cache.set(question, resp)
                 return resp
             except Exception as e:
@@ -961,6 +1061,18 @@ class AIEnergyMarketAnalyst:
         # Fallback: Autonomous Free AI Answer or API Key Required Notice
         if allow_free_autonomous:
             resp = cls._generate_autonomous_free_ai_answer(question)
+            if is_supabase_active and auth_user_id and enforce_daily:
+                try:
+                    import hashlib
+                    q_hash = hashlib.sha256((question or "").strip().encode("utf-8")).hexdigest()
+                    supabase_auth_client.check_and_consume_quota(
+                        user_id=auth_user_id,
+                        question_text=question[:500],
+                        question_hash=q_hash,
+                        model_used="autonomous-free-tier"
+                    )
+                except Exception as q_err:
+                    logger.debug(f"Supabase autonomous quota recording notice: {q_err}")
             question_cache.set(question, resp)
             return resp
 

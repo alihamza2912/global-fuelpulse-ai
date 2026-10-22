@@ -3,19 +3,32 @@ Retail Fuel Price Analytics Engine.
 Calculates price differentials, percentage movements, distribution statistics, and global rankings.
 """
 
+import time
+import logging
 import pandas as pd
 import numpy as np
-from typing import Dict, Any, List, Optional
+from typing import Dict, Any, List, Optional, Tuple
 from datetime import datetime
 from sqlalchemy import text
 from src.database.connection import db_manager
+
+logger = logging.getLogger(__name__)
 
 
 class FuelPriceAnalytics:
     """Computes retail gasoline and diesel price statistics and country comparisons."""
 
-    @staticmethod
+    _cache: Dict[str, Tuple[float, pd.DataFrame]] = {}
+    CACHE_TTL_SECONDS: float = 300.0  # 5-minute read cache for high responsiveness
+
+    @classmethod
+    def invalidate_cache(cls):
+        """Clears in-memory price analytics cache."""
+        cls._cache.clear()
+
+    @classmethod
     def get_latest_prices(
+        cls,
         fuel_type: Optional[str] = None,
         continent: Optional[str] = None,
         country_iso3: Optional[str] = None
@@ -23,6 +36,36 @@ class FuelPriceAnalytics:
         """
         Retrieves latest available retail prices per country with observation timestamps and sources.
         """
+        cache_key = f"latest:{fuel_type}:{continent}:{country_iso3}"
+        now_ts = time.time()
+        if cache_key in cls._cache:
+            saved_time, cached_df = cls._cache[cache_key]
+            if (now_ts - saved_time) < cls.CACHE_TTL_SECONDS:
+                return cached_df.copy()
+
+        # 1. Supabase Cloud Integration: retrieve from vw_latest_fuel_prices view when configured
+        try:
+            from src.auth.supabase_client import supabase_auth_client
+            if supabase_auth_client.is_configured():
+                sb_params = {"limit": 1000}
+                if fuel_type:
+                    sb_params["fuel_type"] = f"eq.{fuel_type}"
+                if continent and continent != "All":
+                    sb_params["continent"] = f"eq.{continent}"
+                if country_iso3 and country_iso3 != "All":
+                    sb_params["country_iso3"] = f"eq.{country_iso3}"
+                
+                ok, records, _ = supabase_auth_client.select_table("vw_latest_fuel_prices", params=sb_params)
+                if ok and records:
+                    df = pd.DataFrame(records)
+                    for col in ["price_local", "price_usd_per_litre", "tax_component_percent"]:
+                        if col in df.columns:
+                            df[col] = pd.to_numeric(df[col], errors="coerce")
+                    cls._cache[cache_key] = (now_ts, df)
+                    return df.copy()
+        except Exception as e:
+            logger.debug("Supabase read fallback to local DB: %s", e)
+
         query = """
         SELECT 
             fp.price_id,

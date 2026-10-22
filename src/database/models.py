@@ -283,9 +283,27 @@ class User(Base):
     full_name = Column(String(150), nullable=True)
     is_active = Column(Boolean, default=True)
     created_at = Column(DateTime, default=datetime.utcnow)
+    last_login_at = Column(DateTime, nullable=True)
 
     sessions = relationship("UserSession", back_populates="user", cascade="all, delete-orphan")
+    login_history = relationship("UserLoginHistory", back_populates="user", cascade="all, delete-orphan")
     ai_usages = relationship("AIQuestionUsage", back_populates="user", cascade="all, delete-orphan")
+
+
+class UserLoginHistory(Base):
+    __tablename__ = "user_login_history"
+
+    id = Column(BigInteger().with_variant(Integer, "sqlite"), primary_key=True, autoincrement=True)
+    user_id = Column(String(36), ForeignKey("users.user_id", ondelete="CASCADE"), nullable=False, index=True)
+    login_timestamp = Column(DateTime, default=datetime.utcnow, index=True)
+    event_type = Column(String(50), default="login", nullable=False)
+    result = Column(String(50), default="success", nullable=False)
+    session_id = Column(String(100), nullable=True)
+    ip_address = Column(String(45), nullable=True)
+    user_agent = Column(Text, nullable=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+    user = relationship("User", back_populates="login_history")
 
 
 class UserSession(Base):
@@ -308,8 +326,11 @@ class AIQuestionUsage(Base):
     question_text = Column(Text, nullable=False)
     question_hash = Column(String(64), nullable=False, index=True)
     created_at = Column(DateTime, default=datetime.utcnow, index=True)
-    status = Column(String(20), default="completed", index=True)  # "completed", "failed", "pending"
+    status = Column(String(20), default="completed", index=True)  # "completed", "failed", "pending", "rejected"
     model_used = Column(String(50), nullable=True)
     tokens_used = Column(Integer, nullable=True)
+    request_id = Column(String(100), nullable=True, index=True)
+    quota_unit_consumed = Column(Boolean, default=True)
 
     user = relationship("User", back_populates="ai_usages")
+

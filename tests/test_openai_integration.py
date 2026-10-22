@@ -45,21 +45,29 @@ def clean_auth_quota_db():
     test_names = ["test_analyst_1", "user_a", "user_b", "concurrent_user", "testuser"]
 
     def _cleanup():
+        from src.auth.quota_service import quota_service
+        openai_quota_manager.invalidate_cache()
+        quota_service.invalidate_cache()
         with db_manager.get_session() as s:
             # Find users matching test names or IDs
             users = s.query(User).filter(
                 (User.user_id.in_(test_uids)) | (User.username.in_(test_names))
             ).all()
             all_uids = list(set([u.user_id for u in users] + test_uids + [DEFAULT_DEMO_USER_ID]))
-            s.query(AIQuestionUsage).filter(AIQuestionUsage.user_id.in_(all_uids)).delete()
-            s.query(UserSession).filter(UserSession.user_id.in_(all_uids)).delete()
+            s.query(AIQuestionUsage).filter(AIQuestionUsage.user_id.in_(all_uids)).delete(synchronize_session=False)
+            s.query(UserSession).filter(UserSession.user_id.in_(all_uids)).delete(synchronize_session=False)
             s.query(User).filter(
                 (User.user_id.in_(test_uids)) | (User.username.in_(test_names))
-            ).delete()
+            ).delete(synchronize_session=False)
+            s.commit()
+        openai_quota_manager.invalidate_cache()
+        quota_service.invalidate_cache()
 
     _cleanup()
+    AuthService.ensure_default_demo_user()
     yield
     _cleanup()
+    AuthService.ensure_default_demo_user()
 
 
 def test_openai_api_key_sanitization():
@@ -88,8 +96,10 @@ def test_password_hashing_and_verification():
 
 def test_user_registration_and_authentication():
     """Verifies database-backed user registration, login, and session validation."""
-    username = "test_analyst_1"
-    email = "analyst1@fuelpulse.ai"
+    import uuid
+    uid_suffix = uuid.uuid4().hex[:8]
+    username = f"test_analyst_{uid_suffix}"
+    email = f"analyst_{uid_suffix}@fuelpulse.ai"
     pwd = "Password123!"
 
     # Registration
@@ -165,8 +175,10 @@ def test_atomic_rolling_24h_quota_enforcement():
 
 def test_multi_user_quota_isolation():
     """Verifies that User A exhausting their quota does not affect User B."""
-    ok_a, _, user_a = AuthService.register_user("user_a", "usera@test.com", "pass123")
-    ok_b, _, user_b = AuthService.register_user("user_b", "userb@test.com", "pass123")
+    import uuid
+    suffix = uuid.uuid4().hex[:8]
+    ok_a, _, user_a = AuthService.register_user(f"user_a_{suffix}", f"usera_{suffix}@test.com", "pass123")
+    ok_b, _, user_b = AuthService.register_user(f"user_b_{suffix}", f"userb_{suffix}@test.com", "pass123")
     assert ok_a and ok_b
 
     uid_a = user_a.user_id

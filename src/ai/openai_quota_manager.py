@@ -56,6 +56,11 @@ class OpenAIQuotaManager:
     def __init__(self):
         self._lock = threading.RLock()
 
+    def invalidate_cache(self, user_id: Optional[str] = None) -> None:
+        """Invalidates cache in the unified QuotaService."""
+        from src.auth.quota_service import quota_service
+        quota_service.invalidate_cache(user_id)
+
     @classmethod
     def format_time_delta(cls, target_dt: datetime) -> str:
         """Formats remaining time into human-friendly hours and minutes."""
@@ -72,51 +77,32 @@ class OpenAIQuotaManager:
 
     def get_user_quota_status(self, user_id: str) -> Dict[str, Any]:
         """
-        Retrieves the current rolling 24-hour quota status for an authenticated user ID.
+        Retrieves the authoritative rolling 24-hour quota status for a user.
+        Delegates directly to the unified QuotaService.
         """
-        if not user_id:
-            return {
-                "user_id": None,
-                "max_allowed": MAX_QUESTIONS_PER_24H,
-                "used_count": 0,
-                "remaining": 0,
-                "is_exhausted": True,
-                "reset_timestamp": None,
-                "reset_time_str": "Requires authentication"
-            }
+        from src.auth.quota_service import quota_service
+        q = quota_service.get_quota_summary(user_id)
+        reset_ts_dt = None
+        if q.get("resets_at"):
+            try:
+                reset_ts_dt = datetime.fromisoformat(str(q["resets_at"]).replace("Z", "+00:00"))
+            except Exception:
+                pass
 
-        cutoff = utc_now() - timedelta(hours=ROLLING_WINDOW_HOURS)
-
-        with self._lock:
-            with db_manager.get_session() as session:
-                # Query completed usage records in rolling 24h
-                usages = session.query(AIQuestionUsage).filter(
-                    AIQuestionUsage.user_id == str(user_id),
-                    AIQuestionUsage.created_at >= cutoff,
-                    AIQuestionUsage.status == "completed"
-                ).order_by(AIQuestionUsage.created_at.asc()).all()
-
-                used_count = len(usages)
-                remaining = max(0, MAX_QUESTIONS_PER_24H - used_count)
-                is_exhausted = used_count >= MAX_QUESTIONS_PER_24H
-
-                reset_ts = None
-                reset_time_str = "N/A"
-                if is_exhausted and usages:
-                    # Oldest record in the rolling window determines when the next slot frees up
-                    oldest_in_window = usages[0].created_at
-                    reset_ts = oldest_in_window + timedelta(hours=ROLLING_WINDOW_HOURS)
-                    reset_time_str = self.format_time_delta(reset_ts)
-
-                return {
-                    "user_id": user_id,
-                    "max_allowed": MAX_QUESTIONS_PER_24H,
-                    "used_count": used_count,
-                    "remaining": remaining,
-                    "is_exhausted": is_exhausted,
-                    "reset_timestamp": reset_ts,
-                    "reset_time_str": reset_time_str
-                }
+        return {
+            "user_id": user_id,
+            "max_allowed": q["limit"],
+            "used_count": q["used"],
+            "remaining": q["remaining"],
+            "is_exhausted": q["quota_exhausted"],
+            "reset_timestamp": reset_ts_dt,
+            "reset_time_str": q["reset_time_str"],
+            "used": q["used"],
+            "limit": q["limit"],
+            "window_started_at": q["window_started_at"],
+            "resets_at": q["resets_at"],
+            "quota_exhausted": q["quota_exhausted"]
+        }
 
     def check_quota(self, user_id: str) -> Tuple[bool, Optional[str], Dict[str, Any]]:
         """
@@ -179,6 +165,11 @@ class OpenAIQuotaManager:
                 )
                 session.add(usage_record)
                 session.commit()
+                try:
+                    from src.auth.quota_service import quota_service
+                    quota_service.invalidate_cache(user_id)
+                except Exception:
+                    pass
                 logger.info(
                     "Recorded OpenAI usage for user %s. Used: %d/%d",
                     user_id, len(current_usages) + 1, MAX_QUESTIONS_PER_24H

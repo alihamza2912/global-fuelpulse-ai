@@ -20,7 +20,11 @@ logger = logging.getLogger(__name__)
 ALLOWED_FREE_MODELS = {
     "gemini-3.5-flash-lite",
     "gemini-3.5-flash",
+    "gemini-3.1-flash-lite",
+    "gemini-3-flash-preview",
     "gemini-3.8-flash",
+    "gemini-flash-latest",
+    "gemini-flash-lite-latest",
     "gemini-2.5-flash-lite",
     "gemini-2.5-flash",
     "gemini-2.0-flash",
@@ -138,14 +142,19 @@ class GeminiFreeTierClient:
 
         # Default professional analyst grounding instruction
         default_system = (
-            "You are Global FuelPulse AI, a professional, world-class executive AI assistant and market intelligence analyst. "
-            "You provide rigorous, objective, and deeply grounded answers across all domains: general knowledge, "
-            "science, programming, business, macroeconomics, policy, and global energy markets.\n\n"
-            "Professional Guidelines:\n"
-            "1. Answer the question directly and articulately in clear, executive-grade language without conversational filler or meta-labels.\n"
-            "2. Whenever explaining a concept, workflow, supply chain, system architecture, or economic cycle, provide a clean Mermaid flowchart diagram (using ```mermaid ... ```).\n"
-            "3. Provide structured '### 🔍 Key Facts & Analytical Breakdown' with bullet points, figures, and verified insights.\n"
-            "4. Never invent speculative prices or hallucinatory statistics."
+            "You are Global FuelPulse AI, a senior energy systems specialist, macroeconomic analyst, and global petroleum market intelligence advisor.\n\n"
+            "Core Guidelines:\n"
+            "1. Answer the exact question directly in the opening paragraph using clear, professional, authoritative English without conversational meta-filler.\n"
+            "2. Provide executive-grade depth and detail rather than generic introductory statements. Structure responses with logical Markdown headings, bullet points, and tables where helpful.\n"
+            "3. When answering questions with superlatives like 'best', 'top', 'cheapest', or 'leading' (e.g. 'Who is the best supplier of fuel in USA?'):\n"
+            "   - Disaggregate the market by segment: wholesale rack supply, retail station networks, bulk commercial/fleet delivery, and crude refining.\n"
+            "   - Compare leading contenders (e.g. Marathon Petroleum, Valero, ExxonMobil, Phillips 66, Shell, Chevron) using objective operational criteria (refining capacity bpd, logistics, distribution reach, reliability).\n"
+            "   - Explain the criteria and trade-offs rather than declaring an unsupported single winner.\n"
+            "4. Distinguish between verified empirical facts, current estimates, and strategic inferences. Always include dates, units ($/bbl, $/gal, metric tonnes), and geographic locations for figures.\n"
+            "5. Cite supporting evidence with clickable Markdown links [Source Name](URL) whenever live search findings are provided. Clearly separate live online findings from internal database numbers.\n"
+            "6. Admit when reliable evidence is insufficient or when live search returned no current data, without inventing statistics or citations.\n"
+            "7. When explaining a supply chain, flow, or system architecture, provide a valid Mermaid flowchart (```mermaid ... ```).\n"
+            "8. Answer any topic asked by the user, applying Global FuelPulse's rigorous analytical standards."
         )
         sys_text = system_instruction or default_system
         if context_data:
@@ -153,12 +162,16 @@ class GeminiFreeTierClient:
 
         # Enrich with live web research grounding
         try:
-            from src.ai.deep_research_engine import DeepOnlineResearchEngine
-            web_items = DeepOnlineResearchEngine.search_web(prompt, max_results=4)
-            if web_items:
-                snippets_text = "\n".join(f"- [{it['title']}]({it['url']}): {it['snippet']}" for it in web_items)
-                sys_text += f"\n\nLive External Web Research Grounding (Real-Time Current Web Findings):\n{snippets_text}\n"
-                sys_text += "Always incorporate these live search findings and cite the sources as clickable markdown links [Source Title](URL)."
+            from src.ai.deep_research_engine import DeepOnlineResearchEngine, should_perform_web_search
+            needs_search = should_perform_web_search(prompt)
+            if needs_search:
+                web_items = DeepOnlineResearchEngine.search_web(prompt, max_results=5)
+                if web_items:
+                    snippets_text = "\n".join(f"- [{it['title']}]({it['url']}): {it['snippet']}" for it in web_items)
+                    sys_text += f"\n\nLive External Web Research Grounding (Real-Time Current Web Findings):\n{snippets_text}\n"
+                    sys_text += "Always incorporate these live search findings and cite the sources as clickable markdown links [Source Title](URL). Clearly distinguish live web findings from internal database metrics."
+                else:
+                    sys_text += "\n\nLive External Web Research Notice: Online search was attempted for current information but did not return live results. Clearly state that live online search could not retrieve current data at this moment rather than inventing current prices, suppliers, or news."
         except Exception as e:
             logger.debug(f"Web research grounding notice: {e}")
 
@@ -172,16 +185,16 @@ class GeminiFreeTierClient:
             }
         ]
 
-        # Generation config (strict free tier parameters, low temperature & bounded tokens for fast response)
+        # Generation config (executive depth with 2048 output tokens)
         payload["generationConfig"] = {
-            "temperature": 0.1,
-            "maxOutputTokens": 600,
-            "topP": 0.8,
+            "temperature": 0.2,
+            "maxOutputTokens": 2048,
+            "topP": 0.9,
         }
 
         # Multi-model resilience: try primary model, fall back to companion models if Google returns 429/404/503/500
         models_to_try = [self.model]
-        for companion in ["gemini-3.5-flash-lite", "gemini-3.5-flash", "gemini-3.8-flash"]:
+        for companion in ["gemini-3.5-flash-lite", "gemini-3.1-flash-lite", "gemini-3-flash-preview", "gemini-3.5-flash", "gemini-3.8-flash"]:
             if companion not in models_to_try and companion in ALLOWED_FREE_MODELS:
                 models_to_try.append(companion)
 

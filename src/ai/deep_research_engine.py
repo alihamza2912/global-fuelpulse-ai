@@ -21,29 +21,35 @@ TEMPORAL_AND_LIVE_TRIGGERS = {
     "news", "breaking", "update", "updates", "trending", "headlines", "live",
     "spot price", "2025", "2026", "2027", "right now", "real time", "realtime",
     "market open", "close today", "today's", "happening", "search", "browse",
-    "look up", "find online", "google"
+    "look up", "find online", "google", "supplier", "suppliers", "vendor", "vendors",
+    "distributor", "distributors", "refiner", "refiners", "producer", "producers",
+    "ranking", "rankings", "cheapest", "leading", "bunkering", "wholesaler", "wholesalers"
 }
 
 
 def should_perform_web_search(query: str) -> bool:
     """
     Intelligently determines whether a natural language query requires live web search.
-    Conceptual, educational, historical, database, or algorithmic questions bypass
-    blocking web search and stream directly to the LLM (reducing latency from ~14s to ~1.5s).
+    Performs real online search when the answer needs fresh facts, current fuel prices,
+    supplier rankings, regulations, trade data, news, or changing market intelligence.
     """
     if not query or not isinstance(query, str):
         return False
     q_lower = query.lower().strip()
 
-    # Direct word match against temporal triggers
+    # Direct word match against triggers
     words = set(re.findall(r"\b\w+\b", q_lower))
     if any(trigger in words for trigger in TEMPORAL_AND_LIVE_TRIGGERS):
         return True
 
-    # Multi-word phrase triggers
+    # Multi-word phrase triggers (comparisons, rankings, current market developments)
     multi_word_triggers = [
         "this week", "this month", "this year", "right now", "real time",
-        "spot price", "close today", "today's", "look up", "find online"
+        "spot price", "close today", "today's", "look up", "find online",
+        "best supplier", "top supplier", "best fuel", "top fuel", "who is the best",
+        "who are the best", "who is the top", "who is the leading", "market share",
+        "fuel price", "petrol price", "diesel price", "gas price", "crude price",
+        "strait of hormuz", "red sea", "suez canal"
     ]
     if any(phrase in q_lower for phrase in multi_word_triggers):
         return True
@@ -76,7 +82,7 @@ class DeepOnlineResearchEngine:
             ddg_hits = []
             try:
                 from ddgs import DDGS
-                with DDGS(timeout=3) as ddgs:
+                with DDGS(timeout=6) as ddgs:
                     raw = list(ddgs.text(clean_q, max_results=max_results))
                     for r in raw:
                         title = r.get("title", "").strip()
@@ -101,8 +107,8 @@ class DeepOnlineResearchEngine:
             fut_ddg = executor.submit(_run_ddgs)
             fut_wiki = executor.submit(_run_wiki)
 
-            # Wait for both with a strict 3.5s collective timeout
-            done, not_done = concurrent.futures.wait([fut_ddg, fut_wiki], timeout=3.5)
+            # Wait for both with a reliable 7.0s collective timeout
+            done, not_done = concurrent.futures.wait([fut_ddg, fut_wiki], timeout=7.0)
 
             if fut_ddg.done():
                 try:

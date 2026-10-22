@@ -1,5 +1,12 @@
 import pytest
-from src.ui_components import render_app_header_brand_html
+from src.ui_components import (
+    render_app_header_brand_html,
+    get_logo_mark_svg,
+    get_brand_logo_svg,
+    get_news_globe_icon_svg,
+    get_lucide_icon_svg,
+    apply_theme
+)
 
 def test_app_header_brand_html_structure():
     """Verifies that the brand title, AI badge, subtitle, and status indicators are strictly separated."""
@@ -32,3 +39,35 @@ def test_app_header_brand_html_structure():
     status_idx = html.find("fuelpulse-header-status-cluster")
     
     assert sub_row_idx < v_div_idx < status_idx, "Layout order must be Sub-row -> Divider -> Status Cluster"
+
+
+def test_brand_logo_and_news_globe_svg():
+    """Verifies brand vector marks and News globe SVG generation."""
+    mark = get_logo_mark_svg(36)
+    assert "<svg" in mark
+    assert "viewBox=\"0 0 36 36\"" in mark
+    assert "gfp_drop_grad" in mark
+
+    brand = get_brand_logo_svg(340, 54, "en")
+    assert "GLOBAL FUELPULSE" in brand
+    assert "AI" in brand
+
+    globe = get_news_globe_icon_svg(24, "en")
+    assert "NEWS" in globe
+    assert "<circle" in globe
+
+
+def test_lucide_icon_system():
+    """Verifies pure-SVG Lucide vector icons render correctly."""
+    icons_to_test = ["database", "activity", "bot", "fuel", "languages", "newspaper", "sparkles"]
+    for icon_name in icons_to_test:
+        svg = get_lucide_icon_svg(icon_name, size=20, color="#F5B942")
+        assert "<svg" in svg
+        assert "viewBox=\"0 0 24 24\"" in svg
+        assert "stroke=\"#F5B942\"" in svg
+
+
+def test_apply_theme_runs_safely():
+    """Verifies that apply_theme executes without exception in standalone environment."""
+    apply_theme()
+

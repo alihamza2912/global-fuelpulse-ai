@@ -148,6 +148,23 @@ def ensure_database_ready():
 
 ensure_database_ready()
 
+@st.cache_data(ttl=60, show_spinner=False)
+def get_cached_engine_health():
+    """Caches DB connection check for 60 seconds to eliminate redundant round-trips."""
+    try:
+        return db_manager.check_health()
+    except Exception:
+        return {"connected": False, "dialect": "sqlite", "database": "local", "tables_count": 0}
+
+@st.cache_data(ttl=60, show_spinner=False)
+def get_cached_sync_timestamps():
+    """Caches sync timestamps for 60 seconds to avoid repeated table queries on UI interactions."""
+    try:
+        from src.ingestion.orchestrator import orchestrator
+        return orchestrator.get_last_sync_timestamps()
+    except Exception:
+        return {}
+
 
 # 3. Navigation Structure & URL Routing
 current_lang = get_current_language()
@@ -273,8 +290,8 @@ render_html(
     container=st.sidebar
 )
 
-# Engine Health Badge
-health = db_manager.check_health()
+# Engine Health Badge (Cached)
+health = get_cached_engine_health()
 engine_sym = "🟢" if health["connected"] else "🔴"
 render_html(
     f"""
@@ -362,8 +379,7 @@ if st.sidebar.button(f"⚡ {t('sidebar_sync_btn', current_lang)}", key="sidebar_
         st.sidebar.success("Live data refreshed!")
         st.rerun()
 
-from src.ingestion.orchestrator import orchestrator
-sync_times = orchestrator.get_last_sync_timestamps()
+sync_times = get_cached_sync_timestamps()
 last_fx = sync_times.get("OPEN_ER_API") or "Today"
 last_eia = sync_times.get("US_EIA") or "Today"
 last_ppac = sync_times.get("INDIA_PPAC") or "Today"

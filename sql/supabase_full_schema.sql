@@ -53,7 +53,11 @@ CREATE POLICY "Users can update own profile"
 
 -- Trigger to automatically create profile on signup
 CREATE OR REPLACE FUNCTION public.handle_new_user()
-RETURNS TRIGGER AS $$
+RETURNS TRIGGER 
+LANGUAGE plpgsql 
+SECURITY DEFINER
+SET search_path = public, auth, pg_temp
+AS $$
 BEGIN
     INSERT INTO public.profiles (id, username, full_name, email, preferences)
     VALUES (
@@ -68,7 +72,11 @@ BEGIN
         updated_at = NOW();
     RETURN new;
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+$$;
+
+REVOKE EXECUTE ON FUNCTION public.handle_new_user() FROM PUBLIC;
+REVOKE EXECUTE ON FUNCTION public.handle_new_user() FROM anon;
+REVOKE EXECUTE ON FUNCTION public.handle_new_user() FROM authenticated;
 
 DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
 CREATE TRIGGER on_auth_user_created
@@ -117,7 +125,11 @@ CREATE OR REPLACE FUNCTION public.check_and_consume_ai_quota(
     p_max_questions INT DEFAULT 3,
     p_window_hours INT DEFAULT 24
 )
-RETURNS JSONB AS $$
+RETURNS JSONB
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public, pg_temp
+AS $$
 DECLARE
     v_cutoff TIMESTAMPTZ;
     v_used_count INT;
@@ -126,6 +138,11 @@ DECLARE
     v_remaining INT;
     v_new_usage_id BIGINT;
 BEGIN
+    -- Security guard: If called by an authenticated user, verify they are consuming their own quota
+    IF auth.uid() IS NOT NULL AND auth.uid() != p_user_id THEN
+        RAISE EXCEPTION 'Access Denied: You can only consume your own AI question quota.';
+    END IF;
+
     v_cutoff := NOW() - (p_window_hours || ' hours')::INTERVAL;
 
     -- Concurrency safety: lock active usage rows for this user within window
@@ -171,7 +188,12 @@ BEGIN
         'message', 'Question accepted. ' || v_remaining || '/' || p_max_questions || ' free questions remaining.'
     );
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+$$;
+
+REVOKE EXECUTE ON FUNCTION public.check_and_consume_ai_quota(UUID, TEXT, TEXT, TEXT, INT, INT) FROM PUBLIC;
+REVOKE EXECUTE ON FUNCTION public.check_and_consume_ai_quota(UUID, TEXT, TEXT, TEXT, INT, INT) FROM anon;
+GRANT EXECUTE ON FUNCTION public.check_and_consume_ai_quota(UUID, TEXT, TEXT, TEXT, INT, INT) TO authenticated;
+GRANT EXECUTE ON FUNCTION public.check_and_consume_ai_quota(UUID, TEXT, TEXT, TEXT, INT, INT) TO service_role;
 
 -- ------------------------------------------------------------------------------
 -- 4. PRIVATE CHAT CONVERSATIONS & MESSAGE HISTORY
@@ -395,7 +417,8 @@ END $$;
 -- ------------------------------------------------------------------------------
 -- 7. ANALYTICAL VIEWS
 -- ------------------------------------------------------------------------------
-CREATE OR REPLACE VIEW public.vw_latest_fuel_prices AS
+CREATE OR REPLACE VIEW public.vw_latest_fuel_prices
+WITH (security_invoker = true) AS
 WITH ranked_prices AS (
     SELECT 
         fp.price_id,

@@ -19,7 +19,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import select
 
 from src.database.connection import db_manager
-from src.database.models import User, UserSession
+from src.database.models import User, UserSession, UserLoginHistory, AIQuestionUsage
 from src.auth.supabase_client import supabase_auth_client
 
 logger = logging.getLogger(__name__)
@@ -129,6 +129,12 @@ class AuthService:
             sb_ok, sb_msg, sb_user = supabase_auth_client.sign_up(email_clean, password, meta)
             if sb_ok and sb_user:
                 user_id = (sb_user.get("id") if isinstance(sb_user, dict) else None) or str(uuid.uuid4())
+                supabase_auth_client.ensure_profile_exists(
+                    user_id=user_id,
+                    email=email_clean,
+                    username=username_clean,
+                    full_name=(full_name or "").strip() or username_clean.capitalize()
+                )
                 with db_manager.get_session() as session:
                     existing = session.query(User).filter(
                         (User.username == username_clean) | (User.email == email_clean) | (User.user_id == user_id)
@@ -152,6 +158,10 @@ class AuthService:
                     return True, "User registered successfully via Supabase.", existing
             elif not sb_ok and "already registered" in sb_msg.lower():
                 return False, "An account with this email already exists.", None
+            elif not sb_ok and ("rate limit" in sb_msg.lower() or "over_email_send_rate_limit" in sb_msg.lower()):
+                logger.warning(f"Supabase auth rate limited ({sb_msg}), falling back to local database registration")
+            else:
+                return False, sb_msg, None
 
         with db_manager.get_session() as session:
             # Check existing username or email
@@ -182,7 +192,9 @@ class AuthService:
     def login_user(
         cls,
         username_or_email: str,
-        password: str
+        password: str,
+        request_ip: Optional[str] = None,
+        user_agent: Optional[str] = None
     ) -> Tuple[bool, str, Optional[str], Optional[Dict[str, Any]]]:
         """
         Authenticates a user and creates a secure session token.
@@ -192,28 +204,60 @@ class AuthService:
         if not ident or not password:
             return False, "Please provide username/email and password.", None, None
 
-        # Supabase Integration: attempt cloud login if configured and email is provided
-        if supabase_auth_client.is_configured() and "@" in ident and ident != DEFAULT_DEMO_EMAIL:
-            sb_ok, sb_msg, sb_token, sb_user = supabase_auth_client.sign_in_with_password(ident, password)
-            if sb_ok and sb_token and sb_user:
-                # Mirror user in local database to guarantee foreign-key constraints for local tables
-                with db_manager.get_session() as session:
-                    local_user = session.query(User).filter(
-                        (User.user_id == sb_user["user_id"]) | (User.email == sb_user["email"])
-                    ).first()
-                    if not local_user:
-                        local_user = User(
-                            user_id=sb_user["user_id"],
-                            username=sb_user["username"],
-                            email=sb_user["email"],
-                            password_hash=hash_password(password),
-                            full_name=sb_user["full_name"],
-                            is_active=True,
-                            created_at=utc_now()
-                        )
-                        session.add(local_user)
+        # Supabase Integration: attempt cloud login if configured (supports email or username)
+        # Demo account bypasses cloud so local offline testing always succeeds
+        if supabase_auth_client.is_configured() and ident not in (DEFAULT_DEMO_EMAIL, DEFAULT_DEMO_USERNAME):
+            login_email = ident
+            if "@" not in login_email:
+                resolved = supabase_auth_client.resolve_email_from_username(ident)
+                if resolved:
+                    login_email = resolved
+
+            if "@" in login_email:
+                sb_ok, sb_msg, sb_token, sb_user = supabase_auth_client.sign_in_with_password(login_email, password)
+                if sb_ok and sb_token and sb_user:
+                    # Guarantee user profile is current in public.profiles
+                    supabase_auth_client.ensure_profile_exists(
+                        user_id=sb_user["user_id"],
+                        email=sb_user["email"],
+                        username=sb_user["username"],
+                        full_name=sb_user["full_name"]
+                    )
+                    # Mirror user in local database to guarantee foreign-key constraints for local tables
+                    with db_manager.get_session() as session:
+                        local_user = session.query(User).filter(
+                            (User.user_id == sb_user["user_id"]) | 
+                            (User.email == sb_user["email"]) |
+                            (User.username == sb_user["username"])
+                        ).first()
+                        if not local_user:
+                            local_user = User(
+                                user_id=sb_user["user_id"],
+                                username=sb_user["username"],
+                                email=sb_user["email"],
+                                password_hash=hash_password(password),
+                                full_name=sb_user["full_name"],
+                                is_active=True,
+                                created_at=utc_now(),
+                                last_login_at=utc_now()
+                            )
+                            session.add(local_user)
+                        else:
+                            local_user.last_login_at = utc_now()
                         session.commit()
-                return True, "Login successful via Supabase.", sb_token, sb_user
+
+                    # Record login audit event in Supabase
+                    supabase_auth_client.record_login(
+                        user_id=sb_user["user_id"],
+                        event_type="login",
+                        result="success",
+                        ip_address=request_ip,
+                        user_agent=user_agent,
+                        session_id=sb_token[:24] if sb_token else None
+                    )
+                    return True, "Login successful via Supabase.", sb_token, sb_user
+                elif sb_msg and "invalid" in sb_msg.lower():
+                    return False, "Invalid email/username or password.", None, None
 
         with db_manager.get_session() as session:
             user = session.query(User).filter(
@@ -226,6 +270,9 @@ class AuthService:
             if not user.is_active:
                 return False, "This account is inactive. Please contact support.", None, None
 
+            # Update last login timestamp
+            user.last_login_at = utc_now()
+
             # Generate crypto-secure session token
             token = secrets.token_urlsafe(32)
             user_session = UserSession(
@@ -236,14 +283,40 @@ class AuthService:
                 is_revoked=False
             )
             session.add(user_session)
+
+            # Record login audit in local database
+            try:
+                hist_record = UserLoginHistory(
+                    user_id=user.user_id,
+                    event_type="login",
+                    result="success",
+                    ip_address=request_ip,
+                    user_agent=user_agent,
+                    session_id=token[:24]
+                )
+                session.add(hist_record)
+            except Exception as audit_err:
+                logger.debug(f"Local login audit notice: {audit_err}")
+
             session.commit()
+
+            if supabase_auth_client.is_configured() and user.user_id and "-" in str(user.user_id):
+                supabase_auth_client.record_login(
+                    user_id=user.user_id,
+                    event_type="login",
+                    result="success",
+                    ip_address=request_ip,
+                    user_agent=user_agent,
+                    session_id=token[:24]
+                )
 
             user_dict = {
                 "user_id": user.user_id,
                 "username": user.username,
                 "email": user.email,
                 "full_name": user.full_name,
-                "created_at": user.created_at.isoformat() if user.created_at else None
+                "created_at": user.created_at.isoformat() if user.created_at else None,
+                "last_login_at": user.last_login_at.isoformat() if user.last_login_at else None
             }
             return True, "Login successful.", token, user_dict
 
@@ -279,17 +352,24 @@ class AuthService:
                 "username": user.username,
                 "email": user.email,
                 "full_name": user.full_name,
-                "session_token": clean_token
+                "session_token": clean_token,
+                "last_login_at": user.last_login_at.isoformat() if user.last_login_at else None
             }
 
     @classmethod
     def logout(cls, token: Optional[str]) -> bool:
-        """Revokes an active session token."""
+        """Revokes an active session token and records the logout event."""
         if not token:
             return False
 
+        sb_done = False
+        user_id_to_log = None
         if supabase_auth_client.is_configured():
-            supabase_auth_client.sign_out(token)
+            u = cls.get_active_user()
+            if u and u.get("user_id"):
+                user_id_to_log = u["user_id"]
+                supabase_auth_client.record_login(user_id=user_id_to_log, event_type="logout", result="success")
+            sb_done = supabase_auth_client.sign_out(token)
 
         with db_manager.get_session() as session:
             sess = session.query(UserSession).filter(
@@ -299,7 +379,7 @@ class AuthService:
                 sess.is_revoked = True
                 session.commit()
                 return True
-        return False
+        return sb_done or bool(supabase_auth_client.is_configured())
 
     @classmethod
     def get_active_user(cls) -> Optional[Dict[str, Any]]:
@@ -416,3 +496,66 @@ class AuthService:
         except Exception as e:
             logger.error(f"Failed to persist Supabase credentials to .env: {e}")
             return True, "Supabase credentials connected for active session (could not write to .env)."
+
+    @classmethod
+    def get_user_login_history(cls, user_id: str, limit: int = 10, access_token: Optional[str] = None) -> list[Dict[str, Any]]:
+        """Retrieves login history for a user from Supabase or local SQLite."""
+        if not user_id:
+            return []
+        if supabase_auth_client.is_configured() and "-" in str(user_id) and len(str(user_id)) >= 32:
+            sb_rows = supabase_auth_client.get_user_login_history(user_id, limit=limit, access_token=access_token)
+            if sb_rows:
+                return sb_rows
+
+        try:
+            with db_manager.get_session() as session:
+                rows = session.query(UserLoginHistory).filter(
+                    UserLoginHistory.user_id == str(user_id)
+                ).order_by(UserLoginHistory.login_timestamp.desc()).limit(limit).all()
+                return [
+                    {
+                        "id": r.id,
+                        "user_id": r.user_id,
+                        "login_timestamp": r.login_timestamp.isoformat() if r.login_timestamp else None,
+                        "event_type": r.event_type,
+                        "result": r.result,
+                        "session_id": r.session_id,
+                        "ip_address": r.ip_address,
+                        "user_agent": r.user_agent
+                    }
+                    for r in rows
+                ]
+        except Exception as e:
+            logger.debug(f"Local login history lookup notice: {e}")
+            return []
+
+    @classmethod
+    def get_user_question_history(cls, user_id: str, limit: int = 10, access_token: Optional[str] = None) -> list[Dict[str, Any]]:
+        """Retrieves AI question history for a user from Supabase or local SQLite."""
+        if not user_id:
+            return []
+        if supabase_auth_client.is_configured() and "-" in str(user_id) and len(str(user_id)) >= 32:
+            sb_rows = supabase_auth_client.get_user_question_history(user_id, limit=limit, access_token=access_token)
+            if sb_rows:
+                return sb_rows
+
+        try:
+            with db_manager.get_session() as session:
+                rows = session.query(AIQuestionUsage).filter(
+                    AIQuestionUsage.user_id == str(user_id)
+                ).order_by(AIQuestionUsage.created_at.desc()).limit(limit).all()
+                return [
+                    {
+                        "usage_id": r.usage_id,
+                        "user_id": r.user_id,
+                        "question_text": r.question_text,
+                        "created_at": r.created_at.isoformat() if r.created_at else None,
+                        "status": r.status,
+                        "model_used": r.model_used,
+                        "quota_unit_consumed": getattr(r, "quota_unit_consumed", True)
+                    }
+                    for r in rows
+                ]
+        except Exception as e:
+            logger.debug(f"Local question history lookup notice: {e}")
+            return []

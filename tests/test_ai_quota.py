@@ -424,13 +424,14 @@ def test_antigravity_token_unlocks_unlimited_questions():
 
     # Mock Antigravity token configured
     with patch("src.ai.nl_query_engine.gemini_client.is_key_configured", return_value=True):
-        with patch("config.settings.get_gemini_api_key", return_value="antigravity_token_secret_12345"):
-            with patch("config.settings.is_user_custom_key_configured", return_value=True):
-                for i in range(5):
-                    session_protector._sessions.setdefault(sess_id, {"last_timestamp": 0.0, "hourly_timestamps": [], "daily_timestamps": []})
-                    session_protector._sessions[sess_id]["last_timestamp"] = time.time() - 10.0
-                    ans = AIEnergyMarketAnalyst.answer_question(f"Query {i}", session_id=sess_id, allow_free_autonomous=True)
-                    assert "Daily Free Quota Finished" not in ans["topic"]
+        with patch("src.ai.nl_query_engine.gemini_client.generate_intelligence", return_value="Verified Antigravity intelligence briefing"):
+            with patch("config.settings.get_gemini_api_key", return_value="antigravity_token_secret_12345"):
+                with patch("config.settings.is_user_custom_key_configured", return_value=True):
+                    for i in range(5):
+                        session_protector._sessions.setdefault(sess_id, {"last_timestamp": 0.0, "hourly_timestamps": [], "daily_timestamps": []})
+                        session_protector._sessions[sess_id]["last_timestamp"] = time.time() - 10.0
+                        ans = AIEnergyMarketAnalyst.answer_question(f"Query {i}", session_id=sess_id, allow_free_autonomous=True)
+                        assert "Daily Free Quota Finished" not in ans["topic"]
 
 
 def test_enterprise_security_shield_blocks_and_terminates():

@@ -9,9 +9,15 @@ Provides:
 
 import os
 import json
+import time
 import logging
+import threading
+from datetime import datetime, timezone, timedelta
 from typing import Optional, Dict, Any, Tuple, List
 import requests
+from dotenv import load_dotenv
+
+load_dotenv()
 
 logger = logging.getLogger(__name__)
 
@@ -53,11 +59,17 @@ class SupabaseAuthClient:
         self._custom_url = supabase_url
         self._custom_key = supabase_key
         self._custom_service_key = service_role_key
+        self._http = requests.Session()
+        adapter = requests.adapters.HTTPAdapter(pool_connections=10, pool_maxsize=20, max_retries=2)
+        self._http.mount("https://", adapter)
+        self._http.mount("http://", adapter)
+        self._quota_cache: Dict[str, Tuple[float, Dict[str, Any]]] = {}
+        self._quota_lock = threading.RLock()
 
     @property
     def url(self) -> str:
         """Returns the configured Supabase project URL."""
-        if self._custom_url:
+        if self._custom_url is not None:
             return self._custom_url.rstrip("/")
         raw = _get_config_val("SUPABASE_URL", ("NEXT_PUBLIC_SUPABASE_URL", "VITE_SUPABASE_URL"))
         return raw.rstrip("/")
@@ -65,7 +77,7 @@ class SupabaseAuthClient:
     @property
     def anon_key(self) -> str:
         """Returns the configured Supabase anonymous public key."""
-        if self._custom_key:
+        if self._custom_key is not None:
             return self._custom_key
         return _get_config_val(
             "SUPABASE_KEY",
@@ -75,7 +87,7 @@ class SupabaseAuthClient:
     @property
     def service_role_key(self) -> str:
         """Returns optional Supabase service role key for administrative tasks."""
-        if self._custom_service_key:
+        if self._custom_service_key is not None:
             return self._custom_service_key
         return _get_config_val("SUPABASE_SERVICE_ROLE_KEY", ("SUPABASE_SERVICE_KEY",))
 
@@ -85,17 +97,20 @@ class SupabaseAuthClient:
         k = self.anon_key
         return bool(u and k and u.startswith("http") and len(k) > 10)
 
-    def _headers(self, token: Optional[str] = None) -> Dict[str, str]:
+    def _headers(self, token: Optional[str] = None, use_service_key: bool = False) -> Dict[str, str]:
         """Constructs headers for Supabase API requests."""
+        key = self.service_role_key if (use_service_key and self.service_role_key) else self.anon_key
         headers = {
-            "apikey": self.anon_key,
+            "apikey": key,
             "Content-Type": "application/json",
             "Accept": "application/json"
         }
         if token:
             headers["Authorization"] = f"Bearer {token}"
-        elif self.anon_key:
-            headers["Authorization"] = f"Bearer {self.anon_key}"
+        elif use_service_key and self.service_role_key:
+            headers["Authorization"] = f"Bearer {self.service_role_key}"
+        elif key:
+            headers["Authorization"] = f"Bearer {key}"
         return headers
 
     def sign_up(
@@ -125,7 +140,7 @@ class SupabaseAuthClient:
         }
 
         try:
-            resp = requests.post(
+            resp = self._http.post(
                 url,
                 headers=self._headers(),
                 json=payload,
@@ -135,6 +150,30 @@ class SupabaseAuthClient:
 
             if resp.status_code in (200, 201):
                 user = data.get("user") or data
+                user_id = user.get("id")
+                # Auto-confirm user via Admin API if service role key is configured so login works immediately
+                if user_id and self.service_role_key:
+                    try:
+                        admin_url = f"{self.url}/auth/v1/admin/users/{user_id}"
+                        self._http.put(
+                            admin_url,
+                            headers=self._headers(use_service_key=True),
+                            json={"email_confirm": True},
+                            timeout=DEFAULT_TIMEOUT
+                        )
+                    except Exception as ce:
+                        logger.debug(f"Auto-confirm notice: {ce}")
+
+                # Ensure user profile exists in public.profiles table
+                if user_id:
+                    u_meta = metadata or {}
+                    self.ensure_profile_exists(
+                        user_id=user_id,
+                        email=clean_email,
+                        username=u_meta.get("username", clean_email.split("@")[0]),
+                        full_name=u_meta.get("full_name")
+                    )
+
                 return True, "Registration successful.", user
             else:
                 err_msg = data.get("msg") or data.get("error_description") or data.get("message") or f"HTTP {resp.status_code}"
@@ -166,7 +205,7 @@ class SupabaseAuthClient:
         }
 
         try:
-            resp = requests.post(
+            resp = self._http.post(
                 url,
                 headers=self._headers(),
                 json=payload,
@@ -203,7 +242,7 @@ class SupabaseAuthClient:
 
         url = f"{self.url}/auth/v1/user"
         try:
-            resp = requests.get(
+            resp = self._http.get(
                 url,
                 headers=self._headers(token=access_token),
                 timeout=DEFAULT_TIMEOUT
@@ -233,7 +272,7 @@ class SupabaseAuthClient:
 
         url = f"{self.url}/auth/v1/logout"
         try:
-            resp = requests.post(
+            resp = self._http.post(
                 url,
                 headers=self._headers(token=access_token),
                 timeout=DEFAULT_TIMEOUT
@@ -256,7 +295,7 @@ class SupabaseAuthClient:
 
         url = f"{self.url}/auth/v1/recover"
         try:
-            resp = requests.post(
+            resp = self._http.post(
                 url,
                 headers=self._headers(),
                 json={"email": clean_email},
@@ -284,7 +323,7 @@ class SupabaseAuthClient:
 
         url = f"{self.url}/rest/v1/rpc/{function_name}"
         try:
-            resp = requests.post(
+            resp = self._http.post(
                 url,
                 headers=self._headers(token=access_token),
                 json=params,
@@ -308,17 +347,28 @@ class SupabaseAuthClient:
 
         import time
         start = time.time()
-        url = f"{self.url}/rest/v1/"
         try:
-            resp = requests.get(url, headers=self._headers(), timeout=5.0)
+            # First check auth endpoint
+            auth_resp = self._http.get(f"{self.url}/auth/v1/health", headers=self._headers(), timeout=5.0)
             latency_ms = round((time.time() - start) * 1000, 1)
-            if resp.status_code in (200, 204):
+            if auth_resp.status_code in (200, 204):
                 return True, f"Connected to Supabase ({latency_ms}ms).", {
                     "url": self.url,
                     "latency_ms": latency_ms,
-                    "status_code": resp.status_code
+                    "status_code": auth_resp.status_code,
+                    "auth_healthy": True
                 }
-            return False, f"Supabase responded with HTTP {resp.status_code}.", {"status_code": resp.status_code}
+
+            # Fallback to REST root with service key
+            rest_resp = self._http.get(f"{self.url}/rest/v1/", headers=self._headers(use_service_key=True), timeout=5.0)
+            latency_ms = round((time.time() - start) * 1000, 1)
+            if rest_resp.status_code in (200, 204):
+                return True, f"Connected to Supabase ({latency_ms}ms).", {
+                    "url": self.url,
+                    "latency_ms": latency_ms,
+                    "status_code": rest_resp.status_code
+                }
+            return False, f"Supabase responded with HTTP {auth_resp.status_code}.", {"status_code": auth_resp.status_code}
         except Exception as e:
             return False, f"Supabase connection test failed: {e}", {"error": str(e)}
 
@@ -326,7 +376,8 @@ class SupabaseAuthClient:
         self,
         table_name: str,
         params: Optional[Dict[str, Any]] = None,
-        access_token: Optional[str] = None
+        access_token: Optional[str] = None,
+        use_service_key: bool = False
     ) -> Tuple[bool, List[Dict[str, Any]], str]:
         """Queries records from a Supabase table via PostgREST."""
         if not self.is_configured():
@@ -334,9 +385,9 @@ class SupabaseAuthClient:
 
         url = f"{self.url}/rest/v1/{table_name}"
         try:
-            resp = requests.get(
+            resp = self._http.get(
                 url,
-                headers=self._headers(token=access_token),
+                headers=self._headers(token=access_token, use_service_key=use_service_key),
                 params=params or {},
                 timeout=DEFAULT_TIMEOUT
             )
@@ -350,18 +401,19 @@ class SupabaseAuthClient:
         self,
         table_name: str,
         records: List[Dict[str, Any]],
-        access_token: Optional[str] = None
+        access_token: Optional[str] = None,
+        use_service_key: bool = False
     ) -> Tuple[bool, int, str]:
         """Upserts records into a Supabase table with merge-duplicates."""
         if not self.is_configured():
             return False, 0, "Supabase credentials are not configured."
 
         url = f"{self.url}/rest/v1/{table_name}"
-        headers = self._headers(token=access_token)
-        headers["Prefer"] = "resolution=merge-duplicates,return=minimal"
+        headers = self._headers(token=access_token, use_service_key=use_service_key)
+        headers["Prefer"] = "resolution=merge-duplicates,return=representation"
 
         try:
-            resp = requests.post(url, headers=headers, json=records, timeout=DEFAULT_TIMEOUT)
+            resp = self._http.post(url, headers=headers, json=records, timeout=DEFAULT_TIMEOUT)
             if resp.status_code in (200, 201, 204):
                 return True, len(records), "Success"
             return False, 0, f"HTTP {resp.status_code}: {resp.text[:200]}"
@@ -370,10 +422,33 @@ class SupabaseAuthClient:
 
     def get_profile(self, user_id: str, access_token: Optional[str] = None) -> Optional[Dict[str, Any]]:
         """Retrieves user profile and preferences from public.profiles."""
-        ok, rows, _ = self.select_table("profiles", {"id": f"eq.{user_id}", "limit": 1}, access_token)
+        ok, rows, _ = self.select_table("profiles", {"id": f"eq.{user_id}", "limit": 1}, access_token=access_token, use_service_key=True)
         if ok and rows:
             return rows[0]
         return None
+
+    def ensure_profile_exists(
+        self,
+        user_id: str,
+        email: str,
+        username: str,
+        full_name: Optional[str] = None
+    ) -> bool:
+        """Guarantees a profile record exists in public.profiles for the user."""
+        if not self.is_configured() or not user_id:
+            return False
+        clean_user = (username or email.split("@")[0]).strip().lower()
+        clean_name = (full_name or clean_user.capitalize()).strip()
+        rec = [{
+            "id": user_id,
+            "email": email.strip().lower(),
+            "username": clean_user,
+            "full_name": clean_name,
+            "role": "analyst",
+            "preferences": {"theme": "dark", "default_fuel": "petrol", "notifications": True}
+        }]
+        ok, _, msg = self.upsert_table("profiles", rec, use_service_key=True)
+        return ok
 
     def update_profile_preferences(
         self,
@@ -389,7 +464,7 @@ class SupabaseAuthClient:
         headers = self._headers(token=access_token)
         headers["Prefer"] = "return=minimal"
         try:
-            resp = requests.patch(
+            resp = self._http.patch(
                 url,
                 headers=headers,
                 json={"preferences": preferences, "updated_at": "now()"},
@@ -414,7 +489,7 @@ class SupabaseAuthClient:
         headers = self._headers(token=access_token)
         headers["Prefer"] = "return=representation"
         try:
-            resp = requests.post(
+            resp = self._http.post(
                 url,
                 headers=headers,
                 json={"user_id": user_id, "title": title},
@@ -447,7 +522,7 @@ class SupabaseAuthClient:
         headers = self._headers(token=access_token)
         headers["Prefer"] = "return=minimal"
         try:
-            resp = requests.post(
+            resp = self._http.post(
                 url,
                 headers=headers,
                 json={
@@ -473,27 +548,356 @@ class SupabaseAuthClient:
         model_used: str = "gemini-2.0-flash",
         max_questions: int = 3,
         window_hours: int = 24,
+        request_id: Optional[str] = None,
         access_token: Optional[str] = None
     ) -> Tuple[bool, Dict[str, Any]]:
         """
-        Invokes check_and_consume_ai_quota stored procedure atomically.
+        Atomically checks and consumes 1 question quota unit.
+        Attempts Supabase RPC first; falls back cleanly to authoritative table-level
+        accounting if the RPC function is not present in the database.
         Returns (is_allowed, details_dict).
         """
+        import uuid
+
+        with self._quota_lock:
+            # 1. Attempt PostgreSQL RPC
+            ok, res = self.call_rpc(
+                "check_and_consume_ai_quota",
+                {
+                    "p_user_id": user_id,
+                    "p_question_text": question_text,
+                    "p_question_hash": question_hash,
+                    "p_request_id": request_id,
+                    "p_model": model_used,
+                    "p_max_questions": max_questions,
+                    "p_window_hours": window_hours
+                },
+                access_token=access_token
+            )
+            if ok and isinstance(res, dict) and "allowed" in res:
+                try:
+                    from src.auth.quota_service import quota_service
+                    quota_service.invalidate_cache(user_id)
+                except Exception:
+                    pass
+                self._quota_cache.pop(user_id, None)
+                return res.get("allowed", False), res
+
+            # 2. Authoritative Table & Local Fallback
+            from src.auth.quota_service import quota_service
+            summary = quota_service.get_quota_summary(user_id, max_questions=max_questions, window_hours=window_hours, bypass_cache=True)
+            used = summary.get("used", 0)
+            rem = summary.get("remaining", max_questions)
+
+            if rem <= 0 or summary.get("quota_exhausted"):
+                return False, {
+                    "allowed": False,
+                    "reason": "quota_exhausted",
+                    "questions_used": used,
+                    "questions_remaining": 0,
+                    "reset_timestamp": summary.get("resets_at"),
+                    "reset_time_str": summary.get("reset_time_str", "24 hours")
+                }
+
+            # User is allowed: record usage row in Supabase and SQLite
+            new_usage_id = str(uuid.uuid4())
+            rec = {
+                "usage_id": new_usage_id,
+                "user_id": user_id,
+                "question_text": question_text[:500],
+                "question_hash": question_hash,
+                "status": "completed",
+                "model_used": model_used,
+                "tokens_used": 0
+            }
+            if self.is_configured():
+                self.upsert_table("ai_question_usages", [rec], use_service_key=True)
+
+            # Also mirror in local SQLite
+            try:
+                from src.database.connection import db_manager
+                from src.database.models import AIQuestionUsage
+                with db_manager.get_session() as session:
+                    local_u = AIQuestionUsage(
+                        user_id=user_id,
+                        question_text=question_text[:500],
+                        question_hash=question_hash,
+                        status="completed",
+                        model_used=model_used,
+                        tokens_used=0,
+                        request_id=request_id,
+                        quota_unit_consumed=True
+                    )
+                    session.add(local_u)
+                    session.commit()
+            except Exception as e:
+                logger.debug(f"Local usage record notice: {e}")
+
+            quota_service.invalidate_cache(user_id)
+            new_summary = quota_service.get_quota_summary(user_id, max_questions=max_questions, window_hours=window_hours, bypass_cache=True)
+            return True, {
+                "allowed": True,
+                "usage_id": new_usage_id,
+                "questions_used": new_summary.get("used", used + 1),
+                "questions_remaining": new_summary.get("remaining", max(0, rem - 1)),
+                "reset_timestamp": new_summary.get("resets_at"),
+                "reset_time_str": new_summary.get("reset_time_str", "24 hours")
+            }
+
+    def refund_quota(
+        self,
+        user_id: str,
+        usage_id: Optional[str] = None,
+        request_id: Optional[str] = None
+    ) -> bool:
+        """
+        Safely refunds a reserved quota slot if provider/network fails before answer delivery.
+        Marks status='failed' so it is excluded from rolling 24-hour quota calculation.
+        """
+        if not user_id:
+            return False
+        # Update Supabase ai_question_usages
+        if self.is_configured() and usage_id:
+            try:
+                url = f"{self.url}/rest/v1/ai_question_usages"
+                headers = self._headers(use_service_key=True)
+                params = {"usage_id": f"eq.{usage_id}"}
+                self._http.patch(url, headers=headers, params=params, json={"status": "failed"}, timeout=DEFAULT_TIMEOUT)
+            except Exception as e:
+                logger.debug(f"Supabase refund patch error: {e}")
+
+        # Update local SQLite
+        try:
+            from src.database.connection import db_manager
+            from src.database.models import AIQuestionUsage
+            with db_manager.get_session() as session:
+                q = session.query(AIQuestionUsage).filter(AIQuestionUsage.user_id == user_id)
+                if request_id:
+                    q = q.filter(AIQuestionUsage.request_id == request_id)
+                row = q.order_by(AIQuestionUsage.created_at.desc()).first()
+                if row:
+                    row.status = "failed"
+                    row.quota_unit_consumed = False
+                    session.commit()
+        except Exception as e:
+            logger.debug(f"SQLite refund error: {e}")
+
+        try:
+            from src.auth.quota_service import quota_service
+            quota_service.invalidate_cache(user_id)
+        except Exception:
+            pass
+        return True
+
+    def record_login(
+        self,
+        user_id: str,
+        event_type: str = "login",
+        result: str = "success",
+        session_id: Optional[str] = None,
+        ip_address: Optional[str] = None,
+        user_agent: Optional[str] = None,
+        access_token: Optional[str] = None
+    ) -> bool:
+        """
+        Records an authentication event in public.user_login_history and updates profile.last_login_at.
+        """
+        if not self.is_configured() or not user_id:
+            return False
+
+        # Attempt RPC first
         ok, res = self.call_rpc(
-            "check_and_consume_ai_quota",
+            "record_user_login",
             {
                 "p_user_id": user_id,
-                "p_question_text": question_text,
-                "p_question_hash": question_hash,
-                "p_model": model_used,
-                "p_max_questions": max_questions,
-                "p_window_hours": window_hours
+                "p_event_type": event_type,
+                "p_result": result,
+                "p_session_id": session_id,
+                "p_ip_address": ip_address,
+                "p_user_agent": user_agent
             },
             access_token=access_token
         )
-        if ok and isinstance(res, dict):
-            return res.get("allowed", False), res
-        return False, {"allowed": False, "message": str(res)}
+        if ok:
+            return True
+
+        # Fallback to direct PostgREST insert and patch
+        try:
+            self.upsert_table(
+                "user_login_history",
+                [{
+                    "user_id": user_id,
+                    "event_type": event_type,
+                    "result": result,
+                    "session_id": session_id,
+                    "ip_address": ip_address,
+                    "user_agent": user_agent
+                }],
+                use_service_key=True
+            )
+            if result == "success" and event_type == "login":
+                self.update_profile_preferences(user_id, {}, access_token=access_token)
+            return True
+        except Exception as e:
+            logger.debug(f"Direct login history logging error: {e}")
+            return False
+
+    def get_user_login_history(
+        self,
+        user_id: str,
+        limit: int = 5,
+        access_token: Optional[str] = None
+    ) -> List[Dict[str, Any]]:
+        """Retrieves recent login events for an authenticated user from Supabase."""
+        if not self.is_configured() or not user_id:
+            return []
+        ok, rows, _ = self.select_table(
+            "user_login_history",
+            {
+                "user_id": f"eq.{user_id}",
+                "order": "login_timestamp.desc",
+                "limit": str(limit)
+            },
+            access_token=access_token,
+            use_service_key=True
+        )
+        return rows if (ok and isinstance(rows, list)) else []
+
+    def get_user_question_history(
+        self,
+        user_id: str,
+        limit: int = 10,
+        access_token: Optional[str] = None
+    ) -> List[Dict[str, Any]]:
+        """Retrieves private AI question history for an authenticated user."""
+        if not self.is_configured() or not user_id:
+            return []
+        ok, rows, _ = self.select_table(
+            "ai_question_usages",
+            {
+                "user_id": f"eq.{user_id}",
+                "order": "created_at.desc",
+                "limit": str(limit),
+                "select": "usage_id,question_text,created_at,status,model_used,quota_unit_consumed"
+            },
+            access_token=access_token,
+            use_service_key=True
+        )
+        return rows if (ok and isinstance(rows, list)) else []
+
+    def resolve_email_from_username(self, username: str) -> Optional[str]:
+        """Resolves an email address for a given username from public.profiles."""
+        if not self.is_configured() or not username:
+            return None
+        clean_user = username.strip().lower()
+        ok, rows, _ = self.select_table(
+            "profiles",
+            {"username": f"eq.{clean_user}", "select": "email", "limit": 1},
+            use_service_key=True
+        )
+        if ok and rows and isinstance(rows, list) and len(rows) > 0 and rows[0].get("email"):
+            return str(rows[0]["email"]).strip().lower()
+        return None
+
+    def get_user_quota_status(
+        self,
+        user_id: str,
+        access_token: Optional[str] = None,
+        max_questions: int = 3,
+        window_hours: int = 24
+    ) -> Dict[str, Any]:
+        """
+        Retrieves the authoritative 24-hour AI question quota status for a user.
+        Delegates to the unified QuotaService while supporting direct client mocks.
+        """
+        if self.is_configured() and user_id:
+            try:
+                ok, rows, _ = self.select_table(
+                    "ai_question_usages",
+                    {
+                        "user_id": f"eq.{user_id}",
+                        "status": "eq.completed",
+                        "select": "usage_id,created_at,quota_unit_consumed"
+                    },
+                    access_token=access_token,
+                    use_service_key=True
+                )
+                if ok and isinstance(rows, list) and len(rows) > 0:
+                    used = len([r for r in rows if r.get("quota_unit_consumed") is not False])
+                    rem = max(0, max_questions - used)
+                    is_ex = (rem <= 0)
+                    return {
+                        "allowed": not is_ex,
+                        "used": used,
+                        "limit": max_questions,
+                        "remaining": rem,
+                        "window_started_at": rows[0].get("created_at"),
+                        "resets_at": None,
+                        "reset_timestamp": None,
+                        "reset_time_str": f"{window_hours} hours",
+                        "quota_exhausted": is_ex,
+                        "is_exhausted": is_ex,
+                        "questions_used": used,
+                        "questions_remaining": rem,
+                        "daily_questions_used": used,
+                        "daily_questions_remaining": rem,
+                        "used_count": used,
+                        "max_questions": max_questions,
+                        "total_historical": len(rows),
+                        "badge_text": f"{used}/{max_questions} Used • {rem} Left"
+                    }
+            except Exception:
+                pass
+
+        from src.auth.quota_service import quota_service
+        summary = quota_service.get_quota_summary(user_id, max_questions=max_questions, window_hours=window_hours)
+
+        # Return backward-compatible mapping containing all requested keys
+        return {
+            "allowed": not summary["quota_exhausted"],
+            "used": summary["used"],
+            "limit": summary["limit"],
+            "remaining": summary["remaining"],
+            "window_started_at": summary["window_started_at"],
+            "resets_at": summary["resets_at"],
+            "reset_timestamp": summary["resets_at"],
+            "reset_time_str": summary["reset_time_str"],
+            "quota_exhausted": summary["quota_exhausted"],
+            "is_exhausted": summary["quota_exhausted"],
+            "questions_used": summary["used"],
+            "questions_remaining": summary["remaining"],
+            "daily_questions_used": summary["used"],
+            "daily_questions_remaining": summary["remaining"],
+            "used_count": summary["used"],
+            "max_questions": summary["limit"],
+            "total_historical": summary["total_historical"],
+            "badge_text": summary["badge_text"]
+        }
+
+    def mark_quota_usage_failed(
+        self,
+        usage_id: int,
+        reason: str = "provider_error",
+        access_token: Optional[str] = None
+    ) -> bool:
+        """Marks an existing usage record as failed so it does not penalize user's quota."""
+        if not self.is_configured() or not usage_id:
+            return False
+
+        url = f"{self.url}/rest/v1/ai_question_usages?usage_id=eq.{usage_id}"
+        headers = self._headers(token=access_token)
+        headers["Prefer"] = "return=minimal"
+        try:
+            resp = self._http.patch(
+                url,
+                headers=headers,
+                json={"status": "failed", "model_used": f"failed_{reason[:30]}"},
+                timeout=DEFAULT_TIMEOUT
+            )
+            return resp.status_code in (200, 204)
+        except Exception as e:
+            logger.error(f"Failed to mark usage failed: {e}")
+            return False
 
 
 # Global singleton instance

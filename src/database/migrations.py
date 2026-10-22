@@ -7,8 +7,9 @@ import logging
 from pathlib import Path
 from sqlalchemy import text
 from src.database.connection import db_manager
-from src.database.models import Base, DataSource, DimCountry, FuelPrice
+import src.database.models as models
 
+Base = models.Base
 logger = logging.getLogger(__name__)
 SQL_DIR = Path(__file__).resolve().parent.parent.parent / "sql"
 
@@ -25,6 +26,20 @@ def init_database(seed_if_empty: bool = True) -> bool:
         # 1. Create tables from SQLAlchemy ORM metadata
         Base.metadata.create_all(bind=engine)
         logger.info("Database tables verified/created successfully.")
+
+        # 1b. Non-destructive migration of newly added columns on existing SQLite/MySQL tables
+        with engine.connect() as conn:
+            for col_sql in [
+                "ALTER TABLE users ADD COLUMN last_login_at TIMESTAMP",
+                "ALTER TABLE ai_question_usages ADD COLUMN request_id VARCHAR(64)",
+                "ALTER TABLE ai_question_usages ADD COLUMN quota_unit_consumed BOOLEAN DEFAULT 1",
+                "ALTER TABLE ai_question_usages ADD COLUMN response_metadata TEXT"
+            ]:
+                try:
+                    conn.execute(text(col_sql))
+                    conn.commit()
+                except Exception:
+                    pass  # Column already exists
 
         # 2. Check if we need to seed demo/benchmark data
         if seed_if_empty:
