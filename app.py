@@ -305,28 +305,44 @@ def navigate_to(target: str):
 
 
 # 4. Sidebar Brand Lockup
+# 4. Sidebar Brand Lockup (WorkspaceSwitcher styling from dashboard-sidebar.tsx)
 render_html(
     f"""
-    <div style="padding: 10px 0 14px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.1); margin-bottom: 12px;">
-        <div style="font-family: 'Space Grotesk', -apple-system, sans-serif; font-size: 1.15rem; font-weight: 800; color: #F9FAFB; display: flex; align-items: center; gap: 8px;">
-            {get_lucide_icon_svg('zap', size=20, color='#F5B942')} {t('brand_title', current_lang)}
+    <div style="display: flex; align-items: center; justify-content: space-between; padding: 8px 10px; margin-bottom: 12px; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.08); background: rgba(255, 255, 255, 0.02); select-none;">
+        <div style="display: flex; align-items: center; gap: 10px; min-width: 0;">
+            <div style="width: 32px; height: 32px; min-width: 32px; border-radius: 6px; background: #F5B942; color: #0B101E; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; box-shadow: 0 1px 3px rgba(0,0,0,0.3);">
+                FP
+            </div>
+            <div style="display: flex; flex-direction: column; overflow: hidden; min-width: 0;">
+                <span style="font-size: 13px; font-weight: 600; line-height: 1.2; color: #F8FAFC; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{t('brand_title', current_lang)}</span>
+                <span style="font-size: 11px; color: #94A3B8; line-height: 1.2; margin-top: 2px;">{t('brand_subtitle', current_lang)} · Live v2.0</span>
+            </div>
         </div>
-        <div style="font-family: 'Space Grotesk', -apple-system, sans-serif; font-size: 0.74rem; color: #94A3B8; font-weight: 700; letter-spacing: 0.06em; margin-top: 2px;">
-            {t('brand_subtitle', current_lang)} v2.0
+        <div style="color: rgba(148, 163, 184, 0.5); display: flex; align-items: center; shrink-0;">
+            {get_lucide_icon_svg('chevron-down', size=15, color='#94A3B8')}
         </div>
     </div>
     """,
     container=st.sidebar
 )
 
-# Engine Health Badge
+# Engine Health Badge (Sleek minimalist card)
 health = db_manager.check_health()
 engine_sym = "🟢" if health["connected"] else "🔴"
 render_html(
     f"""
-    <div style="font-family: 'Space Grotesk', -apple-system, sans-serif; font-size: 0.78rem; color: #F9FAFB; margin-bottom: 14px; background: rgba(14, 21, 38, 0.8); backdrop-filter: blur(12px); padding: 10px 12px; border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; line-height: 1.5;">
-        <div><b>ENGINE:</b> {engine_sym} {health['dialect'].upper()} &nbsp;|&nbsp; <b>REPOS:</b> {health['database']}</div>
-        <div><b>TABLES:</b> {health['tables_count']} marts &nbsp;|&nbsp; <b>DATA:</b> {'VERIFIED' if settings.is_demo_mode else 'LIVE'}</div>
+    <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 8px; padding: 8px 10px; margin-bottom: 10px; font-size: 11px; line-height: 1.5; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-weight: 600; color: #71717A; text-transform: uppercase; letter-spacing: 0.05em; display: flex; align-items: center; gap: 6px;">
+                <span style="display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: {'#10B981' if health['connected'] else '#EF4444'};"></span>
+                Engine
+            </span>
+            <span style="font-family: monospace; color: #E2E8F0; font-weight: 500;">{health['dialect'].upper()} · {health['database']}</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 3px;">
+            <span style="font-weight: 600; color: #71717A; text-transform: uppercase; letter-spacing: 0.05em;">Pipeline</span>
+            <span style="font-size: 10px; font-weight: 600; background: rgba(16, 185, 129, 0.12); color: #10B981; padding: 1px 6px; border-radius: 4px; border: 1px solid rgba(16, 185, 129, 0.25);">{'VERIFIED' if settings.is_demo_mode else 'LIVE 2026'}</span>
+        </div>
     </div>
     """,
     container=st.sidebar
@@ -337,12 +353,17 @@ auth_user = st.session_state.get("auth_user")
 if auth_user:
     disp_name = (auth_user.get("full_name") or auth_user.get("username") or "Analyst")
     user_email = auth_user.get("email", "")
+    initials = (disp_name[0] if disp_name else "A").upper()
     render_html(
         f"""
-        <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: 8px; padding: 10px 12px; margin-bottom: 8px;">
-            <div style="font-size: 0.72rem; color: #10B981; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;">● Active Analyst Session</div>
-            <div style="font-size: 0.88rem; font-weight: 700; color: #F9FAFB; margin-top: 2px;">{disp_name}</div>
-            <div style="font-size: 0.74rem; color: #94A3B8;">{user_email}</div>
+        <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 8px; padding: 8px 10px; margin-bottom: 8px; display: flex; align-items: center; gap: 10px;">
+            <div style="width: 28px; height: 28px; border-radius: 6px; background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.3); color: #10B981; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700;">
+                {initials}
+            </div>
+            <div style="overflow: hidden; min-width: 0;">
+                <div style="font-size: 10px; color: #10B981; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;">● Active Session</div>
+                <div style="font-size: 12px; font-weight: 600; color: #F8FAFC; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{disp_name}</div>
+            </div>
         </div>
         """,
         container=st.sidebar
@@ -352,9 +373,14 @@ if auth_user:
 else:
     render_html(
         """
-        <div style="background: rgba(245, 185, 66, 0.08); border: 1px solid rgba(245, 185, 66, 0.25); border-radius: 8px; padding: 10px 12px; margin-bottom: 8px;">
-            <div style="font-size: 0.72rem; color: #F5B942; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;">🔐 Client Access</div>
-            <div style="font-size: 0.78rem; color: #E2E8F0; margin-top: 2px;">3 free AI questions every 24 hours</div>
+        <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 8px; padding: 8px 10px; margin-bottom: 8px; display: flex; align-items: center; gap: 10px;">
+            <div style="width: 28px; height: 28px; border-radius: 6px; background: rgba(245, 185, 66, 0.15); border: 1px solid rgba(245, 185, 66, 0.3); color: #F5B942; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700;">
+                🔐
+            </div>
+            <div>
+                <div style="font-size: 10px; color: #F5B942; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;">Client Access</div>
+                <div style="font-size: 11px; color: #94A3B8;">3 free AI questions / 24h</div>
+            </div>
         </div>
         """,
         container=st.sidebar
@@ -362,7 +388,7 @@ else:
     if st.sidebar.button("🔐 Sign In / Create Account", key="sb_signin_btn", type="primary", use_container_width=True):
         show_sign_in_dialog()
 
-st.sidebar.markdown("<div style='margin-bottom: 12px;'></div>", unsafe_allow_html=True)
+st.sidebar.markdown("<div style='margin-bottom: 8px;'></div>", unsafe_allow_html=True)
 
 # Auto-open sign-in dialog if query parameter ?login=1 or ?auth=1 is present
 if st.query_params.get("login") in ("1", "true") or st.query_params.get("auth") in ("1", "true"):
@@ -370,7 +396,7 @@ if st.query_params.get("login") in ("1", "true") or st.query_params.get("auth") 
     st.query_params.pop("auth", None)
     show_sign_in_dialog()
 
-# 21st.dev Authentic TreeNav Sidebar Component
+# Authentic Navigation Items matching dashboard-sidebar.tsx
 TREE_NAV_ITEMS = [
     {"label": t("nav_overview", current_lang), "tab": "home", "canonical": "🏠 Overview", "badge": None},
     {"label": t("nav_dashboard", current_lang), "tab": "dashboard", "canonical": "⚡ Intelligence Dashboard", "badge": t("badge_live", current_lang)},
@@ -384,22 +410,27 @@ TREE_NAV_ITEMS = [
     {"label": t("nav_faq", current_lang), "tab": "faq", "canonical": "❓ Docs & FAQ", "badge": t("badge_docs", current_lang)},
 ]
 
-st.sidebar.markdown(f"""
-<div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 11px; font-weight: 700; color: #71717A; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; padding-left: 2px;">
+render_html(f"""
+<div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 11px; font-weight: 600; color: #71717A; text-transform: uppercase; letter-spacing: 0.08em; padding: 4px 4px 6px 4px;">
     {t('sidebar_tree_nav', current_lang)}
 </div>
-""", unsafe_allow_html=True)
+""", container=st.sidebar)
 
 for item in TREE_NAV_ITEMS:
     is_active = (item["tab"] == st.session_state.active_canonical)
-    badge_str = f" [{item['badge']}]" if item.get("badge") else ""
+    badge_str = f" · {item['badge']}" if item.get("badge") else ""
     btn_label = f"{item['label']}{badge_str}"
     if st.sidebar.button(btn_label, key=f"sb_nav_btn_{item['tab']}", type="primary" if is_active else "secondary", use_container_width=True):
         navigate_to(item["tab"])
 
 
-# Live Pipeline Refresh Controls & Timestamps
-st.sidebar.markdown(f"### ⚡ {t('sidebar_sync_title', current_lang)}")
+# Live Pipeline Refresh Controls & Timestamps (Group Header styling from dashboard-sidebar.tsx)
+render_html(f"""
+<div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 11px; font-weight: 600; color: #71717A; text-transform: uppercase; letter-spacing: 0.08em; padding: 14px 4px 6px 4px;">
+    ⚡ {t('sidebar_sync_title', current_lang)}
+</div>
+""", container=st.sidebar)
+
 if st.sidebar.button(f"⚡ {t('sidebar_sync_btn', current_lang)}", key="sidebar_live_refresh_btn", use_container_width=True):
     with st.sidebar.status("Syncing live feeds (FRED, PPAC, EC, FX)..."):
         from src.ingestion.orchestrator import orchestrator
@@ -416,34 +447,43 @@ last_ppac = sync_times.get("INDIA_PPAC") or "Today"
 
 render_html(
     f"""
-    <div style="font-family: 'Space Grotesk', sans-serif; font-size: 0.76rem; color: #94A3B8; margin-bottom: 16px; background: rgba(14, 21, 38, 0.6); padding: 10px; border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 6px; line-height: 1.4;">
-        <div style="font-weight: 800; color: #F9FAFB; margin-bottom: 4px;">{t('sidebar_provenance_title', current_lang)}</div>
-        <div>• EIA & FRED: <span style="font-weight: 700; color: #F5B942;">{last_eia}</span></div>
-        <div>• PPAC India: <span style="font-weight: 700; color: #F5B942;">{last_ppac}</span></div>
-        <div>• FX Rates: <span style="font-weight: 700; color: #F5B942;">{last_fx}</span></div>
+    <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 11px; color: #94A3B8; margin-bottom: 14px; background: rgba(255, 255, 255, 0.02); padding: 8px 10px; border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 8px; line-height: 1.6;">
+        <div style="font-weight: 600; color: #CBD5E1; margin-bottom: 4px; display: flex; align-items: center; justify-content: space-between;">
+            <span>{t('sidebar_provenance_title', current_lang)}</span>
+            <span style="font-size: 9px; color: #64748B;">SYNCED</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; color: #94A3B8;"><span>• EIA & FRED</span><span style="font-weight: 600; color: #F5B942;">{last_eia}</span></div>
+        <div style="display: flex; justify-content: space-between; color: #94A3B8;"><span>• PPAC India</span><span style="font-weight: 600; color: #F5B942;">{last_ppac}</span></div>
+        <div style="display: flex; justify-content: space-between; color: #94A3B8;"><span>• FX Rates</span><span style="font-weight: 600; color: #F5B942;">{last_fx}</span></div>
     </div>
     """,
     container=st.sidebar
 )
 
 # Deep Drill-Down Pages in Sidebar rendered with Tree Rail hierarchy
-st.sidebar.markdown(f"### 🌿 {t('sidebar_drilldown', current_lang)}")
+render_html(f"""
+<div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 11px; font-weight: 600; color: #71717A; text-transform: uppercase; letter-spacing: 0.08em; padding: 4px 4px 6px 4px;">
+    🌿 {t('sidebar_drilldown', current_lang)}
+</div>
+""", container=st.sidebar)
+
 render_html(
     f"""
-    <div style="position: relative; padding-left: 14px; margin-left: 4px; border-left: 2px solid rgba(255, 255, 255, 0.12); font-family: 'Space Grotesk', sans-serif; font-size: 0.81rem; line-height: 2.15; font-weight: 600;">
-        <div style="position: absolute; bottom: 0; left: -4px; width: 6px; height: 6px; border-radius: 50%; background: #60A5FA;"></div>
-        <div><a href="/Global_Command_Center" style="color: #94A3B8; text-decoration: none; display: flex; justify-content: space-between; align-items: center;"><span style="color: #CBD5E1;">{t('sidebar_01_command', current_lang)}</span><span style="font-size: 10px; background: rgba(59,130,246,0.15); color: #60A5FA; padding: 1px 6px; border-radius: 4px;">Exec</span></a></div>
-        <div><a href="/Fuel_Price_Explorer" style="color: #94A3B8; text-decoration: none; display: flex; justify-content: space-between; align-items: center;"><span style="color: #CBD5E1;">{t('sidebar_02_explorer', current_lang)}</span><span style="font-size: 10px; background: rgba(59,130,246,0.15); color: #60A5FA; padding: 1px 6px; border-radius: 4px;">Daily</span></a></div>
-        <div><a href="/Global_Trade" style="color: #94A3B8; text-decoration: none; display: flex; justify-content: space-between; align-items: center;"><span style="color: #CBD5E1;">{t('sidebar_03_trade', current_lang)}</span><span style="font-size: 10px; background: rgba(59,130,246,0.15); color: #60A5FA; padding: 1px 6px; border-radius: 4px;">Comtrade</span></a></div>
-        <div><a href="/Affordability" style="color: #94A3B8; text-decoration: none; display: flex; justify-content: space-between; align-items: center;"><span style="color: #CBD5E1;">{t('sidebar_04_afford', current_lang)}</span><span style="font-size: 10px; background: rgba(59,130,246,0.15); color: #60A5FA; padding: 1px 6px; border-radius: 4px;">GDP/365</span></a></div>
-        <div><a href="/Supply_Risk" style="color: #94A3B8; text-decoration: none; display: flex; justify-content: space-between; align-items: center;"><span style="color: #CBD5E1;">{t('sidebar_05_risk', current_lang)}</span><span style="font-size: 10px; background: rgba(59,130,246,0.15); color: #60A5FA; padding: 1px 6px; border-radius: 4px;">HHI</span></a></div>
-        <div><a href="/Shock_Simulator" style="color: #94A3B8; text-decoration: none; display: flex; justify-content: space-between; align-items: center;"><span style="color: #CBD5E1;">{t('sidebar_06_shock', current_lang)}</span><span style="font-size: 10px; background: rgba(59,130,246,0.15); color: #60A5FA; padding: 1px 6px; border-radius: 4px;">Sens</span></a></div>
-        <div><a href="/Forecasting" style="color: #94A3B8; text-decoration: none; display: flex; justify-content: space-between; align-items: center;"><span style="color: #CBD5E1;">{t('sidebar_07_forecast', current_lang)}</span><span style="font-size: 10px; background: rgba(59,130,246,0.15); color: #60A5FA; padding: 1px 6px; border-radius: 4px;">Holt-W</span></a></div>
-        <div><a href="/Data_Trust" style="color: #94A3B8; text-decoration: none; display: flex; justify-content: space-between; align-items: center;"><span style="color: #CBD5E1;">{t('sidebar_08_trust', current_lang)}</span><span style="font-size: 10px; background: rgba(59,130,246,0.15); color: #60A5FA; padding: 1px 6px; border-radius: 4px;">Health</span></a></div>
-        <div><a href="/AI_Analyst" style="color: #94A3B8; text-decoration: none; display: flex; justify-content: space-between; align-items: center;"><span style="color: #CBD5E1;">{t('sidebar_09_ai', current_lang)}</span><span style="font-size: 10px; background: rgba(59,130,246,0.15); color: #60A5FA; padding: 1px 6px; border-radius: 4px;">Gemini</span></a></div>
-        <div><a href="/India_Intelligence" style="color: #94A3B8; text-decoration: none; display: flex; justify-content: space-between; align-items: center;"><span style="color: #CBD5E1;">{t('sidebar_10_india', current_lang)}</span><span style="font-size: 10px; background: rgba(59,130,246,0.15); color: #60A5FA; padding: 1px 6px; border-radius: 4px;">PPAC</span></a></div>
-        <div><a href="/Product_Guide" style="color: #94A3B8; text-decoration: none; display: flex; justify-content: space-between; align-items: center;"><span style="color: #CBD5E1;">{t('sidebar_11_guide', current_lang)}</span><span style="font-size: 10px; background: rgba(59,130,246,0.15); color: #60A5FA; padding: 1px 6px; border-radius: 4px;">Guide</span></a></div>
+    <div style="position: relative; padding-left: 12px; margin-left: 6px; border-left: 1px solid rgba(255, 255, 255, 0.08); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 12px; line-height: 2.1;">
+        <div style="position: absolute; bottom: 0; left: -3px; width: 5px; height: 5px; border-radius: 50%; background: #60A5FA;"></div>
+        <div><a href="/Global_Command_Center" style="color: #94A3B8; text-decoration: none; display: flex; justify-content: space-between; align-items: center; padding: 2px 6px; border-radius: 4px; transition: all 0.15s ease;" onmouseover="this.style.background='rgba(255,255,255,0.05)'; this.style.color='#FFFFFF';" onmouseout="this.style.background='transparent'; this.style.color='#94A3B8';"><span style="color: #CBD5E1;">{t('sidebar_01_command', current_lang)}</span><span style="font-size: 10px; font-weight: 500; background: rgba(59,130,246,0.12); color: #60A5FA; border: 1px solid rgba(59,130,246,0.25); padding: 0 6px; border-radius: 9999px;">Exec</span></a></div>
+        <div><a href="/Fuel_Price_Explorer" style="color: #94A3B8; text-decoration: none; display: flex; justify-content: space-between; align-items: center; padding: 2px 6px; border-radius: 4px; transition: all 0.15s ease;" onmouseover="this.style.background='rgba(255,255,255,0.05)'; this.style.color='#FFFFFF';" onmouseout="this.style.background='transparent'; this.style.color='#94A3B8';"><span style="color: #CBD5E1;">{t('sidebar_02_explorer', current_lang)}</span><span style="font-size: 10px; font-weight: 500; background: rgba(59,130,246,0.12); color: #60A5FA; border: 1px solid rgba(59,130,246,0.25); padding: 0 6px; border-radius: 9999px;">Daily</span></a></div>
+        <div><a href="/Global_Trade" style="color: #94A3B8; text-decoration: none; display: flex; justify-content: space-between; align-items: center; padding: 2px 6px; border-radius: 4px; transition: all 0.15s ease;" onmouseover="this.style.background='rgba(255,255,255,0.05)'; this.style.color='#FFFFFF';" onmouseout="this.style.background='transparent'; this.style.color='#94A3B8';"><span style="color: #CBD5E1;">{t('sidebar_03_trade', current_lang)}</span><span style="font-size: 10px; font-weight: 500; background: rgba(59,130,246,0.12); color: #60A5FA; border: 1px solid rgba(59,130,246,0.25); padding: 0 6px; border-radius: 9999px;">Comtrade</span></a></div>
+        <div><a href="/Affordability" style="color: #94A3B8; text-decoration: none; display: flex; justify-content: space-between; align-items: center; padding: 2px 6px; border-radius: 4px; transition: all 0.15s ease;" onmouseover="this.style.background='rgba(255,255,255,0.05)'; this.style.color='#FFFFFF';" onmouseout="this.style.background='transparent'; this.style.color='#94A3B8';"><span style="color: #CBD5E1;">{t('sidebar_04_afford', current_lang)}</span><span style="font-size: 10px; font-weight: 500; background: rgba(59,130,246,0.12); color: #60A5FA; border: 1px solid rgba(59,130,246,0.25); padding: 0 6px; border-radius: 9999px;">GDP/365</span></a></div>
+        <div><a href="/Supply_Risk" style="color: #94A3B8; text-decoration: none; display: flex; justify-content: space-between; align-items: center; padding: 2px 6px; border-radius: 4px; transition: all 0.15s ease;" onmouseover="this.style.background='rgba(255,255,255,0.05)'; this.style.color='#FFFFFF';" onmouseout="this.style.background='transparent'; this.style.color='#94A3B8';"><span style="color: #CBD5E1;">{t('sidebar_05_risk', current_lang)}</span><span style="font-size: 10px; font-weight: 500; background: rgba(59,130,246,0.12); color: #60A5FA; border: 1px solid rgba(59,130,246,0.25); padding: 0 6px; border-radius: 9999px;">HHI</span></a></div>
+        <div><a href="/Shock_Simulator" style="color: #94A3B8; text-decoration: none; display: flex; justify-content: space-between; align-items: center; padding: 2px 6px; border-radius: 4px; transition: all 0.15s ease;" onmouseover="this.style.background='rgba(255,255,255,0.05)'; this.style.color='#FFFFFF';" onmouseout="this.style.background='transparent'; this.style.color='#94A3B8';"><span style="color: #CBD5E1;">{t('sidebar_06_shock', current_lang)}</span><span style="font-size: 10px; font-weight: 500; background: rgba(59,130,246,0.12); color: #60A5FA; border: 1px solid rgba(59,130,246,0.25); padding: 0 6px; border-radius: 9999px;">Sens</span></a></div>
+        <div><a href="/Forecasting" style="color: #94A3B8; text-decoration: none; display: flex; justify-content: space-between; align-items: center; padding: 2px 6px; border-radius: 4px; transition: all 0.15s ease;" onmouseover="this.style.background='rgba(255,255,255,0.05)'; this.style.color='#FFFFFF';" onmouseout="this.style.background='transparent'; this.style.color='#94A3B8';"><span style="color: #CBD5E1;">{t('sidebar_07_forecast', current_lang)}</span><span style="font-size: 10px; font-weight: 500; background: rgba(59,130,246,0.12); color: #60A5FA; border: 1px solid rgba(59,130,246,0.25); padding: 0 6px; border-radius: 9999px;">Holt-W</span></a></div>
+        <div><a href="/Data_Trust" style="color: #94A3B8; text-decoration: none; display: flex; justify-content: space-between; align-items: center; padding: 2px 6px; border-radius: 4px; transition: all 0.15s ease;" onmouseover="this.style.background='rgba(255,255,255,0.05)'; this.style.color='#FFFFFF';" onmouseout="this.style.background='transparent'; this.style.color='#94A3B8';"><span style="color: #CBD5E1;">{t('sidebar_08_trust', current_lang)}</span><span style="font-size: 10px; font-weight: 500; background: rgba(59,130,246,0.12); color: #60A5FA; border: 1px solid rgba(59,130,246,0.25); padding: 0 6px; border-radius: 9999px;">Health</span></a></div>
+        <div><a href="/AI_Analyst" style="color: #94A3B8; text-decoration: none; display: flex; justify-content: space-between; align-items: center; padding: 2px 6px; border-radius: 4px; transition: all 0.15s ease;" onmouseover="this.style.background='rgba(255,255,255,0.05)'; this.style.color='#FFFFFF';" onmouseout="this.style.background='transparent'; this.style.color='#94A3B8';"><span style="color: #CBD5E1;">{t('sidebar_09_ai', current_lang)}</span><span style="font-size: 10px; font-weight: 500; background: rgba(59,130,246,0.12); color: #60A5FA; border: 1px solid rgba(59,130,246,0.25); padding: 0 6px; border-radius: 9999px;">Gemini</span></a></div>
+        <div><a href="/India_Intelligence" style="color: #94A3B8; text-decoration: none; display: flex; justify-content: space-between; align-items: center; padding: 2px 6px; border-radius: 4px; transition: all 0.15s ease;" onmouseover="this.style.background='rgba(255,255,255,0.05)'; this.style.color='#FFFFFF';" onmouseout="this.style.background='transparent'; this.style.color='#94A3B8';"><span style="color: #CBD5E1;">{t('sidebar_10_india', current_lang)}</span><span style="font-size: 10px; font-weight: 500; background: rgba(59,130,246,0.12); color: #60A5FA; border: 1px solid rgba(59,130,246,0.25); padding: 0 6px; border-radius: 9999px;">PPAC</span></a></div>
+        <div><a href="/Product_Guide" style="color: #94A3B8; text-decoration: none; display: flex; justify-content: space-between; align-items: center; padding: 2px 6px; border-radius: 4px; transition: all 0.15s ease;" onmouseover="this.style.background='rgba(255,255,255,0.05)'; this.style.color='#FFFFFF';" onmouseout="this.style.background='transparent'; this.style.color='#94A3B8';"><span style="color: #CBD5E1;">{t('sidebar_11_guide', current_lang)}</span><span style="font-size: 10px; font-weight: 500; background: rgba(59,130,246,0.12); color: #60A5FA; border: 1px solid rgba(59,130,246,0.25); padding: 0 6px; border-radius: 9999px;">Guide</span></a></div>
     </div>
+    <div style="border-top: 1px solid rgba(255, 255, 255, 0.08); margin-top: 16px; padding-top: 8px;"></div>
     """,
     container=st.sidebar
 )

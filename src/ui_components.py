@@ -502,38 +502,41 @@ def apply_theme():
   display: none !important;
 }}
 
-/* Sidebar navigation buttons styling */
+/* Sidebar navigation buttons styling (shadcn / Tailwind dashboard-sidebar.tsx design) */
 div[data-testid="stSidebar"] div.stButton > button {{
-  border-radius: 8px !important;
+  border-radius: 6px !important;
   text-align: left !important;
   justify-content: flex-start !important;
-  padding: 6px 12px !important;
+  padding: 6px 10px !important;
   font-size: 13px !important;
+  font-weight: 500 !important;
+  letter-spacing: -0.01em !important;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
   margin-bottom: 2px !important;
-  height: 36px !important;
-  transition: all 0.15s ease-out !important;
+  height: 34px !important;
+  min-height: 34px !important;
+  transition: all 0.15s ease-in-out !important;
 }}
 
 div[data-testid="stSidebar"] div.stButton > button[kind="primary"] {{
-  background: rgba(234, 179, 8, 0.15) !important;
-  color: #F5B942 !important;
-  border: 1px solid rgba(234, 179, 8, 0.45) !important;
-  font-weight: 700 !important;
-  box-shadow: 0 0 10px rgba(234, 179, 8, 0.12) !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+  color: #FFFFFF !important;
+  border: 1px solid rgba(255, 255, 255, 0.16) !important;
+  font-weight: 600 !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25) !important;
 }}
 
 div[data-testid="stSidebar"] div.stButton > button[kind="secondary"] {{
-  background: rgba(255, 255, 255, 0.03) !important;
-  color: #CBD5E1 !important;
-  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  background: transparent !important;
+  color: #94A3B8 !important;
+  border: 1px solid transparent !important;
   font-weight: 500 !important;
 }}
 
 div[data-testid="stSidebar"] div.stButton > button[kind="secondary"]:hover {{
-  background: rgba(255, 255, 255, 0.08) !important;
-  color: #FFFFFF !important;
-  border-color: rgba(255, 255, 255, 0.16) !important;
+  background: rgba(255, 255, 255, 0.05) !important;
+  color: #F8FAFC !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
 }}
 
 /* Main Top Two-Tier Navigation button styling */
@@ -967,13 +970,18 @@ p, span, label {{
   line-height: 1.5;
 }}
 
-/* 3. Sidebar Styling */
+/* 3. Sidebar Styling (shadcn / Tailwind dashboard-sidebar.tsx design) */
 section[data-testid="stSidebar"] {{
   background-color: #0B101E !important;
-  border-right: 1px solid rgba(255, 255, 255, 0.10) !important;
+  border-right: 1px solid rgba(255, 255, 255, 0.08) !important;
 }}
-section[data-testid="stSidebar"] * {{
-  color: #F9FAFB !important;
+section[data-testid="stSidebar"] .stMarkdown p {{
+  color: #94A3B8;
+}}
+section[data-testid="stSidebar"] div[data-testid="stSidebarUserContent"] {{
+  padding-top: 0.75rem !important;
+  padding-left: 0.75rem !important;
+  padding-right: 0.75rem !important;
 }}
 
 /* 4. BaseWeb Popover & Dropdown Portals (Selectbox, Menus) */
