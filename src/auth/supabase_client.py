@@ -177,6 +177,37 @@ class SupabaseAuthClient:
                 return True, "Registration successful.", user
             else:
                 err_msg = data.get("msg") or data.get("error_description") or data.get("message") or f"HTTP {resp.status_code}"
+                # If rate limit is encountered, fallback to admin user creation since service role key is present
+                if any(k in err_msg.lower() for k in ("rate limit", "over_email_send_rate_limit")) and self.service_role_key:
+                    try:
+                        admin_create_url = f"{self.url}/auth/v1/admin/users"
+                        admin_resp = self._http.post(
+                            admin_create_url,
+                            headers=self._headers(use_service_key=True),
+                            json={
+                                "email": clean_email,
+                                "password": password,
+                                "email_confirm": True,
+                                "user_metadata": metadata or {}
+                            },
+                            timeout=DEFAULT_TIMEOUT
+                        )
+                        if admin_resp.status_code in (200, 201):
+                            admin_data = admin_resp.json()
+                            user = admin_data.get("user") or admin_data
+                            user_id = user.get("id")
+                            if user_id:
+                                u_meta = metadata or {}
+                                self.ensure_profile_exists(
+                                    user_id=user_id,
+                                    email=clean_email,
+                                    username=u_meta.get("username", clean_email.split("@")[0]),
+                                    full_name=u_meta.get("full_name")
+                                )
+                            return True, "Registration successful via admin.", user
+                    except Exception as ae:
+                        logger.debug(f"Admin user creation fallback notice: {ae}")
+
                 return False, f"Supabase Registration error: {err_msg}", None
         except Exception as e:
             logger.error(f"Supabase sign_up error: {e}")

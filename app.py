@@ -165,7 +165,7 @@ render_html("""
     }
 })();
 </script>
-""")
+""", container=st.sidebar)
 
 if hasattr(st, "query_params"):
     qp_code = st.query_params.get("code")

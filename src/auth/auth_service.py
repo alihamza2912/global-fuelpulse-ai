@@ -123,6 +123,16 @@ class AuthService:
         if not password or len(password) < 6:
             return False, "Password must be at least 6 characters long.", None
 
+        # Check existing username or email in local DB first
+        with db_manager.get_session() as session:
+            existing = session.query(User).filter(
+                (User.username == username_clean) | (User.email == email_clean)
+            ).first()
+            if existing:
+                if existing.username == username_clean:
+                    return False, "Username is already taken.", None
+                return False, "An account with this email already exists.", None
+
         # Supabase Integration: attempt cloud registration if configured
         if supabase_auth_client.is_configured():
             meta = {"username": username_clean, "full_name": (full_name or "").strip() or username_clean.capitalize()}
@@ -136,26 +146,20 @@ class AuthService:
                     full_name=(full_name or "").strip() or username_clean.capitalize()
                 )
                 with db_manager.get_session() as session:
-                    existing = session.query(User).filter(
-                        (User.username == username_clean) | (User.email == email_clean) | (User.user_id == user_id)
-                    ).first()
-                    if not existing:
-                        new_user = User(
-                            user_id=user_id,
-                            username=username_clean,
-                            email=email_clean,
-                            password_hash=hash_password(password),
-                            full_name=(full_name or "").strip() or username_clean.capitalize(),
-                            is_active=True,
-                            created_at=utc_now()
-                        )
-                        session.add(new_user)
-                        session.commit()
-                        session.refresh(new_user)
-                        session.expunge(new_user)
-                        return True, "User registered successfully via Supabase.", new_user
-                    session.expunge(existing)
-                    return True, "User registered successfully via Supabase.", existing
+                    new_user = User(
+                        user_id=user_id,
+                        username=username_clean,
+                        email=email_clean,
+                        password_hash=hash_password(password),
+                        full_name=(full_name or "").strip() or username_clean.capitalize(),
+                        is_active=True,
+                        created_at=utc_now()
+                    )
+                    session.add(new_user)
+                    session.commit()
+                    session.refresh(new_user)
+                    session.expunge(new_user)
+                    return True, "User registered successfully via Supabase.", new_user
             elif not sb_ok and "already registered" in sb_msg.lower():
                 return False, "An account with this email already exists.", None
             elif not sb_ok and any(err_term in sb_msg.lower() for err_term in (

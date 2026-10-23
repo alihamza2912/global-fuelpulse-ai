@@ -258,13 +258,30 @@ def get_fuel_client_logo_html() -> str:
     """
 
 
-def render_app_header_brand_html(current_lang: str, engine_name: str, live_text: str) -> str:
+def render_app_header_brand_html(current_lang: str, engine_name: str = "", live_text: str = "", show_status: bool = True) -> str:
     """Renders the balanced, unified top application header bar with Lucide vector icons."""
     from src.localization.i18n import t
-    brand_sub = t('brand_subtitle', current_lang)
-    db_icon = get_lucide_icon_svg("database", size=11, color="#34D399")
-    act_icon = get_lucide_icon_svg("activity", size=11, color="#F5B942")
-    logo_svg = get_logo_mark_svg(size=38)
+    brand_sub = t('brand_subtitle', current_lang) or "GLOBAL ENERGY INTELLIGENCE"
+    logo_svg = get_logo_mark_svg(size=34)
+
+    status_html = ""
+    if show_status and (engine_name or live_text):
+        db_icon = get_lucide_icon_svg("database", size=11, color="#34D399")
+        act_icon = get_lucide_icon_svg("activity", size=11, color="#F5B942")
+        status_html = f"""
+        <div class="fuelpulse-header-v-divider"></div>
+        <div class="fuelpulse-header-status-cluster">
+            <span class="fuelpulse-status-pill fuelpulse-status-emerald">
+                {db_icon}
+                <span>{engine_name}</span>
+            </span>
+            <span class="fuelpulse-status-pill fuelpulse-status-amber">
+                {act_icon}
+                <span>{live_text}</span>
+            </span>
+        </div>
+        """
+
     return f"""
     <div class="fuelpulse-header-bar">
         <div class="fuelpulse-header-brand-wrap">
@@ -285,17 +302,7 @@ def render_app_header_brand_html(current_lang: str, engine_name: str, live_text:
                 </div>
             </div>
         </div>
-        <div class="fuelpulse-header-v-divider"></div>
-        <div class="fuelpulse-header-status-cluster">
-            <span class="fuelpulse-status-pill fuelpulse-status-emerald">
-                {db_icon}
-                <span>{engine_name}</span>
-            </span>
-            <span class="fuelpulse-status-pill fuelpulse-status-amber">
-                {act_icon}
-                <span>{live_text}</span>
-            </span>
-        </div>
+        {status_html}
     </div>
     """
 
@@ -427,11 +434,14 @@ def apply_theme():
 }}
 
 /* 0. Responsive Centered Layout Container (1360px max-width, zero horizontal overflow) */
-.block-container {{
+.block-container,
+div[data-testid="stAppViewBlockContainer"],
+.main .block-container,
+section.main > div.block-container {{
   max-width: 1360px !important;
   margin-left: auto !important;
   margin-right: auto !important;
-  padding-top: 1.25rem !important;
+  padding-top: 0.25rem !important;
   padding-bottom: 2.5rem !important;
   padding-left: 24px !important;
   padding-right: 24px !important;
@@ -439,18 +449,22 @@ def apply_theme():
 }}
 
 @media (max-width: 1024px) {{
-  .block-container {{
+  .block-container,
+  div[data-testid="stAppViewBlockContainer"],
+  .main .block-container {{
     padding-left: 18px !important;
     padding-right: 18px !important;
-    padding-top: 1.15rem !important;
+    padding-top: 0.25rem !important;
   }}
 }}
 
 @media (max-width: 768px) {{
-  .block-container {{
+  .block-container,
+  div[data-testid="stAppViewBlockContainer"],
+  .main .block-container {{
     padding-left: 12px !important;
     padding-right: 12px !important;
-    padding-top: 1.0rem !important;
+    padding-top: 0.20rem !important;
   }}
 }}
 
@@ -830,24 +844,25 @@ div[data-testid*="global_fuelpulse_fab"] button:active {{
 
 /* Universal Header & Action Bar Container */
 .fuelpulse-header-bar {{
-  display: flex !important;
+  display: inline-flex !important;
   align-items: center !important;
   justify-content: flex-start !important;
   background: rgba(14, 21, 38, 0.90) !important;
   backdrop-filter: blur(16px) !important;
   -webkit-backdrop-filter: blur(16px) !important;
   border: 1px solid rgba(255, 255, 255, 0.12) !important;
-  border-radius: 10px !important;
-  padding: 6px 14px !important;
+  border-radius: 9999px !important;
+  padding: 3px 14px 3px 5px !important;
   margin-top: 0 !important;
   margin-bottom: 0 !important;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4) !important;
-  gap: 12px !important;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.35) !important;
+  gap: 10px !important;
   flex-wrap: nowrap !important;
-  overflow: hidden !important;
+  overflow: visible !important;
   box-sizing: border-box !important;
-  width: 100% !important;
-  min-height: 48px !important;
+  width: auto !important;
+  max-width: 100% !important;
+  min-height: 34px !important;
 }}
 
 .fuelpulse-header-brand-wrap {{
@@ -1433,10 +1448,10 @@ div[data-testid="stDecoration"] {{
   display: none !important;
 }}
 header[data-testid="stHeader"] {{
-  height: 2.875rem !important;
-  min-height: 2.875rem !important;
-  max-height: 2.875rem !important;
-  padding: 0 1rem !important;
+  height: 0 !important;
+  min-height: 0 !important;
+  max-height: 0 !important;
+  padding: 0 !important;
   margin: 0 !important;
   top: 0 !important;
   background: transparent !important;
@@ -1446,6 +1461,7 @@ header[data-testid="stHeader"] {{
   border-bottom: none !important;
   pointer-events: none !important;
   z-index: 999990 !important;
+  overflow: visible !important;
 }}
 header[data-testid="stHeader"] * {{
   pointer-events: auto !important;
@@ -2702,6 +2718,41 @@ button[data-testid*="primaryActive"] * {{
 /* ==============================================================================
    ULTIMATE SPECIFICITY OVERRIDE: FLOATING PILL NAVBAR CAPSULE & CONTROLS
    ============================================================================== */
+/* ==============================================================================
+   ULTIMATE SPECIFICITY OVERRIDE: FLOATING PILL NAVBAR CAPSULE & CONTROLS
+   ============================================================================== */
+/* Eliminate wasted space above top navbar */
+header[data-testid="stHeader"] {{
+  display: none !important;
+  height: 0 !important;
+  min-height: 0 !important;
+  max-height: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}}
+
+.block-container,
+div[data-testid="stAppViewBlockContainer"],
+.main .block-container,
+section.main > div.block-container {{
+  padding-top: 0.20rem !important;
+  margin-top: 0 !important;
+}}
+
+div.element-container:has(div[data-testid="stHtml"] script:only-child),
+div.stElementContainer:has(div[data-testid="stHtml"] script:only-child),
+div[data-testid="stHtml"]:has(script:only-child) {{
+  display: none !important;
+  height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}}
+
+.main div[data-testid="stVerticalBlock"] > div:first-child {{
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}}
+
 div[data-testid="stColumn"] div[data-testid="stHorizontalBlock"]:has([class*="top_ai_assistant_btn"]) {{
   display: flex !important;
   align-items: center !important;
@@ -2712,22 +2763,26 @@ div[data-testid="stColumn"] div[data-testid="stHorizontalBlock"]:has([class*="to
   -webkit-backdrop-filter: blur(20px) !important;
   border: 1px solid rgba(255, 255, 255, 0.14) !important;
   border-radius: 9999px !important;
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
-  padding: 4px 8px !important;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.40), inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
+  padding: 2px 6px !important;
   margin: 0 !important;
   gap: 0px !important;
+  height: 32px !important;
+  min-height: 32px !important;
+  max-height: 32px !important;
+  box-sizing: border-box !important;
 }}
 
 div[data-testid="stColumn"] div[data-testid="stHorizontalBlock"]:has([class*="top_ai_assistant_btn"]) > div[data-testid="stColumn"] {{
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  padding: 0 4px !important;
+  padding: 0 2px !important;
   margin: 0 !important;
 }}
 
 div[data-testid="stColumn"] div[data-testid="stHorizontalBlock"]:has([class*="top_ai_assistant_btn"]) > div[data-testid="stColumn"]:not(:last-child) {{
-  border-right: 1px solid rgba(255, 255, 255, 0.12) !important;
+  border-right: 1px solid rgba(255, 255, 255, 0.10) !important;
 }}
 
 div[data-testid="stColumn"] div[data-testid="stHorizontalBlock"]:has([class*="top_ai_assistant_btn"]) button,
@@ -2745,24 +2800,27 @@ div[class*="top_auth_btn"] button {{
   border-radius: 9999px !important;
   color: #E2E8F0 !important;
   -webkit-text-fill-color: #E2E8F0 !important;
-  font-size: 13px !important;
-  font-weight: 500 !important;
-  height: 34px !important;
-  min-height: 34px !important;
-  line-height: 34px !important;
-  padding: 0 12px !important;
+  font-size: 11px !important;
+  font-weight: 550 !important;
+  letter-spacing: 0.01em !important;
+  height: 26px !important;
+  min-height: 26px !important;
+  max-height: 26px !important;
+  line-height: 26px !important;
+  padding: 0 8px !important;
   margin: 0 !important;
   position: relative !important;
   overflow: visible !important;
-  transition: all 0.2s ease !important;
+  transition: all 0.18s ease !important;
   cursor: pointer !important;
+  white-space: nowrap !important;
 }}
 
 div[data-testid="stColumn"] div[data-testid="stHorizontalBlock"]:has([class*="top_ai_assistant_btn"]) button *,
 div[data-testid="stColumn"] div[data-testid="stHorizontalBlock"]:has([class*="top_ai_assistant_btn"]) [data-testid="stPopover"] > button * {{
   color: inherit !important;
   -webkit-text-fill-color: inherit !important;
-  font-size: 13px !important;
+  font-size: 11px !important;
   font-weight: inherit !important;
   white-space: nowrap !important;
   line-height: 1 !important;
@@ -2781,13 +2839,13 @@ div[data-testid="stColumn"] div[data-testid="stHorizontalBlock"]:has([class*="to
 div[data-testid="stColumn"] div[data-testid="stHorizontalBlock"]:has([class*="top_ai_assistant_btn"]) [data-testid="stPopover"] > button:hover::before {{
   content: "" !important;
   position: absolute !important;
-  top: -4px !important;
+  top: -3px !important;
   left: 20% !important;
   right: 20% !important;
   height: 2px !important;
   background: #F5B942 !important;
   border-radius: 9999px !important;
-  box-shadow: 0 0 12px 2px rgba(245, 185, 66, 0.70), 0 0 20px 4px rgba(245, 185, 66, 0.35) !important;
+  box-shadow: 0 0 10px 2px rgba(245, 185, 66, 0.70), 0 0 16px 3px rgba(245, 185, 66, 0.35) !important;
   pointer-events: none !important;
 }}
 
@@ -2864,27 +2922,27 @@ def render_universal_top_header(active_page_name: str = "Overview", key_prefix: 
             rem_q = summary.get("remaining", max(0, 3 - used_q))
             is_exh = summary.get("quota_exhausted", rem_q <= 0 or used_q >= 3)
             if is_exh:
-                ai_btn_label = "🤖 AI (0/3 Left)"
+                ai_btn_label = "✦ AI (0/3)"
             else:
-                ai_btn_label = f"🤖 AI ({rem_q}/3)"
+                ai_btn_label = f"✦ AI ({rem_q}/3)"
             ai_btn_help = f"Antigravity AI ({used_q}/3 used · {rem_q} remaining)"
         else:
             rem_q = 3
-            ai_btn_label = "🤖 AI (3/3)"
+            ai_btn_label = "✦ AI (3/3)"
             ai_btn_help = "Ask Antigravity AI Assistant (Sign in to unlock 3 free daily questions)"
     except Exception:
         rem_q = 3
-        ai_btn_label = "🤖 AI (3/3)"
+        ai_btn_label = "✦ AI (3/3)"
         ai_btn_help = "Ask Antigravity AI Assistant"
 
     # 2-Zone Premium Header: Left = Brand Only; Right = Exactly Four Controls [AI Analyst, Language, News, Account]
-    col_brand, col_controls_cluster = st.columns([1.35, 1.65], gap="medium", vertical_alignment="center")
+    col_brand, col_controls_cluster = st.columns([1.1, 1.4], gap="small", vertical_alignment="center")
     with col_brand:
-        render_html(render_app_header_brand_html(current_lang, engine_name, t('live_indicator', current_lang)))
+        render_html(render_app_header_brand_html(current_lang, show_status=False))
 
     with col_controls_cluster:
         # Four controls strictly in specified order: 1. AI Analyst -> 2. Language -> 3. News -> 4. User Account
-        col_ai, col_lang, col_news, col_auth = st.columns([1.1, 1.0, 1.0, 1.1], gap="small", vertical_alignment="center")
+        col_ai, col_lang, col_news, col_auth = st.columns([1.0, 0.9, 1.0, 0.95], gap="small", vertical_alignment="center")
 
         # 1. AI Analyst
         with col_ai:
@@ -2906,7 +2964,7 @@ def render_universal_top_header(active_page_name: str = "Overview", key_prefix: 
             all_langs = get_available_languages()
             cur_data = all_langs.get(current_lang, all_langs.get("en", {"flag": "🇬🇧", "native": "English", "name": "English"}))
             cur_flag = cur_data.get("flag", "🇬🇧" if current_lang == "en" else "🌐")
-            lang_btn_label = f"🌐 {cur_flag} {current_lang.upper()} ▾"
+            lang_btn_label = f"{cur_flag} {current_lang.upper()} ▾"
             with st.popover(lang_btn_label, use_container_width=True, key=f"{pfx}_top_lang_popover"):
                 st.markdown(f"#### 🌐 {t('select_language', current_lang)} ({len(all_langs)} World Languages)")
                 st.caption(t("lang_modal_sub", current_lang))
