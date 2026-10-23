@@ -953,6 +953,42 @@ class SupabaseAuthClient:
             logger.error(f"Error querying Supabase OAuth authorize: {e}")
             return False, f"Network error contacting Supabase Auth: {e}", None
 
+    def generate_admin_magic_link(
+        self,
+        email: str,
+        redirect_to: Optional[str] = None
+    ) -> Tuple[bool, str, Optional[str]]:
+        """
+        Generates a direct, cryptographically verified Supabase sign-in link via the Admin API.
+        Returns (success, message, action_link).
+        """
+        if not self.is_configured() or not self.service_role_key:
+            return False, "Supabase service credentials not configured.", None
+
+        clean_email = (email or "").strip().lower()
+        if not clean_email or "@" not in clean_email:
+            return False, "Please provide a valid email address.", None
+
+        url = f"{self.url}/auth/v1/admin/generate_link"
+        headers = self._headers(use_service_key=True)
+        payload = {
+            "type": "magiclink",
+            "email": clean_email,
+            "redirect_to": redirect_to or "http://localhost:8501"
+        }
+        try:
+            resp = self._http.post(url, headers=headers, json=payload, timeout=DEFAULT_TIMEOUT)
+            if resp.status_code == 200:
+                data = resp.json()
+                action_link = data.get("action_link")
+                return True, "Supabase verified sign-in link ready.", action_link
+            data = resp.json() if resp.content else {}
+            err_msg = data.get("msg") or data.get("message") or f"HTTP {resp.status_code}"
+            return False, f"Supabase admin link error: {err_msg}", None
+        except Exception as e:
+            logger.error(f"Error generating Supabase admin link: {e}")
+            return False, f"Connection error: {e}", None
+
     def exchange_code_for_session(
         self,
         code: str

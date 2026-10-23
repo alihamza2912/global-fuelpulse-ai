@@ -1509,18 +1509,19 @@ div[data-testid="stPopoverButton"] {{
    PREMIUM CUSTOM NAVBAR WITH CONSOLIDATED FLOATING CONTROL CAPSULE
    ============================================================================== */
 
-/* The single unified right-side control surface (News | AI Analyst | Language | Account) */
-div[data-testid="stHorizontalBlock"]:has(button[key*="top_ai_assistant_btn"]) {{
-  display: inline-flex !important;
+/* The single unified right-side floating navigation capsule */
+div[data-testid="stColumn"] div[data-testid="stHorizontalBlock"]:has([class*="_top_ai_assistant_btn"]),
+div[data-testid="stHorizontalBlock"]:has([class*="_top_ai_assistant_btn"]) {{
+  display: flex !important;
   align-items: center !important;
   justify-content: flex-end !important;
-  background: rgba(10, 15, 29, 0.90) !important;
-  background-color: rgba(10, 15, 29, 0.90) !important;
-  backdrop-filter: blur(18px) !important;
-  -webkit-backdrop-filter: blur(18px) !important;
-  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  background: rgba(10, 15, 29, 0.92) !important;
+  background-color: rgba(10, 15, 29, 0.92) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.14) !important;
   border-radius: 9999px !important;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.06) !important;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
   padding: 3px 6px !important;
   margin: 0 !important;
   gap: 0px !important;
@@ -1528,40 +1529,43 @@ div[data-testid="stHorizontalBlock"]:has(button[key*="top_ai_assistant_btn"]) {{
   max-width: 100% !important;
 }}
 
-div[data-testid="stHorizontalBlock"]:has(button[key*="top_ai_assistant_btn"]) > div[data-testid="column"] {{
+div[data-testid="stColumn"] div[data-testid="stHorizontalBlock"]:has([class*="_top_ai_assistant_btn"]) > div[data-testid="stColumn"],
+div[data-testid="stColumn"] div[data-testid="stHorizontalBlock"]:has([class*="_top_ai_assistant_btn"]) > div[data-testid="column"] {{
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  padding: 0 4px !important;
+  padding: 0 2px !important;
   margin: 0 !important;
 }}
 
-/* Subtle 1px vertical separator between the 4 actions (News | AI Analyst | Language | Account) */
-div[data-testid="stHorizontalBlock"]:has(button[key*="top_ai_assistant_btn"]) > div[data-testid="column"]:not(:last-child) {{
-  border-right: 1px solid rgba(255, 255, 255, 0.08) !important;
+/* Subtle 1px vertical hairline separator between actions */
+div[data-testid="stColumn"] div[data-testid="stHorizontalBlock"]:has([class*="_top_ai_assistant_btn"]) > div[data-testid="stColumn"]:not(:last-child),
+div[data-testid="stColumn"] div[data-testid="stHorizontalBlock"]:has([class*="_top_ai_assistant_btn"]) > div[data-testid="column"]:not(:last-child) {{
+  border-right: 1px solid rgba(255, 255, 255, 0.10) !important;
 }}
 
 /* Base button and popover button styling inside the integrated surface:
    COMPLETELY REMOVE individual borders, boxed backgrounds, and individual outlines */
-div[data-testid="stHorizontalBlock"]:has(button[key*="top_ai_assistant_btn"]) button,
-div[data-testid="stHorizontalBlock"]:has(button[key*="top_ai_assistant_btn"]) [data-testid="stPopover"] > button,
-div[data-testid="stHorizontalBlock"]:has(button[key*="top_ai_assistant_btn"]) [data-testid="stPopoverButton"] > button,
-div[data-testid="stHorizontalBlock"]:has(button[key*="top_auth_btn"]) button,
-div[data-testid="stHorizontalBlock"]:has(button[key*="top_auth_btn"]) [data-testid="stPopover"] > button,
-div[data-testid="stHorizontalBlock"]:has(button[key*="top_auth_btn"]) [data-testid="stPopoverButton"] > button,
-button[key*="top_ai_assistant_btn"],
-button[key*="top_auth_btn"] {{
+[class*="_top_ai_assistant_btn"] button,
+[class*="_top_lang_popover"] [data-testid="stPopover"] > button,
+[class*="_top_lang_popover"] [data-testid="stPopoverButton"] > button,
+[class*="_top_news_popover"] [data-testid="stPopover"] > button,
+[class*="_top_news_popover"] [data-testid="stPopoverButton"] > button,
+[class*="_top_auth_btn"] button,
+div[data-testid="stColumn"] div[data-testid="stHorizontalBlock"]:has([class*="_top_ai_assistant_btn"]) button,
+div[data-testid="stColumn"] div[data-testid="stHorizontalBlock"]:has([class*="_top_ai_assistant_btn"]) [data-testid="stPopover"] > button,
+div[data-testid="stColumn"] div[data-testid="stHorizontalBlock"]:has([class*="_top_ai_assistant_btn"]) [data-testid="stPopoverButton"] > button {{
   background: transparent !important;
   background-color: transparent !important;
   border: 1px solid transparent !important;
   box-shadow: none !important;
   outline: none !important;
   border-radius: 9999px !important;
-  height: 32px !important;
-  min-height: 32px !important;
-  max-height: 32px !important;
-  line-height: 32px !important;
-  padding: 0 10px !important;
+  height: 34px !important;
+  min-height: 34px !important;
+  max-height: 34px !important;
+  line-height: 34px !important;
+  padding: 0 12px !important;
   margin: 0 !important;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
   font-size: 12px !important;
@@ -1578,18 +1582,18 @@ button[key*="top_auth_btn"] {{
   cursor: pointer !important;
   width: 100% !important;
   box-sizing: border-box !important;
-  transition: font-variation-settings 0.22s cubic-bezier(0.16, 1, 0.3, 1),
-              font-weight 0.2s ease,
-              color 0.18s ease,
-              background-color 0.18s ease,
-              box-shadow 0.18s ease !important;
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }}
 
-div[data-testid="stHorizontalBlock"]:has(button[key*="top_ai_assistant_btn"]) button *,
-div[data-testid="stHorizontalBlock"]:has(button[key*="top_ai_assistant_btn"]) [data-testid="stPopover"] > button *,
-div[data-testid="stHorizontalBlock"]:has(button[key*="top_ai_assistant_btn"]) [data-testid="stPopoverButton"] > button *,
-button[key*="top_ai_assistant_btn"] *,
-button[key*="top_auth_btn"] * {{
+[class*="_top_ai_assistant_btn"] button *,
+[class*="_top_lang_popover"] [data-testid="stPopover"] > button *,
+[class*="_top_lang_popover"] [data-testid="stPopoverButton"] > button *,
+[class*="_top_news_popover"] [data-testid="stPopover"] > button *,
+[class*="_top_news_popover"] [data-testid="stPopoverButton"] > button *,
+[class*="_top_auth_btn"] button *,
+div[data-testid="stColumn"] div[data-testid="stHorizontalBlock"]:has([class*="_top_ai_assistant_btn"]) button *,
+div[data-testid="stColumn"] div[data-testid="stHorizontalBlock"]:has([class*="_top_ai_assistant_btn"]) [data-testid="stPopover"] > button *,
+div[data-testid="stColumn"] div[data-testid="stHorizontalBlock"]:has([class*="_top_ai_assistant_btn"]) [data-testid="stPopoverButton"] > button * {{
   color: inherit !important;
   -webkit-text-fill-color: inherit !important;
   font-size: 12px !important;
@@ -1605,16 +1609,14 @@ button[key*="top_auth_btn"] * {{
 
 /* VariableFontHover effect on hover and keyboard focus:
    Subtle weight increase without layout shift and soft unified highlight */
-div[data-testid="stHorizontalBlock"]:has(button[key*="top_ai_assistant_btn"]) button:hover,
-div[data-testid="stHorizontalBlock"]:has(button[key*="top_ai_assistant_btn"]) [data-testid="stPopover"] > button:hover,
-div[data-testid="stHorizontalBlock"]:has(button[key*="top_ai_assistant_btn"]) [data-testid="stPopoverButton"] > button:hover,
-div[data-testid="stHorizontalBlock"]:has(button[key*="top_ai_assistant_btn"]) button:focus-visible,
-div[data-testid="stHorizontalBlock"]:has(button[key*="top_ai_assistant_btn"]) [data-testid="stPopover"] > button:focus-visible,
-div[data-testid="stHorizontalBlock"]:has(button[key*="top_ai_assistant_btn"]) [data-testid="stPopoverButton"] > button:focus-visible,
-button[key*="top_ai_assistant_btn"]:hover,
-button[key*="top_ai_assistant_btn"]:focus-visible,
-button[key*="top_auth_btn"]:hover,
-button[key*="top_auth_btn"]:focus-visible {{
+[class*="_top_ai_assistant_btn"] button:hover,
+[class*="_top_lang_popover"] [data-testid="stPopover"] > button:hover,
+[class*="_top_news_popover"] [data-testid="stPopover"] > button:hover,
+[class*="_top_auth_btn"] button:hover,
+div[data-testid="stColumn"] div[data-testid="stHorizontalBlock"]:has([class*="_top_ai_assistant_btn"]) button:hover,
+div[data-testid="stColumn"] div[data-testid="stHorizontalBlock"]:has([class*="_top_ai_assistant_btn"]) [data-testid="stPopover"] > button:hover,
+div[data-testid="stColumn"] div[data-testid="stHorizontalBlock"]:has([class*="_top_ai_assistant_btn"]) button:focus-visible,
+div[data-testid="stColumn"] div[data-testid="stHorizontalBlock"]:has([class*="_top_ai_assistant_btn"]) [data-testid="stPopover"] > button:focus-visible {{
   background: rgba(255, 255, 255, 0.08) !important;
   background-color: rgba(255, 255, 255, 0.08) !important;
   border-color: transparent !important;
@@ -1626,17 +1628,24 @@ button[key*="top_auth_btn"]:focus-visible {{
 }}
 
 /* Smooth subtle tubelight active lamp & focus effect inspired by reference screenshot */
-div[data-testid="stHorizontalBlock"]:has(button[key*="top_ai_assistant_btn"]) button,
-div[data-testid="stHorizontalBlock"]:has(button[key*="top_ai_assistant_btn"]) [data-testid="stPopover"] > button,
-div[data-testid="stHorizontalBlock"]:has(button[key*="top_ai_assistant_btn"]) [data-testid="stPopoverButton"] > button {{
+[class*="_top_ai_assistant_btn"] button,
+[class*="_top_lang_popover"] [data-testid="stPopover"] > button,
+[class*="_top_news_popover"] [data-testid="stPopover"] > button,
+[class*="_top_auth_btn"] button,
+div[data-testid="stColumn"] div[data-testid="stHorizontalBlock"]:has([class*="_top_ai_assistant_btn"]) button,
+div[data-testid="stColumn"] div[data-testid="stHorizontalBlock"]:has([class*="_top_ai_assistant_btn"]) [data-testid="stPopover"] > button {{
   position: relative !important;
   overflow: visible !important;
 }}
 
-div[data-testid="stHorizontalBlock"]:has(button[key*="top_ai_assistant_btn"]) button:hover::before,
-div[data-testid="stHorizontalBlock"]:has(button[key*="top_ai_assistant_btn"]) [data-testid="stPopover"] > button:hover::before,
-div[data-testid="stHorizontalBlock"]:has(button[key*="top_ai_assistant_btn"]) button:focus-visible::before,
-div[data-testid="stHorizontalBlock"]:has(button[key*="top_ai_assistant_btn"]) [data-testid="stPopover"] > button:focus-visible::before {{
+[class*="_top_ai_assistant_btn"] button:hover::before,
+[class*="_top_lang_popover"] [data-testid="stPopover"] > button:hover::before,
+[class*="_top_news_popover"] [data-testid="stPopover"] > button:hover::before,
+[class*="_top_auth_btn"] button:hover::before,
+div[data-testid="stColumn"] div[data-testid="stHorizontalBlock"]:has([class*="_top_ai_assistant_btn"]) button:hover::before,
+div[data-testid="stColumn"] div[data-testid="stHorizontalBlock"]:has([class*="_top_ai_assistant_btn"]) [data-testid="stPopover"] > button:hover::before,
+div[data-testid="stColumn"] div[data-testid="stHorizontalBlock"]:has([class*="_top_ai_assistant_btn"]) button:focus-visible::before,
+div[data-testid="stColumn"] div[data-testid="stHorizontalBlock"]:has([class*="_top_ai_assistant_btn"]) [data-testid="stPopover"] > button:focus-visible::before {{
   content: "" !important;
   position: absolute !important;
   top: -3px !important;
@@ -1650,24 +1659,19 @@ div[data-testid="stHorizontalBlock"]:has(button[key*="top_ai_assistant_btn"]) [d
   transition: all 0.25s ease !important;
 }}
 
-div[data-testid="stHorizontalBlock"]:has(button[key*="top_ai_assistant_btn"]) button[key*="top_auth_btn"][kind="primary"]::before {{
-  background: #10B981 !important;
-  box-shadow: 0 0 10px 2px rgba(16, 185, 129, 0.45) !important;
-}}
-
 /* Dedicated subtle gold accent on AI Analyst action */
-button[key*="top_ai_assistant_btn"] {{
+[class*="_top_ai_assistant_btn"] button {{
   color: #F5B942 !important;
   -webkit-text-fill-color: #F5B942 !important;
 }}
 
-button[key*="top_ai_assistant_btn"] * {{
+[class*="_top_ai_assistant_btn"] button * {{
   color: #F5B942 !important;
   -webkit-text-fill-color: #F5B942 !important;
 }}
 
-button[key*="top_ai_assistant_btn"]:hover,
-button[key*="top_ai_assistant_btn"]:focus-visible {{
+[class*="_top_ai_assistant_btn"] button:hover,
+[class*="_top_ai_assistant_btn"] button:focus-visible {{
   background: rgba(245, 185, 66, 0.12) !important;
   background-color: rgba(245, 185, 66, 0.12) !important;
   color: #FCD34D !important;
@@ -1678,13 +1682,13 @@ button[key*="top_ai_assistant_btn"]:focus-visible {{
 }}
 
 /* Authenticated active session for Account button */
-button[key*="top_auth_btn"][kind="primary"] {{
+[class*="_top_auth_btn"] button[kind="primary"] {{
   color: #34D399 !important;
   -webkit-text-fill-color: #34D399 !important;
   font-weight: 600 !important;
 }}
 
-button[key*="top_auth_btn"][kind="primary"]:hover {{
+[class*="_top_auth_btn"] button[kind="primary"]:hover {{
   background: rgba(16, 185, 129, 0.12) !important;
   background-color: rgba(16, 185, 129, 0.12) !important;
   color: #6EE7B7 !important;
@@ -1692,11 +1696,9 @@ button[key*="top_auth_btn"][kind="primary"]:hover {{
 }}
 
 /* Hide popover chevron caret in header actions for unified baseline & centering */
-div[data-testid="stHorizontalBlock"]:has(button[key*="top_ai_assistant_btn"]) div[data-testid="stPopover"] > button svg,
-div[data-testid="stHorizontalBlock"]:has(button[key*="top_ai_assistant_btn"]) div[data-testid="stPopoverButton"] > button svg,
-div[data-testid="stHorizontalBlock"]:has(button[key*="top_ai_assistant_btn"]) svg[data-testid="stPopoverButtonArrow"],
-div[data-testid="stHorizontalBlock"]:has(.fuelpulse-header-bar) div[data-testid="stPopover"] > button svg,
-div[data-testid="stHorizontalBlock"]:has(.fuelpulse-header-bar) div[data-testid="stPopoverButton"] > button svg,
+[class*="_top_lang_popover"] svg,
+[class*="_top_news_popover"] svg,
+div[data-testid="stColumn"] div[data-testid="stHorizontalBlock"]:has([class*="_top_ai_assistant_btn"]) svg[data-testid="stPopoverButtonArrow"],
 div[data-testid="stHorizontalBlock"]:has(.fuelpulse-header-bar) svg[data-testid="stPopoverButtonArrow"] {{
   display: none !important;
   width: 0 !important;
@@ -1793,9 +1795,9 @@ div[data-testid="stPopoverContent"] div.stButton > button[kind="primary"] * {{
 }}
 
 /* C. Secondary Action Buttons & Suggested Query Chips (Excluding Top Navbar Buttons) */
-section:not([data-testid="stSidebar"]) div:not([data-testid="stPopoverBody"]):not([data-baseweb="popover"]):not([data-testid="stPopoverContent"]) > div.stButton > button[kind="secondary"]:not([key*="top_"]),
-section:not([data-testid="stSidebar"]) div:not([data-testid="stPopoverBody"]):not([data-baseweb="popover"]):not([data-testid="stPopoverContent"]) > div.stButton > button[data-testid="stBaseButton-secondary"]:not([role="radio"]):not([role="checkbox"]):not([data-testid*="Active"]):not([key*="top_"]),
-section:not([data-testid="stSidebar"]) button[kind="secondary"]:not([data-testid="stBaseButton-primary"]):not([role="radio"]):not([role="checkbox"]):not([key*="top_"]) {{
+section:not([data-testid="stSidebar"]) div:not([data-testid="stPopoverBody"]):not([data-baseweb="popover"]):not([data-testid="stPopoverContent"]) > div.stButton > button[kind="secondary"]:not(:is(div[data-testid="stHorizontalBlock"]:has([class*="_top_ai_assistant_btn"]) *)),
+section:not([data-testid="stSidebar"]) div:not([data-testid="stPopoverBody"]):not([data-baseweb="popover"]):not([data-testid="stPopoverContent"]) > div.stButton > button[data-testid="stBaseButton-secondary"]:not([role="radio"]):not([role="checkbox"]):not([data-testid*="Active"]):not(:is(div[data-testid="stHorizontalBlock"]:has([class*="_top_ai_assistant_btn"]) *)),
+section:not([data-testid="stSidebar"]) button[kind="secondary"]:not([data-testid="stBaseButton-primary"]):not([role="radio"]):not([role="checkbox"]):not(:is(div[data-testid="stHorizontalBlock"]:has([class*="_top_ai_assistant_btn"]) *)) {{
   background: rgba(14, 21, 38, 0.75) !important;
   background-color: rgba(14, 21, 38, 0.75) !important;
   color: #E2E8F0 !important;
@@ -1816,8 +1818,8 @@ section:not([data-testid="stSidebar"]) button[kind="secondary"]:not([data-testid
   cursor: pointer !important;
 }}
 
-section:not([data-testid="stSidebar"]) div:not([data-testid*="Popover"]):not([data-baseweb="popover"]) > div.stButton > button[kind="secondary"]:not([key*="top_"]) *,
-section:not([data-testid="stSidebar"]) div:not([data-testid*="Popover"]):not([data-baseweb="popover"]) > div.stButton > button[data-testid="stBaseButton-secondary"]:not([key*="top_"]) * {{
+section:not([data-testid="stSidebar"]) div:not([data-testid*="Popover"]):not([data-baseweb="popover"]) > div.stButton > button[kind="secondary"]:not(:is(div[data-testid="stHorizontalBlock"]:has([class*="_top_ai_assistant_btn"]) *)) *,
+section:not([data-testid="stSidebar"]) div:not([data-testid*="Popover"]):not([data-baseweb="popover"]) > div.stButton > button[data-testid="stBaseButton-secondary"]:not(:is(div[data-testid="stHorizontalBlock"]:has([class*="_top_ai_assistant_btn"]) *)) * {{
   color: #E2E8F0 !important;
   -webkit-text-fill-color: #E2E8F0 !important;
   font-size: 11.5px !important;
@@ -1825,8 +1827,8 @@ section:not([data-testid="stSidebar"]) div:not([data-testid*="Popover"]):not([da
   white-space: nowrap !important;
 }}
 
-section:not([data-testid="stSidebar"]) div:not([data-testid*="Popover"]):not([data-baseweb="popover"]) > div.stButton > button[kind="secondary"]:not([key*="top_"]):hover,
-section:not([data-testid="stSidebar"]) div:not([data-testid*="Popover"]):not([data-baseweb="popover"]) > div.stButton > button[data-testid="stBaseButton-secondary"]:not([key*="top_"]):hover {{
+section:not([data-testid="stSidebar"]) div:not([data-testid*="Popover"]):not([data-baseweb="popover"]) > div.stButton > button[kind="secondary"]:not(:is(div[data-testid="stHorizontalBlock"]:has([class*="_top_ai_assistant_btn"]) *)):hover,
+section:not([data-testid="stSidebar"]) div:not([data-testid*="Popover"]):not([data-baseweb="popover"]) > div.stButton > button[data-testid="stBaseButton-secondary"]:not(:is(div[data-testid="stHorizontalBlock"]:has([class*="_top_ai_assistant_btn"]) *)):hover {{
   background: rgba(245, 185, 66, 0.12) !important;
   background-color: rgba(245, 185, 66, 0.12) !important;
   border-color: rgba(245, 185, 66, 0.45) !important;
@@ -1836,8 +1838,8 @@ section:not([data-testid="stSidebar"]) div:not([data-testid*="Popover"]):not([da
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.35) !important;
 }}
 
-section:not([data-testid="stSidebar"]) div:not([data-testid*="Popover"]):not([data-baseweb="popover"]) > div.stButton > button[kind="secondary"]:not([key*="top_"]):hover *,
-section:not([data-testid="stSidebar"]) div:not([data-testid*="Popover"]):not([data-baseweb="popover"]) > div.stButton > button[data-testid="stBaseButton-secondary"]:not([key*="top_"]):hover * {{
+section:not([data-testid="stSidebar"]) div:not([data-testid*="Popover"]):not([data-baseweb="popover"]) > div.stButton > button[kind="secondary"]:not(:is(div[data-testid="stHorizontalBlock"]:has([class*="_top_ai_assistant_btn"]) *)):hover *,
+section:not([data-testid="stSidebar"]) div:not([data-testid*="Popover"]):not([data-baseweb="popover"]) > div.stButton > button[data-testid="stBaseButton-secondary"]:not(:is(div[data-testid="stHorizontalBlock"]:has([class*="_top_ai_assistant_btn"]) *)):hover * {{
   color: #F5B942 !important;
   -webkit-text-fill-color: #F5B942 !important;
 }}
@@ -2697,6 +2699,117 @@ button[data-testid*="primaryActive"] * {{
     white-space: nowrap !important;
   }}
 }}
+/* ==============================================================================
+   ULTIMATE SPECIFICITY OVERRIDE: FLOATING PILL NAVBAR CAPSULE & CONTROLS
+   ============================================================================== */
+div[data-testid="stColumn"] div[data-testid="stHorizontalBlock"]:has([class*="top_ai_assistant_btn"]) {{
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  background: rgba(10, 15, 29, 0.94) !important;
+  background-color: rgba(10, 15, 29, 0.94) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.14) !important;
+  border-radius: 9999px !important;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
+  padding: 4px 8px !important;
+  margin: 0 !important;
+  gap: 0px !important;
+}}
+
+div[data-testid="stColumn"] div[data-testid="stHorizontalBlock"]:has([class*="top_ai_assistant_btn"]) > div[data-testid="stColumn"] {{
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0 4px !important;
+  margin: 0 !important;
+}}
+
+div[data-testid="stColumn"] div[data-testid="stHorizontalBlock"]:has([class*="top_ai_assistant_btn"]) > div[data-testid="stColumn"]:not(:last-child) {{
+  border-right: 1px solid rgba(255, 255, 255, 0.12) !important;
+}}
+
+div[data-testid="stColumn"] div[data-testid="stHorizontalBlock"]:has([class*="top_ai_assistant_btn"]) button,
+div[data-testid="stColumn"] div[data-testid="stHorizontalBlock"]:has([class*="top_ai_assistant_btn"]) [data-testid="stPopover"] > button,
+div[data-testid="stColumn"] div[data-testid="stHorizontalBlock"]:has([class*="top_ai_assistant_btn"]) [data-testid="stPopoverButton"] > button,
+div[class*="top_ai_assistant_btn"] button,
+div[class*="top_lang_popover"] [data-testid="stPopover"] > button,
+div[class*="top_news_popover"] [data-testid="stPopover"] > button,
+div[class*="top_auth_btn"] button {{
+  background: transparent !important;
+  background-color: transparent !important;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  border-radius: 9999px !important;
+  color: #E2E8F0 !important;
+  -webkit-text-fill-color: #E2E8F0 !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  height: 34px !important;
+  min-height: 34px !important;
+  line-height: 34px !important;
+  padding: 0 12px !important;
+  margin: 0 !important;
+  position: relative !important;
+  overflow: visible !important;
+  transition: all 0.2s ease !important;
+  cursor: pointer !important;
+}}
+
+div[data-testid="stColumn"] div[data-testid="stHorizontalBlock"]:has([class*="top_ai_assistant_btn"]) button *,
+div[data-testid="stColumn"] div[data-testid="stHorizontalBlock"]:has([class*="top_ai_assistant_btn"]) [data-testid="stPopover"] > button * {{
+  color: inherit !important;
+  -webkit-text-fill-color: inherit !important;
+  font-size: 13px !important;
+  font-weight: inherit !important;
+  white-space: nowrap !important;
+  line-height: 1 !important;
+}}
+
+div[data-testid="stColumn"] div[data-testid="stHorizontalBlock"]:has([class*="top_ai_assistant_btn"]) button:hover,
+div[data-testid="stColumn"] div[data-testid="stHorizontalBlock"]:has([class*="top_ai_assistant_btn"]) [data-testid="stPopover"] > button:hover {{
+  background: rgba(255, 255, 255, 0.08) !important;
+  background-color: rgba(255, 255, 255, 0.08) !important;
+  color: #FFFFFF !important;
+  -webkit-text-fill-color: #FFFFFF !important;
+  font-weight: 650 !important;
+}}
+
+div[data-testid="stColumn"] div[data-testid="stHorizontalBlock"]:has([class*="top_ai_assistant_btn"]) button:hover::before,
+div[data-testid="stColumn"] div[data-testid="stHorizontalBlock"]:has([class*="top_ai_assistant_btn"]) [data-testid="stPopover"] > button:hover::before {{
+  content: "" !important;
+  position: absolute !important;
+  top: -4px !important;
+  left: 20% !important;
+  right: 20% !important;
+  height: 2px !important;
+  background: #F5B942 !important;
+  border-radius: 9999px !important;
+  box-shadow: 0 0 12px 2px rgba(245, 185, 66, 0.70), 0 0 20px 4px rgba(245, 185, 66, 0.35) !important;
+  pointer-events: none !important;
+}}
+
+div[class*="top_ai_assistant_btn"] button {{
+  color: #F5B942 !important;
+  -webkit-text-fill-color: #F5B942 !important;
+}}
+div[class*="top_ai_assistant_btn"] button * {{
+  color: #F5B942 !important;
+  -webkit-text-fill-color: #F5B942 !important;
+}}
+div[class*="top_ai_assistant_btn"] button:hover {{
+  background: rgba(245, 185, 66, 0.12) !important;
+  color: #FCD34D !important;
+  -webkit-text-fill-color: #FCD34D !important;
+}}
+
+div[class*="top_auth_btn"] button[kind="primary"] {{
+  color: #34D399 !important;
+  -webkit-text-fill-color: #34D399 !important;
+  font-weight: 600 !important;
+}}
 </style>"""
     render_html(custom_css)
 
@@ -2764,14 +2877,14 @@ def render_universal_top_header(active_page_name: str = "Overview", key_prefix: 
         ai_btn_label = "🤖 AI (3/3)"
         ai_btn_help = "Ask Antigravity AI Assistant"
 
-    # 2-Zone Premium Header: Left = Brand Only; Right = Exactly Four Controls [News, AI Analyst, Language, Account]
-    col_brand, col_controls_cluster = st.columns([1.55, 1.45], gap="medium", vertical_alignment="center")
+    # 2-Zone Premium Header: Left = Brand Only; Right = Exactly Four Controls [AI Analyst, Language, News, Account]
+    col_brand, col_controls_cluster = st.columns([1.35, 1.65], gap="medium", vertical_alignment="center")
     with col_brand:
         render_html(render_app_header_brand_html(current_lang, engine_name, t('live_indicator', current_lang)))
 
     with col_controls_cluster:
         # Four controls strictly in specified order: 1. AI Analyst -> 2. Language -> 3. News -> 4. User Account
-        col_ai, col_lang, col_news, col_auth = st.columns([1.25, 1.05, 1.0, 1.15], gap="small", vertical_alignment="center")
+        col_ai, col_lang, col_news, col_auth = st.columns([1.1, 1.0, 1.0, 1.1], gap="small", vertical_alignment="center")
 
         # 1. AI Analyst
         with col_ai:
@@ -2794,7 +2907,7 @@ def render_universal_top_header(active_page_name: str = "Overview", key_prefix: 
             cur_data = all_langs.get(current_lang, all_langs.get("en", {"flag": "🇬🇧", "native": "English", "name": "English"}))
             cur_flag = cur_data.get("flag", "🇬🇧" if current_lang == "en" else "🌐")
             lang_btn_label = f"🌐 {cur_flag} {current_lang.upper()} ▾"
-            with st.popover(lang_btn_label, use_container_width=True):
+            with st.popover(lang_btn_label, use_container_width=True, key=f"{pfx}_top_lang_popover"):
                 st.markdown(f"#### 🌐 {t('select_language', current_lang)} ({len(all_langs)} World Languages)")
                 st.caption(t("lang_modal_sub", current_lang))
                 with st.container(height=340):
@@ -2816,7 +2929,7 @@ def render_universal_top_header(active_page_name: str = "Overview", key_prefix: 
         with col_news:
             alerts_count = GlobalNewsEngine.get_active_alerts_count()
             news_btn_label = f"📰 News ({alerts_count}) ▾" if alerts_count else "📰 News ▾"
-            with st.popover(news_btn_label, use_container_width=True):
+            with st.popover(news_btn_label, use_container_width=True, key=f"{pfx}_top_news_popover"):
                 render_html(f"""
                 <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid rgba(255, 255, 255, 0.12);">
                     {get_news_globe_icon_svg(size=36, lang=current_lang)}
