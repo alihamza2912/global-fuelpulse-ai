@@ -457,33 +457,74 @@ def apply_theme():
 }}
 
 /* Sidebar navigation buttons & page links styling (shadcn / Tailwind dashboard-sidebar.tsx design) */
-[data-testid="stSidebar"] div.stButton > button,
-section[data-testid="stSidebar"] div.stButton > button,
-section[data-testid="stSidebar"] button,
-[data-testid="stSidebar"] button,
-[data-testid="stSidebar"] [data-testid="stPageLink-NavLink"],
-[data-testid="stSidebar"] [data-testid="stPageLink"] a,
-section[data-testid="stSidebar"] [data-testid="stPageLink-NavLink"],
-section[data-testid="stSidebar"] [data-testid="stPageLink"] a {{
-  border-radius: 6px !important;
+/* ==============================================================================
+   Sidebar Tree Navigation & Action Buttons Styling (Minimalist Tree Navigation)
+   ============================================================================== */
+
+/* A. Top Utility Action Buttons (Sign In / Account & Refresh Live Data) */
+[data-testid="stSidebar"] div.stButton > button:has([data-testid="stIconMaterial"]),
+section[data-testid="stSidebar"] div.stButton > button:has([data-testid="stIconMaterial"]) {{
+  border-radius: 7px !important;
   display: flex !important;
   flex-direction: row !important;
   text-align: left !important;
   justify-content: flex-start !important;
   align-items: center !important;
-  padding: 6px 10px !important;
-  font-size: 13px !important;
+  padding: 6px 12px !important;
+  font-size: 12px !important;
   font-weight: 500 !important;
   letter-spacing: -0.01em !important;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
-  margin-bottom: 2px !important;
-  height: 34px !important;
-  min-height: 34px !important;
-  max-height: 34px !important;
+  margin-bottom: 5px !important;
+  height: 33px !important;
+  min-height: 33px !important;
+  max-height: 33px !important;
   width: 100% !important;
+  background: rgba(255, 255, 255, 0.03) !important;
+  border: 1px solid rgba(255, 255, 255, 0.09) !important;
+  color: #CBD5E1 !important;
+  -webkit-text-fill-color: #CBD5E1 !important;
+  box-shadow: none !important;
+  transition: all 0.15s ease-in-out !important;
+  cursor: pointer !important;
+}}
+
+[data-testid="stSidebar"] div.stButton > button:has([data-testid="stIconMaterial"]):hover {{
+  background: rgba(255, 255, 255, 0.07) !important;
+  border-color: rgba(255, 255, 255, 0.18) !important;
+  color: #FFFFFF !important;
+  -webkit-text-fill-color: #FFFFFF !important;
+}}
+
+/* B. Tree Navigation Links with Connected Vertical Rail */
+[data-testid="stSidebar"] div.stButton > button:not(:has([data-testid="stIconMaterial"])),
+section[data-testid="stSidebar"] div.stButton > button:not(:has([data-testid="stIconMaterial"])),
+[data-testid="stSidebar"] [data-testid="stPageLink-NavLink"],
+[data-testid="stSidebar"] [data-testid="stPageLink"] a,
+section[data-testid="stSidebar"] [data-testid="stPageLink-NavLink"],
+section[data-testid="stSidebar"] [data-testid="stPageLink"] a {{
+  position: relative !important;
+  display: flex !important;
+  flex-direction: row !important;
+  text-align: left !important;
+  justify-content: flex-start !important;
+  align-items: center !important;
+  margin-left: 12px !important;
+  margin-bottom: 2px !important;
+  padding: 4px 12px 4px 16px !important;
+  font-size: 12.5px !important;
+  font-weight: 400 !important;
+  letter-spacing: -0.01em !important;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+  height: 31px !important;
+  min-height: 31px !important;
+  max-height: 31px !important;
+  width: calc(100% - 12px) !important;
   background: transparent !important;
   background-color: transparent !important;
-  border: 1px solid transparent !important;
+  border: none !important;
+  border-left: 1.5px solid rgba(255, 255, 255, 0.12) !important;
+  border-radius: 0 6px 6px 0 !important;
   color: #94A3B8 !important;
   -webkit-text-fill-color: #94A3B8 !important;
   box-shadow: none !important;
@@ -492,6 +533,7 @@ section[data-testid="stSidebar"] [data-testid="stPageLink"] a {{
   cursor: pointer !important;
 }}
 
+/* Universal text layout inside tree buttons and page links */
 [data-testid="stSidebar"] div.stButton > button > div,
 section[data-testid="stSidebar"] div.stButton > button > div,
 [data-testid="stSidebar"] div.stButton > button [data-testid="stMarkdownContainer"],
@@ -512,7 +554,7 @@ section[data-testid="stSidebar"] div.stButton > button > div,
   align-items: center !important;
   color: inherit !important;
   -webkit-text-fill-color: inherit !important;
-  font-size: 13px !important;
+  font-size: 12.5px !important;
   font-weight: inherit !important;
   line-height: 1 !important;
   margin: 0 !important;
@@ -520,56 +562,74 @@ section[data-testid="stSidebar"] div.stButton > button > div,
 }}
 
 [data-testid="stSidebar"] [data-testid="stIconMaterial"] {{
-  font-size: 16px !important;
+  font-size: 15px !important;
   line-height: 1 !important;
   margin-right: 8px !important;
   color: #94A3B8 !important;
   -webkit-text-fill-color: #94A3B8 !important;
-  opacity: 0.85 !important;
+  opacity: 0.9 !important;
   display: inline-flex !important;
   align-items: center !important;
 }}
 
-[data-testid="stSidebar"] div.stButton > button:hover,
-section[data-testid="stSidebar"] div.stButton > button:hover,
-[data-testid="stSidebar"] [data-testid="stPageLink-NavLink"]:hover,
-[data-testid="stSidebar"] [data-testid="stPageLink"] a:hover {{
-  background: rgba(255, 255, 255, 0.05) !important;
-  background-color: rgba(255, 255, 255, 0.05) !important;
-  color: #F8FAFC !important;
-  -webkit-text-fill-color: #F8FAFC !important;
-  border-color: rgba(255, 255, 255, 0.08) !important;
-  transform: none !important;
+/* Inactive tree guide dot along vertical rail */
+[data-testid="stSidebar"] div.stButton > button:not(:has([data-testid="stIconMaterial"])):not([kind="primary"]):not([data-testid="stBaseButton-primary"])::before,
+[data-testid="stSidebar"] [data-testid="stPageLink-NavLink"]:not([aria-current="page"])::before,
+[data-testid="stSidebar"] [data-testid="stPageLink"] a:not([aria-current="page"])::before {{
+  content: "" !important;
+  position: absolute !important;
+  left: -2px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  width: 3px !important;
+  height: 3px !important;
+  border-radius: 50% !important;
+  background: transparent !important;
+  transition: background 0.15s ease !important;
+  z-index: 2 !important;
 }}
 
-[data-testid="stSidebar"] div.stButton > button:hover *,
+/* Hover state on inactive tree links */
+[data-testid="stSidebar"] div.stButton > button:not(:has([data-testid="stIconMaterial"])):hover,
+[data-testid="stSidebar"] [data-testid="stPageLink-NavLink"]:hover,
+[data-testid="stSidebar"] [data-testid="stPageLink"] a:hover {{
+  background: rgba(255, 255, 255, 0.04) !important;
+  background-color: rgba(255, 255, 255, 0.04) !important;
+  border-left-color: rgba(255, 255, 255, 0.3) !important;
+  color: #F8FAFC !important;
+  -webkit-text-fill-color: #F8FAFC !important;
+}}
+
+[data-testid="stSidebar"] div.stButton > button:not(:has([data-testid="stIconMaterial"])):hover *,
 [data-testid="stSidebar"] [data-testid="stPageLink-NavLink"]:hover *,
 [data-testid="stSidebar"] [data-testid="stPageLink"] a:hover * {{
   color: #F8FAFC !important;
   -webkit-text-fill-color: #F8FAFC !important;
 }}
 
-/* Active item in sidebar: sleek shadcn dark:bg-white/10 text-white font-medium */
-[data-testid="stSidebar"] div.stButton > button[kind="primary"],
-[data-testid="stSidebar"] div.stButton > button[data-testid="stBaseButton-primary"],
-section[data-testid="stSidebar"] div.stButton > button[kind="primary"],
-section[data-testid="stSidebar"] div.stButton > button[data-testid="stBaseButton-primary"],
-[data-testid="stSidebar"] [data-testid="stPageLink-NavLink"][aria-current="page"],
-[data-testid="stSidebar"] [data-testid="stPageLink"] a[aria-current="page"] {{
-  background: rgba(255, 255, 255, 0.09) !important;
-  background-color: rgba(255, 255, 255, 0.09) !important;
-  color: #FFFFFF !important;
-  -webkit-text-fill-color: #FFFFFF !important;
-  border: 1px solid rgba(255, 255, 255, 0.15) !important;
-  font-weight: 600 !important;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25) !important;
-  transform: none !important;
+[data-testid="stSidebar"] div.stButton > button:not(:has([data-testid="stIconMaterial"])):hover::before,
+[data-testid="stSidebar"] [data-testid="stPageLink-NavLink"]:hover::before,
+[data-testid="stSidebar"] [data-testid="stPageLink"] a:hover::before {{
+  background: rgba(255, 255, 255, 0.4) !important;
 }}
 
-[data-testid="stSidebar"] div.stButton > button[kind="primary"] *,
-[data-testid="stSidebar"] div.stButton > button[kind="primary"] p,
-[data-testid="stSidebar"] div.stButton > button[kind="primary"] span,
-[data-testid="stSidebar"] div.stButton > button[data-testid="stBaseButton-primary"] *,
+/* C. Active Tree Item with Diamond Marker and Soft Rounded Highlight */
+[data-testid="stSidebar"] div.stButton > button:not(:has([data-testid="stIconMaterial"]))[kind="primary"],
+[data-testid="stSidebar"] div.stButton > button:not(:has([data-testid="stIconMaterial"]))[data-testid="stBaseButton-primary"],
+[data-testid="stSidebar"] [data-testid="stPageLink-NavLink"][aria-current="page"],
+[data-testid="stSidebar"] [data-testid="stPageLink"] a[aria-current="page"] {{
+  background: rgba(255, 255, 255, 0.08) !important;
+  background-color: rgba(255, 255, 255, 0.08) !important;
+  border-left: 2px solid #F5B942 !important;
+  border-radius: 0 6px 6px 0 !important;
+  color: #FFFFFF !important;
+  -webkit-text-fill-color: #FFFFFF !important;
+  font-weight: 600 !important;
+  box-shadow: none !important;
+}}
+
+[data-testid="stSidebar"] div.stButton > button:not(:has([data-testid="stIconMaterial"]))[kind="primary"] *,
+[data-testid="stSidebar"] div.stButton > button:not(:has([data-testid="stIconMaterial"]))[data-testid="stBaseButton-primary"] *,
 [data-testid="stSidebar"] [data-testid="stPageLink-NavLink"][aria-current="page"] *,
 [data-testid="stSidebar"] [data-testid="stPageLink"] a[aria-current="page"] * {{
   color: #FFFFFF !important;
@@ -577,22 +637,22 @@ section[data-testid="stSidebar"] div.stButton > button[data-testid="stBaseButton
   font-weight: 600 !important;
 }}
 
-[data-testid="stSidebar"] div.stButton > button[kind="primary"] [data-testid="stIconMaterial"],
-[data-testid="stSidebar"] [data-testid="stPageLink-NavLink"][aria-current="page"] [data-testid="stIconMaterial"] {{
-  color: #FFFFFF !important;
-  -webkit-text-fill-color: #FFFFFF !important;
-  opacity: 1 !important;
-}}
-
-[data-testid="stSidebar"] div.stButton > button[kind="secondary"],
-[data-testid="stSidebar"] div.stButton > button[data-testid="stBaseButton-secondary"] {{
-  background: transparent !important;
-  background-color: transparent !important;
-  color: #94A3B8 !important;
-  -webkit-text-fill-color: #94A3B8 !important;
-  border: 1px solid transparent !important;
-  font-weight: 500 !important;
-  box-shadow: none !important;
+/* Diamond Marker on Active Page */
+[data-testid="stSidebar"] div.stButton > button:not(:has([data-testid="stIconMaterial"]))[kind="primary"]::before,
+[data-testid="stSidebar"] div.stButton > button:not(:has([data-testid="stIconMaterial"]))[data-testid="stBaseButton-primary"]::before,
+[data-testid="stSidebar"] [data-testid="stPageLink-NavLink"][aria-current="page"]::before,
+[data-testid="stSidebar"] [data-testid="stPageLink"] a[aria-current="page"]::before {{
+  content: "◆" !important;
+  position: absolute !important;
+  left: -5.5px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  color: #F5B942 !important;
+  -webkit-text-fill-color: #F5B942 !important;
+  font-size: 9px !important;
+  line-height: 1 !important;
+  text-shadow: 0 0 6px rgba(245, 185, 66, 0.8) !important;
+  z-index: 5 !important;
 }}
 
 /* Main Top Two-Tier Navigation button styling */
