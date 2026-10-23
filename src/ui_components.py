@@ -2721,14 +2721,107 @@ button[data-testid*="primaryActive"] * {{
 /* ==============================================================================
    ULTIMATE SPECIFICITY OVERRIDE: FLOATING PILL NAVBAR CAPSULE & CONTROLS
    ============================================================================== */
-/* Eliminate wasted space above top navbar */
+/* Maintain compact header without dead space, keeping sidebar expand controls active */
 header[data-testid="stHeader"] {{
-  display: none !important;
+  display: block !important;
   height: 0 !important;
   min-height: 0 !important;
   max-height: 0 !important;
   padding: 0 !important;
   margin: 0 !important;
+  background: transparent !important;
+  pointer-events: none !important;
+  z-index: 999995 !important;
+  overflow: visible !important;
+  border: none !important;
+}}
+header[data-testid="stHeader"] * {{
+  pointer-events: auto !important;
+}}
+
+/* ==============================================================================
+   PREMIUM SIDEBAR DRAWER & NAVIGATION TOGGLE BUTTON (REPLACES ARROW)
+   ============================================================================== */
+button[data-testid="stExpandSidebarButton"],
+[data-testid="stSidebarCollapsedControl"] button {{
+  position: fixed !important;
+  top: 48px !important;
+  left: 18px !important;
+  z-index: 9999999 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 40px !important;
+  height: 40px !important;
+  min-width: 40px !important;
+  min-height: 40px !important;
+  background: rgba(14, 21, 38, 0.95) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  border: 1px solid rgba(245, 185, 66, 0.50) !important;
+  border-radius: 10px !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.60), 0 0 14px rgba(245, 185, 66, 0.25) !important;
+  cursor: pointer !important;
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  padding: 0 !important;
+  pointer-events: auto !important;
+}}
+
+button[data-testid="stExpandSidebarButton"]:hover,
+[data-testid="stSidebarCollapsedControl"] button:hover {{
+  background: rgba(245, 185, 66, 0.22) !important;
+  border-color: #F5B942 !important;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.70), 0 0 18px rgba(245, 185, 66, 0.50) !important;
+  transform: translateY(-1px) scale(1.05) !important;
+}}
+
+/* Completely hide the tiny default 'keyboard_double_arrow_right' text */
+button[data-testid="stExpandSidebarButton"] span,
+[data-testid="stSidebarCollapsedControl"] button span {{
+  display: none !important;
+  font-size: 0 !important;
+  color: transparent !important;
+}}
+
+/* Render a crisp, beautiful 3-bar hamburger navigation drawer SVG icon in vibrant amber-gold */
+button[data-testid="stExpandSidebarButton"]::before,
+[data-testid="stSidebarCollapsedControl"] button::before {{
+  content: "" !important;
+  display: block !important;
+  width: 22px !important;
+  height: 20px !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23F5B942' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cline x1='3' y1='6' x2='21' y2='6'/%3E%3Cline x1='3' y1='12' x2='21' y2='12'/%3E%3Cline x1='3' y1='18' x2='21' y2='18'/%3E%3C/svg%3E") !important;
+  background-repeat: no-repeat !important;
+  background-position: center !important;
+  background-size: contain !important;
+}}
+
+/* Sidebar header close button styling when open */
+div[data-testid="stSidebarCollapseButton"] button {{
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 32px !important;
+  height: 32px !important;
+  background: rgba(14, 21, 38, 0.85) !important;
+  border: 1px solid rgba(255, 255, 255, 0.20) !important;
+  border-radius: 8px !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+}}
+
+div[data-testid="stSidebarCollapseButton"] button:hover {{
+  background: rgba(245, 185, 66, 0.20) !important;
+  border-color: #F5B942 !important;
+  box-shadow: 0 0 10px rgba(245, 185, 66, 0.3) !important;
+}}
+
+/* Offset brand bar when sidebar is collapsed so it sits gracefully next to the hamburger toggle */
+div[data-testid="stAppViewContainer"]:has(section[data-testid="stSidebar"][aria-expanded="false"]) .fuelpulse-header-bar {{
+  margin-left: 52px !important;
+}}
+div[data-testid="stAppViewContainer"]:has(section[data-testid="stSidebar"][aria-expanded="true"]) .fuelpulse-header-bar {{
+  margin-left: 0 !important;
 }}
 
 .block-container,
