@@ -1625,6 +1625,36 @@ button[key*="top_auth_btn"]:focus-visible {{
   box-shadow: none !important;
 }}
 
+/* Smooth subtle tubelight active lamp & focus effect inspired by reference screenshot */
+div[data-testid="stHorizontalBlock"]:has(button[key*="top_ai_assistant_btn"]) button,
+div[data-testid="stHorizontalBlock"]:has(button[key*="top_ai_assistant_btn"]) [data-testid="stPopover"] > button,
+div[data-testid="stHorizontalBlock"]:has(button[key*="top_ai_assistant_btn"]) [data-testid="stPopoverButton"] > button {{
+  position: relative !important;
+  overflow: visible !important;
+}}
+
+div[data-testid="stHorizontalBlock"]:has(button[key*="top_ai_assistant_btn"]) button:hover::before,
+div[data-testid="stHorizontalBlock"]:has(button[key*="top_ai_assistant_btn"]) [data-testid="stPopover"] > button:hover::before,
+div[data-testid="stHorizontalBlock"]:has(button[key*="top_ai_assistant_btn"]) button:focus-visible::before,
+div[data-testid="stHorizontalBlock"]:has(button[key*="top_ai_assistant_btn"]) [data-testid="stPopover"] > button:focus-visible::before {{
+  content: "" !important;
+  position: absolute !important;
+  top: -3px !important;
+  left: 20% !important;
+  right: 20% !important;
+  height: 2px !important;
+  background: #F5B942 !important;
+  box-shadow: 0 0 10px 2px rgba(245, 185, 66, 0.45) !important;
+  border-radius: 9999px !important;
+  pointer-events: none !important;
+  transition: all 0.25s ease !important;
+}}
+
+div[data-testid="stHorizontalBlock"]:has(button[key*="top_ai_assistant_btn"]) button[key*="top_auth_btn"][kind="primary"]::before {{
+  background: #10B981 !important;
+  box-shadow: 0 0 10px 2px rgba(16, 185, 129, 0.45) !important;
+}}
+
 /* Dedicated subtle gold accent on AI Analyst action */
 button[key*="top_ai_assistant_btn"] {{
   color: #F5B942 !important;
@@ -2680,7 +2710,7 @@ def render_universal_top_header(active_page_name: str = "Overview", key_prefix: 
     - Vector Brand lockup with live database engine verification badge
     - Universal Language Selector Popover (synchronizes app_language and URL query params site-wide)
     - Live News Wire & Maritime Alert Center Popover
-    - Layout contract: col_brand -> col_nav_home -> col_nav_intel -> col_nav_trade -> col_nav_fc -> col_news -> col_ai -> col_lang -> col_theme -> col_auth
+    - Layout contract: col_brand -> col_ai -> col_lang -> col_news -> col_auth
     """
     from src.localization.i18n import (
         t,
@@ -2740,13 +2770,52 @@ def render_universal_top_header(active_page_name: str = "Overview", key_prefix: 
         render_html(render_app_header_brand_html(current_lang, engine_name, t('live_indicator', current_lang)))
 
     with col_controls_cluster:
-        # Four controls strictly in specified order: 1. News -> 2. AI Analyst -> 3. Language -> 4. User Account
-        col_news, col_ai, col_lang, col_auth = st.columns([1.0, 1.25, 1.05, 1.15], gap="small", vertical_alignment="center")
+        # Four controls strictly in specified order: 1. AI Analyst -> 2. Language -> 3. News -> 4. User Account
+        col_ai, col_lang, col_news, col_auth = st.columns([1.25, 1.05, 1.0, 1.15], gap="small", vertical_alignment="center")
 
-        # 1. News
+        # 1. AI Analyst
+        with col_ai:
+            if st.button(
+                ai_btn_label,
+                key=f"{pfx}_top_ai_assistant_btn",
+                use_container_width=True,
+                type="secondary",
+                help=ai_btn_help
+            ):
+                from src.auth.auth_service import AuthService
+                if not AuthService.get_active_user():
+                    _show_sign_in_dialog()
+                else:
+                    _show_ai_assistant_dialog(context_page=active_page_name)
+
+        # 2. Language
+        with col_lang:
+            all_langs = get_available_languages()
+            cur_data = all_langs.get(current_lang, all_langs.get("en", {"flag": "🇬🇧", "native": "English", "name": "English"}))
+            cur_flag = cur_data.get("flag", "🇬🇧" if current_lang == "en" else "🌐")
+            lang_btn_label = f"🌐 {cur_flag} {current_lang.upper()} ▾"
+            with st.popover(lang_btn_label, use_container_width=True):
+                st.markdown(f"#### 🌐 {t('select_language', current_lang)} ({len(all_langs)} World Languages)")
+                st.caption(t("lang_modal_sub", current_lang))
+                with st.container(height=340):
+                    for code, data in all_langs.items():
+                        is_selected = (code == current_lang)
+                        active_mark = "✓ " if is_selected else ""
+                        item_label = f"{active_mark}{data['flag']}  {data['native']}  ({data['name']})"
+                        if st.button(
+                            item_label,
+                            key=f"{pfx}_lang_btn_{code}",
+                            use_container_width=True,
+                            type="primary" if is_selected else "secondary"
+                        ):
+                            if code != current_lang:
+                                set_language(code)
+                                st.rerun()
+
+        # 3. News
         with col_news:
             alerts_count = GlobalNewsEngine.get_active_alerts_count()
-            news_btn_label = f"📰 News ({alerts_count}) ▾"
+            news_btn_label = f"📰 News ({alerts_count}) ▾" if alerts_count else "📰 News ▾"
             with st.popover(news_btn_label, use_container_width=True):
                 render_html(f"""
                 <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid rgba(255, 255, 255, 0.12);">
@@ -2896,44 +2965,6 @@ def render_universal_top_header(active_page_name: str = "Overview", key_prefix: 
                         </div>
                         """, unsafe_allow_html=True)
 
-        # 2. AI Analyst
-        with col_ai:
-            if st.button(
-                ai_btn_label,
-                key=f"{pfx}_top_ai_assistant_btn",
-                use_container_width=True,
-                type="secondary",
-                help=ai_btn_help
-            ):
-                from src.auth.auth_service import AuthService
-                if not AuthService.get_active_user():
-                    _show_sign_in_dialog()
-                else:
-                    _show_ai_assistant_dialog(context_page=active_page_name)
-
-        # 3. Language
-        with col_lang:
-            all_langs = get_available_languages()
-            cur_data = all_langs.get(current_lang, all_langs.get("en", {"flag": "🇬🇧", "native": "English", "name": "English"}))
-            cur_flag = cur_data.get("flag", "🇬🇧" if current_lang == "en" else "🌐")
-            lang_btn_label = f"🌐 {cur_flag} {current_lang.upper()} ▾"
-            with st.popover(lang_btn_label, use_container_width=True):
-                st.markdown(f"#### 🌐 {t('select_language', current_lang)} ({len(all_langs)} World Languages)")
-                st.caption(t("lang_modal_sub", current_lang))
-                with st.container(height=340):
-                    for code, data in all_langs.items():
-                        is_selected = (code == current_lang)
-                        active_mark = "✓ " if is_selected else ""
-                        item_label = f"{active_mark}{data['flag']}  {data['native']}  ({data['name']})"
-                        if st.button(
-                            item_label,
-                            key=f"{pfx}_lang_btn_{code}",
-                            use_container_width=True,
-                            type="primary" if is_selected else "secondary"
-                        ):
-                            if code != current_lang:
-                                set_language(code)
-                                st.rerun()
 
         # 4. User Account / User ID
         with col_auth:
@@ -3050,25 +3081,53 @@ def _show_sign_in_dialog():
 
     # Modern Card Header matching login-signup.tsx
     st.markdown("""
-    <div style="text-align: center; margin-bottom: 16px;">
-        <h2 style="font-family: 'Space Grotesk', -apple-system, sans-serif; font-size: 1.6rem; font-weight: 800; color: #F9FAFB; margin: 0 0 6px 0; letter-spacing: -0.02em;">Welcome back</h2>
-        <p style="font-size: 0.88rem; color: #94A3B8; margin: 0; line-height: 1.4;">Sign in to the Global FuelPulse client console and see what your agents did today.</p>
+    <div style="text-align: center; margin-bottom: 14px;">
+        <div style="display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%; background: rgba(245, 185, 66, 0.12); border: 1px solid rgba(245, 185, 66, 0.3); margin-bottom: 8px;">
+            <span style="font-size: 1.2rem;">🔐</span>
+        </div>
+        <h3 style="font-family: 'Space Grotesk', -apple-system, sans-serif; font-size: 1.3rem; font-weight: 700; color: #F9FAFB; margin: 0 0 4px 0;">Sign In</h3>
+        <p style="font-size: 0.82rem; color: #94A3B8; margin: 0;">Access Global FuelPulse AI Analyst Console</p>
     </div>
     """, unsafe_allow_html=True)
 
     tab_signin, tab_register = st.tabs(["Sign In", "Create Account"])
 
     with tab_signin:
+        # Social OAuth Actions
+        col_goog, col_gh = st.columns(2)
+        with col_goog:
+            if st.button("🌐 Google", use_container_width=True, key="auth_social_google", help="Sign in with Google OAuth"):
+                ok, msg, url = AuthService.get_oauth_url("google", redirect_to="http://localhost:8501")
+                if ok and url:
+                    render_html(f"<meta http-equiv='refresh' content='0; url={url}'><script>window.top.location.href = '{url}';</script>")
+                    st.link_button("👉 Continue with Google", url, type="primary", use_container_width=True)
+                else:
+                    logger.info(f"Google OAuth configuration notice: {msg}")
+                    st.info("Google sign-in is temporarily undergoing configuration. Please sign in with email or check back shortly.")
+        with col_gh:
+            if st.button("🐙 GitHub", use_container_width=True, key="auth_social_github", help="Sign in with GitHub OAuth"):
+                ok, msg, url = AuthService.get_oauth_url("github", redirect_to="http://localhost:8501")
+                if ok and url:
+                    render_html(f"<meta http-equiv='refresh' content='0; url={url}'><script>window.top.location.href = '{url}';</script>")
+                    st.link_button("👉 Continue with GitHub", url, type="primary", use_container_width=True)
+                else:
+                    logger.info(f"GitHub OAuth configuration notice: {msg}")
+                    st.info("GitHub sign-in is temporarily undergoing configuration. Please sign in with email or check back shortly.")
+
+        st.markdown("""
+        <div style="position: relative; text-align: center; margin: 12px 0 10px 0;">
+            <hr style="border: 0; border-top: 1px solid rgba(255, 255, 255, 0.10); margin: 0;">
+            <span style="position: absolute; top: -9px; left: 50%; transform: translateX(-50%); background: #0B1120; padding: 0 8px; font-size: 0.70rem; color: #64748B; text-transform: uppercase; letter-spacing: 0.08em;">or with email</span>
+        </div>
+        """, unsafe_allow_html=True)
+
         with st.form("signin_form", clear_on_submit=False):
             email_val = st.text_input("Email", placeholder="you@company.com", key="auth_signin_email")
             pwd_val = st.text_input("Password", type="password", placeholder="••••••••", key="auth_signin_pwd")
-            col_rem, col_forgot = st.columns([1, 1])
+            col_rem, col_blank = st.columns([1, 1])
             with col_rem:
                 st.checkbox("Remember me", value=True, key="auth_signin_remember")
-            with col_forgot:
-                st.markdown("<p style='text-align: right; margin-top: 4px;'><a href='#' style='color: #94A3B8; font-size: 0.8rem; text-decoration: none;'>Forgot password?</a></p>", unsafe_allow_html=True)
-
-            submit_signin = st.form_submit_button("Sign in", type="primary", use_container_width=True)
+            submit_signin = st.form_submit_button("Sign In", type="primary", use_container_width=True)
 
         if submit_signin:
             if not email_val.strip() or not pwd_val.strip():
@@ -3083,32 +3142,20 @@ def _show_sign_in_dialog():
                 else:
                     st.error(msg)
 
-        st.markdown("""
-        <div style="position: relative; text-align: center; margin: 18px 0 14px 0;">
-            <hr style="border: 0; border-top: 1px solid rgba(255, 255, 255, 0.12); margin: 0;">
-            <span style="position: absolute; top: -10px; left: 50%; transform: translateX(-50%); background: #18181B; padding: 0 10px; font-size: 0.72rem; color: #71717A; text-transform: uppercase; letter-spacing: 0.1em;">or</span>
-        </div>
-        """, unsafe_allow_html=True)
-
-        col_gh, col_goog = st.columns(2)
-        with col_gh:
-            if st.button("GitHub", use_container_width=True, key="auth_social_github"):
-                ok, msg, url = AuthService.get_oauth_url("github", redirect_to="http://localhost:8501")
-                if ok and url:
-                    render_html(f"<meta http-equiv='refresh' content='0; url={url}'><script>window.top.location.href = '{url}';</script>")
-                    st.link_button("👉 Continue with GitHub", url, type="primary", use_container_width=True)
+        # Functional Forgot Password action
+        with st.expander("Forgot password?", expanded=False):
+            st.caption("Enter your email address to receive a secure password reset link.")
+            fp_email = st.text_input("Account Email", placeholder="you@company.com", key="auth_fp_email")
+            if st.button("Send Reset Link", key="auth_fp_submit", use_container_width=True):
+                if fp_email.strip():
+                    from src.auth.supabase_client import supabase_auth_client
+                    sb_ok, sb_msg = supabase_auth_client.reset_password_for_email(fp_email.strip())
+                    if sb_ok:
+                        st.success("Password reset instructions sent to your email.")
+                    else:
+                        st.info(f"Password reset notice: {sb_msg}")
                 else:
-                    logger.info(f"GitHub OAuth configuration notice: {msg}")
-                    st.info("GitHub sign-in is temporarily undergoing configuration. Please sign in with email or check back shortly.")
-        with col_goog:
-            if st.button("Google", use_container_width=True, key="auth_social_google"):
-                ok, msg, url = AuthService.get_oauth_url("google", redirect_to="http://localhost:8501")
-                if ok and url:
-                    render_html(f"<meta http-equiv='refresh' content='0; url={url}'><script>window.top.location.href = '{url}';</script>")
-                    st.link_button("👉 Continue with Google", url, type="primary", use_container_width=True)
-                else:
-                    logger.info(f"Google OAuth configuration notice: {msg}")
-                    st.info("Google sign-in is temporarily undergoing configuration. Please sign in with email or check back shortly.")
+                    st.error("Please provide an email address.")
 
     with tab_register:
         with st.form("register_form", clear_on_submit=False):

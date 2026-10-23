@@ -158,7 +158,12 @@ class AuthService:
                     return True, "User registered successfully via Supabase.", existing
             elif not sb_ok and "already registered" in sb_msg.lower():
                 return False, "An account with this email already exists.", None
-            elif not sb_ok and any(err_term in sb_msg.lower() for err_term in ("rate limit", "over_email_send_rate_limit", "network error", "failed to resolve", "nodename nor servname", "connection", "timeout", "max retries")):
+            elif not sb_ok and any(err_term in sb_msg.lower() for err_term in (
+                "rate limit", "over_email_send_rate_limit", "over_request_rate_limit",
+                "too many requests", "429", "confirmation email", "email send", "network error",
+                "failed to resolve", "nodename nor servname", "connection", "timeout",
+                "max retries", "service unavailable", "bad gateway", "500", "502", "503", "504"
+            )):
                 logger.warning(f"Supabase auth unavailable ({sb_msg}), falling back to local database registration")
             else:
                 return False, sb_msg, None

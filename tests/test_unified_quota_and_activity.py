@@ -313,7 +313,7 @@ def test_scenario_12_top_navigation_order():
     """
     Scenario 12:
     Verifies top navigation layout strictly arranges controls in the required order:
-    Brand (Left) | [News, AI Analyst, Language, Account] (Right).
+    Brand (Left) | [AI Analyst, Language, News, Account] (Right).
     """
     import inspect
     from src.ui_components import render_universal_top_header
@@ -322,20 +322,20 @@ def test_scenario_12_top_navigation_order():
 
     # Search column allocations and render order in the source code
     col_brand_pos = source.find("col_brand")
-    col_news_pos = source.find("col_news")
     col_ai_pos = source.find("col_ai")
     col_lang_pos = source.find("col_lang")
+    col_news_pos = source.find("col_news")
     col_auth_pos = source.find("col_auth")
 
     assert col_brand_pos != -1, "col_brand must exist"
-    assert col_news_pos != -1, "col_news must exist"
     assert col_ai_pos != -1, "col_ai must exist"
     assert col_lang_pos != -1, "col_lang must exist"
+    assert col_news_pos != -1, "col_news must exist"
     assert col_auth_pos != -1, "col_auth must exist"
 
-    # Verify Layout: Brand -> Controls (News < AI < Language < Account)
-    assert col_brand_pos < col_news_pos < col_ai_pos < col_lang_pos < col_auth_pos, (
-        "Header controls must strictly be ordered: Brand -> News -> AI Analyst -> Language -> Account"
+    # Verify Layout: Brand -> Controls (AI < Language < News < Account)
+    assert col_brand_pos < col_ai_pos < col_lang_pos < col_news_pos < col_auth_pos, (
+        "Header controls must strictly be ordered: Brand -> AI Analyst -> Language -> News -> Account"
     )
 
 
