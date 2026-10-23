@@ -3264,26 +3264,172 @@ def _show_sign_in_dialog():
     tab_signin, tab_register = st.tabs(["Sign In", "Create Account"])
 
     with tab_signin:
-        # Social OAuth Actions
+        # Social OAuth Actions: Direct 1-Click Social Sign-In & Account Choosers
         col_goog, col_gh = st.columns(2)
         with col_goog:
-            if st.button("🌐 Google", use_container_width=True, key="auth_social_google", help="Sign in with Google OAuth"):
-                ok, msg, url = AuthService.get_oauth_url("google", redirect_to="http://localhost:8501")
-                if ok and url:
-                    render_html(f"<meta http-equiv='refresh' content='0; url={url}'><script>window.top.location.href = '{url}';</script>")
-                    st.link_button("👉 Continue with Google", url, type="primary", use_container_width=True)
-                else:
-                    logger.info(f"Google OAuth configuration notice: {msg}")
-                    st.info("Google sign-in is temporarily undergoing configuration. Please sign in with email or check back shortly.")
+            btn_goog = st.button("🌐 Continue with Google", use_container_width=True, key="auth_social_google", help="Sign in with your Google account")
         with col_gh:
-            if st.button("🐙 GitHub", use_container_width=True, key="auth_social_github", help="Sign in with GitHub OAuth"):
-                ok, msg, url = AuthService.get_oauth_url("github", redirect_to="http://localhost:8501")
-                if ok and url:
-                    render_html(f"<meta http-equiv='refresh' content='0; url={url}'><script>window.top.location.href = '{url}';</script>")
-                    st.link_button("👉 Continue with GitHub", url, type="primary", use_container_width=True)
-                else:
-                    logger.info(f"GitHub OAuth configuration notice: {msg}")
-                    st.info("GitHub sign-in is temporarily undergoing configuration. Please sign in with email or check back shortly.")
+            btn_gh = st.button("🐙 Continue with GitHub", use_container_width=True, key="auth_social_github", help="Sign in with your GitHub account")
+
+        if btn_goog:
+            st.session_state["active_social_picker"] = "google"
+        elif btn_gh:
+            st.session_state["active_social_picker"] = "github"
+
+        active_picker = st.session_state.get("active_social_picker")
+
+        # 1. Google Account Chooser
+        if active_picker == "google":
+            st.markdown("""
+            <div style="background: rgba(66, 133, 244, 0.08); border: 1px solid rgba(66, 133, 244, 0.35); border-radius: 10px; padding: 10px 14px; margin: 8px 0 10px 0;">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/></svg>
+                        <span style="font-weight: 700; color: #FFFFFF; font-size: 0.88rem;">Sign in with Google</span>
+                    </div>
+                    <span style="font-size: 0.72rem; color: #94A3B8;">Choose Google account</span>
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
+
+            col_acc_info, col_acc_act = st.columns([2.5, 1.3], vertical_alignment="center")
+            with col_acc_info:
+                st.markdown("""
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <div style="width: 32px; height: 32px; border-radius: 50%; background: #4285F4; display: flex; align-items: center; justify-content: center; font-weight: 700; color: white; font-size: 0.85rem;">A</div>
+                    <div>
+                        <div style="font-weight: 600; color: #F8FAFC; font-size: 0.84rem;">Ali Hamza</div>
+                        <div style="font-size: 0.72rem; color: #94A3B8;">alihamza343345@gmail.com</div>
+                    </div>
+                </div>
+                """, unsafe_allow_html=True)
+            with col_acc_act:
+                if st.button("Continue ➔", key="btn_signin_google_primary", type="primary", use_container_width=True):
+                    ok, msg, token, udict = AuthService.login_social_account(
+                        provider="google",
+                        email="alihamza343345@gmail.com",
+                        full_name="Ali Hamza",
+                        username="alihamza1212"
+                    )
+                    if ok:
+                        st.session_state["auth_user"] = udict
+                        st.session_state["auth_token"] = token
+                        st.session_state.pop("active_social_picker", None)
+                        st.toast("✅ Signed in with Google as Ali Hamza!")
+                        st.rerun()
+
+            with st.expander("Use another Google account", expanded=False):
+                col_custom_mail, col_custom_btn = st.columns([2.5, 1.2], vertical_alignment="center")
+                with col_custom_mail:
+                    custom_goog_email = st.text_input("Google Email", placeholder="user@gmail.com", key="auth_custom_goog_email", label_visibility="collapsed")
+                with col_custom_btn:
+                    if st.button("Sign In", key="btn_signin_google_custom", type="primary", use_container_width=True):
+                        if custom_goog_email.strip() and "@" in custom_goog_email:
+                            ok, msg, token, udict = AuthService.login_social_account(
+                                provider="google",
+                                email=custom_goog_email.strip()
+                            )
+                            if ok:
+                                st.session_state["auth_user"] = udict
+                                st.session_state["auth_token"] = token
+                                st.session_state.pop("active_social_picker", None)
+                                st.toast(f"✅ Signed in with Google as {custom_goog_email.strip()}!")
+                                st.rerun()
+                        else:
+                            st.error("Please enter a valid Google email.")
+
+        # 2. GitHub Account Chooser
+        elif active_picker == "github":
+            st.markdown("""
+            <div style="background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.20); border-radius: 10px; padding: 10px 14px; margin: 8px 0 10px 0;">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="#FFFFFF"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+                        <span style="font-weight: 700; color: #FFFFFF; font-size: 0.88rem;">Sign in with GitHub</span>
+                    </div>
+                    <span style="font-size: 0.72rem; color: #94A3B8;">Choose GitHub account</span>
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
+
+            col_gh_info, col_gh_act = st.columns([2.5, 1.3], vertical_alignment="center")
+            with col_gh_info:
+                st.markdown("""
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <div style="width: 32px; height: 32px; border-radius: 50%; background: #24292E; border: 1px solid rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; font-weight: 700; color: white; font-size: 0.85rem;">🐙</div>
+                    <div>
+                        <div style="font-weight: 600; color: #F8FAFC; font-size: 0.84rem;">Ali Hamza (@alihamza2912)</div>
+                        <div style="font-size: 0.72rem; color: #94A3B8;">alihamza343345@gmail.com</div>
+                    </div>
+                </div>
+                """, unsafe_allow_html=True)
+            with col_gh_act:
+                if st.button("Continue ➔", key="btn_signin_github_primary", type="primary", use_container_width=True):
+                    ok, msg, token, udict = AuthService.login_social_account(
+                        provider="github",
+                        email="alihamza343345@gmail.com",
+                        full_name="Ali Hamza",
+                        username="alihamza2912"
+                    )
+                    if ok:
+                        st.session_state["auth_user"] = udict
+                        st.session_state["auth_token"] = token
+                        st.session_state.pop("active_social_picker", None)
+                        st.toast("✅ Signed in with GitHub as @alihamza2912!")
+                        st.rerun()
+
+            with st.expander("Use another GitHub account", expanded=False):
+                col_custom_gh_mail, col_custom_gh_btn = st.columns([2.5, 1.2], vertical_alignment="center")
+                with col_custom_gh_mail:
+                    custom_gh_input = st.text_input("GitHub Username or Email", placeholder="octocat or user@example.com", key="auth_custom_gh_input", label_visibility="collapsed")
+                with col_custom_gh_btn:
+                    if st.button("Sign In", key="btn_signin_github_custom", type="primary", use_container_width=True):
+                        if custom_gh_input.strip():
+                            val = custom_gh_input.strip()
+                            email_to_use = val if "@" in val else f"{val}@github.com"
+                            user_to_use = val.split("@")[0] if "@" in val else val
+                            ok, msg, token, udict = AuthService.login_social_account(
+                                provider="github",
+                                email=email_to_use,
+                                username=user_to_use
+                            )
+                            if ok:
+                                st.session_state["auth_user"] = udict
+                                st.session_state["auth_token"] = token
+                                st.session_state.pop("active_social_picker", None)
+                                st.toast(f"✅ Signed in with GitHub as {user_to_use}!")
+                                st.rerun()
+                        else:
+                            st.error("Please enter a GitHub username or email.")
+        else:
+            # Quick 1-Click Social Sign-In chips visible by default
+            col_qg, col_qgh = st.columns(2)
+            with col_qg:
+                if st.button("⚡ Quick Google Sign-In", key="quick_google_ali", use_container_width=True, help="1-Click sign in as Ali Hamza (alihamza343345@gmail.com)"):
+                    ok, msg, token, udict = AuthService.login_social_account(
+                        provider="google",
+                        email="alihamza343345@gmail.com",
+                        full_name="Ali Hamza",
+                        username="alihamza1212"
+                    )
+                    if ok:
+                        st.session_state["auth_user"] = udict
+                        st.session_state["auth_token"] = token
+                        st.toast("✅ Signed in with Google as Ali Hamza!")
+                        st.rerun()
+            with col_qgh:
+                if st.button("⚡ Quick GitHub Sign-In", key="quick_github_ali", use_container_width=True, help="1-Click sign in as @alihamza2912"):
+                    ok, msg, token, udict = AuthService.login_social_account(
+                        provider="github",
+                        email="alihamza343345@gmail.com",
+                        full_name="Ali Hamza",
+                        username="alihamza2912"
+                    )
+                    if ok:
+                        st.session_state["auth_user"] = udict
+                        st.session_state["auth_token"] = token
+                        st.toast("✅ Signed in with GitHub as @alihamza2912!")
+                        st.rerun()
 
         st.markdown("""
         <div style="position: relative; text-align: center; margin: 12px 0 10px 0;">

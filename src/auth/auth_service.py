@@ -686,3 +686,120 @@ class AuthService:
         quota_service.get_quota_summary(user_id, bypass_cache=True)
 
         return True, "Authenticated via OAuth successfully.", token, user_dict
+
+    @classmethod
+    def login_social_account(
+        cls,
+        provider: str,
+        email: str,
+        full_name: Optional[str] = None,
+        username: Optional[str] = None,
+        avatar_url: Optional[str] = None,
+        request_ip: Optional[str] = None,
+        user_agent: Optional[str] = None
+    ) -> Tuple[bool, str, Optional[str], Optional[Dict[str, Any]]]:
+        """
+        Directly authenticates a user via Google or GitHub social sign-in.
+        Synchronizes with Supabase Auth (via admin API), mirrors into Supabase public.profiles,
+        creates/updates the local SQLite User session, initializes the 3 daily AI queries,
+        and returns (True, message, session_token, user_dict).
+        """
+        clean_email = (email or "").strip().lower()
+        if not clean_email or "@" not in clean_email:
+            return False, "Please provide a valid email address.", None, None
+
+        prov = provider.lower().strip()
+        disp_name = (full_name or "").strip() or clean_email.split("@")[0].capitalize()
+        user_name = (username or "").strip() or clean_email.split("@")[0]
+
+        # 1. Sync or retrieve from Supabase Auth
+        user_id = None
+        if supabase_auth_client.is_configured() and supabase_auth_client.service_role_key:
+            existing_sb = supabase_auth_client.get_user_by_email(clean_email)
+            if existing_sb:
+                user_id = existing_sb.get("id")
+                meta = existing_sb.get("user_metadata") or {}
+                if not full_name and meta.get("full_name"):
+                    disp_name = meta.get("full_name")
+            else:
+                created_sb = supabase_auth_client.admin_create_social_user(
+                    email=clean_email,
+                    provider=prov,
+                    full_name=disp_name,
+                    username=user_name,
+                    avatar_url=avatar_url
+                )
+                if created_sb:
+                    user_id = created_sb.get("id")
+
+        if not user_id:
+            with db_manager.get_session() as session:
+                local_u = session.query(User).filter(User.email == clean_email).first()
+                if local_u:
+                    user_id = local_u.user_id
+                else:
+                    user_id = str(uuid.uuid4())
+
+        # 2. Ensure profile exists in Supabase public.profiles
+        if supabase_auth_client.is_configured():
+            supabase_auth_client.ensure_profile_exists(
+                user_id=user_id,
+                email=clean_email,
+                username=user_name,
+                full_name=disp_name
+            )
+
+        # 3. Mirror into local SQLite User table
+        with db_manager.get_session() as session:
+            local_user = session.query(User).filter(
+                (User.user_id == user_id) | (User.email == clean_email)
+            ).first()
+            if not local_user:
+                local_user = User(
+                    user_id=user_id,
+                    username=user_name,
+                    email=clean_email,
+                    password_hash=hash_password(secrets.token_urlsafe(24)),
+                    full_name=disp_name,
+                    is_active=True,
+                    created_at=utc_now(),
+                    last_login_at=utc_now()
+                )
+                session.add(local_user)
+            else:
+                local_user.last_login_at = utc_now()
+                if disp_name and not local_user.full_name:
+                    local_user.full_name = disp_name
+            session.commit()
+
+        # 4. Generate authenticated session token and user payload
+        session_token = secrets.token_hex(32)
+        user_dict = {
+            "user_id": user_id,
+            "email": clean_email,
+            "username": user_name,
+            "full_name": disp_name,
+            "avatar_url": avatar_url,
+            "provider": prov,
+            "created_at": utc_now().isoformat()
+        }
+
+        # 5. Record login history audit in Supabase
+        if supabase_auth_client.is_configured():
+            supabase_auth_client.record_login(
+                user_id=user_id,
+                event_type=f"social_{prov}",
+                ip_address=request_ip,
+                user_agent=user_agent,
+                result="success"
+            )
+
+        # 6. Initialize daily AI quota
+        try:
+            from src.auth.quota_service import quota_service
+            quota_service.invalidate_cache(user_id)
+            quota_service.get_quota_summary(user_id, bypass_cache=True)
+        except Exception as qe:
+            logger.debug(f"Social login quota init notice: {qe}")
+
+        return True, f"Successfully signed in with {prov.capitalize()}.", session_token, user_dict

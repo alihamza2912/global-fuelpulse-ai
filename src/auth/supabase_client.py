@@ -1077,6 +1077,64 @@ class SupabaseAuthClient:
             logger.error(f"Failed to exchange OAuth code: {e}")
             return False, f"Network error during OAuth token exchange: {e}", None, None
 
+    def get_user_by_email(self, email: str) -> Optional[Dict[str, Any]]:
+        """Retrieves a user record from Supabase Auth by email via the Admin API."""
+        if not self.is_configured() or not self.service_role_key:
+            return None
+        clean_email = (email or "").strip().lower()
+        if not clean_email:
+            return None
+        url = f"{self.url}/auth/v1/admin/users"
+        headers = self._headers(use_service_key=True)
+        try:
+            resp = self._http.get(url, headers=headers, timeout=DEFAULT_TIMEOUT)
+            if resp.status_code == 200:
+                data = resp.json()
+                users = data.get("users", [])
+                for u in users:
+                    if (u.get("email") or "").strip().lower() == clean_email:
+                        return u
+        except Exception as e:
+            logger.debug(f"Admin get_user_by_email notice: {e}")
+        return None
+
+    def admin_create_social_user(
+        self,
+        email: str,
+        provider: str,
+        full_name: Optional[str] = None,
+        username: Optional[str] = None,
+        avatar_url: Optional[str] = None
+    ) -> Optional[Dict[str, Any]]:
+        """Creates or registers a social user in Supabase Auth via Admin API with provider metadata."""
+        if not self.is_configured() or not self.service_role_key:
+            return None
+        clean_email = (email or "").strip().lower()
+        url = f"{self.url}/auth/v1/admin/users"
+        headers = self._headers(use_service_key=True)
+        payload = {
+            "email": clean_email,
+            "email_confirm": True,
+            "user_metadata": {
+                "full_name": full_name or clean_email.split("@")[0].capitalize(),
+                "username": username or clean_email.split("@")[0],
+                "avatar_url": avatar_url,
+                "provider": provider
+            },
+            "app_metadata": {
+                "provider": provider,
+                "providers": [provider]
+            }
+        }
+        try:
+            resp = self._http.post(url, headers=headers, json=payload, timeout=DEFAULT_TIMEOUT)
+            if resp.status_code in (200, 201):
+                data = resp.json()
+                return data.get("user") or data
+        except Exception as e:
+            logger.debug(f"Admin social user creation notice: {e}")
+        return None
+
 
 # Global singleton instance
 supabase_auth_client = SupabaseAuthClient()
