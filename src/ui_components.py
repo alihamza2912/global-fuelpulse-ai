@@ -3401,35 +3401,7 @@ def _show_sign_in_dialog():
                                 st.rerun()
                         else:
                             st.error("Please enter a GitHub username or email.")
-        else:
-            # Quick 1-Click Social Sign-In chips visible by default
-            col_qg, col_qgh = st.columns(2)
-            with col_qg:
-                if st.button("⚡ Quick Google Sign-In", key="quick_google_ali", use_container_width=True, help="1-Click sign in as Ali Hamza (alihamza343345@gmail.com)"):
-                    ok, msg, token, udict = AuthService.login_social_account(
-                        provider="google",
-                        email="alihamza343345@gmail.com",
-                        full_name="Ali Hamza",
-                        username="alihamza1212"
-                    )
-                    if ok:
-                        st.session_state["auth_user"] = udict
-                        st.session_state["auth_token"] = token
-                        st.toast("✅ Signed in with Google as Ali Hamza!")
-                        st.rerun()
-            with col_qgh:
-                if st.button("⚡ Quick GitHub Sign-In", key="quick_github_ali", use_container_width=True, help="1-Click sign in as @alihamza2912"):
-                    ok, msg, token, udict = AuthService.login_social_account(
-                        provider="github",
-                        email="alihamza343345@gmail.com",
-                        full_name="Ali Hamza",
-                        username="alihamza2912"
-                    )
-                    if ok:
-                        st.session_state["auth_user"] = udict
-                        st.session_state["auth_token"] = token
-                        st.toast("✅ Signed in with GitHub as @alihamza2912!")
-                        st.rerun()
+
 
         st.markdown("""
         <div style="position: relative; text-align: center; margin: 12px 0 10px 0;">
