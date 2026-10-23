@@ -343,56 +343,10 @@ def render_two_tier_nav_html(current_lang: str, active_canonical: str) -> str:
 
 def render_two_tier_navigation(current_lang: str, active_canonical: str, navigate_fn=None) -> None:
     """
-    Renders the structured two-tier navigation using reactive Streamlit buttons.
-    Clicking any tab routes immediately in-memory (<30ms) without full browser page reload.
+    Formerly rendered 2-tier boxy buttons (Tier 1 Core, Tier 2 Dossiers).
+    Replaced with the unified floating pill navbar. Retained as a safe no-op for backwards compatibility.
     """
-    from src.localization.i18n import get_clean_nav_label, t
-
-    tier_1_items = [
-        {"tab": "home", "icon": "🏠", "label": get_clean_nav_label("home", current_lang)},
-        {"tab": "dashboard", "icon": "⚡", "label": get_clean_nav_label("dashboard", current_lang), "badge": t("badge_live", current_lang)},
-        {"tab": "india", "icon": "🇮🇳", "label": get_clean_nav_label("india", current_lang), "badge": "MoPNG"},
-        {"tab": "about", "icon": "📖", "label": get_clean_nav_label("about", current_lang)},
-        {"tab": "how_it_works", "icon": "⚙️", "label": get_clean_nav_label("how_it_works", current_lang)},
-    ]
-
-    tier_2_items = [
-        {"tab": "features", "icon": "📋", "label": get_clean_nav_label("features", current_lang), "badge": t("badge_12_mod", current_lang)},
-        {"tab": "data_trust", "icon": "🔒", "label": get_clean_nav_label("data_trust", current_lang), "badge": "SLA"},
-        {"tab": "methodology", "icon": "📐", "label": get_clean_nav_label("methodology", current_lang)},
-        {"tab": "roadmap", "icon": "🗺️", "label": get_clean_nav_label("roadmap", current_lang), "badge": "2026"},
-        {"tab": "faq", "icon": "❓", "label": get_clean_nav_label("faq", current_lang), "badge": t("badge_docs", current_lang)},
-    ]
-
-    # Container with custom CSS wrapper class
-    st.markdown('<div class="fuelpulse-tnav-container">', unsafe_allow_html=True)
-    
-    # Tier 1 - CORE
-    st.markdown(f'<div style="font-size: 10px; font-weight: 800; color: #64748B; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 4px; margin-top: 2px;">{t("nav_core_modules", current_lang)}</div>', unsafe_allow_html=True)
-    t1_cols = st.columns(len(tier_1_items))
-    for col, it in zip(t1_cols, tier_1_items):
-        is_active = (it["tab"] == active_canonical)
-        badge_str = f" [{it['badge']}]" if it.get("badge") else ""
-        btn_label = f"{it['icon']} {it['label']}{badge_str}"
-        with col:
-            if st.button(btn_label, key=f"main_t1_nav_{it['tab']}", type="primary" if is_active else "secondary", use_container_width=True):
-                if navigate_fn:
-                    navigate_fn(it["tab"])
-
-    # Tier 2 - SPECS & DOCS
-    st.markdown(f'<div style="font-size: 10px; font-weight: 800; color: #64748B; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 4px; margin-top: 6px;">{t("nav_tech_dossiers", current_lang)}</div>', unsafe_allow_html=True)
-    t2_cols = st.columns(len(tier_2_items))
-    for col, it in zip(t2_cols, tier_2_items):
-        is_active = (it["tab"] == active_canonical)
-        badge_str = f" [{it['badge']}]" if it.get("badge") else ""
-        btn_label = f"{it['icon']} {it['label']}{badge_str}"
-        with col:
-            if st.button(btn_label, key=f"main_t2_nav_{it['tab']}", type="primary" if is_active else "secondary", use_container_width=True):
-                if navigate_fn:
-                    navigate_fn(it["tab"])
-
-    st.markdown('</div>', unsafe_allow_html=True)
-    st.markdown('<div style="margin-bottom: 14px;"></div>', unsafe_allow_html=True)
+    return
 
 
 
@@ -1488,26 +1442,171 @@ div[data-testid="stPopoverButton"] {{
   margin: 0 !important;
 }}
 
-/* Tubelight Navbar Capsule Wrapper for AI, LANGUAGES, NEWS, USERNAME */
-div[data-testid="stHorizontalBlock"]:has(button[key*="top_ai_assistant_btn"]) {{
-  background: rgba(14, 21, 38, 0.75) !important;
-  background-color: rgba(14, 21, 38, 0.75) !important;
-  backdrop-filter: blur(16px) !important;
-  -webkit-backdrop-filter: blur(16px) !important;
+/* ==============================================================================
+   PREMIUM FLOATING PILL NAVBAR (CWI STUDIO / TUBELIGHT CAPSULE STYLE)
+   ============================================================================== */
+
+/* Centered Floating Navigation Pill Wrapper */
+div[data-testid="stHorizontalBlock"]:has(button[key*="pill_nav_home_btn"]) {{
+  background: rgba(10, 15, 29, 0.90) !important;
+  background-color: rgba(10, 15, 29, 0.90) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
   border: 1px solid rgba(255, 255, 255, 0.12) !important;
   border-radius: 9999px !important;
-  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
-  padding: 3px 5px !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.12) !important;
+  padding: 4px 6px !important;
   align-items: center !important;
-  gap: 4px !important;
+  justify-content: center !important;
+  gap: 2px !important;
+  width: fit-content !important;
+  margin: 0 auto !important;
+  max-width: 100% !important;
 }}
 
-/* Tubelight Pill Items (AI, LANGUAGES, NEWS, USERNAME) */
-div[data-testid="stHorizontalBlock"]:has(button[key*="top_ai_assistant_btn"]) button,
-div[data-testid="stHorizontalBlock"]:has(button[key*="top_ai_assistant_btn"]) [data-testid="stPopover"] > button,
-div[data-testid="stHorizontalBlock"]:has(button[key*="top_ai_assistant_btn"]) [data-testid="stPopoverButton"] > button,
-button[key*="top_ai_assistant_btn"],
-button[key*="top_auth_btn"] {{
+/* All Navigation Items Inside the Pill (Overview, Intelligence, Global Trade, Forecasts, News, AI Analyst) */
+div[data-testid="stHorizontalBlock"]:has(button[key*="pill_nav_home_btn"]) button,
+div[data-testid="stHorizontalBlock"]:has(button[key*="pill_nav_home_btn"]) [data-testid="stPopover"] > button,
+div[data-testid="stHorizontalBlock"]:has(button[key*="pill_nav_home_btn"]) [data-testid="stPopoverButton"] > button {{
+  background: transparent !important;
+  background-color: transparent !important;
+  color: #94A3B8 !important;
+  -webkit-text-fill-color: #94A3B8 !important;
+  border: 1px solid transparent !important;
+  border-radius: 9999px !important;
+  height: 34px !important;
+  min-height: 34px !important;
+  max-height: 34px !important;
+  line-height: 34px !important;
+  padding: 0 14px !important;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+  font-size: 12.5px !important;
+  font-weight: 500 !important;
+  letter-spacing: -0.01em !important;
+  white-space: nowrap !important;
+  overflow: visible !important;
+  position: relative !important;
+  box-shadow: none !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
+  gap: 4px !important;
+  transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  cursor: pointer !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}}
+
+div[data-testid="stHorizontalBlock"]:has(button[key*="pill_nav_home_btn"]) button *,
+div[data-testid="stHorizontalBlock"]:has(button[key*="pill_nav_home_btn"]) [data-testid="stPopover"] > button *,
+div[data-testid="stHorizontalBlock"]:has(button[key*="pill_nav_home_btn"]) [data-testid="stPopoverButton"] > button * {{
+  color: #94A3B8 !important;
+  -webkit-text-fill-color: #94A3B8 !important;
+  font-size: 12.5px !important;
+  font-weight: 500 !important;
+  white-space: nowrap !important;
+  line-height: 1 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  text-align: center !important;
+}}
+
+/* Pill Items: Hover Transition */
+div[data-testid="stHorizontalBlock"]:has(button[key*="pill_nav_home_btn"]) button:hover,
+div[data-testid="stHorizontalBlock"]:has(button[key*="pill_nav_home_btn"]) [data-testid="stPopover"] > button:hover,
+div[data-testid="stHorizontalBlock"]:has(button[key*="pill_nav_home_btn"]) [data-testid="stPopoverButton"] > button:hover {{
+  background: rgba(255, 255, 255, 0.08) !important;
+  background-color: rgba(255, 255, 255, 0.08) !important;
+  border-color: rgba(255, 255, 255, 0.14) !important;
+  color: #F8FAFC !important;
+  -webkit-text-fill-color: #F8FAFC !important;
+}}
+
+div[data-testid="stHorizontalBlock"]:has(button[key*="pill_nav_home_btn"]) button:hover *,
+div[data-testid="stHorizontalBlock"]:has(button[key*="pill_nav_home_btn"]) [data-testid="stPopover"] > button:hover *,
+div[data-testid="stHorizontalBlock"]:has(button[key*="pill_nav_home_btn"]) [data-testid="stPopoverButton"] > button:hover * {{
+  color: #F8FAFC !important;
+  -webkit-text-fill-color: #F8FAFC !important;
+}}
+
+/* Active Nav Item Inside Pill (Primary Kind) */
+div[data-testid="stHorizontalBlock"]:has(button[key*="pill_nav_home_btn"]) button[kind="primary"] {{
+  background: rgba(255, 255, 255, 0.12) !important;
+  background-color: rgba(255, 255, 255, 0.12) !important;
+  color: #FFFFFF !important;
+  -webkit-text-fill-color: #FFFFFF !important;
+  border: 1px solid rgba(255, 255, 255, 0.22) !important;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
+  font-weight: 600 !important;
+}}
+
+div[data-testid="stHorizontalBlock"]:has(button[key*="pill_nav_home_btn"]) button[kind="primary"] * {{
+  color: #FFFFFF !important;
+  -webkit-text-fill-color: #FFFFFF !important;
+  font-weight: 600 !important;
+}}
+
+/* Tubelight Lamp Accent Filament on Active Nav Item */
+div[data-testid="stHorizontalBlock"]:has(button[key*="pill_nav_home_btn"]) button[kind="primary"]::after {{
+  content: "" !important;
+  position: absolute !important;
+  bottom: 0 !important;
+  left: 22% !important;
+  right: 22% !important;
+  height: 2px !important;
+  background: #F5B942 !important;
+  border-radius: 9999px !important;
+  box-shadow: 0 0 8px rgba(245, 185, 66, 0.85) !important;
+  z-index: 10 !important;
+}}
+
+/* AI Analyst Button inside Pill (Golden brand glow) */
+button[key*="top_ai_assistant_btn"] {{
+  background: rgba(245, 185, 66, 0.09) !important;
+  background-color: rgba(245, 185, 66, 0.09) !important;
+  color: #F5B942 !important;
+  -webkit-text-fill-color: #F5B942 !important;
+  border: 1px solid rgba(245, 185, 66, 0.30) !important;
+  box-shadow: 0 0 12px rgba(245, 185, 66, 0.15) !important;
+}}
+
+button[key*="top_ai_assistant_btn"] *,
+button[key*="top_ai_assistant_btn"] p,
+button[key*="top_ai_assistant_btn"] span {{
+  color: #F5B942 !important;
+  -webkit-text-fill-color: #F5B942 !important;
+  font-weight: 600 !important;
+}}
+
+button[key*="top_ai_assistant_btn"]:hover {{
+  background: rgba(245, 185, 66, 0.16) !important;
+  background-color: rgba(245, 185, 66, 0.16) !important;
+  border-color: rgba(245, 185, 66, 0.55) !important;
+  box-shadow: 0 0 16px rgba(245, 185, 66, 0.3) !important;
+}}
+
+/* ==============================================================================
+   COORDINATED ACTIONS CLUSTER (LANGUAGE, LIVE STATUS, ACCOUNT)
+   ============================================================================== */
+div[data-testid="stHorizontalBlock"]:has(button[key*="top_auth_btn"]) {{
+  background: rgba(10, 15, 29, 0.75) !important;
+  background-color: rgba(10, 15, 29, 0.75) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 9999px !important;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.4) !important;
+  padding: 3px 6px !important;
+  align-items: center !important;
+  gap: 3px !important;
+}}
+
+div[data-testid="stHorizontalBlock"]:has(button[key*="top_auth_btn"]) button,
+div[data-testid="stHorizontalBlock"]:has(button[key*="top_auth_btn"]) [data-testid="stPopover"] > button,
+div[data-testid="stHorizontalBlock"]:has(button[key*="top_auth_btn"]) [data-testid="stPopoverButton"] > button,
+button[key*="top_auth_btn"],
+button[key*="top_status_btn"] {{
   background: transparent !important;
   background-color: transparent !important;
   color: #CBD5E1 !important;
@@ -1532,17 +1631,17 @@ button[key*="top_auth_btn"] {{
   justify-content: center !important;
   text-align: center !important;
   gap: 4px !important;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  transition: all 0.18s ease !important;
   cursor: pointer !important;
   width: 100% !important;
   box-sizing: border-box !important;
 }}
 
-div[data-testid="stHorizontalBlock"]:has(button[key*="top_ai_assistant_btn"]) button *,
-div[data-testid="stHorizontalBlock"]:has(button[key*="top_ai_assistant_btn"]) [data-testid="stPopover"] > button *,
-div[data-testid="stHorizontalBlock"]:has(button[key*="top_ai_assistant_btn"]) [data-testid="stPopoverButton"] > button *,
-button[key*="top_ai_assistant_btn"] *,
-button[key*="top_auth_btn"] * {{
+div[data-testid="stHorizontalBlock"]:has(button[key*="top_auth_btn"]) button *,
+div[data-testid="stHorizontalBlock"]:has(button[key*="top_auth_btn"]) [data-testid="stPopover"] > button *,
+div[data-testid="stHorizontalBlock"]:has(button[key*="top_auth_btn"]) [data-testid="stPopoverButton"] > button *,
+button[key*="top_auth_btn"] *,
+button[key*="top_status_btn"] * {{
   color: #CBD5E1 !important;
   -webkit-text-fill-color: #CBD5E1 !important;
   font-size: 11.5px !important;
@@ -1554,97 +1653,25 @@ button[key*="top_auth_btn"] * {{
   text-align: center !important;
 }}
 
-/* AI Assistant Active State: Tubelight Lamp with Glowing Filament and Radiant Beam */
-button[key*="top_ai_assistant_btn"] {{
-  background: rgba(245, 185, 66, 0.10) !important;
-  background-color: rgba(245, 185, 66, 0.10) !important;
-  color: #F5B942 !important;
-  -webkit-text-fill-color: #F5B942 !important;
-  border: 1px solid rgba(245, 185, 66, 0.35) !important;
-  box-shadow: 0 0 14px rgba(245, 185, 66, 0.18) !important;
-}}
-
-button[key*="top_ai_assistant_btn"] *,
-button[key*="top_ai_assistant_btn"] p,
-button[key*="top_ai_assistant_btn"] span {{
-  color: #F5B942 !important;
-  -webkit-text-fill-color: #F5B942 !important;
-}}
-
-/* Tubelight Top Lamp Filament on AI button */
-button[key*="top_ai_assistant_btn"]::before {{
-  content: "" !important;
-  position: absolute !important;
-  top: -2px !important;
-  left: 50% !important;
-  transform: translateX(-50%) !important;
-  width: 24px !important;
-  height: 2px !important;
-  background: #F5B942 !important;
-  border-radius: 9999px 9999px 0 0 !important;
-  box-shadow: 0 -1px 6px #F5B942, 0 0 10px rgba(245, 185, 66, 0.9) !important;
-  z-index: 10 !important;
-}}
-
-/* Tubelight Radiant Lamp Glow Aura on AI button */
-button[key*="top_ai_assistant_btn"]::after {{
-  content: "" !important;
-  position: absolute !important;
-  top: -5px !important;
-  left: 50% !important;
-  transform: translateX(-50%) !important;
-  width: 36px !important;
-  height: 10px !important;
-  background: rgba(245, 185, 66, 0.40) !important;
-  border-radius: 9999px !important;
-  filter: blur(5px) !important;
-  pointer-events: none !important;
-  z-index: 5 !important;
-}}
-
-/* Tubelight Hover State for AI, LANGUAGES, NEWS, USERNAME */
-div[data-testid="stHorizontalBlock"]:has(button[key*="top_ai_assistant_btn"]) button:hover,
-div[data-testid="stHorizontalBlock"]:has(button[key*="top_ai_assistant_btn"]) [data-testid="stPopover"] > button:hover,
-div[data-testid="stHorizontalBlock"]:has(button[key*="top_ai_assistant_btn"]) [data-testid="stPopoverButton"] > button:hover,
-button[key*="top_ai_assistant_btn"]:hover,
-button[key*="top_auth_btn"]:hover {{
+div[data-testid="stHorizontalBlock"]:has(button[key*="top_auth_btn"]) button:hover,
+div[data-testid="stHorizontalBlock"]:has(button[key*="top_auth_btn"]) [data-testid="stPopover"] > button:hover,
+div[data-testid="stHorizontalBlock"]:has(button[key*="top_auth_btn"]) [data-testid="stPopoverButton"] > button:hover,
+button[key*="top_auth_btn"]:hover,
+button[key*="top_status_btn"]:hover {{
   background: rgba(255, 255, 255, 0.08) !important;
   background-color: rgba(255, 255, 255, 0.08) !important;
-  border-color: rgba(245, 185, 66, 0.45) !important;
-  color: #F8FAFC !important;
-  -webkit-text-fill-color: #F8FAFC !important;
+  border-color: rgba(255, 255, 255, 0.16) !important;
+  color: #FFFFFF !important;
+  -webkit-text-fill-color: #FFFFFF !important;
 }}
 
-div[data-testid="stHorizontalBlock"]:has(button[key*="top_ai_assistant_btn"]) button:hover *,
-div[data-testid="stHorizontalBlock"]:has(button[key*="top_ai_assistant_btn"]) [data-testid="stPopover"] > button:hover *,
-div[data-testid="stHorizontalBlock"]:has(button[key*="top_ai_assistant_btn"]) [data-testid="stPopoverButton"] > button:hover *,
-button[key*="top_ai_assistant_btn"]:hover *,
-button[key*="top_auth_btn"]:hover * {{
-  color: #F8FAFC !important;
-  -webkit-text-fill-color: #F8FAFC !important;
-}}
-
-/* Hover Lamp Filament for Languages, News, and User */
-div[data-testid="stHorizontalBlock"]:has(button[key*="top_ai_assistant_btn"]) [data-testid="stPopover"] > button:hover::before,
-div[data-testid="stHorizontalBlock"]:has(button[key*="top_ai_assistant_btn"]) [data-testid="stPopoverButton"] > button:hover::before,
-button[key*="top_auth_btn"]:hover::before {{
-  content: "" !important;
-  position: absolute !important;
-  top: -2px !important;
-  left: 50% !important;
-  transform: translateX(-50%) !important;
-  width: 20px !important;
-  height: 2px !important;
-  background: #F5B942 !important;
-  border-radius: 9999px 9999px 0 0 !important;
-  box-shadow: 0 -1px 5px #F5B942, 0 0 8px rgba(245, 185, 66, 0.7) !important;
-  z-index: 10 !important;
-}}
-
-div[data-testid="stPopover"] > button svg,
-div[data-testid="stPopoverButton"] > button svg {{
-  fill: #F5B942 !important;
-  color: #F5B942 !important;
+div[data-testid="stHorizontalBlock"]:has(button[key*="top_auth_btn"]) button:hover *,
+div[data-testid="stHorizontalBlock"]:has(button[key*="top_auth_btn"]) [data-testid="stPopover"] > button:hover *,
+div[data-testid="stHorizontalBlock"]:has(button[key*="top_auth_btn"]) [data-testid="stPopoverButton"] > button:hover *,
+button[key*="top_auth_btn"]:hover *,
+button[key*="top_status_btn"]:hover * {{
+  color: #FFFFFF !important;
+  -webkit-text-fill-color: #FFFFFF !important;
 }}
 
 /* Hide popover chevron caret in header actions so all 3 buttons are identical in dimensions & centering */
@@ -2719,53 +2746,61 @@ def render_universal_top_header(active_page_name: str = "Overview", key_prefix: 
         ai_btn_label = "🤖 AI (3/3)"
         ai_btn_help = "Ask Antigravity AI Assistant"
 
-    col_brand, col_actions = st.columns([5.5, 4.5], gap="small", vertical_alignment="center")
+    # 3-Zone Premium Navigation Bar: Brand (Left), Centered Floating Pill (Center), Actions Cluster (Right)
+    col_brand, col_pill_box, col_actions_box = st.columns([2.2, 5.8, 2.0], gap="small", vertical_alignment="center")
     with col_brand:
         render_html(render_app_header_brand_html(current_lang, engine_name, t('live_indicator', current_lang)))
 
-    with col_actions:
-        col_ai, col_lang, col_news, col_auth = st.columns([1.0, 1.15, 1.1, 0.95], gap="small", vertical_alignment="center")
-        with col_ai:
-            if st.button(
-                ai_btn_label,
-                key=f"{pfx}_top_ai_assistant_btn",
-                use_container_width=True,
-                type="secondary",
-                help=ai_btn_help
-            ):
-                from src.auth.auth_service import AuthService
-                if not AuthService.get_active_user():
-                    _show_sign_in_dialog()
-                else:
-                    _show_ai_assistant_dialog(context_page=active_page_name)
+    norm_active = (active_page_name or "").lower() if isinstance(active_page_name, str) else ""
+    canonical = st.session_state.get("active_canonical", "home")
 
-        with col_lang:
-            all_langs = get_available_languages()
-            cur_data = all_langs.get(current_lang, all_langs.get("en", {"flag": "🇬🇧", "native": "English", "name": "English"}))
-            cur_flag = cur_data.get("flag", "🇬🇧" if current_lang == "en" else "🌐")
-            lang_name = cur_data.get("name", "English")
-            lang_btn_label = f"🌐 {cur_flag} {lang_name} ▾"
-            with st.popover(lang_btn_label, use_container_width=True):
-                st.markdown(f"#### 🌐 {t('select_language', current_lang)} ({len(all_langs)} World Languages)")
-                st.caption(t("lang_modal_sub", current_lang))
-                with st.container(height=340):
-                    for code, data in all_langs.items():
-                        is_selected = (code == current_lang)
-                        active_mark = "✓ " if is_selected else ""
-                        item_label = f"{active_mark}{data['flag']}  {data['native']}  ({data['name']})"
-                        if st.button(
-                            item_label,
-                            key=f"{pfx}_lang_btn_{code}",
-                            use_container_width=True,
-                            type="primary" if is_selected else "secondary"
-                        ):
-                            if code != current_lang:
-                                set_language(code)
-                                st.rerun()
+    with col_pill_box:
+        # Floating Pill: Overview | Intelligence | Global Trade | Forecasts | News | AI Analyst
+        col_nav_home, col_nav_intel, col_nav_trade, col_nav_fc, col_news, col_ai = st.columns(
+            [1.0, 1.15, 1.25, 1.1, 0.95, 1.3], gap="small", vertical_alignment="center"
+        )
+        
+        with col_nav_home:
+            is_home_active = (norm_active in ("overview", "home", "default", "root") or canonical == "home")
+            if st.button("Overview", key=f"{pfx}_pill_nav_home_btn", use_container_width=True, type="primary" if is_home_active else "secondary", help="Global Retail Fuel Topology & Macro Overview"):
+                st.session_state.active_canonical = "home"
+                st.session_state.active_nav = "🏠 Overview"
+                try:
+                    st.switch_page("app.py")
+                except Exception:
+                    st.rerun()
+
+        with col_nav_intel:
+            is_intel_active = (norm_active in ("intelligence", "live intel", "dashboard", "1_global_command_center") or canonical == "dashboard")
+            if st.button("Intelligence", key=f"{pfx}_pill_nav_intel_btn", use_container_width=True, type="primary" if is_intel_active else "secondary", help="Command Center & Live Energy Telemetry"):
+                st.session_state.active_canonical = "dashboard"
+                st.session_state.active_nav = "⚡ Live Intel"
+                try:
+                    st.switch_page("app.py")
+                except Exception:
+                    st.rerun()
+
+        with col_nav_trade:
+            is_trade_active = ("trade" in norm_active or "3_global_trade" in norm_active or canonical == "india")
+            if st.button("Global Trade", key=f"{pfx}_pill_nav_trade_btn", use_container_width=True, type="primary" if is_trade_active else "secondary", help="Global Maritime Trade Flows & Bilateral Logistics"):
+                try:
+                    st.switch_page("pages/3_Global_Trade.py")
+                except Exception:
+                    st.session_state.active_canonical = "india"
+                    st.rerun()
+
+        with col_nav_fc:
+            is_fc_active = ("forecast" in norm_active or "forecasting" in norm_active or "7_forecasting" in norm_active)
+            if st.button("Forecasts", key=f"{pfx}_pill_nav_fc_btn", use_container_width=True, type="primary" if is_fc_active else "secondary", help="Prophet & ARIMA Quantitative Price Forecasts"):
+                try:
+                    st.switch_page("pages/7_Forecasting.py")
+                except Exception:
+                    st.session_state.active_canonical = "features"
+                    st.rerun()
 
         with col_news:
             alerts_count = GlobalNewsEngine.get_active_alerts_count()
-            news_btn_label = f"📰 News ({alerts_count}) ▾" if current_lang == "en" else f"{t('top_btn_news', current_lang, count=alerts_count)} ▾"
+            news_btn_label = f"News ({alerts_count}) ▾"
             with st.popover(news_btn_label, use_container_width=True):
                 render_html(f"""
                 <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid rgba(255, 255, 255, 0.12);">
@@ -2793,7 +2828,7 @@ def render_universal_top_header(active_page_name: str = "Overview", key_prefix: 
                     </div>
                     """)
                 with col_sync_btn:
-                    if st.button("🔄 Sync Wire", key="sync_live_wire_popover_btn", use_container_width=True):
+                    if st.button("🔄 Sync Wire", key=f"{pfx}_sync_live_wire_popover_btn", use_container_width=True):
                         GlobalNewsEngine.refresh_news(force_live=True)
                         st.rerun()
 
@@ -2914,6 +2949,49 @@ def render_universal_top_header(active_page_name: str = "Overview", key_prefix: 
                             <p style="font-size: 0.76rem; color: #CBD5E1; line-height: 1.4; margin-bottom: 6px;">{item['summary']}</p>
                         </div>
                         """, unsafe_allow_html=True)
+
+        with col_ai:
+            if st.button(
+                ai_btn_label,
+                key=f"{pfx}_top_ai_assistant_btn",
+                use_container_width=True,
+                type="secondary",
+                help=ai_btn_help
+            ):
+                from src.auth.auth_service import AuthService
+                if not AuthService.get_active_user():
+                    _show_sign_in_dialog()
+                else:
+                    _show_ai_assistant_dialog(context_page=active_page_name)
+
+    with col_actions_box:
+        col_lang, col_theme, col_auth = st.columns([1.05, 0.8, 1.15], gap="small", vertical_alignment="center")
+
+        with col_lang:
+            all_langs = get_available_languages()
+            cur_data = all_langs.get(current_lang, all_langs.get("en", {"flag": "🇬🇧", "native": "English", "name": "English"}))
+            cur_flag = cur_data.get("flag", "🇬🇧" if current_lang == "en" else "🌐")
+            lang_btn_label = f"🌐 {cur_flag} {current_lang.upper()} ▾"
+            with st.popover(lang_btn_label, use_container_width=True):
+                st.markdown(f"#### 🌐 {t('select_language', current_lang)} ({len(all_langs)} World Languages)")
+                st.caption(t("lang_modal_sub", current_lang))
+                with st.container(height=340):
+                    for code, data in all_langs.items():
+                        is_selected = (code == current_lang)
+                        active_mark = "✓ " if is_selected else ""
+                        item_label = f"{active_mark}{data['flag']}  {data['native']}  ({data['name']})"
+                        if st.button(
+                            item_label,
+                            key=f"{pfx}_lang_btn_{code}",
+                            use_container_width=True,
+                            type="primary" if is_selected else "secondary"
+                        ):
+                            if code != current_lang:
+                                set_language(code)
+                                st.rerun()
+
+        with col_theme:
+            st.button("🟢 LIVE", key=f"{pfx}_top_status_btn", use_container_width=True, type="secondary", help="Telemetry Engine: Real-Time Streaming Active")
 
         with col_auth:
             auth_user = st.session_state.get("auth_user")
@@ -3411,35 +3489,6 @@ def render_command_strip(
     apply_theme()
     if show_universal_header:
         render_universal_top_header(active_page_name=active_page, key_prefix=f"cs_{active_page}")
-
-    from src.localization.i18n import t, get_current_language
-    current_lang = get_current_language()
-
-    health = db_manager.check_health()
-    engine_name = "MYSQL 8.4" if health["dialect"] == "mysql" else "LOCAL CACHE"
-    logo_svg = get_brand_logo_svg(width=290, height=48)
-
-    nav_html = f"""<div style="background: rgba(14, 21, 38, 0.85); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.12); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); border-radius: 10px; padding: 12px 20px; margin: -0.5rem 0 1.75rem 0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px;">
-<div style="display: flex; align-items: center; gap: 14px;">{logo_svg}</div>
-<div style="display: flex; align-items: center; gap: 8px; font-family: 'Space Grotesk', sans-serif; font-size: 13px; font-weight: 700; flex-wrap: wrap;">
-<a href="#ch-01" style="color: #F9FAFB; text-decoration: none; padding: 4px 8px; border-radius: 4px; transition: color 0.15s ease;">{t('nav_overview', current_lang)}</a>
-<span style="color: rgba(255, 255, 255, 0.2);">•</span>
-<a href="#ch-02" style="color: #F9FAFB; text-decoration: none; padding: 4px 8px; border-radius: 4px;">{t('chapter_02_title', current_lang)[:12]}</a>
-<span style="color: rgba(255, 255, 255, 0.2);">•</span>
-<a href="#ch-03" style="color: #F9FAFB; text-decoration: none; padding: 4px 8px; border-radius: 4px;">{t('nav_trade', current_lang)}</a>
-<span style="color: rgba(255, 255, 255, 0.2);">•</span>
-<a href="#ch-04" style="color: #F9FAFB; text-decoration: none; padding: 4px 8px; border-radius: 4px;">{t('chapter_04_title', current_lang)[:14]}</a>
-<span style="color: rgba(255, 255, 255, 0.2);">•</span>
-<a href="#ch-05" style="color: #F9FAFB; text-decoration: none; padding: 4px 8px; border-radius: 4px;">{t('nav_india', current_lang)}</a>
-<span style="color: rgba(255, 255, 255, 0.2);">•</span>
-<a href="#ch-11" style="color: #F9FAFB; text-decoration: none; padding: 4px 8px; border-radius: 4px;">{t('nav_data_trust', current_lang)}</a>
-</div>
-<div style="display: flex; align-items: center; gap: 12px;">
-<span style="background: rgba(16, 185, 129, 0.18); color: #34D399; border: 1px solid rgba(16, 185, 129, 0.4); padding: 4px 12px; border-radius: 999px; font-family: 'Space Grotesk', sans-serif; font-size: 12px; font-weight: 700;">● {engine_name} VERIFIED</span>
-<a href="#ch-05" style="background: #EAB308; color: #070A12; border: 1px solid #CA8A04; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25); padding: 6px 14px; border-radius: 6px; font-family: 'Space Grotesk', sans-serif; font-size: 13px; font-weight: 800; text-decoration: none;">EXPLORE MARKETS ↗</a>
-</div>
-</div>"""
-    render_html(nav_html)
 
 
 # ==============================================================================

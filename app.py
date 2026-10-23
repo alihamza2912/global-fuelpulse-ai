@@ -497,10 +497,9 @@ if st.query_params.get("login") in ("1", "true") or st.query_params.get("auth") 
 # 5. Top Brand Header Strip with Synchronized Multi-Language and Intelligence Center
 render_universal_top_header(active_page_name=st.session_state.get("active_canonical", "home"), key_prefix="app_root")
 
-# 6. Structured Two-Tier Product Navigation
+# 6. Active Canonical Navigation State
 active_canonical = st.session_state.get("active_canonical", "home")
 st.session_state.active_nav = KEY_TO_NAV.get(active_canonical, "🏠 Overview")
-render_two_tier_navigation(current_lang, active_canonical, navigate_to)
 
 
 # 7. Modular View Router
