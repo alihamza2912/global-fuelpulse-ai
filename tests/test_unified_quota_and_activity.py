@@ -312,8 +312,8 @@ def test_scenario_11_reset_countdown_calculation():
 def test_scenario_12_top_navigation_order():
     """
     Scenario 12:
-    Verifies top navigation layout strictly arranges controls in the required CWI Studio order:
-    Brand | [Overview, Live Intel, Global Trade, Forecasts, News, AI Analyst] | [Language, Theme, Account].
+    Verifies top navigation layout strictly arranges controls in the required order:
+    Brand (Left) | [News, AI Analyst, Language, Account] (Right).
     """
     import inspect
     from src.ui_components import render_universal_top_header
@@ -322,30 +322,20 @@ def test_scenario_12_top_navigation_order():
 
     # Search column allocations and render order in the source code
     col_brand_pos = source.find("col_brand")
-    col_nav_home_pos = source.find("col_nav_home")
-    col_nav_intel_pos = source.find("col_nav_intel")
-    col_nav_trade_pos = source.find("col_nav_trade")
-    col_nav_fc_pos = source.find("col_nav_fc")
     col_news_pos = source.find("col_news")
     col_ai_pos = source.find("col_ai")
     col_lang_pos = source.find("col_lang")
-    col_theme_pos = source.find("col_theme")
     col_auth_pos = source.find("col_auth")
 
     assert col_brand_pos != -1, "col_brand must exist"
-    assert col_nav_home_pos != -1, "col_nav_home must exist"
-    assert col_nav_intel_pos != -1, "col_nav_intel must exist"
-    assert col_nav_trade_pos != -1, "col_nav_trade must exist"
-    assert col_nav_fc_pos != -1, "col_nav_fc must exist"
     assert col_news_pos != -1, "col_news must exist"
     assert col_ai_pos != -1, "col_ai must exist"
     assert col_lang_pos != -1, "col_lang must exist"
-    assert col_theme_pos != -1, "col_theme must exist"
     assert col_auth_pos != -1, "col_auth must exist"
 
-    # Verify CWI Studio Layout: Brand -> Center Nav (Overview < Intel < Trade < FC < News < AI) -> Actions (Lang < Theme < Auth)
-    assert col_brand_pos < col_nav_home_pos < col_nav_intel_pos < col_nav_trade_pos < col_nav_fc_pos < col_news_pos < col_ai_pos < col_lang_pos < col_theme_pos < col_auth_pos, (
-        "Header controls must strictly be ordered: Brand -> Center Navigation (Overview, Intel, Trade, Forecasts, News, AI) -> Actions (Language, Theme, Account)"
+    # Verify Layout: Brand -> Controls (News < AI < Language < Account)
+    assert col_brand_pos < col_news_pos < col_ai_pos < col_lang_pos < col_auth_pos, (
+        "Header controls must strictly be ordered: Brand -> News -> AI Analyst -> Language -> Account"
     )
 
 
