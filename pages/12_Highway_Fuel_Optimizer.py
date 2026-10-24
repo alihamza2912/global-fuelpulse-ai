@@ -202,44 +202,44 @@ m1, m2, m3, m4, m5 = st.columns(5)
 
 with m1:
     st.markdown(f"""
-    <div style="background: #0D1527; border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 10px; padding: 14px; text-align: center;">
-        <div style="font-size: 0.72rem; color: #94A3B8; font-weight: 600; text-transform: uppercase;">Total Distance</div>
+    <div class="hfo-scorecard" style="padding: 16px; text-align: center; min-height: 125px; height: 100%; display: flex; flex-direction: column; justify-content: space-between;">
+        <div style="font-size: 0.72rem; color: #94A3B8; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; min-height: 24px;">Total Distance</div>
         <div style="font-size: 1.5rem; font-weight: 800; color: #F8FAFC; margin: 4px 0;">{result['total_distance_km']:,.0f} <span style="font-size: 0.85rem; color: #94A3B8;">km</span></div>
-        <div style="font-size: 0.75rem; color: #38BDF8;">⏱️ ~{result['est_transit_hours']} hrs transit</div>
+        <div style="font-size: 0.75rem; color: #38BDF8; font-weight: 600;">⏱️ ~{result['est_transit_hours']} hrs transit</div>
     </div>
     """, unsafe_allow_html=True)
 
 with m2:
     st.markdown(f"""
-    <div style="background: #0D1527; border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 10px; padding: 14px; text-align: center;">
-        <div style="font-size: 0.72rem; color: #94A3B8; font-weight: 600; text-transform: uppercase;">Fuel Consumption</div>
+    <div class="hfo-scorecard" style="padding: 16px; text-align: center; min-height: 125px; height: 100%; display: flex; flex-direction: column; justify-content: space-between;">
+        <div style="font-size: 0.72rem; color: #94A3B8; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; min-height: 24px;">Fuel Consumption</div>
         <div style="font-size: 1.5rem; font-weight: 800; color: #F5B942; margin: 4px 0;">{result['total_fuel_needed_l']:,.1f} <span style="font-size: 0.85rem; color: #94A3B8;">L</span></div>
-        <div style="font-size: 0.75rem; color: #94A3B8;">Range: {result['tank_range_km']:,.0f} km/tank</div>
+        <div style="font-size: 0.75rem; color: #94A3B8; font-weight: 600;">Range: {result['tank_range_km']:,.0f} km/tank</div>
     </div>
     """, unsafe_allow_html=True)
 
 with m3:
     st.markdown(f"""
-    <div style="background: #0D1527; border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 10px; padding: 14px; text-align: center;">
-        <div style="font-size: 0.72rem; color: #94A3B8; font-weight: 600; text-transform: uppercase;">Unplanned Cost</div>
+    <div class="hfo-scorecard" style="padding: 16px; text-align: center; min-height: 125px; height: 100%; display: flex; flex-direction: column; justify-content: space-between;">
+        <div style="font-size: 0.72rem; color: #94A3B8; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; min-height: 24px;">Unplanned Cost</div>
         <div style="font-size: 1.5rem; font-weight: 800; color: #F43F5E; margin: 4px 0;">{sym}{fin['unoptimized_cost']:,.0f}</div>
-        <div style="font-size: 0.75rem; color: #FDA4AF;">Naive random fills</div>
+        <div style="font-size: 0.75rem; color: #FDA4AF; font-weight: 600;">Naive random fills</div>
     </div>
     """, unsafe_allow_html=True)
 
 with m4:
     st.markdown(f"""
-    <div style="background: #0D1527; border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 10px; padding: 14px; text-align: center;">
-        <div style="font-size: 0.72rem; color: #94A3B8; font-weight: 600; text-transform: uppercase;">Optimized Cost</div>
+    <div class="hfo-scorecard" style="padding: 16px; text-align: center; min-height: 125px; height: 100%; display: flex; flex-direction: column; justify-content: space-between;">
+        <div style="font-size: 0.72rem; color: #94A3B8; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; min-height: 24px;">Optimized Cost</div>
         <div style="font-size: 1.5rem; font-weight: 800; color: #10B981; margin: 4px 0;">{sym}{fin['optimized_cost']:,.0f}</div>
-        <div style="font-size: 0.75rem; color: #6EE7B7;">{sym}{fin['cost_per_km']:.2f} / km</div>
+        <div style="font-size: 0.75rem; color: #6EE7B7; font-weight: 600;">{sym}{fin['cost_per_km']:.2f} / km</div>
     </div>
     """, unsafe_allow_html=True)
 
 with m5:
     st.markdown(f"""
-    <div style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(13, 21, 39, 0.95) 100%); border: 1px solid rgba(16, 185, 129, 0.4); border-radius: 10px; padding: 14px; text-align: center; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.15);">
-        <div style="font-size: 0.72rem; color: #6EE7B7; font-weight: 700; text-transform: uppercase;">NET CASH SAVINGS</div>
+    <div class="hfo-scorecard" style="padding: 16px; text-align: center; min-height: 125px; height: 100%; display: flex; flex-direction: column; justify-content: space-between; background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(13, 21, 39, 0.95) 100%); border: 1px solid rgba(16, 185, 129, 0.4); box-shadow: 0 4px 15px rgba(16, 185, 129, 0.15);">
+        <div style="font-size: 0.72rem; color: #6EE7B7; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; min-height: 24px;">NET CASH SAVINGS</div>
         <div style="font-size: 1.5rem; font-weight: 900; color: #34D399; margin: 4px 0;">{sym}{fin['net_savings']:,.0f}</div>
         <div style="font-size: 0.75rem; color: #A7F3D0; font-weight: 600;">💰 {fin['savings_pct']}% ROI on Strategy</div>
     </div>

@@ -1916,8 +1916,47 @@ div:not([data-testid*="Popover"]):not([data-baseweb="popover"]) > div.stButton >
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2) !important;
 }}
 
-/* 18. Modern Glassmorphic Cards */
-.editorial-card, .instrument-card {{
+/* 18. Universal Glassmorphic Scorecards & Equal-Height Columns (Whole Project Standard) */
+div[data-testid="stHorizontalBlock"]:has(.editorial-card),
+div[data-testid="stHorizontalBlock"]:has(.instrument-card),
+div[data-testid="stHorizontalBlock"]:has(.hfo-scorecard),
+div[data-testid="stHorizontalBlock"]:has(.kpi-card) {{
+  align-items: stretch !important;
+}}
+
+div[data-testid="stHorizontalBlock"]:has(.editorial-card) > div[data-testid="column"],
+div[data-testid="stHorizontalBlock"]:has(.instrument-card) > div[data-testid="column"],
+div[data-testid="stHorizontalBlock"]:has(.hfo-scorecard) > div[data-testid="column"],
+div[data-testid="stHorizontalBlock"]:has(.kpi-card) > div[data-testid="column"] {{
+  display: flex !important;
+  flex-direction: column !important;
+}}
+
+div[data-testid="stHorizontalBlock"]:has(.editorial-card) > div[data-testid="column"] > div[data-testid="stVerticalBlock"],
+div[data-testid="stHorizontalBlock"]:has(.instrument-card) > div[data-testid="column"] > div[data-testid="stVerticalBlock"],
+div[data-testid="stHorizontalBlock"]:has(.hfo-scorecard) > div[data-testid="column"] > div[data-testid="stVerticalBlock"],
+div[data-testid="stHorizontalBlock"]:has(.kpi-card) > div[data-testid="column"] > div[data-testid="stVerticalBlock"] {{
+  display: flex !important;
+  flex-direction: column !important;
+  flex: 1 1 auto !important;
+  height: 100% !important;
+}}
+
+div[data-testid="stHorizontalBlock"]:has(.editorial-card) div[data-testid="stElementContainer"],
+div[data-testid="stHorizontalBlock"]:has(.instrument-card) div[data-testid="stElementContainer"],
+div[data-testid="stHorizontalBlock"]:has(.hfo-scorecard) div[data-testid="stElementContainer"],
+div[data-testid="stHorizontalBlock"]:has(.kpi-card) div[data-testid="stElementContainer"],
+div[data-testid="stHorizontalBlock"]:has(.editorial-card) div[data-testid="stMarkdownContainer"],
+div[data-testid="stHorizontalBlock"]:has(.instrument-card) div[data-testid="stMarkdownContainer"],
+div[data-testid="stHorizontalBlock"]:has(.hfo-scorecard) div[data-testid="stMarkdownContainer"],
+div[data-testid="stHorizontalBlock"]:has(.kpi-card) div[data-testid="stMarkdownContainer"] {{
+  display: flex !important;
+  flex-direction: column !important;
+  flex: 1 1 auto !important;
+  height: 100% !important;
+}}
+
+.editorial-card, .instrument-card, .hfo-scorecard {{
   background: rgba(14, 21, 38, 0.75);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
@@ -1927,14 +1966,16 @@ div:not([data-testid*="Popover"]):not([data-baseweb="popover"]) > div.stButton >
   padding: 16px 18px;
   position: relative;
   margin-bottom: 14px;
-  min-height: 140px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  box-sizing: border-box;
+  min-height: 195px !important;
+  height: 100% !important;
+  flex: 1 1 auto !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-between !important;
+  box-sizing: border-box !important;
   transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
 }}
-.editorial-card:hover, .instrument-card:hover {{
+.editorial-card:hover, .instrument-card:hover, .hfo-scorecard:hover {{
   transform: translateY(-2px);
   border-color: rgba(245, 185, 66, 0.45);
   box-shadow: 0 12px 30px rgba(0, 0, 0, 0.55), 0 0 16px rgba(245, 185, 66, 0.2);
@@ -1958,19 +1999,21 @@ div[data-testid="stPlotlyChart"]:hover, .stPlotlyChart:hover {{
 
 .instrument-tag {{
   font-family: 'Space Grotesk', sans-serif;
-  font-size: 13px;
+  font-size: 12.5px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: #94A3B8;
-  margin-bottom: 6px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  margin-bottom: 4px;
+  min-height: 38px !important;
+  display: flex !important;
+  align-items: flex-start !important;
+  justify-content: space-between !important;
+  line-height: 1.3 !important;
 }}
 .instrument-val {{
   font-family: 'Space Grotesk', sans-serif;
-  font-size: 26px;
+  font-size: 25px;
   font-weight: 800;
   color: #F9FAFB;
   line-height: 1.2;
@@ -1979,16 +2022,18 @@ div[data-testid="stPlotlyChart"]:hover, .stPlotlyChart:hover {{
   overflow-wrap: break-word;
   white-space: normal;
   font-variant-numeric: tabular-nums;
+  margin: 4px 0 8px 0;
 }}
 .instrument-sub {{
   font-family: 'Space Grotesk', sans-serif;
-  font-size: 13px;
+  font-size: 12px;
   color: #94A3B8;
-  margin-top: 6px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-wrap: wrap;
+  margin-top: auto !important;
+  min-height: 50px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: flex-end !important;
+  gap: 5px !important;
   word-break: break-word;
 }}
 

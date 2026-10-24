@@ -101,15 +101,21 @@ with sk1:
         label="Volume Deficit",
         value=f"{sim_results['volume_deficit_bpd']:,.0f} bpd",
         accent="red",
-        subtext=f"-{sim_results['export_reduction_pct']}% cut from {exporter_names.get(sel_exp, sel_exp)}"
+        delta=f"-{sim_results['export_reduction_pct']:.1f}%",
+        delta_is_positive_bad=True,
+        subtext=f"Cut from {exporter_names.get(sel_exp, sel_exp)}"
     )
 
 with sk2:
+    base_flow = sim_results['baseline_bilateral_bpd']
+    pct_rem = (sim_results['scenario_remaining_supply_bpd'] / max(1.0, float(base_flow))) * 100.0
     render_instrument_card(
         label="Remaining Supply",
         value=f"{sim_results['scenario_remaining_supply_bpd']:,.0f} bpd",
         accent="amber",
-        subtext=f"Baseline: {sim_results['baseline_bilateral_bpd']:,.0f} bpd"
+        delta=f"{pct_rem:.1f}% flow kept",
+        delta_is_positive_bad=False,
+        subtext=f"Baseline: {base_flow:,.0f} bpd"
     )
 
 with sk3:
@@ -137,7 +143,8 @@ with sk5:
         label="Annualized Cost Surge",
         value=f"+${sim_results['annualized_fleet_cost_increase_usd']:,.0f}",
         accent="copper",
-        delta=None,
+        delta="12-Mo Horizon",
+        delta_is_positive_bad=True,
         subtext="Cumulative yearly budget risk"
     )
 
