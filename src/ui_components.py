@@ -3638,18 +3638,23 @@ def _show_sign_in_dialog():
                 """, unsafe_allow_html=True)
             with col_acc_act:
                 if st.button("Continue ➔", key="btn_signin_google_primary", type="primary", use_container_width=True):
-                    ok, msg, token, udict = AuthService.login_social_account(
-                        provider="google",
-                        email="alihamza343345@gmail.com",
-                        full_name="Ali Hamza",
-                        username="alihamza1212"
-                    )
-                    if ok:
-                        st.session_state["auth_user"] = udict
-                        st.session_state["auth_token"] = token
-                        st.session_state.pop("active_social_picker", None)
-                        st.toast("✅ Signed in with Google as Ali Hamza!")
-                        st.rerun()
+                    try:
+                        ok, msg, token, udict = AuthService.login_social_account(
+                            provider="google",
+                            email="alihamza343345@gmail.com",
+                            full_name="Ali Hamza",
+                            username="alihamza1212"
+                        )
+                        if ok:
+                            st.session_state["auth_user"] = udict
+                            st.session_state["auth_token"] = token
+                            st.session_state.pop("active_social_picker", None)
+                            st.toast("✅ Signed in with Google as Ali Hamza!")
+                            st.rerun()
+                        else:
+                            st.error(msg)
+                    except Exception as ge:
+                        st.error(f"Google sign in error: {ge}")
 
             with st.expander("Use another Google account", expanded=False):
                 col_custom_mail, col_custom_btn = st.columns([2.5, 1.2], vertical_alignment="center")
@@ -3658,16 +3663,21 @@ def _show_sign_in_dialog():
                 with col_custom_btn:
                     if st.button("Sign In", key="btn_signin_google_custom", type="primary", use_container_width=True):
                         if custom_goog_email.strip() and "@" in custom_goog_email:
-                            ok, msg, token, udict = AuthService.login_social_account(
-                                provider="google",
-                                email=custom_goog_email.strip()
-                            )
-                            if ok:
-                                st.session_state["auth_user"] = udict
-                                st.session_state["auth_token"] = token
-                                st.session_state.pop("active_social_picker", None)
-                                st.toast(f"✅ Signed in with Google as {custom_goog_email.strip()}!")
-                                st.rerun()
+                            try:
+                                ok, msg, token, udict = AuthService.login_social_account(
+                                    provider="google",
+                                    email=custom_goog_email.strip()
+                                )
+                                if ok:
+                                    st.session_state["auth_user"] = udict
+                                    st.session_state["auth_token"] = token
+                                    st.session_state.pop("active_social_picker", None)
+                                    st.toast(f"✅ Signed in with Google as {custom_goog_email.strip()}!")
+                                    st.rerun()
+                                else:
+                                    st.error(msg)
+                            except Exception as ge:
+                                st.error(f"Google sign in error: {ge}")
                         else:
                             st.error("Please enter a valid Google email.")
 
@@ -3698,18 +3708,23 @@ def _show_sign_in_dialog():
                 """, unsafe_allow_html=True)
             with col_gh_act:
                 if st.button("Continue ➔", key="btn_signin_github_primary", type="primary", use_container_width=True):
-                    ok, msg, token, udict = AuthService.login_social_account(
-                        provider="github",
-                        email="alihamza343345@gmail.com",
-                        full_name="Ali Hamza",
-                        username="alihamza2912"
-                    )
-                    if ok:
-                        st.session_state["auth_user"] = udict
-                        st.session_state["auth_token"] = token
-                        st.session_state.pop("active_social_picker", None)
-                        st.toast("✅ Signed in with GitHub as @alihamza2912!")
-                        st.rerun()
+                    try:
+                        ok, msg, token, udict = AuthService.login_social_account(
+                            provider="github",
+                            email="alihamza343345@gmail.com",
+                            full_name="Ali Hamza",
+                            username="alihamza2912"
+                        )
+                        if ok:
+                            st.session_state["auth_user"] = udict
+                            st.session_state["auth_token"] = token
+                            st.session_state.pop("active_social_picker", None)
+                            st.toast("✅ Signed in with GitHub as @alihamza2912!")
+                            st.rerun()
+                        else:
+                            st.error(msg)
+                    except Exception as ghe:
+                        st.error(f"GitHub sign in error: {ghe}")
 
             with st.expander("Use another GitHub account", expanded=False):
                 col_custom_gh_mail, col_custom_gh_btn = st.columns([2.5, 1.2], vertical_alignment="center")
@@ -3721,17 +3736,22 @@ def _show_sign_in_dialog():
                             val = custom_gh_input.strip()
                             email_to_use = val if "@" in val else f"{val}@github.com"
                             user_to_use = val.split("@")[0] if "@" in val else val
-                            ok, msg, token, udict = AuthService.login_social_account(
-                                provider="github",
-                                email=email_to_use,
-                                username=user_to_use
-                            )
-                            if ok:
-                                st.session_state["auth_user"] = udict
-                                st.session_state["auth_token"] = token
-                                st.session_state.pop("active_social_picker", None)
-                                st.toast(f"✅ Signed in with GitHub as {user_to_use}!")
-                                st.rerun()
+                            try:
+                                ok, msg, token, udict = AuthService.login_social_account(
+                                    provider="github",
+                                    email=email_to_use,
+                                    username=user_to_use
+                                )
+                                if ok:
+                                    st.session_state["auth_user"] = udict
+                                    st.session_state["auth_token"] = token
+                                    st.session_state.pop("active_social_picker", None)
+                                    st.toast(f"✅ Signed in with GitHub as {user_to_use}!")
+                                    st.rerun()
+                                else:
+                                    st.error(msg)
+                            except Exception as ghe:
+                                st.error(f"GitHub sign in error: {ghe}")
                         else:
                             st.error("Please enter a GitHub username or email.")
 

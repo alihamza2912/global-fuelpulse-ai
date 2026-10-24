@@ -160,17 +160,10 @@ class AuthService:
                     session.refresh(new_user)
                     session.expunge(new_user)
                     return True, "User registered successfully via Supabase.", new_user
-            elif not sb_ok and "already registered" in sb_msg.lower():
+            elif not sb_ok and any(k in sb_msg.lower() for k in ("already registered", "already exists", "user already exists")):
                 return False, "An account with this email already exists.", None
-            elif not sb_ok and any(err_term in sb_msg.lower() for err_term in (
-                "rate limit", "over_email_send_rate_limit", "over_request_rate_limit",
-                "too many requests", "429", "confirmation email", "email send", "network error",
-                "failed to resolve", "nodename nor servname", "connection", "timeout",
-                "max retries", "service unavailable", "bad gateway", "500", "502", "503", "504"
-            )):
-                logger.warning(f"Supabase auth unavailable ({sb_msg}), falling back to local database registration")
             else:
-                return False, sb_msg, None
+                logger.warning(f"Supabase auth unavailable or failed ({sb_msg}), falling back to local database registration")
 
         with db_manager.get_session() as session:
             # Check existing username or email
@@ -750,27 +743,30 @@ class AuthService:
             )
 
         # 3. Mirror into local SQLite User table
-        with db_manager.get_session() as session:
-            local_user = session.query(User).filter(
-                (User.user_id == user_id) | (User.email == clean_email)
-            ).first()
-            if not local_user:
-                local_user = User(
-                    user_id=user_id,
-                    username=user_name,
-                    email=clean_email,
-                    password_hash=hash_password(secrets.token_urlsafe(24)),
-                    full_name=disp_name,
-                    is_active=True,
-                    created_at=utc_now(),
-                    last_login_at=utc_now()
-                )
-                session.add(local_user)
-            else:
-                local_user.last_login_at = utc_now()
-                if disp_name and not local_user.full_name:
-                    local_user.full_name = disp_name
-            session.commit()
+        try:
+            with db_manager.get_session() as session:
+                local_user = session.query(User).filter(
+                    (User.user_id == user_id) | (User.email == clean_email)
+                ).first()
+                if not local_user:
+                    local_user = User(
+                        user_id=user_id,
+                        username=user_name,
+                        email=clean_email,
+                        password_hash=hash_password(secrets.token_urlsafe(24)),
+                        full_name=disp_name,
+                        is_active=True,
+                        created_at=utc_now(),
+                        last_login_at=utc_now()
+                    )
+                    session.add(local_user)
+                else:
+                    local_user.last_login_at = utc_now()
+                    if disp_name and not local_user.full_name:
+                        local_user.full_name = disp_name
+                session.commit()
+        except Exception as db_mirror_err:
+            logger.warning(f"Notice: Local database user mirror skipped ({db_mirror_err})")
 
         # 4. Generate authenticated session token and user payload
         session_token = secrets.token_hex(32)

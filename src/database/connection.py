@@ -6,7 +6,7 @@ Supports MySQL fuelx_db with automatic failover to local SQLite storage.
 import logging
 from contextlib import contextmanager
 from typing import Generator, Dict, Any, Optional
-from sqlalchemy import create_engine, text, inspect
+from sqlalchemy import create_engine, text, inspect, event
 from sqlalchemy.engine import Engine
 from sqlalchemy.orm import sessionmaker, Session
 from config.settings import settings
@@ -49,10 +49,22 @@ class DatabaseManager:
         sqlite_url = settings.db.sqlite_url
         self._engine = create_engine(
             sqlite_url,
-            connect_args={"check_same_thread": False}
+            connect_args={"check_same_thread": False, "timeout": 30}
         )
+
+        @event.listens_for(self._engine, "connect")
+        def set_sqlite_pragma(dbapi_connection, connection_record):
+            try:
+                cursor = dbapi_connection.cursor()
+                cursor.execute("PRAGMA journal_mode = WAL")
+                cursor.execute("PRAGMA synchronous = NORMAL")
+                cursor.execute("PRAGMA busy_timeout = 30000")
+                cursor.close()
+            except Exception:
+                pass
+
         self._active_dialect = "sqlite"
-        logger.info("Active database: SQLite local file (%s)", settings.db.sqlite_fallback_path)
+        logger.info("Active database: SQLite local file with WAL mode (%s)", settings.db.sqlite_fallback_path)
         self._session_factory = sessionmaker(
             bind=self._engine,
             autocommit=False,
