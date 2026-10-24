@@ -160,15 +160,15 @@ with map_col:
         )
 
         fig_map.update_geos(
-            bgcolor="rgba(0,0,0,0)",
+            bgcolor="#0D1527",
             showcoastlines=True,
             coastlinecolor="rgba(255, 255, 255, 0.28)",
             showland=True,
-            landcolor="#0E1526",
+            landcolor="#111B30",
             showocean=True,
-            oceancolor="#070A12",
+            oceancolor="#080D1A",
             showlakes=True,
-            lakecolor="#070A12",
+            lakecolor="#080D1A",
             showcountries=True,
             countrycolor="rgba(255, 255, 255, 0.12)",
             countrywidth=0.8,

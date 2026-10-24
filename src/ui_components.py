@@ -1940,6 +1940,22 @@ div:not([data-testid*="Popover"]):not([data-baseweb="popover"]) > div.stButton >
   box-shadow: 0 12px 30px rgba(0, 0, 0, 0.55), 0 0 16px rgba(245, 185, 66, 0.2);
 }}
 
+/* 19. Distinct High-Contrast Graph Cards */
+div[data-testid="stPlotlyChart"], .stPlotlyChart {{
+  background: #0D1527 !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  border-radius: 10px !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45) !important;
+  overflow: hidden !important;
+  margin-top: 6px !important;
+  margin-bottom: 12px !important;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
+}}
+div[data-testid="stPlotlyChart"]:hover, .stPlotlyChart:hover {{
+  border-color: rgba(245, 185, 66, 0.35) !important;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.55), 0 0 14px rgba(245, 185, 66, 0.12) !important;
+}}
+
 .instrument-tag {{
   font-family: 'Space Grotesk', sans-serif;
   font-size: 13px;
@@ -4298,8 +4314,8 @@ def deep_merge(base: dict, update: dict) -> dict:
 def get_atlas_plotly_theme(height: int = 420, **overrides) -> Dict[str, Any]:
     """Returns layout dictionary for Plotly charts matching modern dark glassmorphic styling."""
     theme = dict(
-        paper_bgcolor="rgba(0,0,0,0)",
-        plot_bgcolor="rgba(0,0,0,0)",
+        paper_bgcolor="#0D1527",
+        plot_bgcolor="#090E1C",
         dragmode=False,
         font=dict(
             family="'Space Grotesk', 'Inter', -apple-system, sans-serif",

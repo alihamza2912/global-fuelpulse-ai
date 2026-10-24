@@ -113,12 +113,13 @@ with choke_col_map:
         labels={"daily_transit_volume_mbpd": "Transit (Million bpd)"}
     )
     fig_choke.update_geos(
-        showcoastlines=True, coastlinecolor=COLOR_INK,
-        showland=True, landcolor="#EFEAD9",
-        showocean=True, oceancolor=COLOR_WHITE,
+        bgcolor="#0D1527",
+        showcoastlines=True, coastlinecolor="rgba(255, 255, 255, 0.25)",
+        showland=True, landcolor="#111B30",
+        showocean=True, oceancolor="#080D1A",
+        showlakes=True, lakecolor="#080D1A",
         projection_type="natural earth",
-        framecolor=COLOR_INK,
-        framewidth=1.5
+        showframe=False
     )
     apply_clean_layout(
         fig_choke,

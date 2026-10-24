@@ -1366,8 +1366,8 @@ class AIEnergyMarketAnalyst:
                 text=f"<b>🌍 Seaborne Fuel & Crude Export Destinations: {hub_name}</b><br><sup style=\"color:#94A3B8;\">Verified Global Trade Flows • UN Comtrade, IEA & PPAC Grounding</sup>",
                 font=dict(size=14, color="#F9FAFB")
             ),
-            paper_bgcolor="rgba(14, 21, 38, 0.8)",
-            plot_bgcolor="rgba(14, 21, 38, 0.4)",
+            paper_bgcolor="#0D1527",
+            plot_bgcolor="#090E1C",
             dragmode=False,
             height=400,
             margin=dict(l=40, r=40, t=60, b=40),
@@ -1398,8 +1398,8 @@ class AIEnergyMarketAnalyst:
                 text=f"<b>🚢 Petroleum Import Supply Sourcing: {country_name}</b><br><sup style=\"color:#94A3B8;\">Verified Bilateral Inflow Basket • Sourcing Diversification & Energy Security</sup>",
                 font=dict(size=14, color="#F9FAFB")
             ),
-            paper_bgcolor="rgba(14, 21, 38, 0.8)",
-            plot_bgcolor="rgba(14, 21, 38, 0.4)",
+            paper_bgcolor="#0D1527",
+            plot_bgcolor="#090E1C",
             dragmode=False,
             height=400,
             margin=dict(l=40, r=40, t=60, b=40),
@@ -1435,8 +1435,8 @@ class AIEnergyMarketAnalyst:
             ),
             xaxis=dict(title="Million Barrels Per Day (mbpd)", color="#94A3B8", gridcolor="rgba(255,255,255,0.08)"),
             yaxis=dict(color="#F9FAFB"),
-            paper_bgcolor="rgba(14, 21, 38, 0.8)",
-            plot_bgcolor="rgba(14, 21, 38, 0.4)",
+            paper_bgcolor="#0D1527",
+            plot_bgcolor="#090E1C",
             dragmode=False,
             height=340,
             margin=dict(l=100, r=40, t=60, b=50)
@@ -2102,8 +2102,8 @@ class AIEnergyMarketAnalyst:
             ))
             fig.update_layout(
                 title="<b>Saudi Arabia Petroleum Distribution & Offtake (mbpd)</b>",
-                paper_bgcolor="rgba(0,0,0,0)",
-                plot_bgcolor="rgba(0,0,0,0)",
+                paper_bgcolor="#0D1527",
+                plot_bgcolor="#090E1C",
                 dragmode=False,
                 height=380,
                 font=dict(family="'Space Grotesk', sans-serif", color="#F9FAFB", size=13),
@@ -2285,8 +2285,8 @@ class AIEnergyMarketAnalyst:
             barmode="group",
             xaxis=dict(color="#F9FAFB", tickfont=dict(size=11)),
             yaxis=dict(title="Operational Metric Value", color="#94A3B8", gridcolor="rgba(255,255,255,0.08)"),
-            paper_bgcolor="rgba(14, 21, 38, 0.8)",
-            plot_bgcolor="rgba(14, 21, 38, 0.4)",
+            paper_bgcolor="#0D1527",
+            plot_bgcolor="#090E1C",
             dragmode=False,
             height=370,
             margin=dict(l=50, r=30, t=65, b=60),
@@ -2494,8 +2494,8 @@ class AIEnergyMarketAnalyst:
                 x=0.5,
                 font=dict(size=10.5, color="#F9FAFB")
             ),
-            paper_bgcolor="rgba(14, 21, 38, 0.8)",
-            plot_bgcolor="rgba(14, 21, 38, 0.4)",
+            paper_bgcolor="#0D1527",
+            plot_bgcolor="#090E1C",
             height=380,
             margin=dict(l=60, r=40, t=50, b=85)
         )

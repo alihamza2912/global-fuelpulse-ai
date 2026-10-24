@@ -182,18 +182,20 @@ if not flows_df.empty:
             ))
 
     fig_flow_map.update_geos(
+        bgcolor="#0D1527",
         showcoastlines=True,
-        coastlinecolor=COLOR_INK,
+        coastlinecolor="rgba(255, 255, 255, 0.25)",
         showland=True,
-        landcolor="#EFEAD9",
+        landcolor="#111B30",
         showocean=True,
-        oceancolor=COLOR_WHITE,
+        oceancolor="#080D1A",
+        showlakes=True,
+        lakecolor="#080D1A",
         showcountries=True,
-        countrycolor="#D9D4C8",
+        countrycolor="rgba(255, 255, 255, 0.12)",
         countrywidth=0.8,
         projection_type="natural earth",
-        framecolor=COLOR_INK,
-        framewidth=1.5
+        showframe=False
     )
 
     apply_clean_layout(

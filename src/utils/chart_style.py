@@ -17,6 +17,10 @@ COLOR_BORDER = "rgba(255, 255, 255, 0.12)"
 COLOR_GRID = "rgba(255, 255, 255, 0.08)"
 COLOR_TEXT_MUTED = "#94A3B8"
 
+# Distinct chart elevated card & plot background colors
+CHART_PAPER_BG = "#0D1527"
+CHART_PLOT_BG = "#090E1C"
+
 # Product name mapping dictionary for clean human-readable presentation
 PRODUCT_NAME_MAP = {
     "petrol_regular": "Petrol (Regular)",
@@ -173,10 +177,10 @@ def apply_clean_layout(
     else:
         calc_b = margin_b if margin_b is not None else (140 if legend_below else 80)
 
-    # 3. Base layout configuration
+    # 3. Base layout configuration (distinct elevated dark navy/slate canvas)
     layout_updates: Dict[str, Any] = {
-        "paper_bgcolor": "rgba(0,0,0,0)",
-        "plot_bgcolor": "rgba(0,0,0,0)",
+        "paper_bgcolor": CHART_PAPER_BG,
+        "plot_bgcolor": CHART_PLOT_BG,
         "dragmode": False,
         "height": max(height, 450),
         "font": dict(
@@ -186,8 +190,8 @@ def apply_clean_layout(
         ),
         "margin": dict(l=calc_l, r=calc_r, t=calc_t, b=calc_b),
         "hoverlabel": dict(
-            bgcolor="#0E1526",
-            bordercolor="rgba(255, 255, 255, 0.2)",
+            bgcolor="#0A1020",
+            bordercolor="rgba(245, 185, 66, 0.5)",
             font=dict(color="#F9FAFB", family="'Space Grotesk', sans-serif", size=13)
         )
     }

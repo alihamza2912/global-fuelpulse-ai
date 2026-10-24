@@ -282,8 +282,8 @@ class DeepOnlineResearchEngine:
                 )
                 fig.update_layout(
                     title=f"📊 Discovered Intelligence Metrics: {title[:40]}",
-                    paper_bgcolor="rgba(0,0,0,0)",
-                    plot_bgcolor="rgba(0,0,0,0)",
+                    paper_bgcolor="#0D1527",
+                    plot_bgcolor="#090E1C",
                     font=dict(color="#F9FAFB", family="Space Grotesk, sans-serif"),
                     height=320,
                     margin=dict(l=30, r=30, t=50, b=40),
