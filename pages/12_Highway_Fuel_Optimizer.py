@@ -238,9 +238,45 @@ with m5:
     """, unsafe_allow_html=True)
 
 # -------------------------------------------------------------
+# 3b. PLAIN ENGLISH GUIDE: WHAT DOES THIS MEAN & HOW DOES IT WORK?
+# -------------------------------------------------------------
+st.markdown("<div style='height: 14px;'></div>", unsafe_allow_html=True)
+
+with st.expander("📖 **Plain-English Guide: What do these graphs mean and how does this tool save you money?**", expanded=True):
+    col_g1, col_g2 = st.columns(2)
+    with col_g1:
+        st.markdown(f"""
+        <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 8px; padding: 14px; height: 100%;">
+            <div style="font-weight: 700; color: #F5B942; font-size: 0.92rem; margin-bottom: 6px;">
+                ⛽ What is "Highway Fuel Arbitrage"?
+            </div>
+            <p style="font-size: 0.82rem; color: #CBD5E1; line-height: 1.5; margin: 0 0 10px 0;">
+                Because every state and country charges different local taxes (VAT) on petrol and diesel, pump prices can be <b>₹3 to ₹15 different per liter</b> (or over <b>2.00 SAR / AED</b> across borders) just a few miles away.
+            </p>
+            <div style="font-size: 0.82rem; color: #94A3B8; line-height: 1.5;">
+                • <b>Arbitrage</b> simply means filling your tank in cheaper states and skipping petrol stations in high-tax states.<br>
+                • On a single 400L commercial truck trip, following this strategy can easily save <b>₹1,500 to ₹8,000 in India</b>, or up to <b>400+ SAR / AED</b> on Gulf cross-border routes!
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+    with col_g2:
+        st.markdown(f"""
+        <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 8px; padding: 14px; height: 100%;">
+            <div style="font-weight: 700; color: #34D399; font-size: 0.92rem; margin-bottom: 6px;">
+                🚦 The 3 Golden Rules for Every Driver & Fleet Manager
+            </div>
+            <div style="font-size: 0.82rem; color: #CBD5E1; line-height: 1.55;">
+                <b>1. Never enter a high-tax state with an empty tank!</b> Always top up to 100% at the last petrol station before crossing the border.<br>
+                <b>2. If running low in an expensive state, buy only a "splash"</b> (10–20 Liters)—just enough to reach the next cheap border station.<br>
+                <b>3. Cross-Border Rule:</b> Entering the UAE from Saudi Arabia? <b>Fill 100% in Saudi</b>—Saudi diesel is ~60% cheaper than UAE diesel!
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+# -------------------------------------------------------------
 # 4. VISUALIZATION: HIGHWAY PRICE PROFILE & ARBITRAGE CHARTS
 # -------------------------------------------------------------
-st.markdown("<div style='height: 20px;'></div>", unsafe_allow_html=True)
+st.markdown("<div style='height: 14px;'></div>", unsafe_allow_html=True)
 
 col_chart_route, col_chart_tax = st.columns([1.6, 1.4])
 
@@ -298,6 +334,11 @@ with col_chart_route:
         showlegend=False
     )
     st.plotly_chart(fig_route, use_container_width=True)
+    st.markdown(f"""
+    <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 8px; padding: 10px 14px; margin-top: 6px; font-size: 0.78rem; color: #CBD5E1; line-height: 1.5;">
+        💡 <b>How to read this trajectory:</b> The <b>gold line</b> shows fuel prices as you drive along the highway. <b>Dips</b> are your best discount refill points. <b>Peaks</b> are high-tax spikes. The white dotted line is the corridor average ({sym}{p_met['avg_price']:.2f})—always aim to top up when the price is below this line!
+    </div>
+    """, unsafe_allow_html=True)
 
 with col_chart_tax:
     st.markdown("""
@@ -338,6 +379,11 @@ with col_chart_tax:
         showlegend=False
     )
     st.plotly_chart(fig_tax, use_container_width=True)
+    st.markdown(f"""
+    <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 8px; padding: 10px 14px; margin-top: 6px; font-size: 0.78rem; color: #CBD5E1; line-height: 1.5;">
+        💡 <b>Why taxes differ:</b> Each state or emirate adds its own VAT rate (shown in parentheses). <span style="color: #34D399; font-weight: 700;">Green bars</span> are low-tax zones where you save money. <span style="color: #FB7185; font-weight: 700;">Red bars</span> are high-tax zones where fuel is expensive.
+    </div>
+    """, unsafe_allow_html=True)
 
 # -------------------------------------------------------------
 # 5. STEP-BY-STEP REFUELING MANIFEST & AI TACTICAL ADVICE
