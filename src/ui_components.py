@@ -2966,6 +2966,225 @@ div[class*="top_auth_btn"] button[kind="primary"] {{
 
 
 # ==============================================================================
+# 4b. UNIVERSAL APPLICATION SIDEBAR (SYNCHRONIZED ON ALL PAGES & ROUTES)
+# ==============================================================================
+def render_universal_sidebar(active_page_name: str = "Overview"):
+    """
+    Renders the synchronized, comprehensive SaaS sidebar across the entire application:
+    - FP Brand Lockup Card with versioning
+    - User Client Access & Quota Badge (Live synced with QuotaService & Supabase)
+    - 1-Click Sign In / Account modal or Manage Account / Logout
+    - Real-time Data Sync button (orchestrator feeds)
+    - Main Navigation Tree (5 core chapters)
+    - Analytics Dossiers (All 8 multipage models)
+    - Platform & Documentation (5 docs/SLA chapters)
+    - System Engine Provenance & SQLite status badge
+    """
+    import re
+    from src.localization.i18n import t, get_current_language
+    from src.auth.quota_service import QuotaService
+    
+    current_lang = get_current_language()
+    pfx = (active_page_name or "nav").lower().replace(" ", "_").replace(".", "_").replace("•", "_")
+
+    def clean_nav_title(title: str) -> str:
+        return re.sub(r'^[^\w\s\(\)]+\s*', '', title, flags=re.UNICODE).strip() or title
+
+    # 1. Brand Lockup Card
+    render_html(
+        f"""
+        <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px; margin-bottom: 8px; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.08); background: rgba(255, 255, 255, 0.02); user-select: none;">
+            <div style="display: flex; align-items: center; gap: 10px; min-width: 0;">
+                <div style="width: 32px; height: 32px; min-width: 32px; border-radius: 6px; background: linear-gradient(135deg, #F5B942 0%, #D97706 100%); color: #0B101E; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 13px; box-shadow: 0 1px 4px rgba(0,0,0,0.4); letter-spacing: -0.02em;">
+                    FP
+                </div>
+                <div style="display: flex; flex-direction: column; overflow: hidden; min-width: 0;">
+                    <span style="font-size: 12.5px; font-weight: 700; line-height: 1.2; color: #F8FAFC; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; letter-spacing: 0.02em;">GLOBAL FUELPULSE AI</span>
+                    <span style="font-size: 10px; color: #94A3B8; line-height: 1.2; margin-top: 2px; letter-spacing: 0.03em;">ENERGY INTELLIGENCE · LIVE V2.0</span>
+                </div>
+            </div>
+            <div style="color: rgba(148, 163, 184, 0.6); display: flex; align-items: center; flex-shrink: 0;">
+                {get_lucide_icon_svg('chevron-down', size=14, color='#94A3B8')}
+            </div>
+        </div>
+        """,
+        container=st.sidebar
+    )
+
+    # 2. Client Access / Quota Status Badge
+    auth_user = st.session_state.get("auth_user")
+    user_id = auth_user.get("id") or auth_user.get("user_id") if isinstance(auth_user, dict) else None
+    quota_info = QuotaService.get_quota_summary(user_id)
+    remaining_q = quota_info.get("remaining", 3)
+    limit_q = quota_info.get("limit", 3)
+
+    if auth_user:
+        disp_name = (auth_user.get("full_name") or auth_user.get("username") or "Analyst")
+        initials = (disp_name[0] if disp_name else "A").upper()
+        render_html(
+            f"""
+            <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 8px; padding: 7px 10px; margin-bottom: 6px; display: flex; align-items: center; justify-content: space-between;">
+                <div style="display: flex; align-items: center; gap: 8px; min-width: 0;">
+                    <div style="width: 24px; height: 24px; min-width: 24px; border-radius: 6px; background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.3); color: #10B981; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700;">
+                        {initials}
+                    </div>
+                    <div style="overflow: hidden; min-width: 0;">
+                        <div style="font-size: 11.5px; font-weight: 600; color: #F8FAFC; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{disp_name}</div>
+                        <div style="font-size: 10px; color: #10B981; font-weight: 500;">{remaining_q}/{limit_q} questions left</div>
+                    </div>
+                </div>
+                <span style="font-size: 9px; font-weight: 600; color: #10B981; background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: 4px; padding: 1px 5px;">ACTIVE</span>
+            </div>
+            """,
+            container=st.sidebar
+        )
+        if st.sidebar.button("Manage Account / Logout", key=f"sb_manage_account_{pfx}", icon=":material/manage_accounts:", use_container_width=True):
+            show_sign_in_dialog()
+    else:
+        render_html(
+            f"""
+            <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 8px; padding: 7px 10px; margin-bottom: 6px; display: flex; align-items: center; justify-content: space-between;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <div style="width: 24px; height: 24px; min-width: 24px; border-radius: 6px; background: rgba(245, 185, 66, 0.12); border: 1px solid rgba(245, 185, 66, 0.25); color: #F5B942; display: flex; align-items: center; justify-content: center; font-size: 11px;">
+                        ⚡
+                    </div>
+                    <div>
+                        <div style="font-size: 11px; font-weight: 600; color: #F8FAFC;">Client Access</div>
+                        <div style="font-size: 10px; color: #94A3B8;">{remaining_q} free AI questions left</div>
+                    </div>
+                </div>
+                <span style="font-size: 9px; font-weight: 600; color: #F5B942; background: rgba(245, 185, 66, 0.1); border: 1px solid rgba(245, 185, 66, 0.25); border-radius: 4px; padding: 1px 5px;">FREE</span>
+            </div>
+            """,
+            container=st.sidebar
+        )
+        if st.sidebar.button("Sign In / Account", key=f"sb_signin_{pfx}", icon=":material/lock:", use_container_width=True):
+            show_sign_in_dialog()
+
+    # 3. Refresh Live Data
+    sync_btn_label = t("sidebar_sync_btn", current_lang)
+    if "Refresh Live Data" not in sync_btn_label:
+        sync_btn_label = f"🔄 Refresh Live Data · {sync_btn_label}"
+    if st.sidebar.button(sync_btn_label, key=f"sb_refresh_data_{pfx}", icon=":material/sync:", use_container_width=True):
+        with st.sidebar.status("Syncing live feeds (FRED, PPAC, EC, FX)..."):
+            from src.ingestion.orchestrator import orchestrator
+            orchestrator.run_live_refresh()
+            st.cache_data.clear()
+            st.sidebar.success("Live data refreshed!")
+            st.rerun()
+
+    st.sidebar.markdown("<div style='border-top: 1px solid rgba(255, 255, 255, 0.08); margin: 12px 4px 8px 4px;'></div>", unsafe_allow_html=True)
+
+    # Programmatic navigation helper
+    def _do_nav(target_tab: str):
+        st.session_state.active_canonical = target_tab
+        try:
+            st.switch_page("app.py")
+        except Exception:
+            st.rerun()
+
+    # 4. MAIN NAVIGATION (Tree Nav — 5 items)
+    render_html(f"""
+    <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 10.5px; font-weight: 600; color: #71717A; text-transform: uppercase; letter-spacing: 0.08em; padding: 6px 8px 4px 12px; display: flex; align-items: center; justify-content: space-between;">
+        <span>MAIN NAVIGATION</span>
+        <span style="font-size: 9px; color: #52525B; font-weight: 500;">Tree Nav</span>
+    </div>
+    """, container=st.sidebar)
+
+    MAIN_NAV_ITEMS = [
+        {"label": clean_nav_title(t("nav_overview", current_lang)), "tab": "home", "badge": None},
+        {"label": clean_nav_title(t("nav_dashboard", current_lang)), "tab": "dashboard", "badge": t("badge_live", current_lang)},
+        {"label": clean_nav_title(t("nav_india", current_lang)), "tab": "india", "badge": "MoPNG"},
+        {"label": clean_nav_title(t("nav_about", current_lang)), "tab": "about", "badge": "v2.0"},
+        {"label": clean_nav_title(t("nav_how_it_works", current_lang)), "tab": "how_it_works", "badge": None},
+    ]
+
+    cur_active_tab = st.session_state.get("active_canonical", "home")
+    for item in MAIN_NAV_ITEMS:
+        is_active = (item["tab"] == cur_active_tab and (pfx in ("app_root", "home", "overview", "nav")))
+        badge_str = f" · {item['badge']}" if item.get("badge") else ""
+        btn_label = f"{item['label']}{badge_str}"
+        if st.sidebar.button(
+            btn_label,
+            key=f"sb_nav_btn_{item['tab']}_{pfx}",
+            type="primary" if is_active else "secondary",
+            use_container_width=True
+        ):
+            _do_nav(item["tab"])
+
+    # 5. ANALYTICS DOSSIERS (Tree Nav — 8 Multipage Routes)
+    render_html(f"""
+    <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 10.5px; font-weight: 600; color: #71717A; text-transform: uppercase; letter-spacing: 0.08em; padding: 14px 8px 4px 12px; display: flex; align-items: center; justify-content: space-between;">
+        <span>ANALYTICS DOSSIERS</span>
+        <span style="font-size: 9px; color: #52525B; font-weight: 500;">8 Models</span>
+    </div>
+    """, container=st.sidebar)
+
+    def _safe_page_link(page_path: str, label_text: str):
+        try:
+            st.sidebar.page_link(page_path, label=label_text, use_container_width=True)
+        except Exception:
+            pass
+
+    _safe_page_link("pages/1_Global_Command_Center.py", f"{clean_nav_title(t('sidebar_01_command', current_lang))} — Exec")
+    _safe_page_link("pages/2_Fuel_Price_Explorer.py", f"{clean_nav_title(t('sidebar_02_explorer', current_lang))} — Daily")
+    _safe_page_link("pages/3_Global_Trade.py", f"{clean_nav_title(t('sidebar_03_trade', current_lang))} — Flows")
+    _safe_page_link("pages/4_Affordability.py", f"{clean_nav_title(t('sidebar_04_afford', current_lang))} — Index")
+    _safe_page_link("pages/5_Supply_Risk.py", f"{clean_nav_title(t('sidebar_05_risk', current_lang))} — Radar")
+    _safe_page_link("pages/6_Shock_Simulator.py", f"{clean_nav_title(t('sidebar_06_shock', current_lang))} — Simulator")
+    _safe_page_link("pages/7_Forecasting.py", f"{clean_nav_title(t('sidebar_07_forecast', current_lang))} — Radar")
+    _safe_page_link("pages/9_AI_Analyst.py", f"{clean_nav_title(t('sidebar_09_ai', current_lang))} — Analyst")
+
+    # 6. PLATFORM & DOCUMENTATION (Tree Nav — 5 items)
+    render_html(f"""
+    <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 10.5px; font-weight: 600; color: #71717A; text-transform: uppercase; letter-spacing: 0.08em; padding: 14px 8px 4px 12px; display: flex; align-items: center; justify-content: space-between;">
+        <span>PLATFORM & DOCUMENTATION</span>
+        <span style="font-size: 9px; color: #52525B; font-weight: 500;">Docs</span>
+    </div>
+    """, container=st.sidebar)
+
+    DOCS_NAV_ITEMS = [
+        {"label": clean_nav_title(t("nav_features", current_lang)), "tab": "features", "badge": t("badge_12_mod", current_lang)},
+        {"label": clean_nav_title(t("nav_data_trust", current_lang)), "tab": "data_trust", "badge": "SLA"},
+        {"label": clean_nav_title(t("nav_methodology", current_lang)), "tab": "methodology", "badge": None},
+        {"label": clean_nav_title(t("nav_roadmap", current_lang)), "tab": "roadmap", "badge": "2026"},
+        {"label": clean_nav_title(t("nav_faq", current_lang)), "tab": "faq", "badge": t("badge_docs", current_lang)},
+    ]
+
+    for item in DOCS_NAV_ITEMS:
+        is_active = (item["tab"] == cur_active_tab and (pfx in ("app_root", "home", "overview", "nav")))
+        badge_str = f" · {item['badge']}" if item.get("badge") else ""
+        btn_label = f"{item['label']}{badge_str}"
+        if st.sidebar.button(
+            btn_label,
+            key=f"sb_docs_btn_{item['tab']}_{pfx}",
+            type="primary" if is_active else "secondary",
+            use_container_width=True
+        ):
+            _do_nav(item["tab"])
+
+    # 7. FOOTER: SYSTEM ENGINE & PROVENANCE STATUS
+    render_html(
+        f"""
+        <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 10.5px; color: #94A3B8; margin-top: 14px; margin-bottom: 12px; background: rgba(255, 255, 255, 0.02); padding: 8px 10px; border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 8px; line-height: 1.5;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 3px;">
+                <span style="display: flex; align-items: center; gap: 6px; font-weight: 600; color: #CBD5E1;">
+                    <span style="display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #10B981; box-shadow: 0 0 6px #10B981;"></span>
+                    SQLite Marts
+                </span>
+                <span style="font-size: 9px; font-weight: 600; color: #10B981; background: rgba(16, 185, 129, 0.12); padding: 1px 5px; border-radius: 4px; border: 1px solid rgba(16, 185, 129, 0.25);">LIVE 2026</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; color: #64748B; font-size: 10px;">
+                <span>EIA · PPAC · FX</span>
+                <span style="color: #94A3B8; font-weight: 500;">Synced Today</span>
+            </div>
+        </div>
+        """,
+        container=st.sidebar
+    )
+
+
+# ==============================================================================
 # 5. UNIVERSAL TOP HEADER & SYNCHRONIZED MULTI-LANGUAGE NAVIGATION
 # ==============================================================================
 def render_universal_top_header(active_page_name: str = "Overview", key_prefix: str = ""):
@@ -2985,6 +3204,9 @@ def render_universal_top_header(active_page_name: str = "Overview", key_prefix: 
     from src.analytics.global_news_engine import GlobalNewsEngine
 
     apply_theme()
+    # Ensure universal sidebar is rendered across every page and drill-down route
+    render_universal_sidebar(active_page_name=active_page_name)
+
     current_lang = get_current_language()
     try:
         health = db_manager.check_health() if hasattr(db_manager, "check_health") else {"dialect": "sqlite"}
