@@ -3141,7 +3141,14 @@ def render_universal_sidebar(active_page_name: str = "Overview"):
         try:
             st.sidebar.page_link(page_path, label=label_text, use_container_width=True)
         except Exception:
-            pass
+            # Resilient fallback if Streamlit page router has not refreshed
+            import re
+            slug = re.sub(r'[^a-zA-Z0-9_]', '_', page_path)
+            if st.sidebar.button(label_text, key=f"sb_flbk_{slug}_{pfx}", use_container_width=True):
+                try:
+                    st.switch_page(page_path)
+                except Exception:
+                    st.toast(f"Navigating to {label_text}...")
 
     _safe_page_link("pages/1_Global_Command_Center.py", f"{clean_nav_title(t('sidebar_01_command', current_lang))} — Exec")
     _safe_page_link("pages/2_Fuel_Price_Explorer.py", f"{clean_nav_title(t('sidebar_02_explorer', current_lang))} — Daily")
