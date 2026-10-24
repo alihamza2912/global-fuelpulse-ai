@@ -82,7 +82,14 @@ def render_home_view(navigate_fn=None):
             _show_sign_in_dialog()
     render_html('</div>')
 
-    st.write("")
+    # Quick launch CTA for Highway Fuel Optimizer
+    col_hero_opt, _ = st.columns([1, 0.001])
+    with col_hero_opt:
+        st.page_link(
+            "pages/12_Highway_Fuel_Optimizer.py",
+            label="🛣️ Open Highway Fuel Trip & Arbitrage Optimizer (India • Saudi Arabia • Dubai • GCC) →",
+            use_container_width=True
+        )
 
     # Fetch live headline benchmarks from database with current benchmarks
     brent_val = "$84.20 / bbl"
