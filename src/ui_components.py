@@ -3133,7 +3133,7 @@ def render_universal_sidebar(active_page_name: str = "Overview"):
     render_html(f"""
     <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 10.5px; font-weight: 600; color: #71717A; text-transform: uppercase; letter-spacing: 0.08em; padding: 14px 8px 4px 12px; display: flex; align-items: center; justify-content: space-between;">
         <span>ANALYTICS DOSSIERS</span>
-        <span style="font-size: 9px; color: #52525B; font-weight: 500;">8 Models</span>
+        <span style="font-size: 9px; color: #52525B; font-weight: 500;">10 Models</span>
     </div>
     """, container=st.sidebar)
 
@@ -3151,6 +3151,8 @@ def render_universal_sidebar(active_page_name: str = "Overview"):
     _safe_page_link("pages/6_Shock_Simulator.py", f"{clean_nav_title(t('sidebar_06_shock', current_lang))} — Simulator")
     _safe_page_link("pages/7_Forecasting.py", f"{clean_nav_title(t('sidebar_07_forecast', current_lang))} — Radar")
     _safe_page_link("pages/9_AI_Analyst.py", f"{clean_nav_title(t('sidebar_09_ai', current_lang))} — Analyst")
+    _safe_page_link("pages/10_India_Intelligence.py", f"{clean_nav_title(t('sidebar_10_india', current_lang))} — MoPNG")
+    _safe_page_link("pages/12_Highway_Fuel_Optimizer.py", f"12. 🛣️ Highway Optimizer — Arbitrage")
 
     # 6. PLATFORM & DOCUMENTATION (Tree Nav — 5 items)
     render_html(f"""
