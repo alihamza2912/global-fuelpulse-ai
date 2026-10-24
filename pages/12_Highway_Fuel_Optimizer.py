@@ -73,7 +73,7 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-col_reg, col_mode, col_corridor = st.columns([1.2, 1.0, 1.8])
+col_reg, col_mode, col_corridor = st.columns([1.2, 1.0, 1.8], vertical_alignment="bottom")
 
 with col_reg:
     region_choice = st.selectbox(
@@ -130,7 +130,7 @@ else:
             custom_dest = st.selectbox("Destination Hub", options=all_nodes, index=min(1, len(all_nodes)-1), key="opt_custom_dest")
 
 # Vehicle & Fuel Selection
-col_veh, col_fuel, col_custom = st.columns([1.5, 1.2, 1.3])
+col_veh, col_fuel, col_custom = st.columns([1.4, 1.2, 1.4], vertical_alignment="bottom")
 
 with col_veh:
     veh_keys = list(HighwayFuelOptimizer.VEHICLE_PROFILES.keys())
@@ -160,12 +160,20 @@ with col_fuel:
         key="opt_fuel_type"
     )[0]
 
+v_def = HighwayFuelOptimizer.VEHICLE_PROFILES[vehicle_type]
+override_tank = float(v_def["tank_capacity_l"])
+override_kml = float(v_def["consumption_kml"])
+
 with col_custom:
-    v_def = HighwayFuelOptimizer.VEHICLE_PROFILES[vehicle_type]
-    exp = st.expander(f"⚙️ Tank & Mileage ({v_def['tank_capacity_l']}L • {v_def['consumption_kml']} km/L)", expanded=False)
-    with exp:
-        override_tank = st.number_input("Custom Tank Capacity (Liters)", min_value=10.0, max_value=1200.0, value=float(v_def["tank_capacity_l"]), step=10.0)
-        override_kml = st.number_input("Fuel Efficiency (km/L)", min_value=1.0, max_value=40.0, value=float(v_def["consumption_kml"]), step=0.5)
+    st.markdown('<label style="font-size: 14px; font-weight: 400; color: #F8FAFC; display: block; margin-bottom: 7px; height: 21px; overflow: hidden; white-space: nowrap;">Tank & Mileage Tuning</label>', unsafe_allow_html=True)
+    with st.popover(f"⚙️ Tank: {v_def['tank_capacity_l']}L • {v_def['consumption_kml']} km/L", use_container_width=True):
+        st.markdown("**Vehicle Range Tuning**")
+        p_tank = st.number_input("Custom Tank Capacity (Liters)", min_value=10.0, max_value=1200.0, value=float(v_def["tank_capacity_l"]), step=10.0)
+        p_kml = st.number_input("Fuel Efficiency (km/L)", min_value=1.0, max_value=40.0, value=float(v_def["consumption_kml"]), step=0.5)
+        if p_tank:
+            override_tank = p_tank
+        if p_kml:
+            override_kml = p_kml
 
 # -------------------------------------------------------------
 # 2. RUN OPTIMIZATION ALGORITHM
