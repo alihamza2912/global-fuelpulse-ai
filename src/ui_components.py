@@ -2981,6 +2981,11 @@ div[class*="top_auth_btn"] button[kind="primary"] {{
     render_html(custom_css)
 
 
+def clean_nav_title(title: str) -> str:
+    import re
+    return re.sub(r'^[^\w\s\(\)]+\s*', '', title, flags=re.UNICODE).strip() or title
+
+
 # ==============================================================================
 # 4b. UNIVERSAL APPLICATION SIDEBAR (SYNCHRONIZED ON ALL PAGES & ROUTES)
 # ==============================================================================
@@ -2996,15 +3001,11 @@ def render_universal_sidebar(active_page_name: str = "Overview"):
     - Platform & Documentation (5 docs/SLA chapters)
     - System Engine Provenance & SQLite status badge
     """
-    import re
     from src.localization.i18n import t, get_current_language
     from src.auth.quota_service import QuotaService
     
     current_lang = get_current_language()
     pfx = (active_page_name or "nav").lower().replace(" ", "_").replace(".", "_").replace("•", "_")
-
-    def clean_nav_title(title: str) -> str:
-        return re.sub(r'^[^\w\s\(\)]+\s*', '', title, flags=re.UNICODE).strip() or title
 
     # 1. Brand Lockup Card
     render_html(
@@ -3317,14 +3318,15 @@ def render_universal_top_header(active_page_name: str = "Overview", key_prefix: 
         # 3. News
         with col_news:
             alerts_count = GlobalNewsEngine.get_active_alerts_count()
-            news_btn_label = f"📰 News ({alerts_count}) ▾" if alerts_count else "📰 News ▾"
+            news_label_clean = clean_nav_title(t("live_news_button", current_lang)) or "News"
+            news_btn_label = f"📰 {news_label_clean} ({alerts_count}) ▾" if alerts_count else f"📰 {news_label_clean} ▾"
             with st.popover(news_btn_label, use_container_width=True, key=f"{pfx}_top_news_popover"):
                 render_html(f"""
                 <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid rgba(255, 255, 255, 0.12);">
                     {get_news_globe_icon_svg(size=36, lang=current_lang)}
                     <div>
                         <div style="font-family: 'Space Grotesk', -apple-system, sans-serif; font-size: 1.15rem; font-weight: 800; color: #F9FAFB; letter-spacing: -0.01em;">
-                            {t('brand_title', current_lang)} — Global Wire
+                            {t('brand_title', current_lang)} — {t('news_global_wire', current_lang)}
                         </div>
                         <div style="font-size: 0.72rem; color: #94A3B8; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; margin-top: 2px;">
                             {t('news_wire_title', current_lang)}
@@ -3345,15 +3347,15 @@ def render_universal_top_header(active_page_name: str = "Overview", key_prefix: 
                     </div>
                     """)
                 with col_sync_btn:
-                    if st.button("🔄 Sync Wire", key=f"{pfx}_sync_live_wire_popover_btn", use_container_width=True):
+                    if st.button(t("refresh_feeds", current_lang), key=f"{pfx}_sync_live_wire_popover_btn", use_container_width=True):
                         GlobalNewsEngine.refresh_news(force_live=True)
                         st.rerun()
 
                 tab_hormuz, tab_trade, tab_rates, tab_all = st.tabs([
-                    f"🚨 {t('nav_trade', current_lang)}",
-                    f"🚢 {t('chapter_03_title', current_lang)}",
-                    f"⛽ {t('chapter_05_title', current_lang)}",
-                    f"📰 {t('live_news_button', current_lang)}"
+                    f"🚨 {t('news_maritime_monitor', current_lang)}",
+                    f"🚢 {clean_nav_title(t('sidebar_03_trade', current_lang)) or t('chapter_03_title', current_lang)}",
+                    f"⛽ {clean_nav_title(t('sidebar_02_explorer', current_lang)) or t('chapter_05_title', current_lang)}",
+                    f"📰 {clean_nav_title(t('live_news_button', current_lang))}"
                 ])
                 
                 with tab_hormuz:
@@ -3365,14 +3367,14 @@ def render_universal_top_header(active_page_name: str = "Overview", key_prefix: 
                                 <b style="color: #F9FAFB; font-size: 0.9rem;">{chk['name']}</b>
                                 <span style="background: rgba(239, 68, 68, 0.2); color: {chk['status_color']}; font-size: 0.7rem; font-weight: 800; padding: 2px 6px; border-radius: 4px;">{chk['status']}</span>
                             </div>
-                            <div style="font-size: 0.78rem; color: #94A3B8; margin-top: 4px;">Throughput: <b style="color: #F5B942;">{chk['throughput']}</b> ({chk['global_share']})</div>
-                            <div style="font-size: 0.74rem; color: #CBD5E1; margin-top: 4px;"><b>Risk:</b> {chk['key_risk']}</div>
-                            <div style="font-size: 0.72rem; color: #34D399; margin-top: 3px;"><b>Contingency:</b> {chk['contingency']}</div>
+                            <div style="font-size: 0.78rem; color: #94A3B8; margin-top: 4px;">{t('news_throughput', current_lang)}: <b style="color: #F5B942;">{chk['throughput']}</b> ({chk['global_share']})</div>
+                            <div style="font-size: 0.74rem; color: #CBD5E1; margin-top: 4px;"><b>{t('news_risk', current_lang)}:</b> {chk['key_risk']}</div>
+                            <div style="font-size: 0.72rem; color: #34D399; margin-top: 3px;"><b>{t('news_contingency', current_lang)}:</b> {chk['contingency']}</div>
                         </div>
                         """, unsafe_allow_html=True)
                         
                 with tab_trade:
-                    st.markdown(f"#### 🚢 {t('chapter_03_title', current_lang)}")
+                    st.markdown(f"#### 🚢 {clean_nav_title(t('sidebar_03_trade', current_lang)) or t('chapter_03_title', current_lang)}")
                     for item in GlobalNewsEngine.get_live_news_feed(category="TRADE_FLOWS", lang=current_lang):
                         metrics_html = " ".join([f"<span style='background: rgba(59,130,246,0.18); color: #60A5FA; padding: 2px 6px; border-radius: 4px; font-size: 0.68rem;'><b>{k}:</b> {v}</span>" for k, v in item['metrics'].items()])
                         st.markdown(f"""
@@ -3389,7 +3391,7 @@ def render_universal_top_header(active_page_name: str = "Overview", key_prefix: 
                         """, unsafe_allow_html=True)
                     
                 with tab_rates:
-                    st.markdown("#### ⛽ Verified Live Retail Rates Today (17 Oct 2026)")
+                    st.markdown(f"#### ⛽ {t('news_retail_rates_title', current_lang)} (17 Oct 2026)")
                     benchmarks = GlobalNewsEngine.get_live_delhi_and_metro_benchmarks()
                     d = benchmarks["delhi"]
                     st.markdown(f"""
@@ -3409,15 +3411,15 @@ def render_universal_top_header(active_page_name: str = "Overview", key_prefix: 
                             </div>
                         </div>
                         <div style="font-size: 0.74rem; color: #CBD5E1; margin-top: 8px; line-height: 1.4;">
-                            • <b>Base Refinery Transfer:</b> ₹{d['base_petrol']:.2f}/L<br/>
-                            • <b>Central Excise:</b> ₹{d['central_tax']:.2f}/L<br/>
-                            • <b>Delhi State VAT (19.40%):</b> ₹{d['state_vat']:.2f}/L<br/>
-                            • <b>Combined Tax Wedge:</b> ₹40.40/L ({d['tax_share_pct']}% of pump price)
+                            • <b>{t('news_base_refinery', current_lang)}:</b> ₹{d['base_petrol']:.2f}/L<br/>
+                            • <b>{t('news_central_excise', current_lang)}:</b> ₹{d['central_tax']:.2f}/L<br/>
+                            • <b>{t('news_state_vat', current_lang)} (19.40%):</b> ₹{d['state_vat']:.2f}/L<br/>
+                            • <b>{t('news_combined_tax', current_lang)}:</b> ₹40.40/L ({d['tax_share_pct']}% of pump price)
                         </div>
                     </div>
                     """, unsafe_allow_html=True)
                     
-                    st.markdown("**Other Indian Metros & Global:**")
+                    st.markdown(f"**{t('news_other_metros', current_lang)}:**")
                     m = benchmarks["mumbai"]
                     c = benchmarks["kolkata"]
                     ch = benchmarks["chennai"]
@@ -3436,9 +3438,9 @@ def render_universal_top_header(active_page_name: str = "Overview", key_prefix: 
                 with tab_all:
                     live_wire_items = GlobalNewsEngine.get_realtime_wire(lang=current_lang)
                     if live_wire_items:
-                        st.markdown(f"#### 🔴 Real-Time Breaking Wire ({len(live_wire_items)} Live Dispatches Today)")
+                        st.markdown(f"#### 🔴 {t('news_breaking_wire_title', current_lang)} ({len(live_wire_items)})")
                         for item in live_wire_items:
-                            link_elem = f"<a href='{item['link']}' target='_blank' style='color: #60A5FA; font-size: 0.70rem; text-decoration: none; font-weight: 600;'>🔗 Read original source on {item['source']} ↗</a>" if item.get("link") else ""
+                            link_elem = f"<a href='{item['link']}' target='_blank' style='color: #60A5FA; font-size: 0.70rem; text-decoration: none; font-weight: 600;'>🔗 {t('news_read_original', current_lang)} {item['source']} ↗</a>" if item.get("link") else ""
                             st.markdown(f"""
                             <div style="background: rgba(14, 21, 38, 0.95); border: 1px solid rgba(255, 255, 255, 0.14); border-left: 3px solid {item['impact_color']}; border-radius: 6px; padding: 10px 12px; margin-bottom: 8px;">
                                 <div style="display: flex; justify-content: space-between; align-items: center;">
@@ -3453,7 +3455,7 @@ def render_universal_top_header(active_page_name: str = "Overview", key_prefix: 
                             """, unsafe_allow_html=True)
                         st.markdown("---")
 
-                    st.markdown("#### 📋 Verified Sector Analysis & Strategic Dossiers (16 Oct Archive)")
+                    st.markdown(f"#### 📋 {t('news_verified_dossiers_title', current_lang)} (16 Oct Archive)")
                     for item in GlobalNewsEngine.get_live_news_feed(lang=current_lang):
                         st.markdown(f"""
                         <div style="background: rgba(14, 21, 38, 0.75); border: 1px solid rgba(255, 255, 255, 0.08); border-left: 3px solid {item['impact_color']}; border-radius: 6px; padding: 10px 12px; margin-bottom: 8px;">

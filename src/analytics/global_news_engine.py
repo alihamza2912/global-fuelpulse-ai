@@ -4,6 +4,9 @@ Provides live intelligence feeds, Strait of Hormuz naval & transport alerts,
 bilateral petroleum import/export tracking, and dynamic pump price telemetry.
 """
 
+import os
+import json
+import urllib.parse
 from datetime import datetime, timezone, timedelta
 from typing import Dict, List, Optional, Any
 import threading
@@ -23,6 +26,166 @@ class GlobalNewsEngine:
     _lock = threading.RLock()
     _last_refreshed: Optional[datetime] = None
     _BASE_CURATED_DATE = datetime(2026, 10, 16, 12, 0, tzinfo=timezone.utc)
+    _cached_live_wire: List[Dict[str, Any]] = []
+    _last_live_wire_fetch: Optional[datetime] = None
+    _LIVE_WIRE_CACHE_TTL: int = 300  # 5 minutes cache TTL
+
+    _TRANSLATION_CACHE: Dict[str, str] = {}
+    _CACHE_FILE = os.path.join(os.path.dirname(__file__), "news_translations_cache.json")
+
+    _CATEGORY_LABELS_I18N: Dict[str, Dict[str, str]] = {
+        "HORMUZ_MARITIME": {
+            "en": "🚨 Strait of Hormuz & Maritime",
+            "hi": "🚨 होर्मुज जलडमरूमध्य और समुद्री मार्ग",
+            "es": "🚨 Estrecho de Ormuz y Marítimo",
+            "fr": "🚨 Détroit d'Ormuz & Maritime",
+            "ar": "🚨 مضيق هرمز والنقل البحري",
+            "de": "🚨 Straße von Hormus & Seefahrt",
+            "zh": "🚨 霍尔木兹海峡与海事安全",
+            "ru": "🚨 Ормузский пролив и судоходство",
+            "ja": "🚨 ホルムズ海峡・海洋安保",
+            "pt": "🚨 Estreito de Ormuz e Marítimo",
+            "it": "🚨 Stretto di Hormuz e Marittimo",
+            "ko": "🚨 호르무즈 해협 및 해양 안보",
+            "tr": "🚨 Hürmüz Boğazı ve Denizcilik",
+            "nl": "🚨 Straat van Hormuz & Maritiem",
+            "id": "🚨 Selat Hormuz & Maritim",
+            "ur": "🚨 آبنائے ہرمز اور بحری راستے",
+            "bn": "🚨 হরমুজ প্রণালী ও সামুদ্রিক পথ",
+            "ta": "🚨 ஹார்முஸ் நீரிணை & கடல்சார்"
+        },
+        "OPEC_MACRO": {
+            "en": "🌍 OPEC+ & Macro Energy Policy",
+            "hi": "🌍 ओपेक+ और व्यापक ऊर्जा नीति",
+            "es": "🌍 OPEP+ y Política Energética Macro",
+            "fr": "🌍 OPEP+ et Politique Énergétique",
+            "ar": "🌍 أوبك+ وسياسات الطاقة الكلية",
+            "de": "🌍 OPEC+ & Globale Energiepolitik",
+            "zh": "🌍 欧佩克+与全球宏观能源政策",
+            "ru": "🌍 ОПЕК+ и макроэнергетическая политика",
+            "ja": "🌍 OPEC+・マクロエネルギー政策",
+            "pt": "🌍 OPEP+ e Política Energética Macro",
+            "it": "🌍 OPEC+ e Politica Energetica Globale",
+            "ko": "🌍 OPEC+ 및 거시 에너지 정책",
+            "tr": "🌍 OPEC+ ve Makro Enerji Politikası",
+            "nl": "🌍 OPEC+ & Macro-energiebeleid",
+            "id": "🌍 OPEC+ & Kebijakan Energi Makro",
+            "ur": "🌍 اوپیک پلس اور میکرو انرجی پالیسی",
+            "bn": "🌍 ওপেক+ ও ম্যাক্রো জ্বালানি নীতি",
+            "ta": "🌍 ஒபெக்+ மற்றும் மேக்ரோ ஆற்றல் கொள்கை"
+        },
+        "PRICE_TAX": {
+            "en": "⛽ Live Fuel Rates & Sovereign Tax",
+            "hi": "⛽ लाइव ईंधन दरें और संप्रभु कर",
+            "es": "⛽ Tarifas de Combustible e Impuestos",
+            "fr": "⛽ Tarifs des Carburants & Taxes",
+            "ar": "⛽ أسعار الوقود المباشرة والضرائب السيادية",
+            "de": "⛽ Kraftstoffpreise & Staatliche Steuern",
+            "zh": "⛽ 实时燃油标价与各国税收",
+            "ru": "⛽ Цены на топливо и суверенные налоги",
+            "ja": "⛽ リアルタイム燃料価格・主権税制",
+            "pt": "⛽ Preços dos Combustíveis e Impostos",
+            "it": "⛽ Prezzi Carburanti in Tempo Reale e Tasse",
+            "ko": "⛽ 실시간 유류 가격 및 국가 유류세",
+            "tr": "⛽ Canlı Yakıt Fiyatları ve Devlet Vergisi",
+            "nl": "⛽ Actuele Brandstofprijzen & Belastingen",
+            "id": "⛽ Harga Bahan Bakar Terkini & Pajak Negara",
+            "ur": "⛽ ایندھن کے نرخ اور ملکی ٹیکس",
+            "bn": "⛽ জ্বালানি তেলের দাম ও সরকারি কর",
+            "ta": "⛽ நேரலை எரிபொருள் விலைகள் & வரி"
+        },
+        "TRADE_FLOWS": {
+            "en": "🚢 Global Petroleum Trade Flows",
+            "hi": "🚢 वैश्विक पेट्रोलियम व्यापार प्रवाह",
+            "es": "🚢 Flujos Comerciales Globales de Petróleo",
+            "fr": "🚢 Flux Commerciaux Pétroliers Mondiaux",
+            "ar": "🚢 تدفقات تجارة النفط العالمية",
+            "de": "🚢 Globale Erdöl-Handelsströme",
+            "zh": "🚢 全球原油及成品油贸易航流",
+            "ru": "🚢 Мировые потоки торговли нефтью",
+            "ja": "🚢 世界の石油貿易・タンカーフロー",
+            "pt": "🚢 Fluxos Globais de Comércio de Petróleo",
+            "it": "🚢 Flussi di Commercio Petrolifero Globale",
+            "ko": "🚢 글로벌 석유 무역 흐름",
+            "tr": "🚢 Küresel Petrol Ticaret Akışları",
+            "nl": "🚢 Wereldwijde Oliehandelsstromen",
+            "id": "🚢 Arus Perdagangan Minyak Global",
+            "ur": "🚢 عالمی پیٹرولیم تجارتی بہاؤ",
+            "bn": "🚢 বৈশ্বিক পেট্রোলিয়াম বাণিজ্য প্রবাহ",
+            "ta": "🚢 உலகளாவிய பெட்ரோலிய வர்த்தக ஓட்டம்"
+        }
+    }
+
+    _IMPACT_LABELS_I18N: Dict[str, Dict[str, str]] = {
+        "CRITICAL": {
+            "en": "CRITICAL", "hi": "गंभीर", "es": "CRÍTICO", "fr": "CRITIQUE",
+            "ar": "حرج", "de": "KRITISCH", "zh": "严重预警", "ru": "КРИТИЧЕСКИЙ",
+            "ja": "緊急警戒", "pt": "CRÍTICO", "it": "CRITICO", "ko": "심각",
+            "tr": "KRİTİK", "nl": "KRITIEK", "id": "KRITIS", "ur": "انتہائی نازک",
+            "bn": "মারাত্মক", "ta": "மிக ஆபத்தானது"
+        },
+        "HIGH": {
+            "en": "HIGH", "hi": "उच्च", "es": "ALTO", "fr": "ÉLEVÉ",
+            "ar": "عالي", "de": "HOCH", "zh": "高度关注", "ru": "ВЫСОКИЙ",
+            "ja": "厳戒態勢", "pt": "ALTO", "it": "ALTO", "ko": "높음",
+            "tr": "YÜKSEK", "nl": "HOOG", "id": "TINGGI", "ur": "اعلیٰ",
+            "bn": "উচ্চ", "ta": "அதிகம்"
+        },
+        "STRATEGIC": {
+            "en": "STRATEGIC", "hi": "रणनीतिक", "es": "ESTRATÉGICO", "fr": "STRATÉGIQUE",
+            "ar": "استراتيجي", "de": "STRATEGISCH", "zh": "战略情报", "ru": "СТРАТЕГИЧЕСКИЙ",
+            "ja": "戦略分析", "pt": "ESTRATÉGICO", "it": "STRATEGICO", "ko": "전략적",
+            "tr": "STRATEJİK", "nl": "STRATEGISCH", "id": "STRATEGIS", "ur": "حکمت عملی",
+            "bn": "কৌশলগত", "ta": "மூலோபாய"
+        }
+    }
+
+    @classmethod
+    def _load_translation_cache(cls) -> None:
+        if not cls._TRANSLATION_CACHE and os.path.exists(cls._CACHE_FILE):
+            try:
+                with open(cls._CACHE_FILE, "r", encoding="utf-8") as f:
+                    cls._TRANSLATION_CACHE = json.load(f)
+            except Exception:
+                pass
+
+    @classmethod
+    def _save_translation_cache(cls) -> None:
+        try:
+            with open(cls._CACHE_FILE, "w", encoding="utf-8") as f:
+                json.dump(cls._TRANSLATION_CACHE, f, ensure_ascii=False, indent=2)
+        except Exception:
+            pass
+
+    @classmethod
+    def translate_text(cls, text: str, target_lang: Optional[str]) -> str:
+        """
+        Translates text to target_lang with in-memory & disk caching.
+        Falls back gracefully to original text on any network/timeout error.
+        """
+        if not text or not target_lang or target_lang == "en":
+            return text
+        cls._load_translation_cache()
+        cache_key = f"{target_lang}::{text.strip()}"
+        if cache_key in cls._TRANSLATION_CACHE:
+            return cls._TRANSLATION_CACHE[cache_key]
+
+        try:
+            url = f"https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl={target_lang}&dt=t&q={urllib.parse.quote(text)}"
+            req = urllib.request.Request(
+                url,
+                headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"}
+            )
+            with urllib.request.urlopen(req, timeout=3) as resp:
+                data = json.loads(resp.read().decode("utf-8"))
+                translated = "".join([part[0] for part in data[0] if part and part[0]]).strip()
+                if translated:
+                    cls._TRANSLATION_CACHE[cache_key] = translated
+                    cls._save_translation_cache()
+                    return translated
+        except Exception:
+            pass
+        return text
     _cached_live_wire: List[Dict[str, Any]] = []
     _last_live_wire_fetch: Optional[datetime] = None
     _LIVE_WIRE_CACHE_TTL: int = 300  # 5 minutes cache TTL
@@ -876,39 +1039,106 @@ class GlobalNewsEngine:
     ]
 
     @classmethod
-    def _format_datetime_relative(cls, dt: datetime) -> str:
+    def _format_datetime_relative(cls, dt: datetime, lang: Optional[str] = None) -> str:
         """Formats a datetime into an accurate, honest live wire string."""
         now = datetime.now(timezone.utc)
         if dt.tzinfo is None:
             dt = dt.replace(tzinfo=timezone.utc)
         diff = now - dt
         total_sec = max(0, diff.total_seconds())
+        active_lang = lang if lang else "en"
+        
+        live_wire_labels = {
+            "en": "Live Wire", "hi": "लाइव वायर", "es": "En Directo", "fr": "En Direct",
+            "ar": "بث مباشر", "de": "Live-Meldung", "zh": "实时快报", "ru": "Прямой эфир",
+            "ja": "速報", "pt": "Ao Vivo", "it": "In Diretta", "ko": "실시간 속보",
+            "tr": "Canlı Akış", "nl": "Live Draad", "id": "Warta Langsung", "ur": "لائیو وائر",
+            "bn": "লাইভ ওয়্যার", "ta": "நேரலை கம்பி"
+        }
+        wire_tag = live_wire_labels.get(active_lang, "Live Wire")
+
         if total_sec < 300:
-            return "Just now (Live Wire)"
+            just_now_labels = {
+                "en": f"Just now ({wire_tag})", "hi": f"अभी-अभी ({wire_tag})", "es": f"Justo ahora ({wire_tag})",
+                "fr": f"À l'instant ({wire_tag})", "ar": f"الآن ({wire_tag})", "de": f"Gerade eben ({wire_tag})",
+                "zh": f"刚刚 ({wire_tag})", "ru": f"Только что ({wire_tag})", "ja": f"たった今 ({wire_tag})"
+            }
+            return just_now_labels.get(active_lang, f"Just now ({wire_tag})")
         elif total_sec < 3600:
             mins = int(total_sec // 60)
-            return f"{mins} mins ago • Live Wire"
+            if active_lang == "hi":
+                return f"{mins} मिनट पहले • {wire_tag}"
+            elif active_lang == "es":
+                return f"Hace {mins} min • {wire_tag}"
+            elif active_lang == "fr":
+                return f"Il y a {mins} min • {wire_tag}"
+            elif active_lang == "de":
+                return f"Vor {mins} Min. • {wire_tag}"
+            elif active_lang == "zh":
+                return f"{mins} 分钟前 • {wire_tag}"
+            elif active_lang == "ar":
+                return f"منذ {mins} دقيقة • {wire_tag}"
+            return f"{mins} mins ago • {wire_tag}"
         elif total_sec < 7200:
-            return "1 hour ago • Live Wire"
+            if active_lang == "hi":
+                return f"1 घंटा पहले • {wire_tag}"
+            elif active_lang == "es":
+                return f"Hace 1 hora • {wire_tag}"
+            elif active_lang == "fr":
+                return f"Il y a 1 heure • {wire_tag}"
+            elif active_lang == "de":
+                return f"Vor 1 Stunde • {wire_tag}"
+            elif active_lang == "zh":
+                return f"1 小时前 • {wire_tag}"
+            return f"1 hour ago • {wire_tag}"
         elif total_sec < 86400:
             hours = int(total_sec // 3600)
-            return f"{hours} hours ago • Live Wire"
+            if active_lang == "hi":
+                return f"{hours} घंटे पहले • {wire_tag}"
+            elif active_lang == "es":
+                return f"Hace {hours} horas • {wire_tag}"
+            elif active_lang == "fr":
+                return f"Il y a {hours} heures • {wire_tag}"
+            elif active_lang == "de":
+                return f"Vor {hours} Stunden • {wire_tag}"
+            elif active_lang == "zh":
+                return f"{hours} 小时前 • {wire_tag}"
+            return f"{hours} hours ago • {wire_tag}"
         elif total_sec < 172800:
-            return f"Yesterday • Live Wire ({dt.strftime('%d %b')})"
+            yesterday_labels = {
+                "en": "Yesterday", "hi": "कल", "es": "Ayer", "fr": "Hier", "de": "Gestern", "zh": "昨天"
+            }
+            y = yesterday_labels.get(active_lang, "Yesterday")
+            return f"{y} • {wire_tag} ({dt.strftime('%d %b')})"
         else:
             days = int(total_sec // 86400)
-            return f"{days} days ago • Live Wire ({dt.strftime('%d %b %Y')})"
+            if active_lang == "hi":
+                return f"{days} दिन पहले • {wire_tag} ({dt.strftime('%d %b %Y')})"
+            elif active_lang == "es":
+                return f"Hace {days} días • {wire_tag} ({dt.strftime('%d %b %Y')})"
+            elif active_lang == "zh":
+                return f"{days} 天前 • {wire_tag} ({dt.strftime('%d %b %Y')})"
+            return f"{days} days ago • {wire_tag} ({dt.strftime('%d %b %Y')})"
 
     @classmethod
-    def _format_relative_time(cls, minutes_ago: int, pub_dt: Optional[datetime] = None) -> str:
+    def _format_relative_time(cls, minutes_ago: int, pub_dt: Optional[datetime] = None, lang: Optional[str] = None) -> str:
         """
         Formats relative time. If pub_dt is provided, uses authentic timestamp.
         For baseline curated dossiers, accurately reports archive age.
         """
         if pub_dt is not None:
-            return cls._format_datetime_relative(pub_dt)
+            return cls._format_datetime_relative(pub_dt, lang=lang)
         now = datetime.now(timezone.utc)
         days_ago = max(1, (now - cls._BASE_CURATED_DATE).days)
+        active_lang = lang if lang else "en"
+        if active_lang == "hi":
+            return f"{days_ago} दिन पहले • लाइव वायर आर्काइव (16 अक्टूबर 2026)"
+        elif active_lang == "es":
+            return f"Hace {days_ago} días • Archivo de Cable en Vivo (16 Oct 2026)"
+        elif active_lang == "de":
+            return f"Vor {days_ago} Tagen • Live-Meldungsarchiv (16. Okt. 2026)"
+        elif active_lang == "zh":
+            return f"{days_ago} 天前 • 实时通讯档案库 (2026年10月16日)"
         return f"{days_ago} days ago • Live Wire Archive (16 Oct 2026)"
 
     @classmethod
@@ -1043,10 +1273,29 @@ class GlobalNewsEngine:
         for it in items:
             c = dict(it)
             if "published_dt" in c:
-                c["timestamp"] = cls._format_datetime_relative(c["published_dt"])
+                c["timestamp"] = cls._format_datetime_relative(c["published_dt"], lang=lang)
             if category and c.get("category") != category:
                 continue
             formatted.append(c)
+
+        if lang and lang != "en" and formatted:
+            from concurrent.futures import ThreadPoolExecutor
+
+            def _translate_wire_item(c: Dict[str, Any]) -> Dict[str, Any]:
+                res = dict(c)
+                res["headline"] = cls.translate_text(res.get("headline", ""), lang)
+                res["summary"] = cls.translate_text(res.get("summary", ""), lang)
+                cat_key = res.get("category")
+                if cat_key and cat_key in cls._CATEGORY_LABELS_I18N:
+                    res["category_label"] = cls._CATEGORY_LABELS_I18N[cat_key].get(lang, res.get("category_label"))
+                imp_key = res.get("impact")
+                if imp_key and imp_key in cls._IMPACT_LABELS_I18N:
+                    res["impact"] = cls._IMPACT_LABELS_I18N[imp_key].get(lang, res.get("impact"))
+                return res
+
+            with ThreadPoolExecutor(max_workers=8) as ex:
+                formatted = list(ex.map(_translate_wire_item, formatted))
+
         return formatted
 
     @classmethod
@@ -1060,7 +1309,7 @@ class GlobalNewsEngine:
         """
         Returns structured real-time energy news items with dynamic timestamps,
         metrics, sources, and strategic takeaways. If lang is provided, headlines
-        are localized into the target language.
+        and summaries are localized into the target language.
         """
         with cls._lock:
             if refresh or cls._last_refreshed is None:
@@ -1077,14 +1326,37 @@ class GlobalNewsEngine:
                 wire_items = cls.get_realtime_wire(category=category, lang=lang, force_refresh=refresh)
                 formatted_items.extend(wire_items)
 
-            for item in raw_items:
-                c = dict(item)
-                # Compute honest archive relative timestamp for vetted dossiers
-                c["timestamp"] = cls._format_relative_time(c.get("minutes_ago", 10))
-                # Localize headline if available
-                if lang and lang != "en" and "headline_i18n" in c and lang in c["headline_i18n"]:
-                    c["headline"] = c["headline_i18n"][lang]
-                formatted_items.append(c)
+            if lang and lang != "en":
+                from concurrent.futures import ThreadPoolExecutor
+
+                def _process_item(item: Dict[str, Any]) -> Dict[str, Any]:
+                    c = dict(item)
+                    c["timestamp"] = cls._format_relative_time(c.get("minutes_ago", 10), lang=lang)
+                    if "headline_i18n" in c and lang in c["headline_i18n"]:
+                        c["headline"] = c["headline_i18n"][lang]
+                    else:
+                        c["headline"] = cls.translate_text(c["headline"], lang)
+
+                    if "summary_i18n" in c and lang in c["summary_i18n"]:
+                        c["summary"] = c["summary_i18n"][lang]
+                    elif "summary" in c:
+                        c["summary"] = cls.translate_text(c["summary"], lang)
+
+                    cat_key = c.get("category")
+                    if cat_key and cat_key in cls._CATEGORY_LABELS_I18N:
+                        c["category_label"] = cls._CATEGORY_LABELS_I18N[cat_key].get(lang, c.get("category_label"))
+                    imp_key = c.get("impact")
+                    if imp_key and imp_key in cls._IMPACT_LABELS_I18N:
+                        c["impact"] = cls._IMPACT_LABELS_I18N[imp_key].get(lang, c.get("impact"))
+                    return c
+
+                with ThreadPoolExecutor(max_workers=8) as ex:
+                    formatted_items.extend(list(ex.map(_process_item, raw_items)))
+            else:
+                for item in raw_items:
+                    c = dict(item)
+                    c["timestamp"] = cls._format_relative_time(c.get("minutes_ago", 10), lang=lang)
+                    formatted_items.append(c)
 
             return formatted_items
 
