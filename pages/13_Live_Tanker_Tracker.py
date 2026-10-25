@@ -335,19 +335,30 @@ with rf_col5:
         st.session_state["tanker_map_focus"] = "malacca"
         st.rerun()
 
-# Set center & zoom based on selected focus
+# Set center, zoom & bounds based on selected focus (Guarantees single-world view, no duplicate countries)
 if focus_region == "india":
     c_lat, c_lon, zoom_level = 20.0, 68.0, 3.8
+    bounds_dict = dict(west=45, east=95, south=-5, north=32)
 elif focus_region == "hormuz":
     c_lat, c_lon, zoom_level = 25.5, 55.5, 5.2
+    bounds_dict = dict(west=46, east=62, south=20, north=31)
 elif focus_region == "red_sea":
     c_lat, c_lon, zoom_level = 18.0, 42.0, 4.4
+    bounds_dict = dict(west=32, east=52, south=10, north=30)
 elif focus_region == "malacca":
     c_lat, c_lon, zoom_level = 4.0, 102.0, 4.5
+    bounds_dict = dict(west=92, east=110, south=-5, north=15)
 else:
-    c_lat = selected_vessel["current_lat"] if selected_vessel else 20.0
-    c_lon = selected_vessel["current_lon"] if selected_vessel else 55.0
-    zoom_level = 2.4
+    # Single-world global focus (Never repeats countries across width)
+    if selected_vessel and selected_vessel.get("in_india_corridor"):
+        c_lat, c_lon, zoom_level = 20.0, 66.0, 3.0
+    elif selected_vessel:
+        c_lat = selected_vessel["current_lat"]
+        c_lon = selected_vessel["current_lon"]
+        zoom_level = 2.8
+    else:
+        c_lat, c_lon, zoom_level = 18.0, 62.0, 2.7
+    bounds_dict = dict(west=-35, east=145, south=-38, north=65)
 
 # Major Global Seaborne Shipping Corridors (Background Navigation Lanes)
 SHIPPING_LANES = [
@@ -481,12 +492,16 @@ if is_tile_map:
             name=f"{v['name']} ({v['speed_knots']} kts · {v['cargo_name'].split()[0]})"
         ))
 
+    map_kwargs = dict(
+        style=tile_style,
+        center=dict(lat=c_lat, lon=c_lon),
+        zoom=zoom_level
+    )
+    if bounds_dict:
+        map_kwargs["bounds"] = bounds_dict
+
     fig_map.update_layout(
-        map=dict(
-            style=tile_style,
-            center=dict(lat=c_lat, lon=c_lon),
-            zoom=zoom_level
-        ),
+        map=map_kwargs,
         paper_bgcolor="#070A12",
         plot_bgcolor="#070A12",
         margin=dict(l=0, r=0, t=0, b=0),
@@ -580,7 +595,17 @@ else:
         legend=dict(orientation="h", y=1.02, x=0, font=dict(color="#F8FAFC", size=11))
     )
 
-st.plotly_chart(fig_map, use_container_width=True)
+st.plotly_chart(
+    fig_map,
+    use_container_width=True,
+    config={
+        "scrollZoom": False,
+        "displayModeBar": True,
+        "displaylogo": False,
+        "modeBarButtonsToRemove": ["lasso2d", "select2d"],
+        "modeBarButtonsToAdd": ["zoomIn2d", "zoomOut2d", "resetScale2d"],
+    }
+)
 
 # -------------------------------------------------------------
 # 6. VESSEL DEEP-DIVE DOSSIER & PHOTOGRAPHY (CLEAN HTML, NO LEAKAGE)
