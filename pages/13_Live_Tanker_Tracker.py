@@ -40,17 +40,16 @@ from src.localization.i18n import t, get_current_language
 from src.analytics.live_tanker_tracker import LiveTankerTracker
 
 def get_vessel_image_src(vessel: dict) -> str:
-    """Returns local base64 data URI if available, or fallback image_url."""
-    asset_rel = vessel.get("asset_image")
-    if asset_rel:
-        p = ROOT_DIR / asset_rel
-        if p.exists():
-            try:
-                b64 = base64.b64encode(p.read_bytes()).decode("utf-8")
-                return f"data:image/jpeg;base64,{b64}"
-            except Exception:
-                pass
-    return vessel.get("image_url", "")
+    """Returns local base64 data URI for verified tanker photography."""
+    asset_rel = vessel.get("asset_image") or "assets/tankers/vlcc_supertanker.jpg"
+    p = ROOT_DIR / asset_rel
+    if not p.exists():
+        p = ROOT_DIR / "assets/tankers/vlcc_supertanker.jpg"
+    try:
+        b64 = base64.b64encode(p.read_bytes()).decode("utf-8")
+        return f"data:image/jpeg;base64,{b64}"
+    except Exception:
+        return ""
 
 # 1. Initialize Page Architecture
 apply_theme()
@@ -594,43 +593,47 @@ if selected_vessel:
     col_img, col_telemetry = st.columns([5, 7])
 
     with col_img:
-        # Realistic Ship Photography Card (Rendered via clean render_html)
-        v_img = get_vessel_image_src(v)
-        photo_html = f"""
-        <div style="background: #0D1527; border: 1px solid rgba(255, 255, 255, 0.14); border-radius: 12px; overflow: hidden; box-shadow: 0 8px 30px rgba(0,0,0,0.5);">
-            <div style="position: relative; width: 100%; height: 260px; overflow: hidden; background: #070A12;">
-                <img src="{v_img}" style="width: 100%; height: 100%; object-fit: cover; filter: contrast(1.1) brightness(0.95);" alt="{v['name']} Supertanker" />
-                <div style="position: absolute; bottom: 10px; left: 12px; background: rgba(11, 16, 30, 0.85); backdrop-filter: blur(8px); padding: 4px 10px; border-radius: 6px; border: 1px solid rgba(255, 255, 255, 0.15);">
-                    <span style="font-size: 11px; font-weight: 700; color: #F8FAFC;">{v['flag_emoji']} {v['flag'].upper()} REGISTERED</span>
-                </div>
-                <div style="position: absolute; top: 10px; right: 12px; background: rgba(245, 185, 66, 0.95); color: #0B101E; font-size: 11px; font-weight: 800; padding: 3px 8px; border-radius: 4px;">
-                    {v['vessel_class'].split()[0]}
-                </div>
+        # High-Resolution Real Vessel Photography (Native Streamlit Media Manager)
+        img_rel = v.get("asset_image", "assets/tankers/vlcc_supertanker.jpg")
+        img_file = ROOT_DIR / img_rel
+        if not img_file.exists():
+            img_file = ROOT_DIR / "assets/tankers/vlcc_supertanker.jpg"
+
+        st.image(
+            str(img_file),
+            use_container_width=True,
+            caption=f"🛰️ AIS Satellite Recon: {v['name']} ({v['vessel_class'].split()[0]}) — {v['flag']} Registered"
+        )
+
+        spec_html = f"""
+        <div style="background: #0D1527; border: 1px solid rgba(255, 255, 255, 0.14); border-radius: 10px; padding: 14px 16px; margin-top: 4px; box-shadow: 0 6px 20px rgba(0,0,0,0.35);">
+            <div style="display: flex; justify-content: space-between; align-items: baseline;">
+                <h4 style="margin: 0; font-size: 18px; font-weight: 800; color: #F8FAFC;">{v['flag_emoji']} {v['name']}</h4>
+                <span style="font-size: 11px; color: #94A3B8; font-weight: 600;">BUILT {v['built_year']}</span>
             </div>
-            <div style="padding: 16px 18px;">
-                <div style="display: flex; justify-content: space-between; align-items: baseline;">
-                    <h3 style="margin: 0; font-size: 20px; font-weight: 800; color: #F8FAFC;">{v['name']}</h3>
-                    <span style="font-size: 12px; color: #94A3B8; font-weight: 600;">BUILT {v['built_year']}</span>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 4px;">
+                <span style="font-size: 12px; color: #38BDF8; font-weight: 700;">{v['vessel_class']}</span>
+                <span style="background: rgba(245, 185, 66, 0.15); color: #F5B942; border: 1px solid rgba(245, 185, 66, 0.3); font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 4px;">
+                    {v['flag'].upper()} REGISTERED
+                </span>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 12px; padding-top: 10px; border-top: 1px solid rgba(255, 255, 255, 0.08); text-align: center;">
+                <div style="background: rgba(255,255,255,0.02); padding: 8px 4px; border-radius: 6px;">
+                    <div style="font-size: 9.5px; color: #94A3B8; text-transform: uppercase;">Deadweight</div>
+                    <div style="font-size: 12.5px; font-weight: 800; color: #F8FAFC;">{v['dwt']:,} DWT</div>
                 </div>
-                <div style="font-size: 12px; color: #38BDF8; font-weight: 600; margin-top: 2px;">{v['vessel_class']}</div>
-                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 14px; padding-top: 12px; border-top: 1px solid rgba(255, 255, 255, 0.08); text-align: center;">
-                    <div>
-                        <div style="font-size: 10px; color: #94A3B8; text-transform: uppercase;">Deadweight</div>
-                        <div style="font-size: 13px; font-weight: 700; color: #F8FAFC;">{v['dwt']:,} DWT</div>
-                    </div>
-                    <div>
-                        <div style="font-size: 10px; color: #94A3B8; text-transform: uppercase;">Length / Beam</div>
-                        <div style="font-size: 13px; font-weight: 700; color: #F8FAFC;">{v['length_m']}m × {v['beam_m']}m</div>
-                    </div>
-                    <div>
-                        <div style="font-size: 10px; color: #94A3B8; text-transform: uppercase;">Laden Draft</div>
-                        <div style="font-size: 13px; font-weight: 700; color: #F8FAFC;">{v['draft_m']} meters</div>
-                    </div>
+                <div style="background: rgba(255,255,255,0.02); padding: 8px 4px; border-radius: 6px;">
+                    <div style="font-size: 9.5px; color: #94A3B8; text-transform: uppercase;">Length × Beam</div>
+                    <div style="font-size: 12.5px; font-weight: 800; color: #F8FAFC;">{v['length_m']}m × {v['beam_m']}m</div>
+                </div>
+                <div style="background: rgba(255,255,255,0.02); padding: 8px 4px; border-radius: 6px;">
+                    <div style="font-size: 9.5px; color: #94A3B8; text-transform: uppercase;">Laden Draft</div>
+                    <div style="font-size: 12.5px; font-weight: 800; color: #34D399;">{v['draft_m']} meters</div>
                 </div>
             </div>
         </div>
         """
-        render_html(photo_html, container=col_img)
+        render_html(spec_html)
 
     with col_telemetry:
         # Dynamic ETA & Telemetry Dashboard Card (Rendered via clean render_html)
