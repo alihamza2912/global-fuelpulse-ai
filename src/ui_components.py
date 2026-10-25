@@ -3403,14 +3403,15 @@ def render_universal_top_header(active_page_name: str = "Overview", key_prefix: 
                     """)
                 with col_sync_btn:
                     if st.button(t("refresh_feeds", current_lang), key=f"{pfx}_sync_live_wire_popover_btn", use_container_width=True):
-                        GlobalNewsEngine.refresh_news(force_live=True)
+                        res = GlobalNewsEngine.refresh_news(force_live=True)
+                        st.toast(f"📡 Live news feeds synchronized • {res.get('active_alerts', alerts_count)} active updates", icon="🔄")
                         st.rerun()
 
                 tab_hormuz, tab_trade, tab_rates, tab_all = st.tabs([
                     f"🚨 {t('news_maritime_monitor', current_lang)}",
                     f"🚢 {clean_nav_title(t('sidebar_03_trade', current_lang)) or t('chapter_03_title', current_lang)}",
                     f"⛽ {clean_nav_title(t('sidebar_02_explorer', current_lang)) or t('chapter_05_title', current_lang)}",
-                    f"📰 {clean_nav_title(t('live_news_button', current_lang))}"
+                    f"📰 {clean_nav_title(t('live_news_button', current_lang))} ({alerts_count})"
                 ])
                 
                 with tab_hormuz:
@@ -3510,7 +3511,7 @@ def render_universal_top_header(active_page_name: str = "Overview", key_prefix: 
                             """, unsafe_allow_html=True)
                         st.markdown("---")
 
-                    st.markdown(f"#### 📋 {t('news_verified_dossiers_title', current_lang)} (16 Oct Archive)")
+                    st.markdown(f"#### 📋 {t('news_verified_dossiers_title', current_lang)} ({len(GlobalNewsEngine._LIVE_NEWS_DATABASE)} Verified Strategic Dossiers)")
                     for item in GlobalNewsEngine.get_live_news_feed(lang=current_lang):
                         st.markdown(f"""
                         <div style="background: rgba(14, 21, 38, 0.75); border: 1px solid rgba(255, 255, 255, 0.08); border-left: 3px solid {item['impact_color']}; border-radius: 6px; padding: 10px 12px; margin-bottom: 8px;">
