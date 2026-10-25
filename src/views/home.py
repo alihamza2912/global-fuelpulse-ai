@@ -82,12 +82,18 @@ def render_home_view(navigate_fn=None):
             _show_sign_in_dialog()
     render_html('</div>')
 
-    # Quick launch CTA for Highway Fuel Optimizer
-    col_hero_opt, _ = st.columns([1, 0.001])
-    with col_hero_opt:
+    # Quick launch CTAs for Highway Optimizer & Live Tanker Tracker
+    col_hero_opt1, col_hero_opt2 = st.columns(2)
+    with col_hero_opt1:
         st.page_link(
             "pages/12_Highway_Fuel_Optimizer.py",
-            label="🛣️ Open Highway Fuel Trip & Arbitrage Optimizer (India • Saudi Arabia • Dubai • GCC) →",
+            label="🛣️ Highway Fuel Arbitrage Optimizer (India • Saudi • Dubai) →",
+            use_container_width=True
+        )
+    with col_hero_opt2:
+        st.page_link(
+            "pages/13_Live_Tanker_Tracker.py",
+            label="🚢 Live Maritime Oil Tanker Radar (AIS Coordinates & Speed) →",
             use_container_width=True
         )
 
