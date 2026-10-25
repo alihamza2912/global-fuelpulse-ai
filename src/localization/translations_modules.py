@@ -538,6 +538,28 @@ MODULES_TRANSLATIONS = {
         "ru": "🚢 Малаккский пролив",
         "ja": "🚢 マラッカ海峡コリドー"
     },
+    "ltt_btn_americas_view": {
+        "en": "🌎 Atlantic & Americas",
+        "hi": "🌎 अटलांटिक और अमेरिका",
+        "ar": "🌎 المحيط الأطلسي والأمريكتين",
+        "es": "🌎 Atlántico y Américas",
+        "fr": "🌎 Atlantique et Amériques",
+        "de": "🌎 Atlantik & Amerika",
+        "zh": "🌎 大西洋与美洲航道",
+        "ru": "🌎 Атлантика и Америка",
+        "ja": "🌎 大西洋＆米州航路"
+    },
+    "ltt_opt_fast_vector": {
+        "en": "⚡ Fast Vector Radar (0-Lag)",
+        "hi": "⚡ तेज़ वेक्टर रडार (शून्य विलंब)",
+        "ar": "⚡ رادار متجهي فائق السرعة (بدون تأخير)",
+        "es": "⚡ Radar Vectorial Rápido (Sin Retardo)",
+        "fr": "⚡ Radar Vectoriel Rapide (Zéro Délai)",
+        "de": "⚡ Schnelles Vektor-Radar (Keine Verzögerung)",
+        "zh": "⚡ 极速全矢量航运雷达 (零延迟)",
+        "ru": "⚡ Быстрый векторный радар (без задержек)",
+        "ja": "⚡ 超高速ベクトルレーダー（低遅延）"
+    },
     "ltt_dossier_title": {
         "en": "🔍 Vessel Intelligence Dossier:",
         "hi": "🔍 जहाज खुफिया डोजियर:",

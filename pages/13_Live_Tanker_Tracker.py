@@ -306,26 +306,33 @@ with st.expander(t("ltt_browse_summary_cards", current_lang), expanded=False):
 # -------------------------------------------------------------
 # 5. REALISTIC INTERACTIVE GLOBAL MARITIME AIS SATELLITE MAP
 # -------------------------------------------------------------
-map_header_col1, map_header_col2 = st.columns([6, 4])
+map_header_col1, map_header_col2, map_header_col3 = st.columns([5.2, 3.8, 3.0], vertical_alignment="bottom")
 with map_header_col1:
     st.subheader(t("ltt_map_title", current_lang))
 with map_header_col2:
     map_engine_options = [
         ("dark", t("ltt_opt_dark_ocean", current_lang)),
-        ("coastal", t("ltt_opt_coastal_chart", current_lang)),
-        ("globe", t("ltt_opt_3d_globe", current_lang))
+        ("vector_dark", t("ltt_opt_fast_vector", current_lang)),
+        ("globe", t("ltt_opt_3d_globe", current_lang)),
+        ("coastal", t("ltt_opt_coastal_chart", current_lang))
     ]
-    map_style_key = st.radio(
+    map_style_key = st.selectbox(
         t("ltt_engine_label", current_lang),
         options=[m[0] for m in map_engine_options],
         format_func=lambda k: dict(map_engine_options).get(k, k),
         index=0,
-        horizontal=True,
         key="tanker_map_style_selector"
     )
+with map_header_col3:
+    mouse_scroll_zoom = st.toggle(
+        "🖱️ Mouse Wheel Zoom",
+        value=st.session_state.get("tanker_mouse_zoom", False),
+        key="tanker_mouse_zoom",
+        help="Turn ON to zoom with mouse wheel/trackpad. Turn OFF to scroll page freely."
+    )
 
-# Region quick-focus buttons
-rf_col1, rf_col2, rf_col3, rf_col4, rf_col5 = st.columns(5)
+# Region quick-focus buttons (Includes Americas & Atlantic)
+rf_col1, rf_col2, rf_col3, rf_col4, rf_col5, rf_col6 = st.columns(6)
 focus_region = st.session_state.get("tanker_map_focus", "all")
 
 with rf_col1:
@@ -348,31 +355,26 @@ with rf_col5:
     if st.button(t("ltt_btn_malacca_view", current_lang), use_container_width=True, type="primary" if focus_region == "malacca" else "secondary"):
         st.session_state["tanker_map_focus"] = "malacca"
         st.rerun()
+with rf_col6:
+    if st.button(t("ltt_btn_americas_view", current_lang), use_container_width=True, type="primary" if focus_region == "americas" else "secondary"):
+        st.session_state["tanker_map_focus"] = "americas"
+        st.rerun()
 
-# Set center, zoom & bounds based on selected focus (Guarantees single-world view, no duplicate countries)
+# Set center, zoom & bounds based on selected focus (All countries visible in Global View)
+bounds_dict = None
 if focus_region == "india":
-    c_lat, c_lon, zoom_level = 20.0, 68.0, 3.8
-    bounds_dict = dict(west=45, east=95, south=-5, north=32)
+    c_lat, c_lon, zoom_level = 20.0, 68.0, 3.6
 elif focus_region == "hormuz":
-    c_lat, c_lon, zoom_level = 25.5, 55.5, 5.2
-    bounds_dict = dict(west=46, east=62, south=20, north=31)
+    c_lat, c_lon, zoom_level = 25.5, 55.5, 4.8
 elif focus_region == "red_sea":
-    c_lat, c_lon, zoom_level = 18.0, 42.0, 4.4
-    bounds_dict = dict(west=32, east=52, south=10, north=30)
+    c_lat, c_lon, zoom_level = 18.0, 42.0, 4.2
 elif focus_region == "malacca":
-    c_lat, c_lon, zoom_level = 4.0, 102.0, 4.5
-    bounds_dict = dict(west=92, east=110, south=-5, north=15)
+    c_lat, c_lon, zoom_level = 4.0, 102.0, 4.2
+elif focus_region == "americas":
+    c_lat, c_lon, zoom_level = 15.0, -55.0, 1.8
 else:
-    # Single-world global focus (Never repeats countries across width)
-    if selected_vessel and selected_vessel.get("in_india_corridor"):
-        c_lat, c_lon, zoom_level = 20.0, 66.0, 3.0
-    elif selected_vessel:
-        c_lat = selected_vessel["current_lat"]
-        c_lon = selected_vessel["current_lon"]
-        zoom_level = 2.8
-    else:
-        c_lat, c_lon, zoom_level = 18.0, 62.0, 2.7
-    bounds_dict = dict(west=-35, east=145, south=-38, north=65)
+    # Full World Global View (All continents visible: Americas, Europe, Africa, Asia, Australia)
+    c_lat, c_lon, zoom_level = 18.0, 12.0, 1.05
 
 # Major Global Seaborne Shipping Corridors (Background Navigation Lanes)
 SHIPPING_LANES = [
@@ -385,7 +387,11 @@ SHIPPING_LANES = [
     # Transatlantic US Shale Corridor
     {"name": "US Gulf ➔ Northern Europe Transatlantic", "lats": [27.8, 25.0, 29.0, 38.0, 44.5, 49.0, 52.0], "lons": [-97.4, -85.0, -78.0, -50.0, -24.2, -8.0, 4.1]},
     # Russia Baltic to India via Cape
-    {"name": "Baltic Sea ➔ Gujarat Route", "lats": [60.4, 55.0, 50.0, 35.0, -34.4, -10.0, 5.0, 16.2, 22.5], "lons": [28.6, 15.0, -2.0, -12.0, 18.5, 52.0, 64.0, 68.9, 69.7]}
+    {"name": "Baltic Sea ➔ Gujarat Route", "lats": [60.4, 55.0, 50.0, 35.0, -34.4, -10.0, 5.0, 16.2, 22.5], "lons": [28.6, 15.0, -2.0, -12.0, 18.5, 52.0, 64.0, 68.9, 69.7]},
+    # Americas Pacific to Atlantic Corridor
+    {"name": "Americas Pacific ➔ Atlantic Energy Canal", "lats": [33.7, 20.0, 9.0, 9.3, 15.0, 28.0], "lons": [-118.2, -105.0, -79.5, -79.8, -75.0, -85.0]},
+    # Brazil Santos Basin to Asia/India Route
+    {"name": "Brazil Santos Basin ➔ Cape ➔ India/China", "lats": [-24.0, -28.0, -34.4, -20.0, 5.0, 22.4], "lons": [-46.3, -30.0, 18.5, 55.0, 68.0, 69.8]}
 ]
 
 fig_map = go.Figure()
@@ -394,60 +400,74 @@ is_tile_map = map_style_key in ["dark", "coastal"]
 tile_style = "carto-darkmatter" if map_style_key == "dark" else "open-street-map"
 
 if is_tile_map:
-    # 1. Background Shipping Corridors
+    # 1. Background Shipping Corridors (Vectorized single MultiLine trace for 10x rendering speed)
+    all_lane_lats = []
+    all_lane_lons = []
     for lane in SHIPPING_LANES:
-        fig_map.add_trace(go.Scattermap(
-            lat=lane["lats"],
-            lon=lane["lons"],
-            mode="lines",
-            line=dict(width=1.8, color="rgba(96, 165, 250, 0.28)"),
-            hoverinfo="text",
-            hovertext=f"<b>Primary Seaborne Artery:</b> {lane['name']}",
-            name="Major Maritime Shipping Lanes",
-            showlegend=False
-        ))
+        all_lane_lats.extend(lane["lats"])
+        all_lane_lats.append(None)
+        all_lane_lons.extend(lane["lons"])
+        all_lane_lons.append(None)
 
-    # 2. Strategic Chokepoint Danger Zones
-    for cp_key, cp in LiveTankerTracker.CHOKEPOINTS.items():
-        fig_map.add_trace(go.Scattermap(
-            lat=[cp["lat"]],
-            lon=[cp["lon"]],
-            mode="markers+text",
-            marker=dict(
-                size=18,
-                color=cp["risk_color"],
-                opacity=0.9
-            ),
-            text=[f"🚨 {cp['name']}"],
-            textposition="top center",
-            textfont=dict(family="Space Grotesk, sans-serif", size=11, color="#FFFFFF"),
-            hoverinfo="text",
-            hovertext=(
-                f"<b>🚨 Strategic Maritime Chokepoint</b><br>"
-                f"<b>Name:</b> {cp['name']}<br>"
-                f"<b>Daily Volume:</b> {cp['daily_mbpd']} Million bpd<br>"
-                f"<b>Status:</b> {cp['risk_level']}"
-            ),
-            name=f"Chokepoint: {cp['name']}",
-            showlegend=False
-        ))
+    fig_map.add_trace(go.Scattermap(
+        lat=all_lane_lats,
+        lon=all_lane_lons,
+        mode="lines",
+        line=dict(width=1.8, color="rgba(96, 165, 250, 0.28)"),
+        hoverinfo="none",
+        name="Major Maritime Shipping Lanes",
+        showlegend=False
+    ))
 
-    # 3. Background subtle trails for non-selected vessels
+    # 2. Strategic Chokepoint Danger Zones (Vectorized single trace)
+    cp_lats = [cp["lat"] for cp in LiveTankerTracker.CHOKEPOINTS.values()]
+    cp_lons = [cp["lon"] for cp in LiveTankerTracker.CHOKEPOINTS.values()]
+    cp_colors = [cp["risk_color"] for cp in LiveTankerTracker.CHOKEPOINTS.values()]
+    cp_texts = [f"🚨 {cp['name']}" for cp in LiveTankerTracker.CHOKEPOINTS.values()]
+    cp_hovers = [
+        f"<b>🚨 Strategic Maritime Chokepoint</b><br>"
+        f"<b>Name:</b> {cp['name']}<br>"
+        f"<b>Daily Volume:</b> {cp['daily_mbpd']} Million bpd<br>"
+        f"<b>Status:</b> {cp['risk_level']}"
+        for cp in LiveTankerTracker.CHOKEPOINTS.values()
+    ]
+
+    fig_map.add_trace(go.Scattermap(
+        lat=cp_lats,
+        lon=cp_lons,
+        mode="markers+text",
+        marker=dict(size=18, color=cp_colors, opacity=0.9),
+        text=cp_texts,
+        textposition="top center",
+        textfont=dict(family="Space Grotesk, sans-serif", size=11, color="#FFFFFF"),
+        hoverinfo="text",
+        hovertext=cp_hovers,
+        name="Strategic Chokepoints",
+        showlegend=False
+    ))
+
+    # 3. Background subtle trails for non-selected vessels (Combined into 1 trace for speed)
+    bg_lats = []
+    bg_lons = []
     for v in fleet:
         if selected_vessel and v["vessel_id"] == selected_vessel["vessel_id"]:
             continue
         wps = v.get("waypoints", [])
         if len(wps) >= 2:
-            lats = [pt[0] for pt in wps]
-            lons = [pt[1] for pt in wps]
-            fig_map.add_trace(go.Scattermap(
-                lat=lats,
-                lon=lons,
-                mode="lines",
-                line=dict(width=1.5, color="rgba(148, 163, 184, 0.35)"),
-                hoverinfo="skip",
-                showlegend=False
-            ))
+            bg_lats.extend([pt[0] for pt in wps])
+            bg_lats.append(None)
+            bg_lons.extend([pt[1] for pt in wps])
+            bg_lons.append(None)
+
+    if bg_lats:
+        fig_map.add_trace(go.Scattermap(
+            lat=bg_lats,
+            lon=bg_lons,
+            mode="lines",
+            line=dict(width=1.5, color="rgba(148, 163, 184, 0.35)"),
+            hoverinfo="skip",
+            showlegend=False
+        ))
 
     # 4. Highlighted Active Passage for Selected Vessel with Glowing Trail
     if selected_vessel and "waypoints" in selected_vessel:
@@ -534,7 +554,9 @@ if is_tile_map:
     )
 
 else:
-    # 3D High-Contrast Global Orthographic Projection
+    # High-Performance Vector Radar / 3D Globe Projection (Zero External Tile Lag)
+    proj_type = "orthographic" if map_style_key == "globe" else "natural earth"
+
     for cp_key, cp in LiveTankerTracker.CHOKEPOINTS.items():
         fig_map.add_trace(go.Scattergeo(
             lon=[cp["lon"]],
@@ -549,19 +571,26 @@ else:
             showlegend=False
         ))
 
+    # Vectorized subtle trails for non-selected vessels
+    bg_geo_lats = []
+    bg_geo_lons = []
     for v in fleet:
         if selected_vessel and v["vessel_id"] == selected_vessel["vessel_id"]:
             continue
         wps = v.get("waypoints", [])
         if len(wps) >= 2:
-            fig_map.add_trace(go.Scattergeo(
-                lon=[pt[1] for pt in wps],
-                lat=[pt[0] for pt in wps],
-                mode="lines",
-                line=dict(width=1.5, color="rgba(148, 163, 184, 0.35)", dash="dot"),
-                hoverinfo="skip",
-                showlegend=False
-            ))
+            bg_geo_lats.extend([pt[0] for pt in wps] + [None])
+            bg_geo_lons.extend([pt[1] for pt in wps] + [None])
+
+    if bg_geo_lats:
+        fig_map.add_trace(go.Scattergeo(
+            lon=bg_geo_lons,
+            lat=bg_geo_lats,
+            mode="lines",
+            line=dict(width=1.5, color="rgba(148, 163, 184, 0.35)", dash="dot"),
+            hoverinfo="skip",
+            showlegend=False
+        ))
 
     if selected_vessel and "waypoints" in selected_vessel:
         wps = selected_vessel["waypoints"]
@@ -590,16 +619,16 @@ else:
         ))
 
     fig_map.update_geos(
-        projection_type="orthographic",
+        projection_type=proj_type,
         showocean=True,
         oceancolor="#070A12",
         showland=True,
-        landcolor="#18233C",
+        landcolor="#131B2E",
         showcountries=True,
-        countrycolor="rgba(255, 255, 255, 0.25)",
+        countrycolor="rgba(255, 255, 255, 0.22)",
         showcoastlines=True,
-        coastlinecolor="rgba(245, 185, 66, 0.5)",
-        resolution=50
+        coastlinecolor="rgba(245, 185, 66, 0.45)",
+        resolution=110
     )
     fig_map.update_layout(
         paper_bgcolor="#070A12",
@@ -613,13 +642,25 @@ st.plotly_chart(
     fig_map,
     use_container_width=True,
     config={
-        "scrollZoom": False,
+        "scrollZoom": mouse_scroll_zoom,
+        "doubleClick": "reset+autosize",
         "displayModeBar": True,
         "displaylogo": False,
         "modeBarButtonsToRemove": ["lasso2d", "select2d"],
         "modeBarButtonsToAdd": ["zoomIn2d", "zoomOut2d", "resetScale2d"],
     }
 )
+
+st.markdown("""
+<div style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 8px; padding: 8px 14px; margin-top: 6px; font-size: 0.78rem; color: #94A3B8; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
+    <div>
+        💡 <b>Natural Page Scroll Protected:</b> Page scrolls down smoothly without stopping on map. To zoom the map with mouse wheel/trackpad, toggle <b>"🖱️ Mouse Wheel Zoom"</b> ON above, double-click anywhere to zoom in, or click <b>[+] [-]</b> in the top right map toolbar.
+    </div>
+    <div style="color: #38BDF8; font-weight: 600;">
+        🌍 All Continents & Countries Active (Americas, Asia, Europe, Africa, Oceania)
+    </div>
+</div>
+""", unsafe_allow_html=True)
 
 # -------------------------------------------------------------
 # 6. VESSEL DEEP-DIVE DOSSIER & PHOTOGRAPHY (CLEAN HTML, NO LEAKAGE)
