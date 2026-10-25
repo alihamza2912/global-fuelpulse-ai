@@ -57,40 +57,40 @@ class HighwayFuelOptimizer:
 
     # 2. INDIA STATES & UTS DATABASE (Live benchmark retail pump rates in INR)
     INDIA_NODES = {
-        "Delhi": {"state": "Delhi (NCT)", "petrol": 96.72, "diesel": 87.62, "vat_pct": 19.4, "lat": 28.6139, "lon": 77.2090},
-        "Haryana": {"state": "Haryana", "petrol": 95.25, "diesel": 88.05, "vat_pct": 18.2, "lat": 28.4595, "lon": 77.0266},
-        "Uttar Pradesh": {"state": "Uttar Pradesh", "petrol": 94.75, "diesel": 87.85, "vat_pct": 17.5, "lat": 26.8467, "lon": 80.9462},
-        "Rajasthan": {"state": "Rajasthan", "petrol": 104.88, "diesel": 90.36, "vat_pct": 31.0, "lat": 26.9124, "lon": 75.7873},
-        "Gujarat": {"state": "Gujarat", "petrol": 94.42, "diesel": 89.15, "vat_pct": 13.7, "lat": 23.0225, "lon": 72.5714},
-        "Maharashtra": {"state": "Maharashtra", "petrol": 104.21, "diesel": 92.15, "vat_pct": 25.0, "lat": 19.0760, "lon": 72.8777},
-        "Karnataka": {"state": "Karnataka", "petrol": 102.86, "diesel": 88.94, "vat_pct": 18.4, "lat": 12.9716, "lon": 77.5946},
-        "Tamil Nadu": {"state": "Tamil Nadu", "petrol": 100.75, "diesel": 92.34, "vat_pct": 15.0, "lat": 13.0827, "lon": 80.2707},
-        "Telangana": {"state": "Telangana", "petrol": 107.41, "diesel": 95.65, "vat_pct": 35.2, "lat": 17.3850, "lon": 78.4867},
-        "Andhra Pradesh": {"state": "Andhra Pradesh", "petrol": 109.87, "diesel": 97.71, "vat_pct": 31.0, "lat": 16.5062, "lon": 80.6480},
-        "West Bengal": {"state": "West Bengal", "petrol": 103.94, "diesel": 90.76, "vat_pct": 25.0, "lat": 22.5726, "lon": 88.3639},
-        "Punjab": {"state": "Punjab", "petrol": 96.88, "diesel": 87.16, "vat_pct": 15.5, "lat": 30.9010, "lon": 75.8573},
-        "Madhya Pradesh": {"state": "Madhya Pradesh", "petrol": 106.47, "diesel": 91.84, "vat_pct": 29.0, "lat": 23.2599, "lon": 77.4126},
-        "Bihar": {"state": "Bihar", "petrol": 105.18, "diesel": 92.04, "vat_pct": 26.0, "lat": 25.5941, "lon": 85.1376},
-        "Kerala": {"state": "Kerala", "petrol": 105.84, "diesel": 94.84, "vat_pct": 30.0, "lat": 9.9312, "lon": 76.2673},
-        "Odisha": {"state": "Odisha", "petrol": 101.06, "diesel": 92.64, "vat_pct": 28.0, "lat": 20.2961, "lon": 85.8245},
-        "Assam": {"state": "Assam", "petrol": 96.01, "diesel": 88.27, "vat_pct": 22.0, "lat": 26.1445, "lon": 91.7362},
-        "Jharkhand": {"state": "Jharkhand", "petrol": 97.81, "diesel": 92.56, "vat_pct": 22.0, "lat": 23.3441, "lon": 85.3096},
-        "Chhattisgarh": {"state": "Chhattisgarh", "petrol": 100.39, "diesel": 93.33, "vat_pct": 24.0, "lat": 21.2514, "lon": 81.6296},
-        "Himachal Pradesh": {"state": "Himachal Pradesh", "petrol": 95.28, "diesel": 87.32, "vat_pct": 14.0, "lat": 31.1048, "lon": 77.1734},
-        "Uttarakhand": {"state": "Uttarakhand", "petrol": 93.45, "diesel": 88.32, "vat_pct": 17.0, "lat": 30.3165, "lon": 78.0322},
-        "Goa": {"state": "Goa", "petrol": 96.48, "diesel": 88.24, "vat_pct": 21.0, "lat": 15.4909, "lon": 73.8278},
-        "Jammu & Kashmir": {"state": "Jammu & Kashmir", "petrol": 97.50, "diesel": 83.26, "vat_pct": 16.5, "lat": 34.0837, "lon": 74.7973},
-        "Chandigarh": {"state": "Chandigarh (UT)", "petrol": 94.24, "diesel": 82.40, "vat_pct": 11.0, "lat": 30.7333, "lon": 76.7794},
-        "Puducherry": {"state": "Puducherry (UT)", "petrol": 94.18, "diesel": 84.34, "vat_pct": 14.0, "lat": 11.9416, "lon": 79.8083},
-        "Daman & Diu": {"state": "Dadra & Nagar Haveli and Daman & Diu", "petrol": 92.50, "diesel": 87.80, "vat_pct": 12.0, "lat": 20.4283, "lon": 72.8397},
-        "Sikkim": {"state": "Sikkim", "petrol": 100.75, "diesel": 88.90, "vat_pct": 20.0, "lat": 27.3389, "lon": 88.6065},
-        "Meghalaya": {"state": "Meghalaya", "petrol": 96.80, "diesel": 87.90, "vat_pct": 20.0, "lat": 25.5788, "lon": 91.8933},
-        "Tripura": {"state": "Tripura", "petrol": 97.45, "diesel": 86.50, "vat_pct": 21.0, "lat": 23.8315, "lon": 91.2868},
-        "Nagaland": {"state": "Nagaland", "petrol": 97.10, "diesel": 88.40, "vat_pct": 21.5, "lat": 25.6751, "lon": 94.1086},
-        "Manipur": {"state": "Manipur", "petrol": 99.20, "diesel": 87.60, "vat_pct": 22.0, "lat": 24.8170, "lon": 93.9368},
-        "Mizoram": {"state": "Mizoram", "petrol": 99.15, "diesel": 88.02, "vat_pct": 22.0, "lat": 23.7271, "lon": 92.7176},
-        "Arunachal Pradesh": {"state": "Arunachal Pradesh", "petrol": 90.95, "diesel": 80.45, "vat_pct": 10.0, "lat": 27.0844, "lon": 93.6053},
-        "Ladakh": {"state": "Ladakh (UT)", "petrol": 98.40, "diesel": 84.10, "vat_pct": 16.5, "lat": 34.1526, "lon": 77.5771}
+        "Delhi": {"state": "Delhi (NCT)", "petrol": 96.72, "diesel": 87.62, "vat_petrol_pct": 19.4, "vat_diesel_pct": 16.75, "vat_pct": 19.4, "lat": 28.6139, "lon": 77.2090},
+        "Haryana": {"state": "Haryana", "petrol": 95.25, "diesel": 88.05, "vat_petrol_pct": 18.2, "vat_diesel_pct": 16.0, "vat_pct": 18.2, "lat": 28.4595, "lon": 77.0266},
+        "Uttar Pradesh": {"state": "Uttar Pradesh", "petrol": 94.75, "diesel": 87.85, "vat_petrol_pct": 17.5, "vat_diesel_pct": 17.5, "vat_pct": 17.5, "lat": 26.8467, "lon": 80.9462},
+        "Rajasthan": {"state": "Rajasthan", "petrol": 104.88, "diesel": 90.36, "vat_petrol_pct": 31.0, "vat_diesel_pct": 31.0, "vat_pct": 31.0, "lat": 26.9124, "lon": 75.7873},
+        "Gujarat": {"state": "Gujarat", "petrol": 94.42, "diesel": 89.15, "vat_petrol_pct": 13.7, "vat_diesel_pct": 14.9, "vat_pct": 13.7, "lat": 23.0225, "lon": 72.5714},
+        "Maharashtra": {"state": "Maharashtra", "petrol": 104.21, "diesel": 92.15, "vat_petrol_pct": 25.0, "vat_diesel_pct": 21.0, "vat_pct": 25.0, "lat": 19.0760, "lon": 72.8777},
+        "Karnataka": {"state": "Karnataka", "petrol": 102.86, "diesel": 88.94, "vat_petrol_pct": 25.9, "vat_diesel_pct": 14.3, "vat_pct": 18.4, "lat": 12.9716, "lon": 77.5946},
+        "Tamil Nadu": {"state": "Tamil Nadu", "petrol": 100.75, "diesel": 92.34, "vat_petrol_pct": 15.0, "vat_diesel_pct": 11.0, "vat_pct": 15.0, "lat": 13.0827, "lon": 80.2707},
+        "Telangana": {"state": "Telangana", "petrol": 107.41, "diesel": 95.65, "vat_petrol_pct": 35.2, "vat_diesel_pct": 27.0, "vat_pct": 35.2, "lat": 17.3850, "lon": 78.4867},
+        "Andhra Pradesh": {"state": "Andhra Pradesh", "petrol": 109.87, "diesel": 97.71, "vat_petrol_pct": 31.0, "vat_diesel_pct": 22.25, "vat_pct": 31.0, "lat": 16.5062, "lon": 80.6480},
+        "West Bengal": {"state": "West Bengal", "petrol": 103.94, "diesel": 90.76, "vat_petrol_pct": 25.0, "vat_diesel_pct": 17.0, "vat_pct": 25.0, "lat": 22.5726, "lon": 88.3639},
+        "Punjab": {"state": "Punjab", "petrol": 96.88, "diesel": 87.16, "vat_petrol_pct": 15.7, "vat_diesel_pct": 12.0, "vat_pct": 15.5, "lat": 30.9010, "lon": 75.8573},
+        "Madhya Pradesh": {"state": "Madhya Pradesh", "petrol": 106.47, "diesel": 91.84, "vat_petrol_pct": 29.0, "vat_diesel_pct": 19.0, "vat_pct": 29.0, "lat": 23.2599, "lon": 77.4126},
+        "Bihar": {"state": "Bihar", "petrol": 105.18, "diesel": 92.04, "vat_petrol_pct": 26.0, "vat_diesel_pct": 19.0, "vat_pct": 26.0, "lat": 25.5941, "lon": 85.1376},
+        "Kerala": {"state": "Kerala", "petrol": 105.84, "diesel": 94.84, "vat_petrol_pct": 30.0, "vat_diesel_pct": 22.76, "vat_pct": 30.0, "lat": 9.9312, "lon": 76.2673},
+        "Odisha": {"state": "Odisha", "petrol": 101.06, "diesel": 92.64, "vat_petrol_pct": 28.0, "vat_diesel_pct": 24.0, "vat_pct": 28.0, "lat": 20.2961, "lon": 85.8245},
+        "Assam": {"state": "Assam", "petrol": 96.01, "diesel": 88.27, "vat_petrol_pct": 22.0, "vat_diesel_pct": 17.0, "vat_pct": 22.0, "lat": 26.1445, "lon": 91.7362},
+        "Jharkhand": {"state": "Jharkhand", "petrol": 97.81, "diesel": 92.56, "vat_petrol_pct": 22.0, "vat_diesel_pct": 22.0, "vat_pct": 22.0, "lat": 23.3441, "lon": 85.3096},
+        "Chhattisgarh": {"state": "Chhattisgarh", "petrol": 100.39, "diesel": 93.33, "vat_petrol_pct": 24.0, "vat_diesel_pct": 23.0, "vat_pct": 24.0, "lat": 21.2514, "lon": 81.6296},
+        "Himachal Pradesh": {"state": "Himachal Pradesh", "petrol": 95.28, "diesel": 87.32, "vat_petrol_pct": 14.0, "vat_diesel_pct": 10.0, "vat_pct": 14.0, "lat": 31.1048, "lon": 77.1734},
+        "Uttarakhand": {"state": "Uttarakhand", "petrol": 93.45, "diesel": 88.32, "vat_petrol_pct": 17.0, "vat_diesel_pct": 14.5, "vat_pct": 17.0, "lat": 30.3165, "lon": 78.0322},
+        "Goa": {"state": "Goa", "petrol": 96.48, "diesel": 88.24, "vat_petrol_pct": 21.0, "vat_diesel_pct": 17.5, "vat_pct": 21.0, "lat": 15.4909, "lon": 73.8278},
+        "Jammu & Kashmir": {"state": "Jammu & Kashmir", "petrol": 97.50, "diesel": 83.26, "vat_petrol_pct": 16.5, "vat_diesel_pct": 14.0, "vat_pct": 16.5, "lat": 34.0837, "lon": 74.7973},
+        "Chandigarh": {"state": "Chandigarh (UT)", "petrol": 94.24, "diesel": 82.40, "vat_petrol_pct": 11.0, "vat_diesel_pct": 10.5, "vat_pct": 11.0, "lat": 30.7333, "lon": 76.7794},
+        "Puducherry": {"state": "Puducherry (UT)", "petrol": 94.18, "diesel": 84.34, "vat_petrol_pct": 14.0, "vat_diesel_pct": 10.5, "vat_pct": 14.0, "lat": 11.9416, "lon": 79.8083},
+        "Daman & Diu": {"state": "Dadra & Nagar Haveli and Daman & Diu", "petrol": 92.50, "diesel": 87.80, "vat_petrol_pct": 12.0, "vat_diesel_pct": 12.0, "vat_pct": 12.0, "lat": 20.4283, "lon": 72.8397},
+        "Sikkim": {"state": "Sikkim", "petrol": 100.75, "diesel": 88.90, "vat_petrol_pct": 20.0, "vat_diesel_pct": 15.0, "vat_pct": 20.0, "lat": 27.3389, "lon": 88.6065},
+        "Meghalaya": {"state": "Meghalaya", "petrol": 96.80, "diesel": 87.90, "vat_petrol_pct": 20.0, "vat_diesel_pct": 13.5, "vat_pct": 20.0, "lat": 25.5788, "lon": 91.8933},
+        "Tripura": {"state": "Tripura", "petrol": 97.45, "diesel": 86.50, "vat_petrol_pct": 21.0, "vat_diesel_pct": 16.5, "vat_pct": 21.0, "lat": 23.8315, "lon": 91.2868},
+        "Nagaland": {"state": "Nagaland", "petrol": 97.10, "diesel": 88.40, "vat_petrol_pct": 21.5, "vat_diesel_pct": 17.5, "vat_pct": 21.5, "lat": 25.6751, "lon": 94.1086},
+        "Manipur": {"state": "Manipur", "petrol": 99.20, "diesel": 87.60, "vat_petrol_pct": 22.0, "vat_diesel_pct": 17.5, "vat_pct": 22.0, "lat": 24.8170, "lon": 93.9368},
+        "Mizoram": {"state": "Mizoram", "petrol": 99.15, "diesel": 88.02, "vat_petrol_pct": 22.0, "vat_diesel_pct": 16.5, "vat_pct": 22.0, "lat": 23.7271, "lon": 92.7176},
+        "Arunachal Pradesh": {"state": "Arunachal Pradesh", "petrol": 90.95, "diesel": 80.45, "vat_petrol_pct": 10.0, "vat_diesel_pct": 10.0, "vat_pct": 10.0, "lat": 27.0844, "lon": 93.6053},
+        "Ladakh": {"state": "Ladakh (UT)", "petrol": 98.40, "diesel": 84.10, "vat_petrol_pct": 16.5, "vat_diesel_pct": 14.0, "vat_pct": 16.5, "lat": 34.1526, "lon": 77.5771}
     }
 
     # 3. SAUDI ARABIA HUBS (Aramco official regulated prices in SAR)
@@ -428,6 +428,19 @@ class HighwayFuelOptimizer:
                 return nd.get("diesel_sar_equiv" if fuel_type == "diesel" else "petrol", 2.18)
             return 89.0
 
+        # Resolve clean fuel label
+        if "petrol" in fuel_type.lower():
+            if "91" in fuel_type:
+                fuel_label = "Petrol (91 Octane)"
+            elif "95" in fuel_type:
+                fuel_label = "Petrol (95 Octane)"
+            elif "98" in fuel_type:
+                fuel_label = "Petrol (98 Octane)"
+            else:
+                fuel_label = "Petrol"
+        else:
+            fuel_label = "Diesel"
+
         # Calculate waypoint distances cumulative from origin
         waypoints_data = []
         cum_km = 0.0
@@ -435,7 +448,10 @@ class HighwayFuelOptimizer:
             seg_len = segments[i] if i < len(segments) else (total_dist_km - cum_km)
             p_price = _get_node_price(node_name)
             node_info = nodes_db.get(node_name, {})
-            vat = node_info.get("vat_pct", 18.0)
+            if "petrol" in fuel_type.lower():
+                vat = node_info.get("vat_petrol_pct") or node_info.get("vat_pct", 18.0)
+            else:
+                vat = node_info.get("vat_diesel_pct") or node_info.get("vat_pct", 18.0)
             jurisdiction = node_info.get("state") or node_info.get("province") or node_info.get("emirate") or node_info.get("country", node_name)
             
             waypoints_data.append({
@@ -445,6 +461,7 @@ class HighwayFuelOptimizer:
                 "segment_km": seg_len,
                 "cumulative_km": cum_km,
                 "fuel_price": p_price,
+                "fuel_type": fuel_label,
                 "vat_pct": vat,
                 "lat": node_info.get("lat", 0.0),
                 "lon": node_info.get("lon", 0.0)
@@ -496,13 +513,13 @@ class HighwayFuelOptimizer:
                 if is_cheapest or wp["fuel_price"] < avg_price:
                     fill_action = "Full Tank Top-Up ⛽"
                     fill_liters = round(tank_cap - fuel_remaining_l, 1)
-                    reason = f"Origin fuel is low cost ({currency_symbol}{wp['fuel_price']}/L). Lock in full tank capacity."
+                    reason = f"Origin {fuel_label} is low cost ({currency_symbol}{wp['fuel_price']}/L). Lock in full tank capacity."
                 else:
                     # Origin is somewhat expensive, buy only minimum safety buffer
                     fill_action = "Strategic Partial Fill 🟡"
-                    needed_to_cheapest = min(tank_cap, max(fuel_burn_to_next * 1.3, 40.0))
+                    needed_to_cheapest = min(tank_cap, max(fuel_burn_to_next * 1.3, min(tank_cap * 0.4, 40.0)))
                     fill_liters = round(max(0.0, needed_to_cheapest - fuel_remaining_l), 1)
-                    reason = f"High tax zone ({wp['vat_pct']}% VAT). Buy only minimum required until reaching cheaper border zone."
+                    reason = f"High tax zone ({wp['vat_pct']}% {fuel_label} VAT). Buy only minimum required until reaching cheaper border zone."
             elif is_destination:
                 fill_action = "Trip Complete 🏁"
                 fill_liters = 0.0
@@ -510,13 +527,13 @@ class HighwayFuelOptimizer:
             elif is_cheapest:
                 fill_action = "MAX REFUEL ARBITRAGE ⭐"
                 fill_liters = round(tank_cap - fuel_remaining_l, 1)
-                reason = f"Optimal arbitrage zone ({currency_symbol}{wp['fuel_price']}/L)! Top up to 100% capacity before higher tax state."
+                reason = f"Optimal arbitrage zone ({currency_symbol}{wp['fuel_price']}/L for {fuel_label})! Top up to 100% capacity before higher tax state."
             elif is_expensive:
                 # Avoid filling here if fuel buffer permits
                 if fuel_remaining_l > fuel_burn_to_next * 1.15:
                     fill_action = "DO NOT REFUEL 🛑"
                     fill_liters = 0.0
-                    reason = f"High VAT alert ({currency_symbol}{wp['fuel_price']}/L, {wp['vat_pct']}% VAT). Avoid purchasing here!"
+                    reason = f"High {fuel_label} VAT alert ({currency_symbol}{wp['fuel_price']}/L, {wp['vat_pct']}% VAT). Avoid purchasing here!"
                 else:
                     fill_action = "Emergency Splash Only ⚠️"
                     fill_liters = round(max(10.0, (fuel_burn_to_next * 1.25) - fuel_remaining_l), 1)
@@ -525,7 +542,7 @@ class HighwayFuelOptimizer:
                 if fuel_remaining_l < (tank_cap * 0.25):
                     fill_action = "Maintenance Top-Up ⛽"
                     fill_liters = round(tank_cap * 0.5 - fuel_remaining_l, 1)
-                    reason = "Mid-range buffer maintainer."
+                    reason = f"Mid-range buffer maintainer for {fuel_label}."
 
             fill_liters = max(0.0, fill_liters)
             fill_cost = round(fill_liters * wp["fuel_price"], 2)
@@ -542,6 +559,7 @@ class HighwayFuelOptimizer:
                 "jurisdiction": wp["jurisdiction"],
                 "km_mark": round(wp["cumulative_km"], 1),
                 "price": wp["fuel_price"],
+                "fuel_type": fuel_label,
                 "action": fill_action,
                 "liters_filled": fill_liters,
                 "cost": fill_cost,
@@ -574,6 +592,7 @@ class HighwayFuelOptimizer:
             "mileage_kml": mileage_kml,
             "tank_range_km": round(tank_range_km, 1),
             "fuel_type": fuel_type.upper().replace("_", " "),
+            "fuel_label": fuel_label,
             "total_fuel_needed_l": total_fuel_needed_l,
             "currency_code": currency_code,
             "currency_symbol": currency_symbol,

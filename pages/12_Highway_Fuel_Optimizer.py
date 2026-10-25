@@ -166,19 +166,60 @@ with col_fuel:
     )[0]
 
 v_def = HighwayFuelOptimizer.VEHICLE_PROFILES[vehicle_type]
-override_tank = float(v_def["tank_capacity_l"])
-override_kml = float(v_def["consumption_kml"])
+
+# Check if vehicle_type changed and reset defaults if so
+last_veh = st.session_state.get("hfo_last_vehicle")
+if last_veh != vehicle_type:
+    st.session_state["hfo_custom_tank"] = float(v_def["tank_capacity_l"])
+    st.session_state["hfo_custom_kml"] = float(v_def["consumption_kml"])
+    st.session_state["hfo_last_vehicle"] = vehicle_type
+
+if "hfo_custom_tank" not in st.session_state:
+    st.session_state["hfo_custom_tank"] = float(v_def["tank_capacity_l"])
+if "hfo_custom_kml" not in st.session_state:
+    st.session_state["hfo_custom_kml"] = float(v_def["consumption_kml"])
+
+active_tank = float(st.session_state["hfo_custom_tank"])
+active_kml = float(st.session_state["hfo_custom_kml"])
 
 with col_custom:
     st.markdown(f'<label style="font-size: 14px; font-weight: 400; color: #F8FAFC; display: block; margin-bottom: 7px; height: 21px; overflow: hidden; white-space: nowrap;">{t("hfo_tank_mileage", current_lang)}</label>', unsafe_allow_html=True)
-    with st.popover(f"⚙️ Tank: {v_def['tank_capacity_l']}L • {v_def['consumption_kml']} km/L", use_container_width=True):
+    with st.popover(f"⚙️ Tank: {active_tank:g}L • {active_kml:g} km/L", use_container_width=True):
         st.markdown("**Vehicle Range Tuning**")
-        p_tank = st.number_input("Custom Tank Capacity (Liters)", min_value=10.0, max_value=1200.0, value=float(v_def["tank_capacity_l"]), step=10.0)
-        p_kml = st.number_input("Fuel Efficiency (km/L)", min_value=1.0, max_value=40.0, value=float(v_def["consumption_kml"]), step=0.5)
-        if p_tank:
-            override_tank = p_tank
-        if p_kml:
-            override_kml = p_kml
+        p_tank = st.number_input("Custom Tank Capacity (Liters)", min_value=10.0, max_value=1200.0, step=5.0, key="hfo_custom_tank")
+        p_kml = st.number_input("Fuel Efficiency (km/L)", min_value=0.5, max_value=50.0, step=0.5, key="hfo_custom_kml")
+        override_tank = float(p_tank)
+        override_kml = float(p_kml)
+
+if fuel_type == "petrol_91":
+    fuel_display_name = "Petrol (91 Octane)"
+elif fuel_type == "petrol_95":
+    fuel_display_name = "Petrol (95 Octane)"
+elif fuel_type == "petrol_98":
+    fuel_display_name = "Petrol (98 Octane)"
+elif "petrol" in fuel_type.lower():
+    fuel_display_name = "Petrol (Motor Spirit)"
+else:
+    fuel_display_name = "Diesel (HSD)"
+
+fuel_badge_color = "#34D399" if "petrol" in fuel_type.lower() else "#F5B942"
+fuel_badge_bg = "rgba(16, 185, 129, 0.12)" if "petrol" in fuel_type.lower() else "rgba(245, 185, 66, 0.12)"
+fuel_badge_border = "rgba(16, 185, 129, 0.3)" if "petrol" in fuel_type.lower() else "rgba(245, 185, 66, 0.3)"
+
+st.markdown(f"""
+<div style="background: {fuel_badge_bg}; border: 1px solid {fuel_badge_border}; border-radius: 8px; padding: 8px 14px; margin-top: 6px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
+    <div style="font-size: 0.82rem; color: #CBD5E1;">
+        <span style="font-weight: 700; color: #94A3B8;">ACTIVE VEHICLE:</span> {v_def['icon']} <b>{v_def['name']}</b>
+        <span style="margin: 0 8px; color: rgba(255,255,255,0.2);">|</span>
+        <span style="font-weight: 700; color: {fuel_badge_color};">ACTIVE FUEL:</span> <b style="color: {fuel_badge_color};">{fuel_display_name.upper()}</b>
+        <span style="margin: 0 8px; color: rgba(255,255,255,0.2);">|</span>
+        <span style="font-weight: 700; color: #38BDF8;">TUNED TANK & MILEAGE:</span> <b>{active_tank:g} L</b> • <b>{active_kml:g} km/L</b>
+    </div>
+    <div style="font-size: 0.78rem; color: {fuel_badge_color}; font-weight: 700;">
+        ✓ Real-Time Route & Tax Applied
+    </div>
+</div>
+""", unsafe_allow_html=True)
 
 # -------------------------------------------------------------
 # 2. RUN OPTIMIZATION ALGORITHM
@@ -217,9 +258,9 @@ with m1:
 with m2:
     st.markdown(f"""
     <div class="hfo-scorecard" style="padding: 16px; text-align: center; min-height: 125px; height: 100%; display: flex; flex-direction: column; justify-content: space-between;">
-        <div style="font-size: 0.72rem; color: #94A3B8; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; min-height: 24px;">{t("hfo_metric_consumption", current_lang)}</div>
+        <div style="font-size: 0.72rem; color: #94A3B8; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; min-height: 24px;">{t("hfo_metric_consumption", current_lang)} ({'PETROL' if 'petrol' in fuel_type.lower() else 'DIESEL'})</div>
         <div style="font-size: 1.5rem; font-weight: 800; color: #F5B942; margin: 4px 0;">{result['total_fuel_needed_l']:,.1f} <span style="font-size: 0.85rem; color: #94A3B8;">L</span></div>
-        <div style="font-size: 0.75rem; color: #94A3B8; font-weight: 600;">Range: {result['tank_range_km']:,.0f} km/tank</div>
+        <div style="font-size: 0.75rem; color: #94A3B8; font-weight: 600;">⛽ Tank: {result['tank_capacity_l']:g}L • {result['mileage_kml']:g} km/L • Range: {result['tank_range_km']:,.0f} km</div>
     </div>
     """, unsafe_allow_html=True)
 
@@ -268,11 +309,16 @@ with st.expander(t("hfo_guide_title", current_lang), expanded=True):
             </p>
             <div style="font-size: 0.82rem; color: #94A3B8; line-height: 1.5;">
                 • <b>Arbitrage</b> simply means filling your tank in cheaper states and skipping petrol stations in high-tax states.<br>
-                • On a single 400L commercial truck trip, following this strategy can easily save <b>₹1,500 to ₹8,000 in India</b>, or up to <b>400+ SAR / AED</b> on Gulf cross-border routes!
+                • On a single <b>{active_tank:g}L {result['vehicle']}</b> trip with <b>{fuel_display_name}</b>, following this strategy can easily save <b>{sym}{fin['net_savings']:,.0f} ({fin['savings_pct']}%)</b> on this corridor!
             </div>
         </div>
         """, unsafe_allow_html=True)
     with col_g2:
+        rule_cross_border = (
+            f"<b>3. Cross-Border Rule:</b> Entering the UAE from Saudi Arabia? <b>Fill 100% in Saudi</b>—Saudi petrol is ~25% cheaper than UAE petrol!"
+            if "petrol" in fuel_type.lower() else
+            f"<b>3. Cross-Border Rule:</b> Entering the UAE from Saudi Arabia? <b>Fill 100% in Saudi</b>—Saudi diesel is ~60% cheaper than UAE diesel!"
+        )
         st.markdown(f"""
         <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 8px; padding: 14px; height: 100%;">
             <div style="font-weight: 700; color: #34D399; font-size: 0.92rem; margin-bottom: 6px;">
@@ -281,7 +327,7 @@ with st.expander(t("hfo_guide_title", current_lang), expanded=True):
             <div style="font-size: 0.82rem; color: #CBD5E1; line-height: 1.55;">
                 <b>1. Never enter a high-tax state with an empty tank!</b> Always top up to 100% at the last petrol station before crossing the border.<br>
                 <b>2. If running low in an expensive state, buy only a "splash"</b> (10–20 Liters)—just enough to reach the next cheap border station.<br>
-                <b>3. Cross-Border Rule:</b> Entering the UAE from Saudi Arabia? <b>Fill 100% in Saudi</b>—Saudi diesel is ~60% cheaper than UAE diesel!
+                {rule_cross_border}
             </div>
         </div>
         """, unsafe_allow_html=True)
@@ -300,7 +346,7 @@ chart_plot_bg = "#090E1C"
 with col_chart_route:
     st.markdown(f"""
     <div style="font-size: 0.95rem; font-weight: 700; color: #F8FAFC; margin-bottom: 8px;">
-        {t("hfo_chart_trajectory", current_lang)}
+        📈 Highway Corridor {fuel_display_name} Price Trajectory & Waypoint Arbitrage
     </div>
     """, unsafe_allow_html=True)
 
@@ -316,7 +362,7 @@ with col_chart_route:
         textposition="top center",
         line=dict(color="#F5B942", width=3, shape="spline"),
         marker=dict(size=10, color="#F5B942", line=dict(color="#090E1C", width=2)),
-        name="Pump Price"
+        name=f"{fuel_display_name} Pump Price"
     ))
 
     # Benchmark Average
@@ -324,7 +370,7 @@ with col_chart_route:
         y=p_met["avg_price"],
         line_dash="dot",
         line_color="rgba(148, 163, 184, 0.6)",
-        annotation_text=f"Corridor Avg: {sym}{p_met['avg_price']:.2f}",
+        annotation_text=f"Corridor Avg ({fuel_display_name}): {sym}{p_met['avg_price']:.2f}",
         annotation_position="bottom right"
     )
 
@@ -340,7 +386,7 @@ with col_chart_route:
             zeroline=False
         ),
         yaxis=dict(
-            title=f"Price ({code} / Litre)",
+            title=f"{fuel_display_name} Price ({code} / Litre)",
             gridcolor="rgba(255, 255, 255, 0.06)",
             zeroline=False
         ),
@@ -349,14 +395,14 @@ with col_chart_route:
     st.plotly_chart(fig_route, use_container_width=True)
     st.markdown(f"""
     <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 8px; padding: 10px 14px; margin-top: 6px; font-size: 0.78rem; color: #CBD5E1; line-height: 1.5;">
-        💡 <b>How to read this trajectory:</b> The <b>gold line</b> shows fuel prices as you drive along the highway. <b>Dips</b> are your best discount refill points. <b>Peaks</b> are high-tax spikes. The white dotted line is the corridor average ({sym}{p_met['avg_price']:.2f})—always aim to top up when the price is below this line!
+        💡 <b>How to read this trajectory:</b> The <b>gold line</b> shows <b>{fuel_display_name}</b> prices as you drive along the highway. <b>Dips</b> are your best discount refill points. <b>Peaks</b> are high-tax spikes. The white dotted line is the corridor average ({sym}{p_met['avg_price']:.2f})—always aim to top up when the price is below this line!
     </div>
     """, unsafe_allow_html=True)
 
 with col_chart_tax:
-    st.markdown("""
+    st.markdown(f"""
     <div style="font-size: 0.95rem; font-weight: 700; color: #F8FAFC; margin-bottom: 8px;">
-        🏛️ Interstate VAT & Local Tax Disparity (% Spread)
+        🏛️ Interstate VAT & Retail {fuel_display_name} Price Disparity (% Spread)
     </div>
     """, unsafe_allow_html=True)
 
@@ -369,9 +415,9 @@ with col_chart_tax:
         x=wp_df["node"],
         y=wp_df["fuel_price"],
         marker_color=colors,
-        text=[f"{sym}{p:.2f}<br>({v}%)" for p, v in zip(wp_df["fuel_price"], wp_df["vat_pct"])],
+        text=[f"{sym}{p:.2f}<br>({v}% VAT)" for p, v in zip(wp_df["fuel_price"], wp_df["vat_pct"])],
         textposition="auto",
-        name="Price / L"
+        name=f"{fuel_display_name} Price / L"
     ))
 
     fig_tax.update_layout(
@@ -385,7 +431,7 @@ with col_chart_tax:
             zeroline=False
         ),
         yaxis=dict(
-            title=f"Price ({code} / Litre)",
+            title=f"{fuel_display_name} Price ({code} / Litre)",
             gridcolor="rgba(255, 255, 255, 0.06)",
             zeroline=False
         ),
@@ -394,7 +440,7 @@ with col_chart_tax:
     st.plotly_chart(fig_tax, use_container_width=True)
     st.markdown(f"""
     <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 8px; padding: 10px 14px; margin-top: 6px; font-size: 0.78rem; color: #CBD5E1; line-height: 1.5;">
-        💡 <b>Why taxes differ:</b> Each state or emirate adds its own VAT rate (shown in parentheses). <span style="color: #34D399; font-weight: 700;">Green bars</span> are low-tax zones where you save money. <span style="color: #FB7185; font-weight: 700;">Red bars</span> are high-tax zones where fuel is expensive.
+        💡 <b>Why taxes differ:</b> Each state or emirate adds its own VAT rate on {fuel_display_name} (shown in parentheses). <span style="color: #34D399; font-weight: 700;">Green bars</span> are low-tax zones where you save money. <span style="color: #FB7185; font-weight: 700;">Red bars</span> are high-tax zones where fuel is expensive.
     </div>
     """, unsafe_allow_html=True)
 
@@ -406,10 +452,10 @@ st.markdown(f"""
 <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
     <div>
         <div style="font-weight: 700; color: #F8FAFC; font-size: 1.1rem; letter-spacing: 0.02em;">
-            📋 STEP-BY-STEP AI REFUELING STRATEGY & MANIFEST
+            📋 STEP-BY-STEP AI REFUELING STRATEGY & MANIFEST ({fuel_display_name.upper()})
         </div>
         <div style="font-size: 0.8rem; color: #94A3B8;">
-            Strategic waypoints: follow these stop instructions to achieve the guaranteed {sym}{fin['net_savings']:,.0f} savings.
+            Strategic waypoints: follow these stop instructions to achieve the guaranteed {sym}{fin['net_savings']:,.0f} savings with {fuel_display_name}.
         </div>
     </div>
     <div style="display: flex; gap: 8px;">
@@ -444,7 +490,7 @@ for _, row in sched_df.iterrows():
         badge_text = "#94A3B8"
         card_bg = "#0D1527"
 
-    fill_detail = f"Fill <b>{row['liters_filled']} L</b> ({sym}{row['cost']:,.2f})" if row['liters_filled'] > 0 else "0 Liters"
+    fill_detail = f"Fill <b>{row['liters_filled']} L of {fuel_display_name}</b> ({sym}{row['cost']:,.2f})" if row['liters_filled'] > 0 else "0 Liters"
 
     st.markdown(f"""
     <div style="background: {card_bg}; border: 1px solid {border_col}; border-radius: 10px; padding: 12px 18px; margin-bottom: 8px;">
@@ -459,7 +505,7 @@ for _, row in sched_df.iterrows():
                         <span style="font-size: 0.75rem; color: #94A3B8;">({row['jurisdiction']})</span>
                     </div>
                     <div style="font-size: 0.75rem; color: #64748B;">
-                        Km Marker: <b>{row['km_mark']} km</b> • Pump Price: <b style="color: #F8FAFC;">{sym}{row['price']:.2f}/L</b> • Tax: <b>{row['vat_pct']}%</b>
+                        Km Marker: <b>{row['km_mark']} km</b> • Pump Price: <b style="color: #F8FAFC;">{sym}{row['price']:.2f}/L ({fuel_display_name})</b> • State VAT: <b>{row['vat_pct']}%</b>
                     </div>
                 </div>
             </div>
