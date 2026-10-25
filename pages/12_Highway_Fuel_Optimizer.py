@@ -47,27 +47,31 @@ current_lang = get_current_language()
 
 # Page Header (internally orchestrates universal navigation, sidebar, and theme)
 render_page_header(
-    title="10. 🛣️ Highway Fuel Trip & Arbitrage Optimizer",
-    subtitle="Interstate VAT disparity, cross-border freight corridor routing, and AI refueling optimization for India, Saudi Arabia, Dubai/UAE, and the Middle East.",
-    source_tag="PPAC • MoPNG • Saudi Aramco • UAE Fuel Committee",
-    observation_date="Live Corridor Telemetry 2026"
+    title=t("hfo_title", current_lang),
+    subtitle=t("hfo_subtitle", current_lang),
+    source_tag=t("hfo_source_tag", current_lang),
+    observation_date=t("hfo_observation_date", current_lang)
 )
 
 # -------------------------------------------------------------
 # 1. CONTROL CONSOLE: REGION, ROUTE, VEHICLE & FUEL
 # -------------------------------------------------------------
-st.markdown("""
+b_title = t("hfo_banner_title", current_lang)
+b_desc = t("hfo_banner_desc", current_lang)
+b_badge = t("hfo_ai_arbitrage_active", current_lang)
+
+st.markdown(f"""
 <div style="background: #0D1527; border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 12px; padding: 18px 22px; margin-bottom: 24px; box-shadow: 0 4px 20px rgba(0,0,0,0.3);">
     <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px;">
         <div style="display: flex; align-items: center; gap: 10px;">
             <span style="font-size: 1.2rem;">🗺️</span>
             <div>
-                <div style="font-weight: 700; color: #F8FAFC; font-size: 1.05rem; letter-spacing: 0.02em;">CORRIDOR ROUTE & VEHICLE CONFIGURATION</div>
-                <div style="font-size: 0.78rem; color: #94A3B8;">Select freight region, origin-destination nodes, and fleet vehicle parameters.</div>
+                <div style="font-weight: 700; color: #F8FAFC; font-size: 1.05rem; letter-spacing: 0.02em;">{b_title}</div>
+                <div style="font-size: 0.78rem; color: #94A3B8;">{b_desc}</div>
             </div>
         </div>
         <span style="background: rgba(245, 185, 66, 0.15); border: 1px solid rgba(245, 185, 66, 0.35); color: #F5B942; font-size: 0.75rem; font-weight: 700; padding: 4px 10px; border-radius: 20px;">
-            AI ARBITRAGE ACTIVE
+            {b_badge}
         </span>
     </div>
 </div>
@@ -77,12 +81,12 @@ col_reg, col_mode, col_corridor = st.columns([1.2, 1.0, 1.8], vertical_alignment
 
 with col_reg:
     region_choice = st.selectbox(
-        "Geographic Freight Region",
+        t("hfo_geographic_region", current_lang),
         options=[
-            ("india", "🇮🇳 India (28 States & UTs)"),
-            ("saudi", "🇸🇦 Saudi Arabia (Aramco Corridors)"),
-            ("uae", "🇦🇪 Dubai & UAE (Emirates Freight)"),
-            ("gcc_cross_border", "🌐 GCC Cross-Border (UAE, KSA, Oman, Qatar)")
+            ("india", t("reg_opt_india", current_lang)),
+            ("saudi", t("reg_opt_saudi", current_lang)),
+            ("uae", t("reg_opt_uae", current_lang)),
+            ("gcc_cross_border", t("reg_opt_gcc", current_lang))
         ],
         format_func=lambda x: x[1],
         index=0,
@@ -90,9 +94,10 @@ with col_reg:
     )[0]
 
 with col_mode:
-    route_mode = st.radio(
-        "Routing Mode",
-        options=["Preset Freight Artery", "Custom Hubs"],
+    route_mode_key = st.radio(
+        t("hfo_routing_mode", current_lang),
+        options=["preset", "custom"],
+        format_func=lambda k: t("hfo_preset_artery", current_lang) if k == "preset" else t("hfo_custom_hubs", current_lang),
         horizontal=True,
         key="opt_route_mode"
     )
@@ -102,11 +107,11 @@ selected_corridor_id = None
 custom_origin = None
 custom_dest = None
 
-if route_mode == "Preset Freight Artery":
+if route_mode_key == "preset":
     with col_corridor:
         corridor_options = [(c["id"], c["name"]) for c in corridors]
         selected_corridor_id = st.selectbox(
-            "Primary Arterial Corridor",
+            t("hfo_primary_corridor", current_lang),
             options=corridor_options,
             format_func=lambda x: x[1],
             key="opt_preset_corridor"
@@ -135,7 +140,7 @@ col_veh, col_fuel, col_custom = st.columns([1.4, 1.2, 1.4], vertical_alignment="
 with col_veh:
     veh_keys = list(HighwayFuelOptimizer.VEHICLE_PROFILES.keys())
     vehicle_type = st.selectbox(
-        "Fleet / Vehicle Class",
+        t("hfo_fleet_vehicle_class", current_lang),
         options=veh_keys,
         format_func=lambda k: f"{HighwayFuelOptimizer.VEHICLE_PROFILES[k]['icon']} {HighwayFuelOptimizer.VEHICLE_PROFILES[k]['name']}",
         index=0,
@@ -153,7 +158,7 @@ with col_fuel:
         fuel_opts = [("diesel", "⛽ Diesel (Cross-Border Arbitrage)"), ("petrol", "🟢 Petrol (Cross-Border)")]
 
     fuel_type = st.selectbox(
-        "Fuel Specification",
+        t("hfo_fuel_specification", current_lang),
         options=fuel_opts,
         format_func=lambda x: x[1],
         index=0,
@@ -165,7 +170,7 @@ override_tank = float(v_def["tank_capacity_l"])
 override_kml = float(v_def["consumption_kml"])
 
 with col_custom:
-    st.markdown('<label style="font-size: 14px; font-weight: 400; color: #F8FAFC; display: block; margin-bottom: 7px; height: 21px; overflow: hidden; white-space: nowrap;">Tank & Mileage Tuning</label>', unsafe_allow_html=True)
+    st.markdown(f'<label style="font-size: 14px; font-weight: 400; color: #F8FAFC; display: block; margin-bottom: 7px; height: 21px; overflow: hidden; white-space: nowrap;">{t("hfo_tank_mileage", current_lang)}</label>', unsafe_allow_html=True)
     with st.popover(f"⚙️ Tank: {v_def['tank_capacity_l']}L • {v_def['consumption_kml']} km/L", use_container_width=True):
         st.markdown("**Vehicle Range Tuning**")
         p_tank = st.number_input("Custom Tank Capacity (Liters)", min_value=10.0, max_value=1200.0, value=float(v_def["tank_capacity_l"]), step=10.0)
@@ -203,7 +208,7 @@ m1, m2, m3, m4, m5 = st.columns(5)
 with m1:
     st.markdown(f"""
     <div class="hfo-scorecard" style="padding: 16px; text-align: center; min-height: 125px; height: 100%; display: flex; flex-direction: column; justify-content: space-between;">
-        <div style="font-size: 0.72rem; color: #94A3B8; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; min-height: 24px;">Total Distance</div>
+        <div style="font-size: 0.72rem; color: #94A3B8; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; min-height: 24px;">{t("hfo_metric_distance", current_lang)}</div>
         <div style="font-size: 1.5rem; font-weight: 800; color: #F8FAFC; margin: 4px 0;">{result['total_distance_km']:,.0f} <span style="font-size: 0.85rem; color: #94A3B8;">km</span></div>
         <div style="font-size: 0.75rem; color: #38BDF8; font-weight: 600;">⏱️ ~{result['est_transit_hours']} hrs transit</div>
     </div>
@@ -212,7 +217,7 @@ with m1:
 with m2:
     st.markdown(f"""
     <div class="hfo-scorecard" style="padding: 16px; text-align: center; min-height: 125px; height: 100%; display: flex; flex-direction: column; justify-content: space-between;">
-        <div style="font-size: 0.72rem; color: #94A3B8; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; min-height: 24px;">Fuel Consumption</div>
+        <div style="font-size: 0.72rem; color: #94A3B8; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; min-height: 24px;">{t("hfo_metric_consumption", current_lang)}</div>
         <div style="font-size: 1.5rem; font-weight: 800; color: #F5B942; margin: 4px 0;">{result['total_fuel_needed_l']:,.1f} <span style="font-size: 0.85rem; color: #94A3B8;">L</span></div>
         <div style="font-size: 0.75rem; color: #94A3B8; font-weight: 600;">Range: {result['tank_range_km']:,.0f} km/tank</div>
     </div>
@@ -221,7 +226,7 @@ with m2:
 with m3:
     st.markdown(f"""
     <div class="hfo-scorecard" style="padding: 16px; text-align: center; min-height: 125px; height: 100%; display: flex; flex-direction: column; justify-content: space-between;">
-        <div style="font-size: 0.72rem; color: #94A3B8; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; min-height: 24px;">Unplanned Cost</div>
+        <div style="font-size: 0.72rem; color: #94A3B8; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; min-height: 24px;">{t("hfo_metric_unplanned_cost", current_lang)}</div>
         <div style="font-size: 1.5rem; font-weight: 800; color: #F43F5E; margin: 4px 0;">{sym}{fin['unoptimized_cost']:,.0f}</div>
         <div style="font-size: 0.75rem; color: #FDA4AF; font-weight: 600;">Naive random fills</div>
     </div>
@@ -230,7 +235,7 @@ with m3:
 with m4:
     st.markdown(f"""
     <div class="hfo-scorecard" style="padding: 16px; text-align: center; min-height: 125px; height: 100%; display: flex; flex-direction: column; justify-content: space-between;">
-        <div style="font-size: 0.72rem; color: #94A3B8; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; min-height: 24px;">Optimized Cost</div>
+        <div style="font-size: 0.72rem; color: #94A3B8; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; min-height: 24px;">{t("hfo_metric_optimized_cost", current_lang)}</div>
         <div style="font-size: 1.5rem; font-weight: 800; color: #10B981; margin: 4px 0;">{sym}{fin['optimized_cost']:,.0f}</div>
         <div style="font-size: 0.75rem; color: #6EE7B7; font-weight: 600;">{sym}{fin['cost_per_km']:.2f} / km</div>
     </div>
@@ -239,7 +244,7 @@ with m4:
 with m5:
     st.markdown(f"""
     <div class="hfo-scorecard" style="padding: 16px; text-align: center; min-height: 125px; height: 100%; display: flex; flex-direction: column; justify-content: space-between; background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(13, 21, 39, 0.95) 100%); border: 1px solid rgba(16, 185, 129, 0.4); box-shadow: 0 4px 15px rgba(16, 185, 129, 0.15);">
-        <div style="font-size: 0.72rem; color: #6EE7B7; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; min-height: 24px;">NET CASH SAVINGS</div>
+        <div style="font-size: 0.72rem; color: #6EE7B7; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; min-height: 24px;">{t("hfo_metric_net_savings", current_lang)}</div>
         <div style="font-size: 1.5rem; font-weight: 900; color: #34D399; margin: 4px 0;">{sym}{fin['net_savings']:,.0f}</div>
         <div style="font-size: 0.75rem; color: #A7F3D0; font-weight: 600;">💰 {fin['savings_pct']}% ROI on Strategy</div>
     </div>
@@ -250,7 +255,7 @@ with m5:
 # -------------------------------------------------------------
 st.markdown("<div style='height: 14px;'></div>", unsafe_allow_html=True)
 
-with st.expander("📖 **Plain-English Guide: What do these graphs mean and how does this tool save you money?**", expanded=True):
+with st.expander(t("hfo_guide_title", current_lang), expanded=True):
     col_g1, col_g2 = st.columns(2)
     with col_g1:
         st.markdown(f"""
@@ -293,9 +298,9 @@ chart_paper_bg = "#0D1527"
 chart_plot_bg = "#090E1C"
 
 with col_chart_route:
-    st.markdown("""
+    st.markdown(f"""
     <div style="font-size: 0.95rem; font-weight: 700; color: #F8FAFC; margin-bottom: 8px;">
-        📈 Highway Corridor Fuel Price Trajectory & Waypoint Arbitrage
+        {t("hfo_chart_trajectory", current_lang)}
     </div>
     """, unsafe_allow_html=True)
 

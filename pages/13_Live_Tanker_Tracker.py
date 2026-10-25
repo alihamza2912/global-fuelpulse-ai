@@ -56,22 +56,25 @@ apply_theme()
 current_lang = get_current_language()
 
 render_page_header(
-    title="11. 🚢 Live Maritime Fuel Tanker Tracker — AIS Telemetry",
-    subtitle="Real-time ocean coordinate positioning, speed over ground (knots), heading, dynamic days-to-arrival (ETA), and cargo valuations for global crude and fuel supertankers.",
-    source_tag="Satellite AIS • MarineTraffic Feeds • Lloyd's List Intelligence • Kpler Telemetry",
-    observation_date="Live Ocean Telemetry 2026"
+    title=t("ltt_title", current_lang),
+    subtitle=t("ltt_subtitle", current_lang),
+    source_tag=t("ltt_source_tag", current_lang),
+    observation_date=t("ltt_observation_date", current_lang)
 )
 
 # -------------------------------------------------------------
 # 2. CONTROL & FILTER CONSOLE
 # -------------------------------------------------------------
-render_html("""
+radar_banner_text = t("ltt_radar_console", current_lang)
+ais_lock_text = t("ltt_ais_lock", current_lang)
+
+render_html(f"""
 <div style="background: #0D1527; border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 12px; padding: 14px 20px; margin-bottom: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: space-between;">
     <span style="font-size: 13px; font-weight: 800; color: #F5B942; text-transform: uppercase; letter-spacing: 0.08em; display: flex; align-items: center; gap: 8px;">
-        📡 MARITIME SATELLITE RADAR & FLEET TELEMETRY CONSOLE
+        {radar_banner_text}
     </span>
     <span style="background: rgba(16, 185, 129, 0.15); color: #34D399; border: 1px solid rgba(16, 185, 129, 0.35); font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 999px;">
-        ● SATELLITE AIS LIVE LOCK
+        {ais_lock_text}
     </span>
 </div>
 """)
@@ -80,8 +83,13 @@ col_f1, col_f2, col_f3 = st.columns([2, 2, 3])
 
 with col_f1:
     cargo_choice = st.selectbox(
-        "Commodity Type",
-        options=[("all", "🌐 All Commodities"), ("crude", "🛢️ Crude Oil (VLCC/Suezmax)"), ("product", "⛽ Refined Products (Diesel/Jet)"), ("lng", "❄️ LNG Carriers (Q-Max)")],
+        t("ltt_commodity_type", current_lang),
+        options=[
+            ("all", t("ltt_all_commodities", current_lang)),
+            ("crude", t("ltt_crude_oil", current_lang)),
+            ("product", t("ltt_refined_products", current_lang)),
+            ("lng", t("ltt_lng_carriers", current_lang))
+        ],
         format_func=lambda x: x[1],
         index=0,
         key="tanker_filter_cargo"
@@ -89,16 +97,16 @@ with col_f1:
 
 with col_f2:
     class_choice = st.selectbox(
-        "Vessel Classification",
+        t("ltt_vessel_class", current_lang),
         options=["all", "VLCC", "ULCC", "Suezmax", "Aframax", "LR2", "LR1", "Q-Max"],
-        format_func=lambda x: "All Vessel Classes" if x == "all" else f"Class: {x}",
+        format_func=lambda x: t("ltt_all_classes", current_lang) if x == "all" else f"{t('tbl_vessel_class', current_lang)}: {x}",
         index=0,
         key="tanker_filter_class"
     )
 
 with col_f3:
     search_query = st.text_input(
-        "Search Fleet (Name, IMO, Port, or Flag)",
+        t("ltt_search_label", current_lang),
         placeholder="e.g. Maran Canopus, Ras Tanura, 9784532, India...",
         key="tanker_search_query"
     )
@@ -118,52 +126,52 @@ m1, m2, m3, m4, m5 = st.columns(5)
 
 with m1:
     render_instrument_card(
-        label="Active Fleet at Sea",
+        label=t("ltt_kpi_active_fleet", current_lang),
         value=f"{kpis['active_vessels']} Vessels",
         accent="amber",
-        delta="100% AIS Tracked",
+        delta=t("ltt_kpi_ais_tracked", current_lang),
         delta_is_positive_bad=False,
-        subtext="Laden international voyages"
+        subtext=t("ltt_kpi_laden_voyages", current_lang)
     )
 
 with m2:
     render_instrument_card(
-        label="Seaborne Barrels",
+        label=t("ltt_kpi_seaborne_barrels", current_lang),
         value=f"{kpis['total_barrels_at_sea'] / 1e6:,.1f}M bbl",
         accent="amber",
-        delta="Crude & Refined",
+        delta=t("ltt_kpi_crude_refined", current_lang),
         delta_is_positive_bad=False,
-        subtext="In transit across oceans"
+        subtext=t("ltt_kpi_in_transit", current_lang)
     )
 
 with m3:
     render_instrument_card(
-        label="Customs Cargo Value",
+        label=t("ltt_kpi_customs_value", current_lang),
         value=f"${kpis['total_cargo_value_usd'] / 1e9:.2f}B USD",
         accent="copper",
         delta=f"₹{kpis['total_cargo_value_usd'] * 83.2 / 1e7:,.0f} Cr",
         delta_is_positive_bad=False,
-        subtext="Spot commercial valuation"
+        subtext=t("ltt_kpi_spot_val", current_lang)
     )
 
 with m4:
     render_instrument_card(
-        label="Average Speed (SOG)",
+        label=t("ltt_kpi_avg_speed", current_lang),
         value=f"{kpis['avg_fleet_speed_knots']:.1f} Knots",
         accent="teal",
         delta=f"{kpis['avg_fleet_speed_knots'] * 1.852:.1f} km/h",
         delta_is_positive_bad=False,
-        subtext="Economic slow-steaming"
+        subtext=t("ltt_kpi_slow_steaming", current_lang)
     )
 
 with m5:
     render_instrument_card(
-        label="At-Risk Chokepoint Transit",
+        label=t("ltt_kpi_chokepoint_transit", current_lang),
         value=f"{kpis['at_risk_vessels']} Vessels",
         accent="red",
         delta="Hormuz / Red Sea",
         delta_is_positive_bad=True,
-        subtext="Within 500 NM war-risk zone"
+        subtext=t("ltt_kpi_war_risk", current_lang)
     )
 
 st.markdown("<div style='height: 12px;'></div>", unsafe_allow_html=True)
@@ -177,7 +185,7 @@ vessel_map = {v["vessel_id"]: f"{v['flag_emoji']} {v['name']} ({v['vessel_class'
 col_sel, col_stats = st.columns([6, 4])
 with col_sel:
     selected_vessel_id = st.selectbox(
-        "🎯 Select Supertanker to Inspect Voyage Mission & AIS Telemetry",
+        t("ltt_select_vessel_label", current_lang),
         options=vessel_options,
         format_func=lambda x: vessel_map.get(x, x),
         index=0 if vessel_options else None,
@@ -191,12 +199,12 @@ with col_stats:
         render_html(f"""
         <div style="background: rgba(14, 21, 38, 0.85); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 8px; padding: 10px 14px; margin-top: 24px; display: flex; align-items: center; justify-content: space-between;">
             <div>
-                <span style="font-size: 11px; color: #94A3B8; text-transform: uppercase; font-weight: 600;">Current Speed & Course</span>
+                <span style="font-size: 11px; color: #94A3B8; text-transform: uppercase; font-weight: 600;">{t("ltt_current_speed_course", current_lang)}</span>
                 <div style="font-size: 16px; font-weight: 800; color: #38BDF8;">⚡ {selected_vessel['speed_knots']} Knots ({selected_vessel['speed_knots'] * 1.852:.1f} km/h) · {selected_vessel['heading_deg']}° COG</div>
             </div>
             <div style="text-align: right;">
-                <span style="font-size: 11px; color: #94A3B8; text-transform: uppercase; font-weight: 600;">Arrival Timeline</span>
-                <div style="font-size: 15px; font-weight: 800; color: #34D399;">⏱️ {selected_vessel['days_remaining']} Days Remaining</div>
+                <span style="font-size: 11px; color: #94A3B8; text-transform: uppercase; font-weight: 600;">{t("ltt_arrival_timeline", current_lang)}</span>
+                <div style="font-size: 15px; font-weight: 800; color: #34D399;">⏱️ {selected_vessel['days_remaining']} {t("ltt_days_remaining", current_lang)}</div>
             </div>
         </div>
         """)
@@ -211,7 +219,7 @@ if selected_vessel:
     <div style="background: linear-gradient(135deg, rgba(245, 185, 66, 0.08) 0%, rgba(14, 21, 38, 0.95) 100%); border: 1px solid rgba(245, 185, 66, 0.35); border-radius: 10px; padding: 14px 18px; margin-bottom: 20px; box-shadow: 0 4px 16px rgba(0,0,0,0.35);">
         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; border-bottom: 1px solid rgba(255, 255, 255, 0.08); padding-bottom: 6px;">
             <div style="font-size: 12px; font-weight: 800; color: #F5B942; text-transform: uppercase; letter-spacing: 0.06em; display: flex; align-items: center; gap: 8px;">
-                📦 What is the Ship Carrying?
+                {t("ltt_what_is_ship_carrying", current_lang)}
             </div>
             <span style="background: rgba(56, 189, 248, 0.15); color: #38BDF8; border: 1px solid rgba(56, 189, 248, 0.3); font-size: 10.5px; font-weight: 700; padding: 2px 8px; border-radius: 4px;">
                 {v_class_tag} TANKER
@@ -219,17 +227,17 @@ if selected_vessel:
         </div>
         <div style="display: grid; grid-template-columns: 1.2fr 1.3fr 1.1fr; gap: 14px; font-size: 12px; line-height: 1.5;">
             <div>
-                <span style="color: #94A3B8; font-weight: 600; text-transform: uppercase; font-size: 10.5px;">🚢 Ship & Cargo Holding:</span><br/>
+                <span style="color: #94A3B8; font-weight: 600; text-transform: uppercase; font-size: 10.5px;">{t("ltt_ship_holding_label", current_lang)}</span><br/>
                 <strong style="color: #F8FAFC; font-size: 13.5px;">{sv['flag_emoji']} {sv['name']}</strong> ({sv['flag']} Flag)<br/>
                 <span style="color: #F5B942; font-weight: 700;">📦 Holding:</span> {holding_summary}
             </div>
             <div>
-                <span style="color: #94A3B8; font-weight: 600; text-transform: uppercase; font-size: 10.5px;">📍 Route & Commercial Purpose:</span><br/>
+                <span style="color: #94A3B8; font-weight: 600; text-transform: uppercase; font-size: 10.5px;">{t("ltt_route_purpose_label", current_lang)}</span><br/>
                 <strong style="color: #38BDF8;">⚓ {sv['origin_port']} ({sv['origin_country']}) ➔ 🎯 {sv['dest_port']} ({sv['dest_country']})</strong><br/>
                 <span style="color: #CBD5E1;">{mission_text}</span>
             </div>
             <div>
-                <span style="color: #94A3B8; font-weight: 600; text-transform: uppercase; font-size: 10.5px;">⏱️ Live Status & ETA:</span><br/>
+                <span style="color: #94A3B8; font-weight: 600; text-transform: uppercase; font-size: 10.5px;">{t("ltt_live_status_label", current_lang)}</span><br/>
                 <strong style="color: #34D399;">📍 {sv['current_basin']}</strong><br/>
                 <span style="color: #CBD5E1;">Cruising at <strong>{sv['speed_knots']} kts ({sv['speed_knots'] * 1.852:.1f} km/h)</strong> · <strong>{sv['remaining_distance_nm']:,} NM</strong> to go · <strong>{sv['days_remaining']} days</strong> left to destination.</span>
             </div>
@@ -238,8 +246,8 @@ if selected_vessel:
     """)
 
 # Interactive Fleet Overview Tabs
-with st.expander("🚢 **Browse All 10 Tankers: What Each Ship is Carrying (Quick Summary Cards)**", expanded=False):
-    tab_ind, tab_glob = st.tabs(["🇮🇳 India Energy Lifelines (4 Tankers)", "🌏 Asia-Pacific & European Supertankers (6 Tankers)"])
+with st.expander(t("ltt_browse_summary_cards", current_lang), expanded=False):
+    tab_ind, tab_glob = st.tabs([t("ltt_tab_india_corridor", current_lang), t("ltt_tab_global_corridor", current_lang)])
 
     with tab_ind:
         india_tankers = [v for v in fleet if v.get("in_india_corridor") or "India" in v["dest_country"] or "India" in v["origin_country"]]
@@ -300,11 +308,17 @@ with st.expander("🚢 **Browse All 10 Tankers: What Each Ship is Carrying (Quic
 # -------------------------------------------------------------
 map_header_col1, map_header_col2 = st.columns([6, 4])
 with map_header_col1:
-    st.subheader("🗺️ Realistic Global Maritime Ocean Map — Live AIS Coordinates & Shipping Corridors")
+    st.subheader(t("ltt_map_title", current_lang))
 with map_header_col2:
-    map_style_choice = st.radio(
-        "Map Display Engine",
-        options=["🌑 Realistic Dark Oceanic", "🗺️ Coastal Navigation Chart", "🌐 3D Global Globe"],
+    map_engine_options = [
+        ("dark", t("ltt_opt_dark_ocean", current_lang)),
+        ("coastal", t("ltt_opt_coastal_chart", current_lang)),
+        ("globe", t("ltt_opt_3d_globe", current_lang))
+    ]
+    map_style_key = st.radio(
+        t("ltt_engine_label", current_lang),
+        options=[m[0] for m in map_engine_options],
+        format_func=lambda k: dict(map_engine_options).get(k, k),
         index=0,
         horizontal=True,
         key="tanker_map_style_selector"
@@ -315,23 +329,23 @@ rf_col1, rf_col2, rf_col3, rf_col4, rf_col5 = st.columns(5)
 focus_region = st.session_state.get("tanker_map_focus", "all")
 
 with rf_col1:
-    if st.button("🌐 Global Fleet View", use_container_width=True, type="primary" if focus_region == "all" else "secondary"):
+    if st.button(t("ltt_btn_global_view", current_lang), use_container_width=True, type="primary" if focus_region == "all" else "secondary"):
         st.session_state["tanker_map_focus"] = "all"
         st.rerun()
 with rf_col2:
-    if st.button("🇮🇳 Indian Ocean & Gujarat", use_container_width=True, type="primary" if focus_region == "india" else "secondary"):
+    if st.button(t("ltt_btn_india_view", current_lang), use_container_width=True, type="primary" if focus_region == "india" else "secondary"):
         st.session_state["tanker_map_focus"] = "india"
         st.rerun()
 with rf_col3:
-    if st.button("⚡ Persian Gulf & Hormuz", use_container_width=True, type="primary" if focus_region == "hormuz" else "secondary"):
+    if st.button(t("ltt_btn_hormuz_view", current_lang), use_container_width=True, type="primary" if focus_region == "hormuz" else "secondary"):
         st.session_state["tanker_map_focus"] = "hormuz"
         st.rerun()
 with rf_col4:
-    if st.button("🚨 Red Sea & Bab el-Mandeb", use_container_width=True, type="primary" if focus_region == "red_sea" else "secondary"):
+    if st.button(t("ltt_btn_red_sea_view", current_lang), use_container_width=True, type="primary" if focus_region == "red_sea" else "secondary"):
         st.session_state["tanker_map_focus"] = "red_sea"
         st.rerun()
 with rf_col5:
-    if st.button("🚢 Malacca Strait Corridor", use_container_width=True, type="primary" if focus_region == "malacca" else "secondary"):
+    if st.button(t("ltt_btn_malacca_view", current_lang), use_container_width=True, type="primary" if focus_region == "malacca" else "secondary"):
         st.session_state["tanker_map_focus"] = "malacca"
         st.rerun()
 
@@ -376,8 +390,8 @@ SHIPPING_LANES = [
 
 fig_map = go.Figure()
 
-is_tile_map = "Realistic" in map_style_choice or "Coastal" in map_style_choice
-tile_style = "carto-darkmatter" if "Realistic" in map_style_choice else "open-street-map"
+is_tile_map = map_style_key in ["dark", "coastal"]
+tile_style = "carto-darkmatter" if map_style_key == "dark" else "open-street-map"
 
 if is_tile_map:
     # 1. Background Shipping Corridors
@@ -613,7 +627,8 @@ st.plotly_chart(
 if selected_vessel:
     v = selected_vessel
     st.markdown("---")
-    st.subheader(f"🔍 Vessel Intelligence Dossier: {v['flag_emoji']} {v['name']} (IMO {v['imo']})")
+    dossier_hdr = t("ltt_dossier_title", current_lang)
+    st.subheader(f"{dossier_hdr} {v['flag_emoji']} {v['name']} (IMO {v['imo']})")
 
     col_img, col_telemetry = st.columns([5, 7])
 
@@ -630,6 +645,10 @@ if selected_vessel:
             caption=f"🛰️ AIS Satellite Recon: {v['name']} ({v['vessel_class'].split()[0]}) — {v['flag']} Registered"
         )
 
+        dwt_lbl = t("ltt_deadweight", current_lang)
+        lb_lbl = t("ltt_length_beam", current_lang)
+        draft_lbl = t("ltt_laden_draft", current_lang)
+
         spec_html = f"""
         <div style="background: #0D1527; border: 1px solid rgba(255, 255, 255, 0.14); border-radius: 10px; padding: 14px 16px; margin-top: 4px; box-shadow: 0 6px 20px rgba(0,0,0,0.35);">
             <div style="display: flex; justify-content: space-between; align-items: baseline;">
@@ -644,15 +663,15 @@ if selected_vessel:
             </div>
             <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 12px; padding-top: 10px; border-top: 1px solid rgba(255, 255, 255, 0.08); text-align: center;">
                 <div style="background: rgba(255,255,255,0.02); padding: 8px 4px; border-radius: 6px;">
-                    <div style="font-size: 9.5px; color: #94A3B8; text-transform: uppercase;">Deadweight</div>
+                    <div style="font-size: 9.5px; color: #94A3B8; text-transform: uppercase;">{dwt_lbl}</div>
                     <div style="font-size: 12.5px; font-weight: 800; color: #F8FAFC;">{v['dwt']:,} DWT</div>
                 </div>
                 <div style="background: rgba(255,255,255,0.02); padding: 8px 4px; border-radius: 6px;">
-                    <div style="font-size: 9.5px; color: #94A3B8; text-transform: uppercase;">Length × Beam</div>
+                    <div style="font-size: 9.5px; color: #94A3B8; text-transform: uppercase;">{lb_lbl}</div>
                     <div style="font-size: 12.5px; font-weight: 800; color: #F8FAFC;">{v['length_m']}m × {v['beam_m']}m</div>
                 </div>
                 <div style="background: rgba(255,255,255,0.02); padding: 8px 4px; border-radius: 6px;">
-                    <div style="font-size: 9.5px; color: #94A3B8; text-transform: uppercase;">Laden Draft</div>
+                    <div style="font-size: 9.5px; color: #94A3B8; text-transform: uppercase;">{draft_lbl}</div>
                     <div style="font-size: 12.5px; font-weight: 800; color: #34D399;">{v['draft_m']} meters</div>
                 </div>
             </div>
@@ -752,38 +771,39 @@ if selected_vessel:
 # 7. COMPLETE SEABORNE FLEET TELEMETRY MANIFEST TABLE
 # -------------------------------------------------------------
 st.markdown("<div style='height: 20px;'></div>", unsafe_allow_html=True)
-st.subheader("📋 Active Global Petroleum Fleet Telemetry Manifest")
+st.subheader(t("ltt_manifest_title", current_lang))
 
 table_data = []
 for v in fleet:
     table_data.append({
-        "Vessel Name": f"{v['flag_emoji']} {v['name']}",
-        "Class": v["vessel_class"].split()[0],
+        t("tbl_vessel_name", current_lang): f"{v['flag_emoji']} {v['name']}",
+        t("tbl_vessel_class", current_lang): v["vessel_class"].split()[0],
         "IMO": v["imo"],
-        "What It's Carrying": f"{v['cargo_name']} ({v['cargo_barrels'] / 1e6:.2f}M bbl)",
-        "Cargo Value ($M)": f"${v['cargo_value_millions_usd']}M",
-        "Speed": f"{v['speed_knots']} kts ({v['speed_knots'] * 1.852:.0f} km/h)",
-        "Heading": f"{v['heading_deg']}°",
-        "Current Location": v["current_basin"],
-        "Origin": v["origin_port"],
-        "Destination Port": v["dest_port"],
-        "Days to Arrive": f"{v['days_remaining']} Days",
-        "Progress": f"{v['progress_pct']}%"
+        t("tbl_carrying", current_lang): f"{v['cargo_name']} ({v['cargo_barrels'] / 1e6:.2f}M bbl)",
+        t("tbl_cargo_val", current_lang): f"${v['cargo_value_millions_usd']}M",
+        t("tbl_speed", current_lang): f"{v['speed_knots']} kts ({v['speed_knots'] * 1.852:.0f} km/h)",
+        t("tbl_heading", current_lang): f"{v['heading_deg']}°",
+        t("tbl_current_loc", current_lang): v["current_basin"],
+        t("tbl_origin", current_lang): v["origin_port"],
+        t("tbl_dest_port", current_lang): v["dest_port"],
+        t("tbl_days_arrive", current_lang): f"{v['days_remaining']} Days",
+        t("tbl_progress", current_lang): f"{v['progress_pct']}%"
     })
 
 manifest_df = pd.DataFrame(table_data)
 st.dataframe(manifest_df, use_container_width=True, hide_index=True)
 
 # Technical CSV Export
-render_csv_download(manifest_df, filename="global_tanker_ais_telemetry.csv", label="📥 EXPORT SEABORNE TANKER FLEET TELEMETRY (CSV)")
+render_csv_download(manifest_df, filename="global_tanker_ais_telemetry.csv", label=t("ltt_btn_export_csv", current_lang))
 
 # -------------------------------------------------------------
 # 8. PLAIN ENGLISH GUIDE: HOW MARITIME TANKER TELEMETRY WORKS
 # -------------------------------------------------------------
 st.markdown("<div style='height: 16px;'></div>", unsafe_allow_html=True)
 
-with st.expander("📖 **Plain-English Guide: How does live tanker tracking work and what do knots/ETA mean?**", expanded=True):
+with st.expander(t("ltt_guide_title", current_lang), expanded=True):
     col_g1, col_g2 = st.columns(2)
+
     with col_g1:
         st.markdown("""
         #### 🛰️ How are these tankers tracked?

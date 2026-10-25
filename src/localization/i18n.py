@@ -2677,6 +2677,36 @@ except Exception:
     except Exception:
         pass
 
+MODULES_TRANSLATIONS: Dict[str, Dict[str, str]] = {}
+try:
+    from src.localization.translations_modules import MODULES_TRANSLATIONS as _MT
+    MODULES_TRANSLATIONS = _MT
+except Exception:
+    try:
+        from translations_modules import MODULES_TRANSLATIONS as _MT
+        MODULES_TRANSLATIONS = _MT
+    except Exception:
+        pass
+
+_REVERSE_MAP: Dict[str, str] = {}
+
+
+def _init_reverse_map():
+    """Builds a case-insensitive / trimmed reverse lookup mapping English strings to keys."""
+    global _REVERSE_MAP
+    if _REVERSE_MAP:
+        return
+    rev = {}
+    for table in [MODULES_TRANSLATIONS, VIEWS_TRANSLATIONS, TRANSLATIONS]:
+        for k, v in table.items():
+            if isinstance(v, dict):
+                en_val = v.get("en")
+                if en_val and isinstance(en_val, str):
+                    s_clean = en_val.strip()
+                    rev[s_clean] = k
+                    rev[s_clean.lower()] = k
+    _REVERSE_MAP = rev
+
 
 
 # ==============================================================================
@@ -2733,21 +2763,42 @@ def set_language(lang_code: str) -> None:
 
 def t(key: str, lang: Optional[str] = None, **kwargs) -> str:
     """
-    Safely retrieves the localized string for a given translation key.
+    Safely retrieves the localized string for a given translation key or raw English text.
     Falls back to English if key is missing in the target language.
-    If key is completely unknown, returns key itself.
+    If key is completely unknown, attempts reverse English lookup, else returns key itself.
     Supports str.format kwargs.
     """
+    if not key or not isinstance(key, str):
+        return str(key or "")
+
     active_lang = lang or get_current_language()
     
+    # 1. Direct key match
     if key in TRANSLATIONS:
         lang_dict = TRANSLATIONS[key]
         text = lang_dict.get(active_lang) or lang_dict.get("en") or key
     elif key in VIEWS_TRANSLATIONS:
         lang_dict = VIEWS_TRANSLATIONS[key]
         text = lang_dict.get(active_lang) or lang_dict.get("en") or key
+    elif key in MODULES_TRANSLATIONS:
+        lang_dict = MODULES_TRANSLATIONS[key]
+        text = lang_dict.get(active_lang) or lang_dict.get("en") or key
     else:
-        text = key
+        # 2. Reverse lookup by exact or case-insensitive English text
+        if not _REVERSE_MAP:
+            _init_reverse_map()
+        stripped = key.strip()
+        matched_key = _REVERSE_MAP.get(stripped) or _REVERSE_MAP.get(stripped.lower())
+        if matched_key:
+            for table in [MODULES_TRANSLATIONS, VIEWS_TRANSLATIONS, TRANSLATIONS]:
+                if matched_key in table:
+                    lang_dict = table[matched_key]
+                    text = lang_dict.get(active_lang) or lang_dict.get("en") or key
+                    break
+            else:
+                text = key
+        else:
+            text = key
         
     # Format with kwargs, providing safe defaults for quota-related keys
     if "{" in text or "[" in text:

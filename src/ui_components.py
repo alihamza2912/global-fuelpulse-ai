@@ -4533,17 +4533,39 @@ def render_page_header(
 ):
     """Renders a modern dark glass page banner for drill-down pages with universal language and news header."""
     apply_theme()
+    try:
+        from src.localization.i18n import t, get_current_language
+        cur_lang = get_current_language()
+        loc_title = t(title, cur_lang)
+        loc_subtitle = t(subtitle, cur_lang)
+        loc_source_tag = t(source_tag, cur_lang)
+        loc_observation_date = t(observation_date, cur_lang)
+        source_label = t("source_label", cur_lang)
+        if source_label == "source_label":
+            source_label = "SOURCE:"
+        observed_label = t("observed_label", cur_lang)
+        if observed_label == "observed_label":
+            observed_label = "OBSERVED:"
+    except Exception:
+        cur_lang = "en"
+        loc_title = title
+        loc_subtitle = subtitle
+        loc_source_tag = source_tag
+        loc_observation_date = observation_date
+        source_label = "SOURCE:"
+        observed_label = "OBSERVED:"
+
     if show_universal_header:
-        render_universal_top_header(active_page_name=title, key_prefix=f"hdr_{title}")
+        render_universal_top_header(active_page_name=loc_title, key_prefix=f"hdr_{abs(hash(title))}")
     header_html = f"""<div style="background: rgba(14, 21, 38, 0.8); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border: 1px solid rgba(255, 255, 255, 0.12); box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4); border-radius: 8px; padding: 22px 26px; margin-bottom: 24px;">
 <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 10px;">
 <div>
-<h1 style="font-size: 30px; margin: 0; color: #F9FAFB;">{title}</h1>
-<p style="font-size: 14px; color: #94A3B8; margin-top: 4px; margin-bottom: 0;">{subtitle}</p>
+<h1 style="font-size: 30px; margin: 0; color: #F9FAFB;">{loc_title}</h1>
+<p style="font-size: 14px; color: #94A3B8; margin-top: 4px; margin-bottom: 0;">{loc_subtitle}</p>
 </div>
 <div style="font-family: 'Space Grotesk', sans-serif; font-size: 12px; color: #94A3B8; text-align: right;">
-<div><b style="color: #F9FAFB;">SOURCE:</b> {source_tag}</div>
-<div><b style="color: #F9FAFB;">OBSERVED:</b> {observation_date}</div>
+<div><b style="color: #F9FAFB;">{source_label}</b> {loc_source_tag}</div>
+<div><b style="color: #F9FAFB;">{observed_label}</b> {loc_observation_date}</div>
 </div>
 </div>
 </div>"""
