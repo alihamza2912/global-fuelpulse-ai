@@ -165,5 +165,41 @@ def test_archive_timestamp_honesty():
         assert "Archive" in ts or "days ago" in ts
 
 
+def test_realtime_wire_max_age_filter():
+    """Validates that get_realtime_wire strictly enforces age cutoffs (24h, 48h, 7d) and rejects 30+ day-old items."""
+    from datetime import datetime, timezone
+    now = datetime.now(timezone.utc)
+
+    wire_24h = GlobalNewsEngine.get_realtime_wire(time_horizon="24h")
+    for it in wire_24h:
+        dt = it.get("published_dt")
+        if dt:
+            if dt.tzinfo is None:
+                dt = dt.replace(tzinfo=timezone.utc)
+            age_hours = (now - dt).total_seconds() / 3600.0
+            assert age_hours <= 24.5, f"Article {it['headline']} exceeds 24h: {age_hours}h"
+
+    wire_48h = GlobalNewsEngine.get_realtime_wire(time_horizon="48h")
+    for it in wire_48h:
+        dt = it.get("published_dt")
+        if dt:
+            if dt.tzinfo is None:
+                dt = dt.replace(tzinfo=timezone.utc)
+            age_hours = (now - dt).total_seconds() / 3600.0
+            assert age_hours <= 48.5, f"Article {it['headline']} exceeds 48h: {age_hours}h"
+
+    wire_7d = GlobalNewsEngine.get_realtime_wire(time_horizon="7d")
+    for it in wire_7d:
+        dt = it.get("published_dt")
+        if dt:
+            if dt.tzinfo is None:
+                dt = dt.replace(tzinfo=timezone.utc)
+            age_hours = (now - dt).total_seconds() / 3600.0
+            assert age_hours <= 168.5, f"Article {it['headline']} exceeds 7d: {age_hours}h"
+            # Explicit assertion: Zero 30+ day-old articles allowed in live wire
+            assert age_hours < 30 * 24, "30+ day-old news leaked into live wire!"
+
+
+
 
 

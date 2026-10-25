@@ -3531,7 +3531,50 @@ def render_universal_top_header(active_page_name: str = "Overview", key_prefix: 
                     """, unsafe_allow_html=True)
                     
                 with tab_all:
-                    live_wire_items = GlobalNewsEngine.get_realtime_wire(lang=current_lang)
+                    # Professional Terminal Time-Horizon Control (24h, 48h, 7d)
+                    col_hz, col_hz_info = st.columns([3, 2])
+                    with col_hz:
+                        horizon_opts = ["24h", "48h", "7d"]
+                        selected_horizon = st.segmented_control(
+                            "Horizon",
+                            options=horizon_opts,
+                            format_func=lambda x: {
+                                "24h": "⚡ 24h",
+                                "48h": "⏱️ 48h (Live)",
+                                "7d": "📅 7 Days"
+                            }.get(x, x),
+                            default="48h",
+                            key=f"{pfx}_news_time_horizon_seg",
+                            label_visibility="collapsed"
+                        ) if hasattr(st, "segmented_control") else st.radio(
+                            "Horizon",
+                            options=horizon_opts,
+                            format_func=lambda x: {
+                                "24h": "⚡ 24h",
+                                "48h": "⏱️ 48h (Live)",
+                                "7d": "📅 7 Days"
+                            }.get(x, x),
+                            index=1,
+                            horizontal=True,
+                            key=f"{pfx}_news_time_horizon_radio",
+                            label_visibility="collapsed"
+                        )
+                        if not selected_horizon:
+                            selected_horizon = "48h"
+
+                    with col_hz_info:
+                        horizon_desc = {
+                            "24h": "Today's Wire",
+                            "48h": "Past 48h Wire",
+                            "7d": "Past 7d Wire"
+                        }.get(selected_horizon, "Past 48h Wire")
+                        render_html(f"""
+                        <div style="font-size: 0.68rem; color: #34D399; background: rgba(16,185,129,0.08); border: 1px solid rgba(16,185,129,0.25); border-radius: 4px; padding: 4px 8px; text-align: center; margin-top: 2px;">
+                            ✓ Fresh ({horizon_desc})
+                        </div>
+                        """)
+
+                    live_wire_items = GlobalNewsEngine.get_realtime_wire(lang=current_lang, time_horizon=selected_horizon)
                     if live_wire_items:
                         st.markdown(f"#### 🔴 {t('news_breaking_wire_title', current_lang)} ({len(live_wire_items)})")
                         for item in live_wire_items:
@@ -3548,21 +3591,25 @@ def render_universal_top_header(active_page_name: str = "Overview", key_prefix: 
                                 <div style="text-align: right;">{link_elem}</div>
                             </div>
                             """, unsafe_allow_html=True)
-                        st.markdown("---")
+                    else:
+                        st.info("No breaking dispatches found in this time window. Select ⏱️ 48h or 📅 7 Days to expand coverage.")
 
-                    st.markdown(f"#### 📋 {t('news_verified_dossiers_title', current_lang)} ({len(GlobalNewsEngine._LIVE_NEWS_DATABASE)} Verified Strategic Dossiers)")
-                    for item in GlobalNewsEngine.get_live_news_feed(lang=current_lang):
-                        st.markdown(f"""
-                        <div style="background: rgba(14, 21, 38, 0.75); border: 1px solid rgba(255, 255, 255, 0.08); border-left: 3px solid {item['impact_color']}; border-radius: 6px; padding: 10px 12px; margin-bottom: 8px;">
-                            <div style="display: flex; justify-content: space-between; align-items: center;">
-                                <span style="font-size: 0.7rem; font-weight: 700; color: #94A3B8;">{item['category_label']}</span>
-                                <span style="font-size: 0.65rem; background: rgba(255,255,255,0.08); color: {item['impact_color']}; padding: 1px 6px; border-radius: 4px; font-weight: 700;">{item['impact']}</span>
+                    # Dedicated Collapsible Expander for Verified Strategic Dossiers (Clean separation)
+                    st.markdown("---")
+                    with st.expander(f"📁 {t('news_verified_dossiers_title', current_lang)} ({len(GlobalNewsEngine._LIVE_NEWS_DATABASE)} Verified Strategic Dossiers)", expanded=False):
+                        st.caption("Deep-dive structural intelligence dossiers & risk models curated by senior energy market analysts.")
+                        for item in GlobalNewsEngine.get_live_news_feed(lang=current_lang):
+                            st.markdown(f"""
+                            <div style="background: rgba(14, 21, 38, 0.75); border: 1px solid rgba(255, 255, 255, 0.08); border-left: 3px solid {item['impact_color']}; border-radius: 6px; padding: 10px 12px; margin-bottom: 8px;">
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <span style="font-size: 0.7rem; font-weight: 700; color: #94A3B8;">{item['category_label']}</span>
+                                    <span style="font-size: 0.65rem; background: rgba(255,255,255,0.08); color: {item['impact_color']}; padding: 1px 6px; border-radius: 4px; font-weight: 700;">{item['impact']}</span>
+                                </div>
+                                <b style="color: #F9FAFB; font-size: 0.84rem; display: block; margin: 4px 0;">{item['headline']}</b>
+                                <div style="font-size: 0.72rem; color: #64748B; margin-bottom: 4px;">📅 {item['timestamp']} • <i>{item['source']}</i></div>
+                                <p style="font-size: 0.76rem; color: #CBD5E1; line-height: 1.4; margin-bottom: 6px;">{item['summary']}</p>
                             </div>
-                            <b style="color: #F9FAFB; font-size: 0.84rem; display: block; margin: 4px 0;">{item['headline']}</b>
-                            <div style="font-size: 0.72rem; color: #64748B; margin-bottom: 4px;">📅 {item['timestamp']} • <i>{item['source']}</i></div>
-                            <p style="font-size: 0.76rem; color: #CBD5E1; line-height: 1.4; margin-bottom: 6px;">{item['summary']}</p>
-                        </div>
-                        """, unsafe_allow_html=True)
+                            """, unsafe_allow_html=True)
 
 
         # 4. User Account / User ID

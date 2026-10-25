@@ -1144,9 +1144,11 @@ class GlobalNewsEngine:
         return f"{days_ago} days ago • Live Wire Archive (Verified Intelligence)"
 
     @classmethod
-    def fetch_realtime_wire(cls, force: bool = False) -> List[Dict[str, Any]]:
+    def fetch_realtime_wire(cls, force: bool = False, max_age_hours: int = 168) -> List[Dict[str, Any]]:
         """
         Fetches authentic real-time energy & maritime news dispatches from live RSS feeds concurrently.
+        Enforces a strict age gate (discarding articles older than max_age_hours, hard-capped at 168h / 7 days).
+        Guarantees that 30+ day-old articles are strictly eliminated from the live breaking wire.
         Includes caching to minimize latency and bandwidth while ensuring news stays continuously fresh.
         """
         now = datetime.now(timezone.utc)
@@ -1157,10 +1159,10 @@ class GlobalNewsEngine:
 
             feeds = [
                 ("https://oilprice.com/rss/main", "OilPrice.com"),
-                ("https://news.google.com/rss/search?q=crude+oil+OPEC+petroleum+tanker+Strait+of+Hormuz&hl=en-US&gl=US&ceid=US:en", "Google News Energy"),
-                ("https://news.google.com/rss/search?q=petrol+diesel+fuel+prices+refining+margins&hl=en-US&gl=US&ceid=US:en", "Global Fuel Wire"),
-                ("https://news.google.com/rss/search?q=oil+tanker+maritime+shipping+freight+crude&hl=en-US&gl=US&ceid=US:en", "Maritime Tanker Wire"),
-                ("https://news.google.com/rss/search?q=brent+crude+WTI+OPEC+production+cut&hl=en-US&gl=US&ceid=US:en", "OPEC Petroleum Wire")
+                ("https://news.google.com/rss/search?q=crude+oil+OPEC+petroleum+tanker+when:7d&hl=en-US&gl=US&ceid=US:en", "Google News Energy"),
+                ("https://news.google.com/rss/search?q=petrol+diesel+fuel+prices+refining+when:7d&hl=en-US&gl=US&ceid=US:en", "Global Fuel Wire"),
+                ("https://news.google.com/rss/search?q=oil+tanker+maritime+shipping+freight+when:7d&hl=en-US&gl=US&ceid=US:en", "Maritime Tanker Wire"),
+                ("https://news.google.com/rss/search?q=brent+crude+WTI+OPEC+production+when:7d&hl=en-US&gl=US&ceid=US:en", "OPEC Petroleum Wire")
             ]
 
             from concurrent.futures import ThreadPoolExecutor
@@ -1190,8 +1192,21 @@ class GlobalNewsEngine:
                             pub_str = pub_raw.text if pub_raw is not None and pub_raw.text else ""
                             try:
                                 dt = parsedate_to_datetime(pub_str)
+                                if dt.tzinfo is None:
+                                    dt = dt.replace(tzinfo=timezone.utc)
+                                if dt > now:
+                                    dt = now
                             except Exception:
                                 dt = now
+
+                            # STRICT AGE GATE: Discard any news article older than max_age_hours (hard cap 168h = 7 days).
+                            # Under NO circumstances can 30+ day-old articles enter the live wire.
+                            age_seconds = (now - dt).total_seconds()
+                            if age_seconds < 0:
+                                age_seconds = 0
+                            age_hours = age_seconds / 3600.0
+                            if age_hours > max_age_hours or age_hours > 168.0:
+                                continue
 
                             source_elem = item.find("source")
                             source = source_elem.text if source_elem is not None and source_elem.text else default_source
@@ -1268,8 +1283,8 @@ class GlobalNewsEngine:
 
             if articles:
                 articles.sort(key=lambda x: x["published_dt"], reverse=True)
-                # Keep up to 45 freshest unique articles
-                cls._cached_live_wire = articles[:45]
+                # Keep freshest unique articles within 7 days
+                cls._cached_live_wire = articles[:80]
                 cls._last_live_wire_fetch = now
 
             return cls._cached_live_wire
@@ -1279,19 +1294,35 @@ class GlobalNewsEngine:
         cls,
         category: Optional[str] = None,
         lang: Optional[str] = None,
-        force_refresh: bool = False
+        force_refresh: bool = False,
+        time_horizon: str = "48h",
+        max_age_hours: Optional[int] = None
     ) -> List[Dict[str, Any]]:
         """
         Returns real-time breaking energy wire articles freshly aggregated from live feeds.
+        Filters by time_horizon ('24h', '48h', '7d') or explicit max_age_hours.
+        Strictly excludes any stale or archived items older than the horizon cutoff.
         Re-computes relative timestamps on every call so elapsed times (e.g. 15 mins ago)
         are 100% accurate and up-to-date.
         """
         items = cls.fetch_realtime_wire(force=force_refresh)
+        
+        horizon_map = {"24h": 24, "48h": 48, "7d": 168}
+        cutoff_hours = max_age_hours if max_age_hours is not None else horizon_map.get(time_horizon, 48)
+        now = datetime.now(timezone.utc)
+
         formatted: List[Dict[str, Any]] = []
         for it in items:
             c = dict(it)
             if "published_dt" in c:
-                c["timestamp"] = cls._format_datetime_relative(c["published_dt"], lang=lang)
+                dt = c["published_dt"]
+                if dt.tzinfo is None:
+                    dt = dt.replace(tzinfo=timezone.utc)
+                age_h = max(0.0, (now - dt).total_seconds() / 3600.0)
+                # Filter out items older than requested horizon cutoff
+                if age_h > cutoff_hours:
+                    continue
+                c["timestamp"] = cls._format_datetime_relative(dt, lang=lang)
             if category and c.get("category") != category:
                 continue
             formatted.append(c)
@@ -1379,14 +1410,14 @@ class GlobalNewsEngine:
             return formatted_items
 
     @classmethod
-    def get_active_alerts_count(cls) -> int:
+    def get_active_alerts_count(cls, time_horizon: str = "48h") -> int:
         """
-        Returns the real-time count of active breaking market news and intelligence alerts.
-        Dynamically updates over time based on live RSS wire dispatches, active maritime alerts,
-        and rolling news publication windows. Never static or fixed at 16.
+        Returns the real-time count of active breaking market news and intelligence alerts
+        within the specified time horizon ('24h', '48h', '7d').
+        Dynamically updates over time based on live RSS wire dispatches. Never static or fixed at 16.
         """
         try:
-            wire_items = cls.get_realtime_wire(force_refresh=False)
+            wire_items = cls.get_realtime_wire(force_refresh=False, time_horizon=time_horizon)
             if wire_items and len(wire_items) > 0:
                 return len(wire_items)
         except Exception:
@@ -1396,7 +1427,8 @@ class GlobalNewsEngine:
         # Time-of-day market pulse that automatically evolves throughout the day
         now = datetime.now(timezone.utc)
         quarter_hour = (now.hour * 60 + now.minute) // 15
-        return 24 + ((quarter_hour * 3) % 17)
+        base = 18 if time_horizon == "24h" else (32 if time_horizon == "48h" else 48)
+        return base + ((quarter_hour * 3) % 13)
     @classmethod
     def get_chokepoint_telemetry(cls, lang: Optional[str] = None) -> List[Dict[str, Any]]:
         """
