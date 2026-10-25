@@ -212,7 +212,7 @@ if selected_vessel:
     <div style="background: linear-gradient(135deg, rgba(245, 185, 66, 0.08) 0%, rgba(14, 21, 38, 0.95) 100%); border: 1px solid rgba(245, 185, 66, 0.35); border-radius: 10px; padding: 14px 18px; margin-bottom: 20px; box-shadow: 0 4px 16px rgba(0,0,0,0.35);">
         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; border-bottom: 1px solid rgba(255, 255, 255, 0.08); padding-bottom: 6px;">
             <div style="font-size: 12px; font-weight: 800; color: #F5B942; text-transform: uppercase; letter-spacing: 0.06em; display: flex; align-items: center; gap: 8px;">
-                💡 Plain-English Mission Explainer: What is this ship carrying & where is it going?
+                📦 What is the Ship Carrying?
             </div>
             <span style="background: rgba(56, 189, 248, 0.15); color: #38BDF8; border: 1px solid rgba(56, 189, 248, 0.3); font-size: 10.5px; font-weight: 700; padding: 2px 8px; border-radius: 4px;">
                 {v_class_tag} TANKER
