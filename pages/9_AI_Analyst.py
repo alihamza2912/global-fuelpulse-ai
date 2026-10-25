@@ -118,8 +118,9 @@ reset_time_str = quota_status.get("reset_time_str", "24 hours")
 if "openai_chat_history" not in st.session_state:
     st.session_state["openai_chat_history"] = []
 
+import re
 render_page_header(
-    title=t("sidebar_09_ai", current_lang),
+    title=f"08. {re.sub(r'^\d+\.\s*', '', t('sidebar_09_ai', current_lang)).strip()}",
     subtitle="OpenAI Responses API & Web Search • 3 Free Questions / Rolling 24 Hours • Authenticated Identity",
     source_tag="OpenAI GPT-4o & Live Search Grounding",
     observation_date=datetime.now(timezone.utc).strftime("%B %Y")

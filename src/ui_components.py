@@ -10,6 +10,7 @@ import pandas as pd
 import textwrap
 import urllib.parse
 import logging
+import re
 from typing import Optional, Dict, Any, List, Tuple
 from datetime import datetime
 from config.settings import settings
@@ -3229,17 +3230,21 @@ def render_universal_sidebar(active_page_name: str = "Overview"):
                 except Exception:
                     st.toast(f"Navigating to {label_text}...")
 
-    _safe_page_link("pages/1_Global_Command_Center.py", f"{clean_nav_title(t('sidebar_01_command', current_lang))} — Exec")
-    _safe_page_link("pages/2_Fuel_Price_Explorer.py", f"{clean_nav_title(t('sidebar_02_explorer', current_lang))} — Daily")
-    _safe_page_link("pages/3_Global_Trade.py", f"{clean_nav_title(t('sidebar_03_trade', current_lang))} — Flows")
-    _safe_page_link("pages/4_Affordability.py", f"{clean_nav_title(t('sidebar_04_afford', current_lang))} — Index")
-    _safe_page_link("pages/5_Supply_Risk.py", f"{clean_nav_title(t('sidebar_05_risk', current_lang))} — Radar")
-    _safe_page_link("pages/6_Shock_Simulator.py", f"{clean_nav_title(t('sidebar_06_shock', current_lang))} — Simulator")
-    _safe_page_link("pages/7_Forecasting.py", f"{clean_nav_title(t('sidebar_07_forecast', current_lang))} — Radar")
-    _safe_page_link("pages/9_AI_Analyst.py", f"{clean_nav_title(t('sidebar_09_ai', current_lang))} — Analyst")
-    _safe_page_link("pages/10_India_Intelligence.py", f"{clean_nav_title(t('sidebar_10_india', current_lang))} — MoPNG")
-    _safe_page_link("pages/12_Highway_Fuel_Optimizer.py", f"12. 🛣️ Highway Optimizer — Arbitrage")
-    _safe_page_link("pages/13_Live_Tanker_Tracker.py", f"13. 🚢 Live Tanker Tracker — AIS")
+    def _model_lbl(idx: int, raw_text: str, suffix: str) -> str:
+        clean = re.sub(r'^\d+\.\s*', '', raw_text).strip()
+        return f"{idx:02d}. {clean} — {suffix}"
+
+    _safe_page_link("pages/1_Global_Command_Center.py", _model_lbl(1, t('sidebar_01_command', current_lang), "Exec"))
+    _safe_page_link("pages/2_Fuel_Price_Explorer.py", _model_lbl(2, t('sidebar_02_explorer', current_lang), "Daily"))
+    _safe_page_link("pages/3_Global_Trade.py", _model_lbl(3, t('sidebar_03_trade', current_lang), "Flows"))
+    _safe_page_link("pages/4_Affordability.py", _model_lbl(4, t('sidebar_04_afford', current_lang), "Index"))
+    _safe_page_link("pages/5_Supply_Risk.py", _model_lbl(5, t('sidebar_05_risk', current_lang), "Radar"))
+    _safe_page_link("pages/6_Shock_Simulator.py", _model_lbl(6, t('sidebar_06_shock', current_lang), "Simulator"))
+    _safe_page_link("pages/7_Forecasting.py", _model_lbl(7, t('sidebar_07_forecast', current_lang), "Radar"))
+    _safe_page_link("pages/9_AI_Analyst.py", _model_lbl(8, t('sidebar_09_ai', current_lang), "Analyst"))
+    _safe_page_link("pages/10_India_Intelligence.py", _model_lbl(9, t('sidebar_10_india', current_lang), "MoPNG"))
+    _safe_page_link("pages/12_Highway_Fuel_Optimizer.py", _model_lbl(10, t('sidebar_10_highway', current_lang) if t('sidebar_10_highway', current_lang) != 'sidebar_10_highway' else '🛣️ Highway Optimizer', "Arbitrage"))
+    _safe_page_link("pages/13_Live_Tanker_Tracker.py", _model_lbl(11, t('sidebar_11_tanker', current_lang) if t('sidebar_11_tanker', current_lang) != 'sidebar_11_tanker' else '🚢 Live Tanker Tracker', "AIS"))
 
     # 6. PLATFORM & DOCUMENTATION (Tree Nav — 5 items)
     render_html(f"""

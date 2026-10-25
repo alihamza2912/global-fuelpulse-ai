@@ -1305,6 +1305,28 @@ EXPANDED_TRANSLATIONS: Dict[str, Dict[str, str]] = {
         "bn": "১১. 📖 পণ্য গাইড",
         "ta": "11. 📖 தயாரிப்பு வழிகாட்டி"
     },
+    "sidebar_10_highway": {
+        "pt": "10. 🛣️ Otimizador de Rodovias",
+        "it": "10. 🛣️ Ottimizzatore Autostradale",
+        "ko": "10. 🛣️ 고속도로 유류 차익 최적화",
+        "tr": "10. 🛣️ Otoyol Rota Optimize Edici",
+        "nl": "10. 🛣️ Snelweg Brandstof Optimizer",
+        "id": "10. 🛣️ Pengoptimal Bahan Bakar Jalan Tol",
+        "ur": "10. 🛣️ ہائی وے فیول آپٹیمائزر",
+        "bn": "১০. 🛣️ হাইওয়ে ফুয়েল অপ্টিমাইজার",
+        "ta": "10. 🛣️ நெடுஞ்சாலை எரிபொருள் உகப்பாக்கி"
+    },
+    "sidebar_11_tanker": {
+        "pt": "11. 🚢 Rastreador de Navios-Tanque ao Vivo",
+        "it": "11. 🚢 Tracciatore Navi Cisterna Live",
+        "ko": "11. 🚢 실시간 해상 유조선 AIS 추적기",
+        "tr": "11. 🚢 Canlı Tanker Takipçisi AIS",
+        "nl": "11. 🚢 Live Tanker Tracker AIS",
+        "id": "11. 🚢 Pelacak Kapal Tanker Langsung AIS",
+        "ur": "11. 🚢 لائیو آئل ٹینکر ٹریکر",
+        "bn": "১১. 🚢 লাইভ ট্যাংকার ট্র্যাকার",
+        "ta": "11. 🚢 நேரலை எண்ணெய் கப்பல் கண்காணிப்பான்"
+    },
     "sidebar_sync_title": {
         "pt": "⚡ Sincronização em Tempo Real",
         "it": "⚡ Sincronizzazione Live Pipeline",

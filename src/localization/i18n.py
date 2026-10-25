@@ -2420,6 +2420,28 @@ TRANSLATIONS: Dict[str, Dict[str, str]] = {
         "ru": "11. 📖 Руководство пользователя",
         "ja": "11. 📖 プロダクトガイド"
     },
+    "sidebar_10_highway": {
+        "en": "10. 🛣️ Highway Optimizer",
+        "hi": "10. 🛣️ हाईवे ऑप्टिमाइज़र",
+        "es": "10. 🛣️ Optimizador de Rutas",
+        "fr": "10. 🛣️ Optimiseur d'Autoroutes",
+        "ar": "10. 🛣️ محسن مسارات الطرق السريعة",
+        "de": "10. 🛣️ Autobahn-Routenoptimierer",
+        "zh": "10. 🛣️ 跨境公路燃油套利优化器",
+        "ru": "10. 🛣️ Оптимизатор маршрутов",
+        "ja": "10. 🛣️ 高速道路燃油最適化"
+    },
+    "sidebar_11_tanker": {
+        "en": "11. 🚢 Live Tanker Tracker",
+        "hi": "11. 🚢 लाइव टैंकर ट्रैकर",
+        "es": "11. 🚢 Rastreador de Buques",
+        "fr": "11. 🚢 Suivi des Pétroliers en Direct",
+        "ar": "11. 🚢 متتبع ناقلات النفط البحرية",
+        "de": "11. 🚢 Live-Tanker-Radar",
+        "zh": "11. 🚢 实时海运油轮 AIS 卫星追踪",
+        "ru": "11. 🚢 Мониторинг танкеров AIS",
+        "ja": "11. 🚢 リアルタイムタンカー追跡"
+    },
     "sidebar_sync_title": {
         "en": "⚡ Live Pipeline Sync",
         "hi": "⚡ लाइव डेटा पाइपलाइन सिंक",

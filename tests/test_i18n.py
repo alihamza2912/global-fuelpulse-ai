@@ -132,7 +132,7 @@ def test_all_18_languages_full_key_coverage():
     """Validates that 100% of all translation keys are present for all 18 languages."""
     total_keys = len(TRANSLATIONS)
     assert total_keys >= 165, f"Expected at least 165 keys in TRANSLATIONS, found {total_keys}"
-    assert total_keys == 181, f"Expected 181 keys in TRANSLATIONS, found {total_keys}"
+    assert total_keys == 183, f"Expected 183 keys in TRANSLATIONS, found {total_keys}"
     for code in SUPPORTED_LANGUAGES:
         present = sum(1 for k, d in TRANSLATIONS.items() if code in d and d[code])
         assert present == total_keys, f"Language {code} only has {present}/{total_keys} keys"

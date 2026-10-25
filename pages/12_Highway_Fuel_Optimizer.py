@@ -47,7 +47,7 @@ current_lang = get_current_language()
 
 # Page Header (internally orchestrates universal navigation, sidebar, and theme)
 render_page_header(
-    title="12. 🛣️ Highway Fuel Trip & Arbitrage Optimizer",
+    title="10. 🛣️ Highway Fuel Trip & Arbitrage Optimizer",
     subtitle="Interstate VAT disparity, cross-border freight corridor routing, and AI refueling optimization for India, Saudi Arabia, Dubai/UAE, and the Middle East.",
     source_tag="PPAC • MoPNG • Saudi Aramco • UAE Fuel Committee",
     observation_date="Live Corridor Telemetry 2026"

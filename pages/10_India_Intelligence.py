@@ -44,8 +44,9 @@ from sqlalchemy import text
 apply_theme()
 current_lang = get_current_language()
 
+import re
 render_page_header(
-    title=t("sidebar_10_india", current_lang),
+    title=f"09. {re.sub(r'^\d+\.\s*', '', t('sidebar_10_india', current_lang)).strip()}",
     subtitle=t("chapter_05_subtitle", current_lang),
     source_tag="PPAC • MoPNG • data.gov.in",
     observation_date="Daily & Monthly Official Series"

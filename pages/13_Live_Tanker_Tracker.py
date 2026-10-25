@@ -44,7 +44,7 @@ apply_theme()
 current_lang = get_current_language()
 
 render_page_header(
-    title="13. 🚢 Live Maritime Fuel Tanker Tracker — AIS Telemetry",
+    title="11. 🚢 Live Maritime Fuel Tanker Tracker — AIS Telemetry",
     subtitle="Real-time ocean coordinate positioning, speed over ground (knots), heading, dynamic days-to-arrival (ETA), and cargo valuations for global crude and fuel supertankers.",
     source_tag="Satellite AIS • MarineTraffic Feeds • Lloyd's List Intelligence • Kpler Telemetry",
     observation_date="Live Ocean Telemetry 2026"
