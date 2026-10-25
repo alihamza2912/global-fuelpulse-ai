@@ -2857,24 +2857,58 @@ button[data-testid="stExpandSidebarButton"]::before,
   background-size: contain !important;
 }}
 
-/* Sidebar header close button styling when open */
+/* Sidebar header close button styling when open - ALWAYS HIGH-CONTRAST & VISIBLE */
+div[data-testid="stSidebarCollapseButton"],
+section[data-testid="stSidebar"] div[data-testid="stSidebarCollapseButton"] {{
+  visibility: visible !important;
+  opacity: 1 !important;
+  display: flex !important;
+}}
+
 div[data-testid="stSidebarCollapseButton"] button {{
+  visibility: visible !important;
+  opacity: 1 !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  width: 32px !important;
-  height: 32px !important;
-  background: rgba(14, 21, 38, 0.85) !important;
-  border: 1px solid rgba(255, 255, 255, 0.20) !important;
-  border-radius: 8px !important;
+  width: 36px !important;
+  height: 36px !important;
+  min-width: 36px !important;
+  min-height: 36px !important;
+  background: rgba(14, 21, 38, 0.95) !important;
+  border: 1.5px solid #F5B942 !important;
+  border-radius: 9px !important;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.60), 0 0 12px rgba(245, 185, 66, 0.35) !important;
   cursor: pointer !important;
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}}
+
+div[data-testid="stSidebarCollapseButton"] button span,
+div[data-testid="stSidebarCollapseButton"] button [data-testid="stIconMaterial"],
+div[data-testid="stSidebarCollapseButton"] button svg {{
+  color: #F5B942 !important;
+  fill: #F5B942 !important;
+  font-size: 20px !important;
+  font-weight: 800 !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  text-shadow: 0 0 8px rgba(245, 185, 66, 0.50) !important;
   transition: all 0.2s ease !important;
 }}
 
 div[data-testid="stSidebarCollapseButton"] button:hover {{
-  background: rgba(245, 185, 66, 0.20) !important;
-  border-color: #F5B942 !important;
-  box-shadow: 0 0 10px rgba(245, 185, 66, 0.3) !important;
+  background: rgba(245, 185, 66, 0.25) !important;
+  border-color: #FDE047 !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.70), 0 0 18px rgba(245, 185, 66, 0.65) !important;
+  transform: scale(1.06) !important;
+}}
+
+div[data-testid="stSidebarCollapseButton"] button:hover span,
+div[data-testid="stSidebarCollapseButton"] button:hover [data-testid="stIconMaterial"],
+div[data-testid="stSidebarCollapseButton"] button:hover svg {{
+  color: #FFFFFF !important;
+  fill: #FFFFFF !important;
+  text-shadow: 0 0 12px #F5B942 !important;
 }}
 
 /* Offset brand bar when sidebar is collapsed so it sits gracefully next to the hamburger toggle */
