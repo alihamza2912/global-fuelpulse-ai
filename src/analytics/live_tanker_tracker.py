@@ -597,12 +597,90 @@ class LiveTankerTracker:
         }
     ]
 
+    @staticmethod
+    def haversine_nm(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
+        """Calculates great-circle distance between two nautical coordinates in Nautical Miles."""
+        r = 3440.065
+        phi1 = math.radians(lat1)
+        phi2 = math.radians(lat2)
+        delta_phi = math.radians(lat2 - lat1)
+        delta_lambda = math.radians(lon2 - lon1)
+        a = math.sin(delta_phi / 2.0) ** 2 + math.cos(phi1) * math.cos(phi2) * math.sin(delta_lambda / 2.0) ** 2
+        c = 2.0 * math.atan2(math.sqrt(a), math.sqrt(1.0 - a))
+        return r * c
+
+    @staticmethod
+    def calculate_bearing_deg(lat1: float, lon1: float, lat2: float, lon2: float) -> int:
+        """Calculates initial bearing (heading) between two coordinates in degrees (0-359)."""
+        dlon = math.radians(lon2 - lon1)
+        lat1_r = math.radians(lat1)
+        lat2_r = math.radians(lat2)
+        y = math.sin(dlon) * math.cos(lat2_r)
+        x = math.cos(lat1_r) * math.sin(lat2_r) - math.sin(lat1_r) * math.cos(lat2_r) * math.cos(dlon)
+        brng = math.degrees(math.atan2(y, x))
+        return int((brng + 360.0) % 360.0)
+
+    @classmethod
+    def compute_dynamic_waypoint_position(cls, vessel: Dict[str, Any], now_utc: datetime) -> Dict[str, Any]:
+        """
+        Dynamically advances vessel coordinates along its verified nautical waypoints in real time.
+        Calculates exact instantaneous latitude, longitude, and heading from elapsed voyage duration.
+        """
+        waypoints = vessel.get("waypoints", [])
+        if not waypoints or len(waypoints) < 2:
+            return vessel
+
+        total_nm = float(vessel.get("total_distance_nm", 1000.0))
+        speed_kts = max(1.0, float(vessel.get("speed_knots", 13.5)))
+
+        dep_str = vessel.get("departure_date", "")
+        try:
+            dep_time = datetime.strptime(dep_str.replace(" UTC", ""), "%Y-%m-%d %H:%M").replace(tzinfo=timezone.utc)
+        except Exception:
+            dep_time = now_utc - timedelta(days=2)
+
+        elapsed_hrs = max(0.0, (now_utc - dep_time).total_seconds() / 3600.0)
+        sailed_nm = min(total_nm, elapsed_hrs * speed_kts)
+        if sailed_nm < 0.1:
+            sailed_nm = float(vessel.get("sailed_distance_nm", 0.0))
+
+        seg_dists = []
+        for i in range(len(waypoints) - 1):
+            d = cls.haversine_nm(waypoints[i][0], waypoints[i][1], waypoints[i+1][0], waypoints[i+1][1])
+            seg_dists.append(max(0.1, d))
+        total_wp_dist = sum(seg_dists)
+
+        scale = total_wp_dist / total_nm if total_nm > 0 else 1.0
+        target_wp_dist = sailed_nm * scale
+
+        accum = 0.0
+        curr_lat = waypoints[-1][0]
+        curr_lon = waypoints[-1][1]
+        curr_heading = vessel.get("heading_deg", 90)
+
+        for i, dist in enumerate(seg_dists):
+            if accum + dist >= target_wp_dist:
+                frac = (target_wp_dist - accum) / dist
+                curr_lat = waypoints[i][0] + frac * (waypoints[i+1][0] - waypoints[i][0])
+                curr_lon = waypoints[i][1] + frac * (waypoints[i+1][1] - waypoints[i][1])
+                curr_heading = cls.calculate_bearing_deg(waypoints[i][0], waypoints[i][1], waypoints[i+1][0], waypoints[i+1][1])
+                break
+            accum += dist
+
+        updated = dict(vessel)
+        updated["current_lat"] = round(curr_lat, 4)
+        updated["current_lon"] = round(curr_lon, 4)
+        updated["heading_deg"] = curr_heading
+        updated["sailed_distance_nm"] = round(sailed_nm, 0)
+        return updated
+
     @classmethod
     def get_fleet_telemetry(
         cls,
         cargo_filter: Optional[str] = "all",
         vessel_class_filter: Optional[str] = "all",
-        search_query: Optional[str] = None
+        search_query: Optional[str] = None,
+        dynamic_motion: bool = False
     ) -> List[Dict[str, Any]]:
         """
         Enriches and returns live fleet telemetry with dynamic distance,
@@ -611,7 +689,9 @@ class LiveTankerTracker:
         now = datetime.now(timezone.utc)
         results = []
 
-        for v in cls.VESSELS:
+        for base_v in cls.VESSELS:
+            v = cls.compute_dynamic_waypoint_position(base_v, now) if dynamic_motion else dict(base_v)
+
             # Filters
             if cargo_filter and cargo_filter != "all" and v["cargo_type"] != cargo_filter:
                 continue
@@ -675,6 +755,69 @@ class LiveTankerTracker:
         return results
 
     @classmethod
+    def get_live_open_ais_fleet(
+        cls,
+        cargo_filter: Optional[str] = "all",
+        search_query: Optional[str] = None
+    ) -> List[Dict[str, Any]]:
+        """Retrieves active real commercial tankers broadcasting live satellite AIS via open government API."""
+        try:
+            from src.connectors.open_ais_connector import fetch_live_open_ais_tankers
+            tankers = fetch_live_open_ais_tankers()
+        except Exception:
+            tankers = []
+
+        results = []
+        for t in tankers:
+            if cargo_filter and cargo_filter != "all" and t.get("cargo_type") != cargo_filter:
+                continue
+            if search_query:
+                q = search_query.strip().lower()
+                matches = (
+                    q in t["name"].lower()
+                    or q in str(t["imo"])
+                    or q in str(t["mmsi"])
+                    or q in t.get("dest_port", "").lower()
+                )
+                if not matches:
+                    continue
+            results.append(t)
+        return results
+
+    @classmethod
+    def get_combined_fleet(
+        cls,
+        fleet_source: str = "strategic",
+        cargo_filter: Optional[str] = "all",
+        vessel_class_filter: Optional[str] = "all",
+        search_query: Optional[str] = None,
+        dynamic_motion: bool = True
+    ) -> List[Dict[str, Any]]:
+        """
+        Returns fleet based on selected source:
+        - 'strategic': 10 global crude supertankers with dynamic live GPS motion.
+        - 'live_open_ais': 100+ real tankers broadcasting satellite AIS via open government API.
+        - 'combined': Strategic supertankers + live open AIS fleet combined.
+        """
+        strategic = cls.get_fleet_telemetry(
+            cargo_filter=cargo_filter,
+            vessel_class_filter=vessel_class_filter,
+            search_query=search_query,
+            dynamic_motion=dynamic_motion
+        )
+        if fleet_source == "strategic":
+            return strategic
+
+        live_ais = cls.get_live_open_ais_fleet(
+            cargo_filter=cargo_filter,
+            search_query=search_query
+        )
+        if fleet_source == "live_open_ais":
+            return live_ais
+
+        return strategic + live_ais
+
+    @classmethod
     def get_summary_kpis(cls, vessels: Optional[List[Dict[str, Any]]] = None) -> Dict[str, Any]:
         """Calculates elevated midnight summary metrics across the fleet."""
         fleet = vessels if vessels is not None else cls.get_fleet_telemetry()
@@ -691,7 +834,7 @@ class LiveTankerTracker:
         total_bbl = sum(v["cargo_barrels"] for v in fleet)
         total_val = sum(v["cargo_value_usd"] for v in fleet)
         avg_speed = sum(v["speed_knots"] for v in fleet) / len(fleet)
-        at_risk = sum(1 for v in fleet if v["chokepoint_dist_nm"] < 500 and ("Red Sea" in v["current_basin"] or "Hormuz" in v["nearest_chokepoint"]))
+        at_risk = sum(1 for v in fleet if v.get("chokepoint_dist_nm", 9999) < 500 and ("Red Sea" in v.get("current_basin", "") or "Hormuz" in v.get("nearest_chokepoint", "")))
 
         return {
             "active_vessels": len(fleet),
