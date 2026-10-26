@@ -79,37 +79,38 @@ render_html(f"""
 </div>
 """)
 
-col_f1, col_f2, col_f3 = st.columns([2, 2, 3])
+with st.container(key="tanker_filters_row"):
+    col_f1, col_f2, col_f3 = st.columns([2, 2, 3])
 
-with col_f1:
-    cargo_choice = st.selectbox(
-        t("ltt_commodity_type", current_lang),
-        options=[
-            ("all", t("ltt_all_commodities", current_lang)),
-            ("crude", t("ltt_crude_oil", current_lang)),
-            ("product", t("ltt_refined_products", current_lang)),
-            ("lng", t("ltt_lng_carriers", current_lang))
-        ],
-        format_func=lambda x: x[1],
-        index=0,
-        key="tanker_filter_cargo"
-    )[0]
+    with col_f1:
+        cargo_choice = st.selectbox(
+            t("ltt_commodity_type", current_lang),
+            options=[
+                ("all", t("ltt_all_commodities", current_lang)),
+                ("crude", t("ltt_crude_oil", current_lang)),
+                ("product", t("ltt_refined_products", current_lang)),
+                ("lng", t("ltt_lng_carriers", current_lang))
+            ],
+            format_func=lambda x: x[1],
+            index=0,
+            key="tanker_filter_cargo"
+        )[0]
 
-with col_f2:
-    class_choice = st.selectbox(
-        t("ltt_vessel_class", current_lang),
-        options=["all", "VLCC", "ULCC", "Suezmax", "Aframax", "LR2", "LR1", "Q-Max"],
-        format_func=lambda x: t("ltt_all_classes", current_lang) if x == "all" else f"{t('tbl_vessel_class', current_lang)}: {x}",
-        index=0,
-        key="tanker_filter_class"
-    )
+    with col_f2:
+        class_choice = st.selectbox(
+            t("ltt_vessel_class", current_lang),
+            options=["all", "VLCC", "ULCC", "Suezmax", "Aframax", "LR2", "LR1", "Q-Max"],
+            format_func=lambda x: t("ltt_all_classes", current_lang) if x == "all" else f"{t('tbl_vessel_class', current_lang)}: {x}",
+            index=0,
+            key="tanker_filter_class"
+        )
 
-with col_f3:
-    search_query = st.text_input(
-        t("ltt_search_label", current_lang),
-        placeholder="e.g. Maran Canopus, Ras Tanura, 9784532, India...",
-        key="tanker_search_query"
-    )
+    with col_f3:
+        search_query = st.text_input(
+            t("ltt_search_label", current_lang),
+            placeholder="e.g. Maran Canopus, Ras Tanura, 9784532, India...",
+            key="tanker_search_query"
+        )
 
 # -------------------------------------------------------------
 # 3. COMPUTE FLEET TELEMETRY & SUMMARY METRICS
@@ -182,32 +183,33 @@ st.markdown("<div style='height: 12px;'></div>", unsafe_allow_html=True)
 vessel_options = [v["vessel_id"] for v in fleet] if fleet else []
 vessel_map = {v["vessel_id"]: f"{v['flag_emoji']} {v['name']} ({v['vessel_class'].split()[0]}) — {v['cargo_name']} ➔ {v['dest_port'].split()[0]}" for v in fleet}
 
-col_sel, col_stats = st.columns([6, 4])
-with col_sel:
-    selected_vessel_id = st.selectbox(
-        t("ltt_select_vessel_label", current_lang),
-        options=vessel_options,
-        format_func=lambda x: vessel_map.get(x, x),
-        index=0 if vessel_options else None,
-        key="selected_vessel_tracker"
-    )
+with st.container(key="tanker_vessel_select_row"):
+    col_sel, col_stats = st.columns([6, 4])
+    with col_sel:
+        selected_vessel_id = st.selectbox(
+            t("ltt_select_vessel_label", current_lang),
+            options=vessel_options,
+            format_func=lambda x: vessel_map.get(x, x),
+            index=0 if vessel_options else None,
+            key="selected_vessel_tracker"
+        )
 
-selected_vessel = LiveTankerTracker.get_vessel_by_id(selected_vessel_id) if selected_vessel_id else (fleet[0] if fleet else None)
+    selected_vessel = LiveTankerTracker.get_vessel_by_id(selected_vessel_id) if selected_vessel_id else (fleet[0] if fleet else None)
 
-with col_stats:
-    if selected_vessel:
-        render_html(f"""
-        <div style="background: rgba(14, 21, 38, 0.85); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 8px; padding: 10px 14px; margin-top: 24px; display: flex; align-items: center; justify-content: space-between;">
-            <div>
-                <span style="font-size: 11px; color: #94A3B8; text-transform: uppercase; font-weight: 600;">{t("ltt_current_speed_course", current_lang)}</span>
-                <div style="font-size: 16px; font-weight: 800; color: #38BDF8;">⚡ {selected_vessel['speed_knots']} Knots ({selected_vessel['speed_knots'] * 1.852:.1f} km/h) · {selected_vessel['heading_deg']}° COG</div>
+    with col_stats:
+        if selected_vessel:
+            render_html(f"""
+            <div style="background: rgba(14, 21, 38, 0.85); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 8px; padding: 10px 14px; margin-top: 24px; display: flex; align-items: center; justify-content: space-between;">
+                <div>
+                    <span style="font-size: 11px; color: #94A3B8; text-transform: uppercase; font-weight: 600;">{t("ltt_current_speed_course", current_lang)}</span>
+                    <div style="font-size: 16px; font-weight: 800; color: #38BDF8;">⚡ {selected_vessel['speed_knots']} Knots ({selected_vessel['speed_knots'] * 1.852:.1f} km/h) · {selected_vessel['heading_deg']}° COG</div>
+                </div>
+                <div style="text-align: right;">
+                    <span style="font-size: 11px; color: #94A3B8; text-transform: uppercase; font-weight: 600;">{t("ltt_arrival_timeline", current_lang)}</span>
+                    <div style="font-size: 15px; font-weight: 800; color: #34D399;">⏱️ {selected_vessel['days_remaining']} {t("ltt_days_remaining", current_lang)}</div>
+                </div>
             </div>
-            <div style="text-align: right;">
-                <span style="font-size: 11px; color: #94A3B8; text-transform: uppercase; font-weight: 600;">{t("ltt_arrival_timeline", current_lang)}</span>
-                <div style="font-size: 15px; font-weight: 800; color: #34D399;">⏱️ {selected_vessel['days_remaining']} {t("ltt_days_remaining", current_lang)}</div>
-            </div>
-        </div>
-        """)
+            """)
 
 # Plain-English Executive Mission Callout for the Selected Vessel
 if selected_vessel:
@@ -225,7 +227,7 @@ if selected_vessel:
                 {v_class_tag} TANKER
             </span>
         </div>
-        <div style="display: grid; grid-template-columns: 1.2fr 1.3fr 1.1fr; gap: 14px; font-size: 12px; line-height: 1.5;">
+        <div class="fuelpulse-mission-grid">
             <div>
                 <span style="color: #94A3B8; font-weight: 600; text-transform: uppercase; font-size: 10.5px;">{t("ltt_ship_holding_label", current_lang)}</span><br/>
                 <strong style="color: #F8FAFC; font-size: 13.5px;">{sv['flag_emoji']} {sv['name']}</strong> ({sv['flag']} Flag)<br/>
@@ -306,30 +308,31 @@ with st.expander(t("ltt_browse_summary_cards", current_lang), expanded=False):
 # -------------------------------------------------------------
 # 5. REALISTIC INTERACTIVE GLOBAL MARITIME AIS SATELLITE MAP
 # -------------------------------------------------------------
-map_header_col1, map_header_col2, map_header_col3 = st.columns([5.2, 3.8, 3.0], vertical_alignment="bottom")
-with map_header_col1:
-    st.subheader(t("ltt_map_title", current_lang))
-with map_header_col2:
-    map_engine_options = [
-        ("dark", t("ltt_opt_dark_ocean", current_lang)),
-        ("vector_dark", t("ltt_opt_fast_vector", current_lang)),
-        ("globe", t("ltt_opt_3d_globe", current_lang)),
-        ("coastal", t("ltt_opt_coastal_chart", current_lang))
-    ]
-    map_style_key = st.selectbox(
-        t("ltt_engine_label", current_lang),
-        options=[m[0] for m in map_engine_options],
-        format_func=lambda k: dict(map_engine_options).get(k, k),
-        index=0,
-        key="tanker_map_style_selector"
-    )
-with map_header_col3:
-    mouse_scroll_zoom = st.toggle(
-        "🖱️ Mouse Wheel Zoom",
-        value=st.session_state.get("tanker_mouse_zoom", False),
-        key="tanker_mouse_zoom",
-        help="Turn ON to zoom with mouse wheel/trackpad. Turn OFF to scroll page freely."
-    )
+with st.container(key="tanker_map_header_row"):
+    map_header_col1, map_header_col2, map_header_col3 = st.columns([5.2, 3.8, 3.0], vertical_alignment="bottom")
+    with map_header_col1:
+        st.subheader(t("ltt_map_title", current_lang))
+    with map_header_col2:
+        map_engine_options = [
+            ("dark", t("ltt_opt_dark_ocean", current_lang)),
+            ("vector_dark", t("ltt_opt_fast_vector", current_lang)),
+            ("globe", t("ltt_opt_3d_globe", current_lang)),
+            ("coastal", t("ltt_opt_coastal_chart", current_lang))
+        ]
+        map_style_key = st.selectbox(
+            t("ltt_engine_label", current_lang),
+            options=[m[0] for m in map_engine_options],
+            format_func=lambda k: dict(map_engine_options).get(k, k),
+            index=0,
+            key="tanker_map_style_selector"
+        )
+    with map_header_col3:
+        mouse_scroll_zoom = st.toggle(
+            "🖱️ Mouse Wheel Zoom",
+            value=st.session_state.get("tanker_mouse_zoom", False),
+            key="tanker_mouse_zoom",
+            help="Turn ON to zoom with mouse wheel/trackpad. Turn OFF to scroll page freely."
+        )
 
 # Region quick-focus buttons (Includes Americas & Atlantic)
 rf_col1, rf_col2, rf_col3, rf_col4, rf_col5, rf_col6 = st.columns(6)
@@ -425,10 +428,8 @@ if is_tile_map:
     cp_colors = [cp["risk_color"] for cp in LiveTankerTracker.CHOKEPOINTS.values()]
     cp_texts = [f"🚨 {cp['name']}" for cp in LiveTankerTracker.CHOKEPOINTS.values()]
     cp_hovers = [
-        f"<b>🚨 Strategic Maritime Chokepoint</b><br>"
-        f"<b>Name:</b> {cp['name']}<br>"
-        f"<b>Daily Volume:</b> {cp['daily_mbpd']} Million bpd<br>"
-        f"<b>Status:</b> {cp['risk_level']}"
+        f"<b>🚨 {cp['name']}</b><br>"
+        f"Daily Vol: <b>{cp['daily_mbpd']}M bpd</b> · Status: <b>{cp['risk_level']}</b>"
         for cp in LiveTankerTracker.CHOKEPOINTS.values()
     ]
 
@@ -492,21 +493,12 @@ if is_tile_map:
         color = "#F5B942" if v["cargo_type"] == "crude" else ("#38BDF8" if v["cargo_type"] == "product" else "#10B981")
         size = 22 if is_sel else (15 if "VLCC" in v["vessel_class"] or "ULCC" in v["vessel_class"] else 12)
 
+        dest_short = v["dest_port"].split()[0]
+        cargo_short = v["cargo_name"]
         hover_card = (
-            f"<b>🚢 {v['name']} ({v['flag_emoji']} {v['flag']})</b><br>"
-            f"<b>Class:</b> {v['vessel_class']}<br>"
-            f"<b>IMO:</b> {v['imo']} · <b>MMSI:</b> {v['mmsi']}<br>"
-            f"────────────────────────<br>"
-            f"<b>Speed Over Ground:</b> {v['speed_knots']} Knots ({v['speed_knots'] * 1.852:.1f} km/h)<br>"
-            f"<b>Heading:</b> {v['heading_deg']}° · <b>Draft:</b> {v['draft_m']}m<br>"
-            f"<b>Current Location:</b> {v['current_basin']}<br>"
-            f"<b>Coordinates:</b> {v['current_lat']:.4f}°N, {v['current_lon']:.4f}°E<br>"
-            f"────────────────────────<br>"
-            f"<b>Cargo:</b> {v['cargo_name']} ({v['cargo_barrels']:,} bbl)<br>"
-            f"<b>Cargo Value:</b> ${v['cargo_value_millions_usd']}M USD<br>"
-            f"<b>Route:</b> {v['origin_port']} ➔ {v['dest_port']}<br>"
-            f"<b>Mission:</b> {v.get('mission_purpose', 'Energy Delivery')}<br>"
-            f"<b>ETA:</b> {v['eta_human']} ({v['remaining_distance_nm']:,} NM left · {v['progress_pct']}%)"
+            f"<b>🚢 {v['name']} ({v['flag_emoji']})</b><br>"
+            f"⚡ <b>{v['speed_knots']} kts</b> · 🛢️ {cargo_short}<br>"
+            f"🎯 ➔ <b>{dest_short}</b> ({v['dest_country']}) · ⏱️ <b>{v['days_remaining']}d left</b>"
         )
 
         fig_map.add_trace(go.Scattermap(
@@ -523,7 +515,8 @@ if is_tile_map:
             textfont=dict(family="Space Grotesk, sans-serif", size=12, color="#FFFFFF"),
             hoverinfo="text",
             hovertext=hover_card,
-            name=f"{v['name']} ({v['speed_knots']} kts · {v['cargo_name'].split()[0]})"
+            name=f"{v['name']} ({v['speed_knots']} kts · {v['cargo_name'].split()[0]})",
+            showlegend=False
         ))
 
     map_kwargs = dict(
@@ -539,7 +532,13 @@ if is_tile_map:
         paper_bgcolor="#070A12",
         plot_bgcolor="#070A12",
         margin=dict(l=0, r=0, t=0, b=0),
-        height=580,
+        height=560,
+        hoverlabel=dict(
+            bgcolor="rgba(11, 17, 32, 0.95)",
+            bordercolor="rgba(245, 185, 66, 0.7)",
+            font_size=12,
+            font_family="Space Grotesk, -apple-system, sans-serif"
+        ),
         legend=dict(
             orientation="h",
             yanchor="bottom",
@@ -607,6 +606,13 @@ else:
         is_sel = selected_vessel and v["vessel_id"] == selected_vessel["vessel_id"]
         color = "#F5B942" if v["cargo_type"] == "crude" else ("#38BDF8" if v["cargo_type"] == "product" else "#10B981")
         size = 20 if is_sel else 12
+        dest_short = v["dest_port"].split()[0]
+        cargo_short = v["cargo_name"]
+        geo_hover = (
+            f"<b>🚢 {v['name']} ({v['flag_emoji']})</b><br>"
+            f"⚡ <b>{v['speed_knots']} kts</b> · 🛢️ {cargo_short}<br>"
+            f"🎯 ➔ <b>{dest_short}</b> ({v['dest_country']}) · ⏱️ <b>{v['days_remaining']}d left</b>"
+        )
         fig_map.add_trace(go.Scattergeo(
             lon=[v["current_lon"]],
             lat=[v["current_lat"]],
@@ -615,7 +621,10 @@ else:
             text=[f"<b>{v['name']}</b> ({v['speed_knots']} kts)"] if is_sel else [""],
             textposition="bottom center",
             textfont=dict(family="Space Grotesk, sans-serif", size=12, color="#F8FAFC"),
-            name=f"{v['name']} ({v['speed_knots']} kts)"
+            hoverinfo="text",
+            hovertext=geo_hover,
+            name=f"{v['name']} ({v['speed_knots']} kts)",
+            showlegend=False
         ))
 
     fig_map.update_geos(
@@ -634,7 +643,13 @@ else:
         paper_bgcolor="#070A12",
         plot_bgcolor="#070A12",
         margin=dict(l=0, r=0, t=10, b=0),
-        height=580,
+        height=560,
+        hoverlabel=dict(
+            bgcolor="rgba(11, 17, 32, 0.95)",
+            bordercolor="rgba(245, 185, 66, 0.7)",
+            font_size=12,
+            font_family="Space Grotesk, -apple-system, sans-serif"
+        ),
         legend=dict(orientation="h", y=1.02, x=0, font=dict(color="#F8FAFC", size=11))
     )
 
@@ -671,142 +686,143 @@ if selected_vessel:
     dossier_hdr = t("ltt_dossier_title", current_lang)
     st.subheader(f"{dossier_hdr} {v['flag_emoji']} {v['name']} (IMO {v['imo']})")
 
-    col_img, col_telemetry = st.columns([5, 7])
+    with st.container(key="tanker_dossier_row"):
+        col_img, col_telemetry = st.columns([5, 7])
 
-    with col_img:
-        # High-Resolution Real Vessel Photography (Native Streamlit Media Manager)
-        img_rel = v.get("asset_image", "assets/tankers/vlcc_supertanker.jpg")
-        img_file = ROOT_DIR / img_rel
-        if not img_file.exists():
-            img_file = ROOT_DIR / "assets/tankers/vlcc_supertanker.jpg"
+        with col_img:
+            # High-Resolution Real Vessel Photography (Native Streamlit Media Manager)
+            img_rel = v.get("asset_image", "assets/tankers/vlcc_supertanker.jpg")
+            img_file = ROOT_DIR / img_rel
+            if not img_file.exists():
+                img_file = ROOT_DIR / "assets/tankers/vlcc_supertanker.jpg"
 
-        st.image(
-            str(img_file),
-            use_container_width=True,
-            caption=f"🛰️ AIS Satellite Recon: {v['name']} ({v['vessel_class'].split()[0]}) — {v['flag']} Registered"
-        )
+            st.image(
+                str(img_file),
+                use_container_width=True,
+                caption=f"🛰️ AIS Satellite Recon: {v['name']} ({v['vessel_class'].split()[0]}) — {v['flag']} Registered"
+            )
 
-        dwt_lbl = t("ltt_deadweight", current_lang)
-        lb_lbl = t("ltt_length_beam", current_lang)
-        draft_lbl = t("ltt_laden_draft", current_lang)
+            dwt_lbl = t("ltt_deadweight", current_lang)
+            lb_lbl = t("ltt_length_beam", current_lang)
+            draft_lbl = t("ltt_laden_draft", current_lang)
 
-        spec_html = f"""
-        <div style="background: #0D1527; border: 1px solid rgba(255, 255, 255, 0.14); border-radius: 10px; padding: 14px 16px; margin-top: 4px; box-shadow: 0 6px 20px rgba(0,0,0,0.35);">
-            <div style="display: flex; justify-content: space-between; align-items: baseline;">
-                <h4 style="margin: 0; font-size: 18px; font-weight: 800; color: #F8FAFC;">{v['flag_emoji']} {v['name']}</h4>
-                <span style="font-size: 11px; color: #94A3B8; font-weight: 600;">BUILT {v['built_year']}</span>
+            spec_html = f"""
+            <div style="background: #0D1527; border: 1px solid rgba(255, 255, 255, 0.14); border-radius: 10px; padding: 14px 16px; margin-top: 4px; box-shadow: 0 6px 20px rgba(0,0,0,0.35);">
+                <div style="display: flex; justify-content: space-between; align-items: baseline;">
+                    <h4 style="margin: 0; font-size: 18px; font-weight: 800; color: #F8FAFC;">{v['flag_emoji']} {v['name']}</h4>
+                    <span style="font-size: 11px; color: #94A3B8; font-weight: 600;">BUILT {v['built_year']}</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 4px;">
+                    <span style="font-size: 12px; color: #38BDF8; font-weight: 700;">{v['vessel_class']}</span>
+                    <span style="background: rgba(245, 185, 66, 0.15); color: #F5B942; border: 1px solid rgba(245, 185, 66, 0.3); font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 4px;">
+                        {v['flag'].upper()} REGISTERED
+                    </span>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 12px; padding-top: 10px; border-top: 1px solid rgba(255, 255, 255, 0.08); text-align: center;">
+                    <div style="background: rgba(255,255,255,0.02); padding: 8px 4px; border-radius: 6px;">
+                        <div style="font-size: 9.5px; color: #94A3B8; text-transform: uppercase;">{dwt_lbl}</div>
+                        <div style="font-size: 12.5px; font-weight: 800; color: #F8FAFC;">{v['dwt']:,} DWT</div>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.02); padding: 8px 4px; border-radius: 6px;">
+                        <div style="font-size: 9.5px; color: #94A3B8; text-transform: uppercase;">{lb_lbl}</div>
+                        <div style="font-size: 12.5px; font-weight: 800; color: #F8FAFC;">{v['length_m']}m × {v['beam_m']}m</div>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.02); padding: 8px 4px; border-radius: 6px;">
+                        <div style="font-size: 9.5px; color: #94A3B8; text-transform: uppercase;">{draft_lbl}</div>
+                        <div style="font-size: 12.5px; font-weight: 800; color: #34D399;">{v['draft_m']} meters</div>
+                    </div>
+                </div>
             </div>
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 4px;">
-                <span style="font-size: 12px; color: #38BDF8; font-weight: 700;">{v['vessel_class']}</span>
-                <span style="background: rgba(245, 185, 66, 0.15); color: #F5B942; border: 1px solid rgba(245, 185, 66, 0.3); font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 4px;">
-                    {v['flag'].upper()} REGISTERED
-                </span>
-            </div>
-            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 12px; padding-top: 10px; border-top: 1px solid rgba(255, 255, 255, 0.08); text-align: center;">
-                <div style="background: rgba(255,255,255,0.02); padding: 8px 4px; border-radius: 6px;">
-                    <div style="font-size: 9.5px; color: #94A3B8; text-transform: uppercase;">{dwt_lbl}</div>
-                    <div style="font-size: 12.5px; font-weight: 800; color: #F8FAFC;">{v['dwt']:,} DWT</div>
-                </div>
-                <div style="background: rgba(255,255,255,0.02); padding: 8px 4px; border-radius: 6px;">
-                    <div style="font-size: 9.5px; color: #94A3B8; text-transform: uppercase;">{lb_lbl}</div>
-                    <div style="font-size: 12.5px; font-weight: 800; color: #F8FAFC;">{v['length_m']}m × {v['beam_m']}m</div>
-                </div>
-                <div style="background: rgba(255,255,255,0.02); padding: 8px 4px; border-radius: 6px;">
-                    <div style="font-size: 9.5px; color: #94A3B8; text-transform: uppercase;">{draft_lbl}</div>
-                    <div style="font-size: 12.5px; font-weight: 800; color: #34D399;">{v['draft_m']} meters</div>
-                </div>
-            </div>
-        </div>
-        """
-        render_html(spec_html)
+            """
+            render_html(spec_html)
 
-    with col_telemetry:
-        # Dynamic ETA & Telemetry Dashboard Card (Rendered via clean render_html)
-        telemetry_html = f"""
-        <div style="background: #0D1527; border: 1px solid rgba(255, 255, 255, 0.14); border-radius: 12px; padding: 18px 20px; box-shadow: 0 8px 30px rgba(0,0,0,0.5); display: flex; flex-direction: column; justify-content: space-between;">
-            <div>
-                <!-- Status & Sea Zone -->
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-                    <div style="display: flex; align-items: center; gap: 8px;">
-                        <span style="display: inline-block; width: 9px; height: 9px; border-radius: 50%; background: #10B981; box-shadow: 0 0 8px #10B981;"></span>
-                        <span style="font-size: 12px; font-weight: 800; color: #10B981; text-transform: uppercase; letter-spacing: 0.05em;">{v['nav_status']}</span>
-                    </div>
-                    <span style="font-size: 11px; color: #94A3B8; font-weight: 600;">IMO: {v['imo']} · MMSI: {v['mmsi']}</span>
-                </div>
-
-                <!-- Current Sea Basin -->
-                <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 8px; padding: 10px 14px; margin-bottom: 12px;">
-                    <div style="font-size: 10.5px; color: #94A3B8; text-transform: uppercase; font-weight: 600;">Current Maritime Basin & Coordinates</div>
-                    <div style="font-size: 14.5px; font-weight: 700; color: #F8FAFC; margin-top: 2px;">📍 {v['current_basin']}</div>
-                    <div style="font-size: 12px; color: #38BDF8; font-family: monospace; margin-top: 2px;">{v['current_lat']:.4f}° N, {v['current_lon']:.4f}° E · Heading: {v['heading_deg']}° COG</div>
-                </div>
-
-                <!-- Voyage Progress Bar -->
-                <div style="margin-bottom: 12px;">
-                    <div style="display: flex; justify-content: space-between; font-size: 11.5px; font-weight: 700; color: #F8FAFC; margin-bottom: 6px;">
-                        <span>⚓ {v['origin_port']} ({v['origin_country']})</span>
-                        <span style="color: #F5B942;">{v['progress_pct']}% SAILED</span>
-                        <span>🎯 {v['dest_port']} ({v['dest_country']})</span>
-                    </div>
-                    <div style="width: 100%; height: 8px; background: rgba(255, 255, 255, 0.1); border-radius: 999px; overflow: hidden;">
-                        <div style="width: {v['progress_pct']}%; height: 100%; background: linear-gradient(90deg, #F5B942, #10B981); border-radius: 999px;"></div>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; font-size: 10.5px; color: #94A3B8; margin-top: 4px;">
-                        <span>Departed: {v['departure_date']}</span>
-                        <span>{v['sailed_distance_nm']:,} NM sailed of {v['total_distance_nm']:,} NM</span>
-                    </div>
-                </div>
-
-                <!-- DYNAMIC ETA & SPEED SCORECARD ROW -->
-                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 12px;">
-                    <div style="background: rgba(14, 165, 233, 0.1); border: 1px solid rgba(14, 165, 233, 0.3); border-radius: 8px; padding: 8px; text-align: center;">
-                        <div style="font-size: 9.5px; color: #7DD3FC; font-weight: 700; text-transform: uppercase;">CURRENT SPEED (SOG)</div>
-                        <div style="font-size: 18px; font-weight: 800; color: #38BDF8; margin: 2px 0;">{v['speed_knots']} <span style="font-size: 11px;">kts</span></div>
-                        <div style="font-size: 10px; color: #BAE6FD;">{v['speed_knots'] * 1.852:.1f} km/h</div>
-                    </div>
-                    <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 8px; padding: 8px; text-align: center;">
-                        <div style="font-size: 9.5px; color: #6EE7B7; font-weight: 700; text-transform: uppercase;">DAYS TO ARRIVAL (ETA)</div>
-                        <div style="font-size: 18px; font-weight: 800; color: #34D399; margin: 2px 0;">{v['days_remaining']} <span style="font-size: 11px;">Days</span></div>
-                        <div style="font-size: 10px; color: #A7F3D0;">~{v['hours_remaining']:,.0f} hours</div>
-                    </div>
-                    <div style="background: rgba(245, 185, 66, 0.1); border: 1px solid rgba(245, 185, 66, 0.3); border-radius: 8px; padding: 8px; text-align: center;">
-                        <div style="font-size: 9.5px; color: #FCD34D; font-weight: 700; text-transform: uppercase;">DISTANCE REMAINING</div>
-                        <div style="font-size: 18px; font-weight: 800; color: #F5B942; margin: 2px 0;">{v['remaining_distance_nm']:,} <span style="font-size: 11px;">NM</span></div>
-                        <div style="font-size: 10px; color: #FDE68A;">{v['remaining_distance_nm'] * 1.852:,.0f} km</div>
-                    </div>
-                </div>
-
-                <!-- CARGO SPECIFICATION & VALUE -->
-                <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 8px; padding: 10px 12px; margin-bottom: 10px;">
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <div>
-                            <span style="font-size: 10px; color: #94A3B8; text-transform: uppercase; font-weight: 600;">Onboard Petroleum Cargo</span>
-                            <div style="font-size: 13.5px; font-weight: 700; color: #F8FAFC;">🛢️ {v['cargo_name']} ({v['cargo_barrels']:,} bbl)</div>
+        with col_telemetry:
+            # Dynamic ETA & Telemetry Dashboard Card (Rendered via clean render_html)
+            telemetry_html = f"""
+            <div style="background: #0D1527; border: 1px solid rgba(255, 255, 255, 0.14); border-radius: 12px; padding: 18px 20px; box-shadow: 0 8px 30px rgba(0,0,0,0.5); display: flex; flex-direction: column; justify-content: space-between;">
+                <div>
+                    <!-- Status & Sea Zone -->
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <span style="display: inline-block; width: 9px; height: 9px; border-radius: 50%; background: #10B981; box-shadow: 0 0 8px #10B981;"></span>
+                            <span style="font-size: 12px; font-weight: 800; color: #10B981; text-transform: uppercase; letter-spacing: 0.05em;">{v['nav_status']}</span>
                         </div>
-                        <div style="text-align: right;">
-                            <span style="font-size: 10px; color: #94A3B8; text-transform: uppercase; font-weight: 600;">Cargo Market Valuation</span>
-                            <div style="font-size: 15px; font-weight: 800; color: #F5B942;">${v['cargo_value_millions_usd']}M USD</div>
+                        <span style="font-size: 11px; color: #94A3B8; font-weight: 600;">IMO: {v['imo']} · MMSI: {v['mmsi']}</span>
+                    </div>
+
+                    <!-- Current Sea Basin -->
+                    <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 8px; padding: 10px 14px; margin-bottom: 12px;">
+                        <div style="font-size: 10.5px; color: #94A3B8; text-transform: uppercase; font-weight: 600;">Current Maritime Basin & Coordinates</div>
+                        <div style="font-size: 14.5px; font-weight: 700; color: #F8FAFC; margin-top: 2px;">📍 {v['current_basin']}</div>
+                        <div style="font-size: 12px; color: #38BDF8; font-family: monospace; margin-top: 2px;">{v['current_lat']:.4f}° N, {v['current_lon']:.4f}° E · Heading: {v['heading_deg']}° COG</div>
+                    </div>
+
+                    <!-- Voyage Progress Bar -->
+                    <div style="margin-bottom: 12px;">
+                        <div style="display: flex; justify-content: space-between; font-size: 11.5px; font-weight: 700; color: #F8FAFC; margin-bottom: 6px;">
+                            <span>⚓ {v['origin_port']} ({v['origin_country']})</span>
+                            <span style="color: #F5B942;">{v['progress_pct']}% SAILED</span>
+                            <span>🎯 {v['dest_port']} ({v['dest_country']})</span>
+                        </div>
+                        <div style="width: 100%; height: 8px; background: rgba(255, 255, 255, 0.1); border-radius: 999px; overflow: hidden;">
+                            <div style="width: {v['progress_pct']}%; height: 100%; background: linear-gradient(90deg, #F5B942, #10B981); border-radius: 999px;"></div>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; font-size: 10.5px; color: #94A3B8; margin-top: 4px;">
+                            <span>Departed: {v['departure_date']}</span>
+                            <span>{v['sailed_distance_nm']:,} NM sailed of {v['total_distance_nm']:,} NM</span>
                         </div>
                     </div>
-                </div>
 
-                <!-- PLAIN-ENGLISH MISSION BRIEFING -->
-                <div style="background: rgba(56, 189, 248, 0.05); border: 1px dashed rgba(56, 189, 248, 0.3); border-radius: 8px; padding: 9px 12px;">
-                    <div style="font-size: 10px; font-weight: 700; color: #38BDF8; text-transform: uppercase;">🎯 Strategic Commercial Mission:</div>
-                    <div style="font-size: 11.5px; color: #CBD5E1; margin-top: 2px; line-height: 1.4;">
-                        {v.get('mission_purpose', 'Energy supply and commercial refinery feedstock delivery.')}
+                    <!-- DYNAMIC ETA & SPEED SCORECARD ROW -->
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 12px;">
+                        <div style="background: rgba(14, 165, 233, 0.1); border: 1px solid rgba(14, 165, 233, 0.3); border-radius: 8px; padding: 8px; text-align: center;">
+                            <div style="font-size: 9.5px; color: #7DD3FC; font-weight: 700; text-transform: uppercase;">CURRENT SPEED (SOG)</div>
+                            <div style="font-size: 18px; font-weight: 800; color: #38BDF8; margin: 2px 0;">{v['speed_knots']} <span style="font-size: 11px;">kts</span></div>
+                            <div style="font-size: 10px; color: #BAE6FD;">{v['speed_knots'] * 1.852:.1f} km/h</div>
+                        </div>
+                        <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 8px; padding: 8px; text-align: center;">
+                            <div style="font-size: 9.5px; color: #6EE7B7; font-weight: 700; text-transform: uppercase;">DAYS TO ARRIVAL (ETA)</div>
+                            <div style="font-size: 18px; font-weight: 800; color: #34D399; margin: 2px 0;">{v['days_remaining']} <span style="font-size: 11px;">Days</span></div>
+                            <div style="font-size: 10px; color: #A7F3D0;">~{v['hours_remaining']:,.0f} hours</div>
+                        </div>
+                        <div style="background: rgba(245, 185, 66, 0.1); border: 1px solid rgba(245, 185, 66, 0.3); border-radius: 8px; padding: 8px; text-align: center;">
+                            <div style="font-size: 9.5px; color: #FCD34D; font-weight: 700; text-transform: uppercase;">DISTANCE REMAINING</div>
+                            <div style="font-size: 18px; font-weight: 800; color: #F5B942; margin: 2px 0;">{v['remaining_distance_nm']:,} <span style="font-size: 11px;">NM</span></div>
+                            <div style="font-size: 10px; color: #FDE68A;">{v['remaining_distance_nm'] * 1.852:,.0f} km</div>
+                        </div>
+                    </div>
+
+                    <!-- CARGO SPECIFICATION & VALUE -->
+                    <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 8px; padding: 10px 12px; margin-bottom: 10px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <span style="font-size: 10px; color: #94A3B8; text-transform: uppercase; font-weight: 600;">Onboard Petroleum Cargo</span>
+                                <div style="font-size: 13.5px; font-weight: 700; color: #F8FAFC;">🛢️ {v['cargo_name']} ({v['cargo_barrels']:,} bbl)</div>
+                            </div>
+                            <div style="text-align: right;">
+                                <span style="font-size: 10px; color: #94A3B8; text-transform: uppercase; font-weight: 600;">Cargo Market Valuation</span>
+                                <div style="font-size: 15px; font-weight: 800; color: #F5B942;">${v['cargo_value_millions_usd']}M USD</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- PLAIN-ENGLISH MISSION BRIEFING -->
+                    <div style="background: rgba(56, 189, 248, 0.05); border: 1px dashed rgba(56, 189, 248, 0.3); border-radius: 8px; padding: 9px 12px;">
+                        <div style="font-size: 10px; font-weight: 700; color: #38BDF8; text-transform: uppercase;">🎯 Strategic Commercial Mission:</div>
+                        <div style="font-size: 11.5px; color: #CBD5E1; margin-top: 2px; line-height: 1.4;">
+                            {v.get('mission_purpose', 'Energy supply and commercial refinery feedstock delivery.')}
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Chokepoint & Sea State Warning Footer -->
-            <div style="margin-top: 12px; padding-top: 10px; border-top: 1px solid rgba(255, 255, 255, 0.08); display: flex; justify-content: space-between; align-items: center; font-size: 10.5px;">
-                <span style="color: #94A3B8;">🌊 <b>Sea State:</b> {v['weather_sea_state']}</span>
-                <span style="color: {v['chokepoint_color']}; font-weight: 700;">⚠️ {v['chokepoint_name']}: {v['chokepoint_dist_nm']} NM away ({v['chokepoint_risk']})</span>
+                <!-- Chokepoint & Sea State Warning Footer -->
+                <div style="margin-top: 12px; padding-top: 10px; border-top: 1px solid rgba(255, 255, 255, 0.08); display: flex; justify-content: space-between; align-items: center; font-size: 10.5px;">
+                    <span style="color: #94A3B8;">🌊 <b>Sea State:</b> {v['weather_sea_state']}</span>
+                    <span style="color: {v['chokepoint_color']}; font-weight: 700;">⚠️ {v['chokepoint_name']}: {v['chokepoint_dist_nm']} NM away ({v['chokepoint_risk']})</span>
+                </div>
             </div>
-        </div>
-        """
-        render_html(telemetry_html, container=col_telemetry)
+            """
+            render_html(telemetry_html, container=col_telemetry)
 
 # -------------------------------------------------------------
 # 7. COMPLETE SEABORNE FLEET TELEMETRY MANIFEST TABLE

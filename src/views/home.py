@@ -59,43 +59,43 @@ def render_home_view(navigate_fn=None):
     """)
 
     # 2. Hero Action Buttons (Balanced 3-CTA Grid)
-    render_html('<div class="fuelpulse-hero-actions">')
-    c2, c3, c4 = st.columns([1, 1, 1], gap="medium")
-    with c2:
-        if st.button(t('home_cta_dashboard', cur_lang), type="primary", use_container_width=True, key="hero_cta_dash"):
-            if navigate_fn:
-                navigate_fn("Live Intelligence Dashboard")
-            else:
-                st.session_state.active_nav = "⚡ Intelligence Dashboard"
-                st.rerun()
-    with c3:
-        if st.button(t('home_cta_india', cur_lang), type="primary", use_container_width=True, key="hero_cta_india"):
-            if navigate_fn:
-                navigate_fn("India Fuel Center")
-            else:
-                st.session_state.active_nav = "🇮🇳 India Fuel Center"
-                st.rerun()
-    with c4:
-        auth_user = st.session_state.get("auth_user")
-        auth_cta_label = f"👤 {auth_user.get('username', 'Analyst')}" if auth_user else "🔐 Sign In / Console"
-        if st.button(auth_cta_label, type="secondary", use_container_width=True, key="hero_cta_signin"):
-            _show_sign_in_dialog()
-    render_html('</div>')
+    with st.container(key="home_hero_cta_row"):
+        c2, c3, c4 = st.columns([1, 1, 1], gap="medium")
+        with c2:
+            if st.button(t('home_cta_dashboard', cur_lang), type="primary", use_container_width=True, key="hero_cta_dash"):
+                if navigate_fn:
+                    navigate_fn("Live Intelligence Dashboard")
+                else:
+                    st.session_state.active_nav = "⚡ Intelligence Dashboard"
+                    st.rerun()
+        with c3:
+            if st.button(t('home_cta_india', cur_lang), type="primary", use_container_width=True, key="hero_cta_india"):
+                if navigate_fn:
+                    navigate_fn("India Fuel Center")
+                else:
+                    st.session_state.active_nav = "🇮🇳 India Fuel Center"
+                    st.rerun()
+        with c4:
+            auth_user = st.session_state.get("auth_user")
+            auth_cta_label = f"👤 {auth_user.get('username', 'Analyst')}" if auth_user else "🔐 Sign In / Console"
+            if st.button(auth_cta_label, type="secondary", use_container_width=True, key="hero_cta_signin"):
+                _show_sign_in_dialog()
 
     # Quick launch CTAs for Highway Optimizer & Live Tanker Tracker
-    col_hero_opt1, col_hero_opt2 = st.columns(2)
-    with col_hero_opt1:
-        st.page_link(
-            "pages/12_Highway_Fuel_Optimizer.py",
-            label="🛣️ Highway Fuel Arbitrage Optimizer (India • Saudi • Dubai) →",
-            use_container_width=True
-        )
-    with col_hero_opt2:
-        st.page_link(
-            "pages/13_Live_Tanker_Tracker.py",
-            label="🚢 Live Maritime Oil Tanker Radar (AIS Coordinates & Speed) →",
-            use_container_width=True
-        )
+    with st.container(key="home_hero_links_row"):
+        col_hero_opt1, col_hero_opt2 = st.columns(2)
+        with col_hero_opt1:
+            st.page_link(
+                "pages/12_Highway_Fuel_Optimizer.py",
+                label="🛣️ Highway Fuel Arbitrage Optimizer (India • Saudi • Dubai) →",
+                use_container_width=True
+            )
+        with col_hero_opt2:
+            st.page_link(
+                "pages/13_Live_Tanker_Tracker.py",
+                label="🚢 Live Maritime Oil Tanker Radar (AIS Coordinates & Speed) →",
+                use_container_width=True
+            )
 
     # Fetch live headline benchmarks from database with current benchmarks
     brent_val = "$84.20 / bbl"

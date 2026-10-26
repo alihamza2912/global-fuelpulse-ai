@@ -135,61 +135,62 @@ else:
             custom_dest = st.selectbox("Destination Hub", options=all_nodes, index=min(1, len(all_nodes)-1), key="opt_custom_dest")
 
 # Vehicle & Fuel Selection
-col_veh, col_fuel, col_custom = st.columns([1.4, 1.2, 1.4], vertical_alignment="bottom")
+with st.container(key="hfo_vehicle_row"):
+    col_veh, col_fuel, col_custom = st.columns([1.4, 1.2, 1.4], vertical_alignment="bottom")
 
-with col_veh:
-    veh_keys = list(HighwayFuelOptimizer.VEHICLE_PROFILES.keys())
-    vehicle_type = st.selectbox(
-        t("hfo_fleet_vehicle_class", current_lang),
-        options=veh_keys,
-        format_func=lambda k: f"{HighwayFuelOptimizer.VEHICLE_PROFILES[k]['icon']} {HighwayFuelOptimizer.VEHICLE_PROFILES[k]['name']}",
-        index=0,
-        key="opt_vehicle_type"
-    )
+    with col_veh:
+        veh_keys = list(HighwayFuelOptimizer.VEHICLE_PROFILES.keys())
+        vehicle_type = st.selectbox(
+            t("hfo_fleet_vehicle_class", current_lang),
+            options=veh_keys,
+            format_func=lambda k: f"{HighwayFuelOptimizer.VEHICLE_PROFILES[k]['icon']} {HighwayFuelOptimizer.VEHICLE_PROFILES[k]['name']}",
+            index=0,
+            key="opt_vehicle_type"
+        )
 
-with col_fuel:
-    if region_choice == "india":
-        fuel_opts = [("diesel", "⛽ Diesel (High Freight Volume)"), ("petrol", "🟢 Petrol (Motor Spirit)")]
-    elif region_choice == "saudi":
-        fuel_opts = [("diesel", "⛽ Diesel (1.15 SAR/L)"), ("petrol_91", "🟢 Premium 91 (2.18 SAR/L)"), ("petrol_95", "🔴 Super 95 (2.33 SAR/L)")]
-    elif region_choice == "uae":
-        fuel_opts = [("diesel", "⛽ Diesel (3.10 AED/L)"), ("petrol_95", "🟢 Special 95 (2.93 AED/L)"), ("petrol_98", "🔴 Super 98 (3.05 AED/L)")]
-    else:
-        fuel_opts = [("diesel", "⛽ Diesel (Cross-Border Arbitrage)"), ("petrol", "🟢 Petrol (Cross-Border)")]
+    with col_fuel:
+        if region_choice == "india":
+            fuel_opts = [("diesel", "⛽ Diesel (High Freight Volume)"), ("petrol", "🟢 Petrol (Motor Spirit)")]
+        elif region_choice == "saudi":
+            fuel_opts = [("diesel", "⛽ Diesel (1.15 SAR/L)"), ("petrol_91", "🟢 Premium 91 (2.18 SAR/L)"), ("petrol_95", "🔴 Super 95 (2.33 SAR/L)")]
+        elif region_choice == "uae":
+            fuel_opts = [("diesel", "⛽ Diesel (3.10 AED/L)"), ("petrol_95", "🟢 Special 95 (2.93 AED/L)"), ("petrol_98", "🔴 Super 98 (3.05 AED/L)")]
+        else:
+            fuel_opts = [("diesel", "⛽ Diesel (Cross-Border Arbitrage)"), ("petrol", "🟢 Petrol (Cross-Border)")]
 
-    fuel_type = st.selectbox(
-        t("hfo_fuel_specification", current_lang),
-        options=fuel_opts,
-        format_func=lambda x: x[1],
-        index=0,
-        key="opt_fuel_type"
-    )[0]
+        fuel_type = st.selectbox(
+            t("hfo_fuel_specification", current_lang),
+            options=fuel_opts,
+            format_func=lambda x: x[1],
+            index=0,
+            key="opt_fuel_type"
+        )[0]
 
-v_def = HighwayFuelOptimizer.VEHICLE_PROFILES[vehicle_type]
+    v_def = HighwayFuelOptimizer.VEHICLE_PROFILES[vehicle_type]
 
-# Check if vehicle_type changed and reset defaults if so
-last_veh = st.session_state.get("hfo_last_vehicle")
-if last_veh != vehicle_type:
-    st.session_state["hfo_custom_tank"] = float(v_def["tank_capacity_l"])
-    st.session_state["hfo_custom_kml"] = float(v_def["consumption_kml"])
-    st.session_state["hfo_last_vehicle"] = vehicle_type
+    # Check if vehicle_type changed and reset defaults if so
+    last_veh = st.session_state.get("hfo_last_vehicle")
+    if last_veh != vehicle_type:
+        st.session_state["hfo_custom_tank"] = float(v_def["tank_capacity_l"])
+        st.session_state["hfo_custom_kml"] = float(v_def["consumption_kml"])
+        st.session_state["hfo_last_vehicle"] = vehicle_type
 
-if "hfo_custom_tank" not in st.session_state:
-    st.session_state["hfo_custom_tank"] = float(v_def["tank_capacity_l"])
-if "hfo_custom_kml" not in st.session_state:
-    st.session_state["hfo_custom_kml"] = float(v_def["consumption_kml"])
+    if "hfo_custom_tank" not in st.session_state:
+        st.session_state["hfo_custom_tank"] = float(v_def["tank_capacity_l"])
+    if "hfo_custom_kml" not in st.session_state:
+        st.session_state["hfo_custom_kml"] = float(v_def["consumption_kml"])
 
-active_tank = float(st.session_state["hfo_custom_tank"])
-active_kml = float(st.session_state["hfo_custom_kml"])
+    active_tank = float(st.session_state["hfo_custom_tank"])
+    active_kml = float(st.session_state["hfo_custom_kml"])
 
-with col_custom:
-    st.markdown(f'<label style="font-size: 14px; font-weight: 400; color: #F8FAFC; display: block; margin-bottom: 7px; height: 21px; overflow: hidden; white-space: nowrap;">{t("hfo_tank_mileage", current_lang)}</label>', unsafe_allow_html=True)
-    with st.popover(f"⚙️ Tank: {active_tank:g}L • {active_kml:g} km/L", use_container_width=True):
-        st.markdown("**Vehicle Range Tuning**")
-        p_tank = st.number_input("Custom Tank Capacity (Liters)", min_value=10.0, max_value=1200.0, step=5.0, key="hfo_custom_tank")
-        p_kml = st.number_input("Fuel Efficiency (km/L)", min_value=0.5, max_value=50.0, step=0.5, key="hfo_custom_kml")
-        override_tank = float(p_tank)
-        override_kml = float(p_kml)
+    with col_custom:
+        st.markdown(f'<label style="font-size: 14px; font-weight: 400; color: #F8FAFC; display: block; margin-bottom: 7px; height: 21px; overflow: hidden; white-space: nowrap;">{t("hfo_tank_mileage", current_lang)}</label>', unsafe_allow_html=True)
+        with st.popover(f"⚙️ Tank: {active_tank:g}L • {active_kml:g} km/L", use_container_width=True):
+            st.markdown("**Vehicle Range Tuning**")
+            p_tank = st.number_input("Custom Tank Capacity (Liters)", min_value=10.0, max_value=1200.0, step=5.0, key="hfo_custom_tank")
+            p_kml = st.number_input("Fuel Efficiency (km/L)", min_value=0.5, max_value=50.0, step=0.5, key="hfo_custom_kml")
+            override_tank = float(p_tank)
+            override_kml = float(p_kml)
 
 if fuel_type == "petrol_91":
     fuel_display_name = "Petrol (91 Octane)"

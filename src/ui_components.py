@@ -2234,6 +2234,15 @@ button[data-testid*="primaryActive"] * {{
   fill: #070A12 !important;
 }}
 
+/* Mission Callout Card Grid (Desktop 3 columns, Mobile 1 column) */
+.fuelpulse-mission-grid {{
+  display: grid !important;
+  grid-template-columns: 1.2fr 1.3fr 1.1fr !important;
+  gap: 14px !important;
+  font-size: 12px !important;
+  line-height: 1.5 !important;
+}}
+
 /* ==============================================================================
    19. COMPREHENSIVE MOBILE RESPONSIVE ENGINE (<= 768px & <= 480px, Desktop Untouched)
    ============================================================================== */
@@ -2250,6 +2259,20 @@ button[data-testid*="primaryActive"] * {{
   h2 {{ font-size: 18px !important; line-height: 1.25 !important; }}
   h3, h4 {{ font-size: 15px !important; line-height: 1.3 !important; }}
   p, span, label {{ font-size: 13px !important; }}
+
+  /* Mission Callout: Clean vertical stacking on mobile */
+  .fuelpulse-mission-grid {{
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 12px !important;
+  }}
+  .fuelpulse-mission-grid > div {{
+    width: 100% !important;
+  }}
+  .fuelpulse-mission-grid > div:not(:last-child) {{
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+    padding-bottom: 10px !important;
+  }}
 
   /* B. Universal 2-Column Responsive Grid for Multi-Column Blocks */
   [data-testid="stHorizontalBlock"] {{
@@ -2275,6 +2298,164 @@ button[data-testid*="primaryActive"] * {{
   /* D. Odd Last Column Foundation Span (e.g. 3rd card or 5th AI query button) */
   [data-testid="stHorizontalBlock"] > [data-testid="column"]:last-child:nth-child(odd):not(:first-child),
   [data-testid="stHorizontalBlock"] > [data-testid="stColumn"]:last-child:nth-child(odd):not(:first-child) {{
+    grid-column: 1 / -1 !important;
+  }}
+
+  /* D0. Keyed Row Containers: 100% full-width stacking on mobile */
+  div[class*="st-key-tanker_vessel_select_row"] [data-testid="stHorizontalBlock"],
+  div[class*="st-key-tanker_dossier_row"] [data-testid="stHorizontalBlock"],
+  div[class*="st-key-tanker_filters_row"] [data-testid="stHorizontalBlock"],
+  div[class*="st-key-tanker_map_header_row"] [data-testid="stHorizontalBlock"],
+  div[class*="st-key-hfo_vehicle_row"] [data-testid="stHorizontalBlock"],
+  div[class*="st-key-home_hero_cta_row"] [data-testid="stHorizontalBlock"],
+  div[class*="st-key-home_hero_links_row"] [data-testid="stHorizontalBlock"] {{
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 12px !important;
+    width: 100% !important;
+  }}
+  div[class*="st-key-tanker_vessel_select_row"] [data-testid="stHorizontalBlock"] > [data-testid="column"],
+  div[class*="st-key-tanker_vessel_select_row"] [data-testid="stHorizontalBlock"] > [data-testid="stColumn"],
+  div[class*="st-key-tanker_dossier_row"] [data-testid="stHorizontalBlock"] > [data-testid="column"],
+  div[class*="st-key-tanker_dossier_row"] [data-testid="stHorizontalBlock"] > [data-testid="stColumn"],
+  div[class*="st-key-tanker_filters_row"] [data-testid="stHorizontalBlock"] > [data-testid="column"],
+  div[class*="st-key-tanker_filters_row"] [data-testid="stHorizontalBlock"] > [data-testid="stColumn"],
+  div[class*="st-key-tanker_map_header_row"] [data-testid="stHorizontalBlock"] > [data-testid="column"],
+  div[class*="st-key-tanker_map_header_row"] [data-testid="stHorizontalBlock"] > [data-testid="stColumn"],
+  div[class*="st-key-hfo_vehicle_row"] [data-testid="stHorizontalBlock"] > [data-testid="column"],
+  div[class*="st-key-hfo_vehicle_row"] [data-testid="stHorizontalBlock"] > [data-testid="stColumn"],
+  div[class*="st-key-home_hero_cta_row"] [data-testid="stHorizontalBlock"] > [data-testid="column"],
+  div[class*="st-key-home_hero_cta_row"] [data-testid="stHorizontalBlock"] > [data-testid="stColumn"],
+  div[class*="st-key-home_hero_links_row"] [data-testid="stHorizontalBlock"] > [data-testid="column"],
+  div[class*="st-key-home_hero_links_row"] [data-testid="stHorizontalBlock"] > [data-testid="stColumn"] {{
+    width: 100% !important;
+    min-width: 100% !important;
+    max-width: 100% !important;
+    flex: 1 1 100% !important;
+    grid-column: 1 / -1 !important;
+  }}
+
+  /* D0b. Major Split & Content Containers: 100% full-width stacking on mobile */
+  /* Vessel Dossier photo + telemetry split */
+  [data-testid="stHorizontalBlock"]:has([data-testid="stImage"]) {{
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 14px !important;
+    width: 100% !important;
+  }}
+  [data-testid="stHorizontalBlock"]:has([data-testid="stImage"]) > [data-testid="column"],
+  [data-testid="stHorizontalBlock"]:has([data-testid="stImage"]) > [data-testid="stColumn"] {{
+    width: 100% !important;
+    min-width: 100% !important;
+    max-width: 100% !important;
+    flex: 1 1 100% !important;
+    grid-column: 1 / -1 !important;
+  }}
+
+  /* Hero CTA buttons on Home page */
+  [data-testid="stHorizontalBlock"]:has(button[key*="hero_cta"]) {{
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 10px !important;
+    width: 100% !important;
+  }}
+  [data-testid="stHorizontalBlock"]:has(button[key*="hero_cta"]) > [data-testid="column"],
+  [data-testid="stHorizontalBlock"]:has(button[key*="hero_cta"]) > [data-testid="stColumn"] {{
+    width: 100% !important;
+    min-width: 100% !important;
+    max-width: 100% !important;
+    flex: 1 1 100% !important;
+    grid-column: 1 / -1 !important;
+  }}
+  [data-testid="stHorizontalBlock"]:has(button[key*="hero_cta"]) button {{
+    height: auto !important;
+    min-height: 44px !important;
+    font-size: 13.5px !important;
+    white-space: normal !important;
+    word-break: break-word !important;
+    padding: 10px 14px !important;
+    line-height: 1.25 !important;
+    width: 100% !important;
+  }}
+
+  /* Hero module page links (Highway Optimizer & Tanker Tracker) */
+  [data-testid="stHorizontalBlock"]:has(a[href*="Highway_Fuel_Optimizer"]),
+  [data-testid="stHorizontalBlock"]:has(a[href*="Live_Tanker_Tracker"]) {{
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 8px !important;
+    width: 100% !important;
+  }}
+  [data-testid="stHorizontalBlock"]:has(a[href*="Highway_Fuel_Optimizer"]) > [data-testid="column"],
+  [data-testid="stHorizontalBlock"]:has(a[href*="Live_Tanker_Tracker"]) > [data-testid="column"],
+  [data-testid="stHorizontalBlock"]:has(a[href*="Highway_Fuel_Optimizer"]) > [data-testid="stColumn"],
+  [data-testid="stHorizontalBlock"]:has(a[href*="Live_Tanker_Tracker"]) > [data-testid="stColumn"] {{
+    width: 100% !important;
+    min-width: 100% !important;
+    max-width: 100% !important;
+    flex: 1 1 100% !important;
+    grid-column: 1 / -1 !important;
+  }}
+  [data-testid="stHorizontalBlock"]:has(a[href*="Highway_Fuel_Optimizer"]) a,
+  [data-testid="stHorizontalBlock"]:has(a[href*="Live_Tanker_Tracker"]) a {{
+    height: auto !important;
+    min-height: 40px !important;
+    white-space: normal !important;
+    line-height: 1.3 !important;
+    padding: 8px 12px !important;
+    font-size: 12px !important;
+    width: 100% !important;
+  }}
+
+  /* Highway Fuel Optimizer vehicle/fuel selector row */
+  [data-testid="stHorizontalBlock"]:has([data-testid="stSelectbox"]):has([data-testid="stPopover"]) {{
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 10px !important;
+    width: 100% !important;
+  }}
+  [data-testid="stHorizontalBlock"]:has([data-testid="stSelectbox"]):has([data-testid="stPopover"]) > [data-testid="column"],
+  [data-testid="stHorizontalBlock"]:has([data-testid="stSelectbox"]):has([data-testid="stPopover"]) > [data-testid="stColumn"] {{
+    width: 100% !important;
+    min-width: 100% !important;
+    max-width: 100% !important;
+    flex: 1 1 100% !important;
+    grid-column: 1 / -1 !important;
+  }}
+
+  /* Live Tanker Tracker commodity & class filter row */
+  [data-testid="stHorizontalBlock"]:has(input[aria-label*="Search Fleet"]),
+  [data-testid="stHorizontalBlock"]:has(input[placeholder*="Maran Canopus"]) {{
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 8px !important;
+    width: 100% !important;
+  }}
+  [data-testid="stHorizontalBlock"]:has(input[aria-label*="Search Fleet"]) > [data-testid="column"],
+  [data-testid="stHorizontalBlock"]:has(input[placeholder*="Maran Canopus"]) > [data-testid="column"],
+  [data-testid="stHorizontalBlock"]:has(input[aria-label*="Search Fleet"]) > [data-testid="stColumn"],
+  [data-testid="stHorizontalBlock"]:has(input[placeholder*="Maran Canopus"]) > [data-testid="stColumn"] {{
+    width: 100% !important;
+    min-width: 100% !important;
+    max-width: 100% !important;
+    flex: 1 1 100% !important;
+    grid-column: 1 / -1 !important;
+  }}
+
+  /* Map header with title, engine selectbox, and mouse zoom toggle */
+  [data-testid="stHorizontalBlock"]:has(input[aria-label*="Mouse Wheel Zoom"]),
+  [data-testid="stHorizontalBlock"]:has(label:has-text("Mouse Wheel Zoom")) {{
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 8px !important;
+    width: 100% !important;
+  }}
+  [data-testid="stHorizontalBlock"]:has(label:has-text("Mouse Wheel Zoom")) > [data-testid="column"],
+  [data-testid="stHorizontalBlock"]:has(label:has-text("Mouse Wheel Zoom")) > [data-testid="stColumn"] {{
+    width: 100% !important;
+    min-width: 100% !important;
+    max-width: 100% !important;
+    flex: 1 1 100% !important;
     grid-column: 1 / -1 !important;
   }}
 
