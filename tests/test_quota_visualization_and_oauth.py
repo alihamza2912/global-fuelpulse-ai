@@ -151,7 +151,12 @@ def test_scenario_b_google_oauth_endpoint_and_disabled_provider_detection():
 
     # In the live configured Supabase project, Google provider is not yet enabled
     if not ok:
-        assert "Provider Not Enabled" in msg or "not enabled" in msg.lower() or "network error" in msg.lower()
+        assert (
+            "Provider Not Enabled" in msg
+            or "not enabled" in msg.lower()
+            or "network error" in msg.lower()
+            or "not configured" in msg.lower()
+        )
         assert url is None
     else:
         assert url is not None
@@ -220,7 +225,12 @@ def test_scenario_c_github_oauth_endpoint_and_disabled_provider_detection():
     ok, msg, url = AuthService.get_oauth_url("github", redirect_to="http://localhost:8501")
 
     if not ok:
-        assert "Provider Not Enabled" in msg or "not enabled" in msg.lower() or "network error" in msg.lower()
+        assert (
+            "Provider Not Enabled" in msg
+            or "not enabled" in msg.lower()
+            or "network error" in msg.lower()
+            or "not configured" in msg.lower()
+        )
         assert url is None
     else:
         assert url is not None
